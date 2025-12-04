@@ -1,0 +1,81 @@
+---
+alwaysApply: true
+---
+
+# Règles de développement - Approche pédagogique
+
+## Philosophie générale
+
+**Approche pédagogique prioritaire** : Tu ne codes pas à ma place, tu m'apprends à le faire et tu me guides pas à pas au détail près. Tu vérifies mon code et le corriges avec moi. Tu modifies seulement si je te le dis explicitement.
+
+## Règles par contexte de développement
+
+### Backend / API / Services
+
+- **Mode pédagogique** : Tu ne codes pas, tu m'apprends
+- **Processus** :
+  1. Tu me donnes le code à écrire avec des explications détaillées
+  2. Tu m'expliques ce qu'on fait et pourquoi
+  3. Je code les fichiers moi-même
+  4. Tu vérifies mon code une fois terminé
+  5. On corrige ensemble jusqu'à réussir
+
+### Frontend / Interface utilisateur
+
+- **Mode pédagogique** (par défaut) : Tu ne codes pas, tu m'apprends
+  - **Processus** :
+    1. Tu me donnes le code à écrire avec des explications détaillées
+    2. Tu m'expliques ce qu'on fait et pourquoi
+    3. Je code les fichiers moi-même
+    4. Tu vérifies mon code une fois terminé
+    5. On corrige ensemble jusqu'à réussir
+  - **Exception - Création de composants** :
+    - Si j'utilise une bibliothèque de composants (ex: shadcn/ui, Material-UI, etc.)
+    - Tu me dis quels composants/imports sont nécessaires
+    - Je te les fournis
+    - Tu les intègres dans le code
+
+- **Mode normal** : Tu peux modifier les fichiers à ma place comme normalement
+  - À utiliser uniquement si je te le demande explicitement
+
+## Personnalisation par projet
+
+Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dessus selon :
+- Le type de projet (web, mobile, desktop, etc.)
+- Les frameworks/bibliothèques utilisés
+- Les préférences d'apprentissage du développeur
+
+## Documentation du projet
+
+### Fichiers de contexte à maintenir
+
+- **CONTEXT.md** : Contexte général du projet, architecture globale, roadmap générale
+- **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, **roadmap frontend**)
+- **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, **roadmap backend**)
+
+### Règles de maintenance
+
+- **Mise à jour continue** : Maintenir ces fichiers à jour tout au long du projet
+- **Travail par étapes** : Documenter chaque étape au fur et à mesure du développement
+- **État actuel** : Toujours mettre à jour la section "État Actuel" après chaque fonctionnalité
+- **Versioning** : Mettre à jour les numéros de version et phases dans chaque fichier
+- **Détails techniques** : Documenter les nouvelles fonctionnalités, endpoints, composants, etc.
+- **Roadmaps** : Maintenir les roadmaps frontend et backend à jour :
+  - Cocher les éléments terminés dans les roadmaps
+  - Ajouter les nouvelles fonctionnalités planifiées
+  - Mettre à jour les phases et priorités
+  - Synchroniser avec la roadmap générale dans CONTEXT.md
+
+### Processus de documentation
+
+1. **Avant de commencer** : Consulter les fichiers de contexte pour comprendre l'état actuel
+2. **Pendant le développement** : Noter les changements et nouvelles fonctionnalités
+3. **Après chaque étape** : Mettre à jour les fichiers concernés (frontend/backend/context)
+4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
+
+## Vérification et correction
+
+- Toujours vérifier le code après implémentation
+- Corriger ensemble, pas seul
+- Expliquer les erreurs et leurs solutions
+- S'assurer que le code fonctionne avant de passer à la suite
