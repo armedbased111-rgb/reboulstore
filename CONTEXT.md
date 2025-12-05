@@ -82,116 +82,154 @@ reboulstore/
 
 ### Phase 1 : Setup & Architecture de base
 #### 1.1 Configuration Docker globale
-- [ ] Créer docker-compose.yml à la racine
-- [ ] Configurer service PostgreSQL (port, volumes, variables d'environnement)
-- [ ] Configurer service backend NestJS (port, dépendances, volumes)
-- [ ] Configurer service frontend React (port, volumes)
-- [ ] Créer réseau Docker pour communication entre services
-- [ ] Tester démarrage des 3 services simultanément
+- [x] Créer docker-compose.yml à la racine
+- [x] Configurer service PostgreSQL (port, volumes, variables d'environnement)
+- [x] Configurer service backend NestJS (port, dépendances, volumes)
+- [x] Configurer service frontend React (port, volumes)
+- [x] Créer réseau Docker pour communication entre services
+- [x] Tester démarrage des 3 services simultanément
 
 #### 1.2 Setup Backend NestJS
-- [ ] Initialiser projet NestJS dans backend/
-- [ ] Configurer package.json avec dépendances (NestJS, TypeORM, PostgreSQL, etc.)
-- [ ] Créer structure de dossiers (modules, entities, dto, controllers, services)
-- [ ] Configurer TypeORM dans app.module.ts
-- [ ] Créer fichier .env pour variables d'environnement backend
-- [ ] Configurer connexion PostgreSQL via TypeORM
-- [ ] Tester connexion à la base de données
+- [x] Initialiser projet NestJS dans backend/
+- [x] Configurer package.json avec dépendances (NestJS, TypeORM, PostgreSQL, etc.)
+- [x] Créer structure de dossiers (modules, entities, dto, config)
+- [x] Configurer TypeORM dans app.module.ts
+- [x] Créer fichier .env pour variables d'environnement backend
+- [x] Configurer connexion PostgreSQL via TypeORM
+- [x] Créer Dockerfile pour backend
+- [x] Configurer ValidationPipe global et CORS
+- [x] Tester connexion à la base de données
 
 #### 1.3 Setup Frontend React + Vite
-- [ ] Initialiser projet Vite + React + TypeScript dans frontend/
-- [ ] Configurer package.json avec dépendances (React, Vite, TailwindCSS, React Router, etc.)
-- [ ] Créer structure de dossiers (pages, components, services, hooks, types, utils)
-- [ ] Configurer TailwindCSS (tailwind.config.js, postcss.config.js)
-- [ ] Configurer React Router pour routing
-- [ ] Créer fichier .env pour variables d'environnement frontend
-- [ ] Configurer proxy API vers backend
-- [ ] Tester build et dev server
+- [x] Initialiser projet Vite + React + TypeScript dans frontend/
+- [x] Configurer package.json avec dépendances (React, Vite, TailwindCSS, React Router, etc.)
+- [x] Créer structure de dossiers (pages, components, services, hooks, types, utils)
+- [x] Configurer TailwindCSS (index.css avec @import tailwindcss, postcss.config.js)
+- [x] Configurer React Router pour routing
+- [x] Créer fichier .env pour variables d'environnement frontend
+- [x] Créer Dockerfile pour frontend
+- [x] Configurer Vite pour Docker (host 0.0.0.0, port 3000)
+- [x] Tester build et dev server
 
 #### 1.4 Configuration TypeORM + PostgreSQL
-- [ ] Définir schéma de base de données initial
-- [ ] Configurer migrations TypeORM
+- [x] Configurer synchronisation automatique (dev) vs migrations (prod)
+- [x] Configurer migrations TypeORM (dossier migrations créé)
+- [ ] Définir schéma de base de données initial (à faire avec les entités)
 - [ ] Créer script de seed pour données de test
-- [ ] Configurer synchronisation automatique (dev) vs migrations (prod)
-- [ ] Tester création de tables
+- [x] Tester création de tables (synchronize activé en dev)
 
 #### 1.5 Configuration TailwindCSS
-- [ ] Installer et configurer TailwindCSS
-- [ ] Définir thème personnalisé (couleurs premium/streetwear)
-- [ ] Créer variables CSS personnalisées
-- [ ] Configurer plugins Tailwind (forms, typography, etc.)
-- [ ] Créer classes utilitaires personnalisées
-- [ ] Tester compilation CSS
+- [x] Installer et configurer TailwindCSS (v4)
+- [x] Définir thème personnalisé (couleurs premium/streetwear)
+- [x] Créer variables CSS personnalisées
+- [ ] Configurer plugins Tailwind (forms, typography, etc.) - à faire si nécessaire
+- [ ] Créer classes utilitaires personnalisées - à faire si nécessaire
+- [x] Tester compilation CSS
 
-### Phase 2 : Backend - Modèles de données & Entités
+### Phase 2 : Backend - Modèles de données & Entités ✅
 #### 2.1 Entités de base
-- [ ] Créer entité Category (id, name, slug, description, timestamps)
-- [ ] Créer entité Product (id, name, description, price, categoryId, timestamps)
-- [ ] Créer entité Image (id, productId, url, alt, order, timestamps)
-- [ ] Créer entité Variant (id, productId, color, size, stock, sku, timestamps)
-- [ ] Définir types TypeScript pour chaque entité
+- [x] Créer entité Category (id, name, slug, description, timestamps)
+- [x] Créer entité Product (id, name, description, price, categoryId, timestamps)
+- [x] Créer entité Image (id, productId, url, alt, order, timestamps)
+- [x] Créer entité Variant (id, productId, color, size, stock, sku, timestamps)
+- [x] Définir types TypeScript pour chaque entité
 
 #### 2.2 Relations entre entités
-- [ ] Configurer relation Category → Products (OneToMany)
-- [ ] Configurer relation Product → Images (OneToMany)
-- [ ] Configurer relation Product → Variants (OneToMany)
-- [ ] Configurer relations inverses (ManyToOne)
-- [ ] Tester relations avec requêtes TypeORM
+- [x] Configurer relation Category → Products (OneToMany)
+- [x] Configurer relation Product → Images (OneToMany)
+- [x] Configurer relation Product → Variants (OneToMany)
+- [x] Configurer relations inverses (ManyToOne)
+- [x] Tester relations avec requêtes TypeORM (tables créées avec clés étrangères)
 
 #### 2.3 Entités E-commerce
-- [ ] Créer entité Cart (id, sessionId, timestamps)
-- [ ] Créer entité CartItem (id, cartId, variantId, quantity, timestamps)
-- [ ] Créer entité Order (id, cartId, status, total, customerInfo, timestamps)
-- [ ] Configurer relation Cart → CartItems (OneToMany)
-- [ ] Configurer relation CartItem → Variant (ManyToOne)
-- [ ] Configurer relation Order → Cart (ManyToOne)
-- [ ] Définir enum OrderStatus
+- [x] Créer entité Cart (id, sessionId, timestamps)
+- [x] Créer entité CartItem (id, cartId, variantId, quantity, timestamps)
+- [x] Créer entité Order (id, cartId, status, total, customerInfo, timestamps)
+- [x] Configurer relation Cart → CartItems (OneToMany)
+- [x] Configurer relation CartItem → Variant (ManyToOne)
+- [x] Configurer relation Order → Cart (ManyToOne)
+- [x] Définir enum OrderStatus
 
 #### 2.4 Migrations & Base de données
-- [ ] Générer migration initiale pour toutes les entités
-- [ ] Créer script de seed pour catégories de base
-- [ ] Créer script de seed pour produits de test
-- [ ] Tester migrations (up/down)
-- [ ] Vérifier intégrité des données
+- [x] Synchronisation automatique activée (dev) - tables créées automatiquement
+- [x] Toutes les tables créées en base de données (7 tables : categories, products, images, variants, carts, cart_items, orders)
+- [x] Vérifier intégrité des données (clés étrangères créées)
+- [ ] Créer script de seed pour catégories de base (à faire plus tard)
+- [ ] Créer script de seed pour produits de test (à faire plus tard)
+- [ ] Générer migration initiale pour production (à faire plus tard)
 
 ### Phase 3 : Backend - API REST (Modules & Endpoints)
-#### 3.1 Module Catégories
-- [ ] Créer module Categories
-- [ ] Créer DTOs (CreateCategoryDto, UpdateCategoryDto, CategoryResponseDto)
-- [ ] Créer service Categories (findAll, findOne, create, update, delete)
-- [ ] Créer controller Categories avec endpoints GET /categories
-- [ ] Créer endpoint GET /categories/:id
-- [ ] Ajouter validation avec class-validator
-- [ ] Tester endpoints avec Postman/Thunder Client
+#### 3.1 Module Catégories ✅
+- [x] Créer module Categories
+- [x] Créer DTOs (CreateCategoryDto, UpdateCategoryDto)
+- [x] Créer service Categories (findAll, findOne, findBySlug, create, update, delete)
+- [x] Créer controller Categories avec endpoints :
+  - [x] POST /categories (créer)
+  - [x] GET /categories (liste)
+  - [x] GET /categories/:id (par ID)
+  - [x] GET /categories/slug/:slug (par slug)
+  - [x] PATCH /categories/:id (modifier)
+  - [x] DELETE /categories/:id (supprimer)
+- [x] Ajouter validation avec class-validator
+- [x] Enregistrer module dans AppModule
+- [x] Tester endpoints (création, récupération, recherche par slug)
 
-#### 3.2 Module Produits
-- [ ] Créer module Products
-- [ ] Créer DTOs (CreateProductDto, UpdateProductDto, ProductResponseDto)
-- [ ] Créer service Products (findAll, findOne, findByCategory, create, update, delete)
-- [ ] Créer controller Products avec endpoint GET /products
-- [ ] Implémenter pagination (page, limit)
-- [ ] Implémenter filtres (category, price range, search)
-- [ ] Créer endpoint GET /products/:id avec relations (images, variants, category)
-- [ ] Créer endpoint GET /products/category/:categoryId
-- [ ] Ajouter validation avec class-validator
-- [ ] Tester endpoints avec Postman/Thunder Client
+#### 3.2 Module Produits ✅
+- [x] Créer module Products
+- [x] Créer DTOs (CreateProductDto, UpdateProductDto, ProductQueryDto)
+- [x] Créer service Products (findAll, findOne, findByCategory, create, update, delete)
+- [x] Créer controller Products avec endpoints :
+  - [x] POST /products (créer)
+  - [x] GET /products (liste avec filtres et pagination)
+  - [x] GET /products/:id (par ID avec relations)
+  - [x] GET /products/category/:categoryId (par catégorie)
+  - [x] PATCH /products/:id (modifier)
+  - [x] DELETE /products/:id (supprimer)
+- [x] Implémenter pagination (page, limit, totalPages)
+- [x] Implémenter filtres (category, price range, search)
+- [x] Implémenter tri (sortBy, sortOrder)
+- [x] Charger relations automatiquement (category, images, variants)
+- [x] Vérifier existence catégorie avant création/modification
+- [x] Ajouter validation avec class-validator
+- [x] Enregistrer module dans AppModule
+- [x] Tester endpoints (création, récupération, filtres, pagination validés)
 
-#### 3.3 Module Variantes
-- [ ] Créer module Variants (ou intégrer dans Products)
-- [ ] Créer DTOs pour variantes
-- [ ] Créer service pour gestion stock
-- [ ] Créer endpoint GET /products/:id/variants
-- [ ] Implémenter vérification stock disponible
-- [ ] Tester endpoints
+#### 3.3 Module Variantes ✅
+- [x] Créer module Variants (intégré dans Products)
+- [x] Créer DTOs (CreateVariantDto, UpdateVariantDto)
+- [x] Créer service Variants (intégré dans ProductsService) :
+  - [x] findVariantsByProduct(productId)
+  - [x] findVariantById(id)
+  - [x] createVariant(productId, dto)
+  - [x] updateVariant(id, dto)
+  - [x] checkStock(variantId, quantity)
+  - [x] updateStock(variantId, quantity)
+- [x] Créer controller Variants (intégré dans ProductsController) avec endpoints :
+  - [x] GET /products/:id/variants (liste variantes d'un produit)
+  - [x] GET /products/:productId/variants/:variantId (détails variante)
+  - [x] POST /products/:id/variants (créer variante)
+  - [x] PATCH /products/:productId/variants/:variantId (mettre à jour variante)
+  - [x] GET /products/:productId/variants/:variantId/stock?quantity=X (vérifier stock)
+- [x] Implémenter vérification unicité SKU
+- [x] Implémenter vérification stock disponible (retourne objet avec available, currentStock, requestedQuantity)
+- [x] Ajouter validation avec class-validator
+- [x] Tester endpoints (création, récupération, vérification stock, mise à jour, validation SKU validés)
 
-#### 3.4 Module Images
-- [ ] Créer module Images (ou intégrer dans Products)
-- [ ] Configurer upload de fichiers (multer ou équivalent)
-- [ ] Créer service pour gestion upload
-- [ ] Créer endpoint POST /products/:id/images
-- [ ] Créer endpoint DELETE /images/:id
-- [ ] Configurer stockage images (local ou cloud)
-- [ ] Tester upload et affichage
+#### 3.4 Module Images ✅
+- [x] Créer module Images (intégré dans Products)
+- [x] Configurer upload de fichiers (multer avec diskStorage)
+- [x] Créer service pour gestion upload (intégré dans ProductsService)
+- [x] Créer DTOs (CreateImageDto, UpdateImageOrderDto)
+- [x] Créer endpoints Images (intégré dans ProductsController) :
+  - [x] GET /products/:id/images (liste images d'un produit)
+  - [x] POST /products/:id/images (upload image)
+  - [x] DELETE /products/:productId/images/:imageId (supprimer image)
+  - [x] PATCH /products/:productId/images/:imageId/order (mettre à jour ordre)
+- [x] Configurer stockage images (local : dossier uploads/)
+- [x] Configurer serveur fichiers statiques (main.ts)
+- [x] Implémenter suppression fichier physique lors delete
+- [x] Gérer conversion types form-data (order string → number)
+- [x] Tester upload et affichage (validé avec curl)
 
 #### 3.5 Module Panier
 - [ ] Créer module Cart

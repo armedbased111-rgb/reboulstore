@@ -1,0 +1,73 @@
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: reboulstore-postgres
+    environment:
+      POSTGRES_USER: reboulstore
+      POSTGRES_PASSWORD: reboulstore_password
+      POSTGRES_DB: reboulstore_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reboulstore-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reboulstore"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend NestJS
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: reboulstore-backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=reboulstore
+      - DB_PASSWORD=reboulstore_password
+      - DB_DATABASE=reboulstore_db
+      - PORT=3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - reboulstore-network
+    command: npm run start:dev
+
+  # Frontend React + Vite
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: reboulstore-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - reboulstore-network
+    command: npm run dev
+
+volumes:
+  postgres_data:
+
+networks:
+  reboulstore-network:
+    driver: bridge
+

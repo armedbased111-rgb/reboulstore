@@ -137,78 +137,81 @@ Routes principales :
 
 ## 📊 État actuel
 
-### Version : 0.1.0 - Phase initiale
+### Version : 0.1.0 - Phase 1 terminée
 
-**Statut** : 🟡 En cours de setup
+**Statut** : ✅ Phase 1 complétée - Prêt pour Phase 2
 
-#### ✅ Complété
+#### ✅ Complété (Phase 1)
 - Structure de base définie
+- Configuration Docker (Dockerfile, docker-compose.yml)
+- Projet Vite + React + TypeScript initialisé
+- Configuration TailwindCSS v4 (index.css, postcss.config.js)
+- Configuration React Router (App.tsx de base)
+- Configuration variables d'environnement (.env)
+- Structure de dossiers créée (pages, components, services, hooks, types, utils)
+- Configuration Vite pour Docker (host 0.0.0.0, port 3000)
+- Services Docker opérationnels (frontend accessible sur http://localhost:3000)
 
 #### 🚧 En cours
-- Configuration Docker
-- Configuration Vite + React + TypeScript
-- Configuration TailwindCSS
+- Phase 2 : Infrastructure API & Services
 
 #### 📋 À faire
-- Création des pages
-- Création des composants
-- Intégration API
+- Création des pages (Home, Catalog, Product, Cart, Checkout, About)
+- Création des composants (Layout, Header, Footer, ProductCard, etc.)
+- Intégration API (services, hooks)
 - Styling avec TailwindCSS
-- Routing
+- Routing complet
 
 ## 🗺️ Roadmap Frontend
 
-### Phase 1 : Setup & Configuration initiale
+### Phase 1 : Setup & Configuration initiale ✅
 #### 1.1 Configuration Docker
-- [ ] Créer Dockerfile pour frontend React
-- [ ] Configurer docker-compose.yml avec service frontend
-- [ ] Configurer port (ex: 3000)
-- [ ] Configurer volumes pour hot reload
-- [ ] Configurer variables d'environnement (.env)
-- [ ] Tester démarrage container frontend
+- [x] Créer Dockerfile pour frontend React
+- [x] Configurer docker-compose.yml avec service frontend
+- [x] Configurer port (3000)
+- [x] Configurer volumes pour hot reload
+- [x] Configurer variables d'environnement (.env)
+- [x] Tester démarrage container frontend
 
 #### 1.2 Initialisation projet Vite + React + TypeScript
-- [ ] Initialiser projet Vite (npm create vite@latest frontend -- --template react-ts)
-- [ ] Vérifier structure de base (src/, public/, index.html)
-- [ ] Configurer package.json avec dépendances :
-  - [ ] react, react-dom
-  - [ ] react-router-dom
-  - [ ] axios ou fetch API
-  - [ ] types pour TypeScript
-- [ ] Configurer tsconfig.json
-- [ ] Configurer vite.config.ts
-- [ ] Configurer .gitignore
-- [ ] Tester build et dev server
+- [x] Initialiser projet Vite (npm create vite@latest frontend -- --template react-ts)
+- [x] Vérifier structure de base (src/, public/, index.html)
+- [x] Configurer package.json avec dépendances :
+  - [x] react, react-dom
+  - [x] react-router-dom
+  - [x] axios
+  - [x] types pour TypeScript
+- [x] Configurer tsconfig.json
+- [x] Configurer vite.config.ts (avec host 0.0.0.0 pour Docker)
+- [x] Configurer .gitignore
+- [x] Tester build et dev server
 
 #### 1.3 Configuration TailwindCSS
-- [ ] Installer TailwindCSS (npm install -D tailwindcss postcss autoprefixer)
-- [ ] Initialiser TailwindCSS (npx tailwindcss init -p)
-- [ ] Configurer tailwind.config.js :
-  - [ ] Ajouter paths content (./index.html, ./src/**/*.{js,ts,jsx,tsx})
-  - [ ] Définir thème personnalisé (couleurs premium/streetwear)
-  - [ ] Configurer breakpoints responsive
-- [ ] Configurer postcss.config.js
-- [ ] Créer fichier src/index.css avec directives Tailwind
-- [ ] Importer index.css dans main.tsx
-- [ ] Tester classes TailwindCSS
+- [x] Installer TailwindCSS (npm install -D tailwindcss postcss autoprefixer)
+- [x] Configurer TailwindCSS v4 (approche différente de v3)
+- [x] Configurer postcss.config.js
+- [x] Créer fichier src/index.css avec @import tailwindcss
+- [x] Définir thème personnalisé (couleurs premium/streetwear dans variables CSS)
+- [x] Importer index.css dans main.tsx
+- [x] Tester classes TailwindCSS
 
 #### 1.4 Structure des dossiers
-- [ ] Créer src/pages/
-- [ ] Créer src/components/ (layout/, product/, cart/, ui/)
-- [ ] Créer src/services/
-- [ ] Créer src/hooks/
-- [ ] Créer src/types/
-- [ ] Créer src/utils/
-- [ ] Créer src/styles/
-- [ ] Organiser structure claire
+- [x] Créer src/pages/
+- [x] Créer src/components/ (layout/, product/, cart/, ui/)
+- [x] Créer src/services/
+- [x] Créer src/hooks/
+- [x] Créer src/types/
+- [x] Créer src/utils/
+- [x] Créer src/styles/
+- [x] Organiser structure claire
 
 #### 1.5 Configuration routing
-- [ ] Installer react-router-dom (npm install react-router-dom)
-- [ ] Créer fichier src/routes.tsx ou src/App.tsx avec routes
-- [ ] Configurer BrowserRouter dans main.tsx
-- [ ] Créer routes de base (/, /catalog, /product/:id, /cart, /checkout, /about)
-- [ ] Créer composant NotFound pour route 404
-- [ ] Tester navigation entre routes
+- [x] Installer react-router-dom (npm install react-router-dom)
+- [x] Configurer BrowserRouter dans App.tsx
+- [x] Créer route de base (/) avec composant de test
+- [ ] Créer routes complètes (/, /catalog, /product/:id, /cart, /checkout, /about) - à faire en Phase 2
+- [ ] Créer composant NotFound pour route 404 - à faire en Phase 2
+- [x] Tester navigation de base
 
 ### Phase 2 : Infrastructure API & Services
 #### 2.1 Configuration client API
