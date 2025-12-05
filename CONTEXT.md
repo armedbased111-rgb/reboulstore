@@ -231,29 +231,40 @@ reboulstore/
 - [x] Gérer conversion types form-data (order string → number)
 - [x] Tester upload et affichage (validé avec curl)
 
-#### 3.5 Module Panier
-- [ ] Créer module Cart
-- [ ] Créer DTOs (AddToCartDto, UpdateCartItemDto, CartResponseDto)
-- [ ] Créer service Cart (getOrCreate, addItem, updateItem, removeItem, clear)
-- [ ] Implémenter gestion session panier (sessionId)
-- [ ] Créer endpoint GET /cart
-- [ ] Créer endpoint POST /cart/items
-- [ ] Créer endpoint PUT /cart/items/:id
-- [ ] Créer endpoint DELETE /cart/items/:id
-- [ ] Créer endpoint DELETE /cart
-- [ ] Ajouter validation stock avant ajout
-- [ ] Tester endpoints avec Postman/Thunder Client
+#### 3.5 Module Panier ✅
+- [x] Créer module Cart
+- [x] Créer DTOs (AddToCartDto, UpdateCartItemDto, CartResponseDto)
+- [x] Créer service Cart (getOrCreate, findOne, addItem, updateItem, removeItem, clear, calculateTotal)
+- [x] Implémenter gestion session panier (sessionId via header X-Session-Id ou query param)
+- [x] Créer controller Cart avec endpoints :
+  - [x] GET /cart (récupérer panier)
+  - [x] POST /cart/items (ajouter article)
+  - [x] PUT /cart/items/:id (mettre à jour quantité)
+  - [x] DELETE /cart/items/:id (supprimer article)
+  - [x] DELETE /cart (vider panier)
+- [x] Implémenter vérification stock avant ajout et mise à jour
+- [x] Implémenter calcul total automatique
+- [x] Charger relations (variant, product, images) dans les réponses
+- [x] Gérer création automatique de panier si n'existe pas
+- [x] Tester endpoints avec curl (tous validés)
 
-#### 3.6 Module Commandes
-- [ ] Créer module Orders
-- [ ] Créer DTOs (CreateOrderDto, OrderResponseDto)
-- [ ] Créer service Orders (create, findOne, findAll)
-- [ ] Créer endpoint POST /orders
-- [ ] Créer endpoint GET /orders/:id
-- [ ] Implémenter création commande depuis panier
-- [ ] Implémenter calcul total
-- [ ] Ajouter validation données client
-- [ ] Tester endpoints
+#### 3.6 Module Commandes ✅
+- [x] Créer module Orders
+- [x] Créer DTOs (CreateOrderDto, OrderResponseDto, UpdateOrderStatusDto)
+- [x] Créer service Orders (create, findOne, findAll, updateStatus)
+- [x] Créer controller Orders avec endpoints :
+  - [x] POST /orders (créer commande depuis panier)
+  - [x] GET /orders/:id (récupérer commande par ID)
+  - [x] GET /orders (récupérer toutes les commandes)
+  - [x] PATCH /orders/:id/status (mettre à jour statut)
+- [x] Implémenter création commande depuis panier
+- [x] Implémenter vérification stock avant création
+- [x] Implémenter déduction stock après création
+- [x] Implémenter calcul total automatique
+- [x] Ajouter validation données client (email, adresse complète)
+- [x] Charger relations (cart, items, variant, product) dans les réponses
+- [x] Gérer statuts de commande (pending, confirmed, shipped, delivered, cancelled)
+- [x] Tester endpoints (création, récupération, mise à jour statut, vérification stock validés)
 
 ### Phase 4 : Frontend - Infrastructure & Services
 #### 4.1 Configuration API Client
