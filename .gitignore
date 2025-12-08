@@ -1,1 +1,5 @@
 .env
+
+# Cursor/Claude settings (contient des clés API)
+.claude/
+*.claude/
