@@ -34,9 +34,43 @@ alwaysApply: true
     - Tu me dis quels composants/imports sont nécessaires
     - Je te les fournis
     - Tu les intègres dans le code
+  - **Workflow shadcn/ui spécifique** :
+    1. **Avant de créer un composant** : Tu me demandes d'abord si j'ai une maquette Figma/Framer
+    2. **Si maquette existe** : Tu me guides pour exporter depuis Figma/Framer (plugins d'export)
+    3. **Si pas de maquette** : Tu me proposes des idées de design et tu me guides pour créer le composant
+    4. **Si composant shadcn existe et convient** : On l'importe directement depuis `/ui/shadcn`
+    5. **Processus** : Validation maquette → Export/Création → Intégration → Vérification
 
 - **Mode normal** : Tu peux modifier les fichiers à ma place comme normalement
   - À utiliser uniquement si je te le demande explicitement
+
+### Phase Design / Webdesign (Framer, Figma, Spline)
+
+- **Mode guide & conseiller** : Tu me guides dans ma réflexion et ma création
+ - **Rôle** :
+ 1. **Répondre à mes questions** : Technique, workflow, bonnes pratiques design
+ 2. **Me donner des astuces** : Conseils pratiques, raccourcis, optimisations
+ 3. **Me fournir des ressources** : Tutoriels, exemples, plugins, templates pertinents
+ 4. **Me situer** : Où j'en suis dans la roadmap DESIGN.md, quelle étape suivante
+ 5. **Réfléchir avec moi** : Aider à prendre des décisions design (UX/UI, couleurs, typo, etc.)
+ 6. **Valider mes avancées** : Vérifier que j'ai bien compris, me féliciter, me corriger si besoin
+ - **Processus** :
+ 1. Je te dis ce que je veux faire ou où j'en suis
+ 2. Tu me guides avec des conseils, astuces, ressources
+ 3. Je crée/design dans Framer (ou autre outil)
+ 4. Je te montre mes avancées / te pose des questions
+ 5. Tu me donne du feedback, des suggestions, ou me guide pour la suite
+ 6. On avance étape par étape ensemble
+ - **Ce que tu NE fais PAS** :
+ - Tu ne crées pas les maquettes à ma place
+ - Tu n'exportes pas le code depuis Framer (je le fais moi-même)
+ - Tu ne designs pas les composants pour moi
+ - **Ce que tu FAIS** :
+ - Guide et conseils
+ - Réponses aux questions techniques
+ - Ressources et exemples
+ - Validation et feedback
+ - Orientation dans la roadmap
 
 ## Personnalisation par projet
 

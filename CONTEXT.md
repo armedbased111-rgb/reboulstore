@@ -4,11 +4,31 @@
 
 **Reboul Store** est un site e-commerce français spécialisé dans la vente de vêtements, sneakers et accessoires pour adultes et enfants. C'est un concept-store positionné sur la mode premium / streetwear, avec un ton moderne et lifestyle.
 
+### Structure Multi-Shops
+
+Le site gère **4 shops distincts** :
+
+1. **Reboul Adult** : Vêtements et accessoires pour adultes (mixte)
+2. **Reboul Kids** ("Les Minots de Reboul") : Vêtements et accessoires pour enfants
+3. **Reboul Sneakers** : Chaussures de sport
+4. **C.P.COMPANY Marseille** : Franchise avec droits de vente en ligne
+
+**Architecture** : Approche multi-tenant dans la même base de données avec entité `Shop` pour gérer la séparation des produits et catégories par shop.
+
+**Navigation** : Page d'accueil (`/`) = menu de sélection du shop. Navigation via header principal.
+
+**Panier** : Panier universel (articles de plusieurs shops possibles), groupé par shop à l'affichage.
+
+**Commandes** : Commandes regroupées (un seul checkout), mais paiements répartis via **Stripe Connect** (chaque shop a son compte Stripe).
+
 ### Positionnement
 - **Secteur** : Mode premium / streetwear
 - **Cible** : Adultes et enfants
 - **Ancrage local** : Sud de la France (Marseille / Cassis / Sanary)
 - **Univers visuel** : Premium + streetwear
+- **Typographie** : Geist
+- **Design** : Mobile-first, thème noir/blanc (personnalisable)
+- **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
 
 ## 🎯 Objectif de la refonte
 
@@ -56,6 +76,12 @@ Refonte complète from scratch avec une nouvelle architecture moderne, mieux org
 ### Stack Backend
 - **Framework** : NestJS
 - **ORM** : TypeORM
+- **Authentification** : JWT + OAuth (Google, Apple)
+- **Paiement** : Stripe + Stripe Connect (répartition multi-shops)
+- **Images** : Cloudinary (upload, optimisation, CDN, max 7 images/produit, 1200x1200px)
+- **Notifications** : Emails (Nodemailer) + SMS (réinitialisation mot de passe) + WebSockets (temps réel)
+- **Automatisation** : n8n (remboursements automatiques)
+- **Cache** : Redis (optionnel, à ajouter si nécessaire)
 - **Containerisation** : Docker
 
 ### Base de données
@@ -65,7 +91,12 @@ Refonte complète from scratch avec une nouvelle architecture moderne, mieux org
 ### Stack Frontend
 - **Build tool** : Vite
 - **Framework** : React (TypeScript)
-- **Styling** : TailwindCSS
+- **Styling** : TailwindCSS v4
+- **Composants UI** : shadcn/ui (dans `/ui/shadcn`)
+- **Typographie** : Geist
+- **Design** : Mobile-first
+- **Inspiration Design** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium/streetwear
+- **Workflow Design** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS
 - **Containerisation** : Docker
 
 ## 📁 Structure du projet
@@ -73,9 +104,11 @@ Refonte complète from scratch avec une nouvelle architecture moderne, mieux org
 ```
 reboulstore/
 ├── backend/          # API NestJS + TypeORM
-├── frontend/         # Application React + Vite + TailwindCSS
+├── frontend/         # Application React + Vite + TailwindCSS (e-commerce)
+├── admin/            # Frontend Admin séparé (React + GeistUI)
 ├── docker/           # Configuration Docker
-└── CONTEXT.md        # Ce fichier
+├── CONTEXT.md        # Ce fichier
+└── DESIGN.md         # Notes sur le design system (A-COLD-WALL* inspiration)
 ```
 
 ## 🗺️ Roadmap générale
@@ -267,101 +300,121 @@ reboulstore/
 - [x] Tester endpoints (création, récupération, mise à jour statut, vérification stock validés)
 
 ### Phase 4 : Frontend - Infrastructure & Services
-#### 4.1 Configuration API Client
-- [ ] Créer service api.ts (client HTTP avec axios ou fetch)
-- [ ] Configurer base URL depuis variables d'environnement
-- [ ] Configurer intercepteurs (request/response)
-- [ ] Implémenter gestion erreurs centralisée
-- [ ] Implémenter gestion loading states
-- [ ] Créer types TypeScript pour réponses API
+#### 4.1 Configuration API Client ✅
+- [x] Créer service api.ts (client HTTP avec axios)
+- [x] Configurer base URL depuis variables d'environnement (.env)
+- [x] Configurer intercepteurs (request/response)
+- [x] Implémenter gestion erreurs centralisée
+- [x] Implémenter gestion loading states (loadingManager)
+- [x] Créer types TypeScript pour réponses API (types/api.ts)
+- [x] Créer composant de test TestApi.tsx
+- [x] Tester connexion avec backend (GET /categories, GET /)
 
-#### 4.2 Services API métier
-- [ ] Créer service products.ts (getProducts, getProduct, getProductsByCategory)
-- [ ] Créer service categories.ts (getCategories, getCategory)
-- [ ] Créer service cart.ts (getCart, addToCart, updateCartItem, removeCartItem, clearCart)
-- [ ] Créer service orders.ts (createOrder, getOrder)
-- [ ] Implémenter gestion erreurs par service
-- [ ] Tester chaque service avec backend
+#### 4.2 Services API métier ✅
+- [x] Créer service products.ts (getProducts, getProduct, getProductsByCategory)
+- [x] Créer service categories.ts (getCategories, getCategory, getCategoryBySlug)
+- [x] Créer service cart.ts (getCart, addToCart, updateCartItem, removeCartItem, clearCart)
+- [x] Créer service orders.ts (createOrder, getOrder)
+- [x] Créer types complets (Category, Product, Variant, Image, Cart, CartItem, Order, CustomerInfo, ProductQuery, PaginatedProductsResponse)
+- [x] Implémenter gestion erreurs par service
+- [x] Créer composant TestServices.tsx pour tester tous les services
+- [x] Tester chaque service avec backend (données réelles)
+- [x] Tester flux complet (Panier → Ajout article → Création commande)
 
-#### 4.3 Custom Hooks
-- [ ] Créer hook useProducts (fetch, loading, error)
-- [ ] Créer hook useProduct (fetch by id, loading, error)
-- [ ] Créer hook useCategories (fetch, loading, error)
-- [ ] Créer hook useCart (state, actions)
-- [ ] Créer hook useLocalStorage (persistence)
-- [ ] Tester chaque hook
+#### 4.3 Custom Hooks ✅
+- [x] Créer hook useProducts (fetch, loading, error, refetch)
+- [x] Créer hook useProduct (fetch by id, loading, error)
+- [x] Créer hook useCategories (fetch, loading, error, refetch)
+- [x] Créer hook useCart (state, actions, sessionId management)
+- [x] Créer hook useLocalStorage (persistence)
+- [x] Tester chaque hook (composant TestHooks.tsx créé)
 
-#### 4.4 Types TypeScript
-- [ ] Définir types Product, Category, Variant, Image
-- [ ] Définir types Cart, CartItem, Order
-- [ ] Définir types pour DTOs (CreateProductDto, etc.)
-- [ ] Définir types pour réponses API
-- [ ] Créer fichier types/index.ts centralisé
+#### 4.4 Types TypeScript ✅
+- [x] Définir types Product, Category, Variant, Image
+- [x] Définir types Cart, CartItem, Order
+- [x] Définir types pour DTOs (ProductQuery, PaginatedProductsResponse, etc.)
+- [x] Définir types pour réponses API (dans types/api.ts)
+- [x] Créer fichier types/index.ts centralisé
 
-### Phase 5 : Frontend - Layout & Navigation
-#### 5.1 Composants Layout de base
-- [ ] Créer composant Layout.tsx (wrapper principal)
-- [ ] Créer composant Header.tsx (structure de base)
-- [ ] Créer composant Footer.tsx (structure de base)
-- [ ] Intégrer Header et Footer dans Layout
-- [ ] Configurer routing dans App.tsx
+### Phase 5 : Design System & Workflow ✅
+**Approche adoptée** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS
 
-#### 5.2 Header - Navigation
-- [ ] Ajouter logo Reboul Store
-- [ ] Créer composant Navigation avec liens (Home, Catalog, About)
-- [ ] Implémenter menu catégories (dropdown)
-- [ ] Créer composant CartIcon avec badge quantité
-- [ ] Ajouter responsive menu (mobile hamburger)
-- [ ] Styling avec TailwindCSS (premium/streetwear)
+#### 5.1 Design System défini ✅
+- [x] **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
+- [x] Définir palette de couleurs :
+  - Primary : #1A1A1A (noir premium)
+  - Secondary : #F3F3F3 (blanc cassé)
+  - Accent : #D93434 (rouge streetwear)
+  - Gris : texte secondaires, désactivés, bordures
+- [x] Définir typographie (Geist) :
+  - H1 : 48px/1.2, H2 : 38px/1.3, H3 : 28px/1.3
+  - Body : 16px/1.5, Body 2 : 14px/1.5
+- [x] Définir style Product Cards (A-COLD-WALL*) :
+  - Fond gris #F8F8F8, typo majuscules, prix barré
 
-#### 5.3 Footer
-- [ ] Ajouter sections (À propos, Liens, Contact)
-- [ ] Ajouter informations légales
-- [ ] Ajouter réseaux sociaux
-- [ ] Styling avec TailwindCSS
+#### 5.2 Workflow Design adopté ✅
+- [x] **Méthode** : Inspiration visuelle (A-COLD-WALL*) → Création directe en React/TailwindCSS
+- [x] Pas de phase maquettes séparée
+- [x] Création itérative des composants dans le code
+- [x] Style cohérent inspiré A-COLD-WALL*
+- [x] Mobile-first avec TailwindCSS breakpoints
 
-#### 5.4 Routing
-- [ ] Configurer React Router avec toutes les routes
+### Phase 6 : Frontend - Layout & Navigation (Intégration des maquettes) ✅
+#### 6.1 Composants Layout de base ✅
+- [x] Créer composant Layout.tsx (wrapper principal)
+- [x] Créer composant Header.tsx (complet avec fonctionnalités)
+- [x] Créer composant Footer.tsx (structure de base)
+- [x] Créer composant PromoBanner.tsx (intégré dans Layout)
+- [x] Intégrer PromoBanner, Header et Footer dans Layout
+- [x] Configurer routing dans App.tsx
+
+#### 6.2 Création Header - Inspiré A-COLD-WALL* ✅
+- [x] Créer Header.tsx en React/TailwindCSS (inspiré style A-COLD-WALL*)
+- [x] Logo REBOULSTORE 2.0* avec lien vers /
+- [x] Navigation principale (Catalogue avec mega menu, SALE, THE CORNER, C.P. COMPANY)
+- [x] Mega menu catégories (dropdown style A-COLD-WALL* avec colonne gauche catégories + images promotionnelles droite)
+- [x] Champ de recherche interactif (toggle au clic, input avec underline, autoFocus, fermeture Escape/Blur)
+- [x] Connecter hook useCart pour badge panier
+- [x] Connecter hook useCategories pour mega menu
+- [x] Menu mobile hamburger (structure de base)
+- [x] Tester responsive
+
+#### 6.3 Création Footer 🚧
+- [x] Créer composant Footer.tsx (structure de base avec placeholders)
+- [ ] Finaliser design Footer (inspiré A-COLD-WALL*)
+- [ ] Connecter les liens et réseaux sociaux
+- [ ] Tester responsive
+
+#### 6.4 Routing complet
+- [ ] Configurer toutes les routes React Router
 - [ ] Créer composant ProtectedRoute si nécessaire
 - [ ] Implémenter navigation programmatique
 - [ ] Tester toutes les routes
+- [ ] Intégrer Layout sur toutes les pages
 
-### Phase 6 : Frontend - Pages Catalogue & Produits
-#### 6.1 Page Catalog - Structure
-- [ ] Créer page Catalog.tsx
-- [ ] Créer layout avec sidebar filtres et grille produits
-- [ ] Intégrer Header et Footer via Layout
-- [ ] Styling de base avec TailwindCSS
-
-#### 6.2 Composants Catalogue
-- [ ] Créer composant ProductCard.tsx (image, nom, prix, lien)
-- [ ] Créer composant FilterSidebar.tsx (filtres catégories)
-- [ ] Créer composant ProductGrid.tsx (grille de ProductCard)
-- [ ] Créer composant Pagination.tsx
-- [ ] Créer composant SortSelector.tsx (tri par prix, nouveauté)
-
-#### 6.3 Page Catalog - Fonctionnalités
-- [ ] Intégrer hook useProducts
-- [ ] Implémenter affichage liste produits
-- [ ] Implémenter filtres par catégorie
-- [ ] Implémenter recherche (si nécessaire)
-- [ ] Implémenter tri (prix, nouveauté)
-- [ ] Implémenter pagination
+### Phase 7 : Frontend - Pages Catalogue & Produits (Style A-COLD-WALL*)
+#### 7.1 Page Catalog - À créer
+- [ ] Créer page Catalog.tsx (inspiré style A-COLD-WALL*)
+- [ ] Créer composant ProductCard (fond gris #F8F8F8, typo majuscules)
+- [ ] Créer composant FilterSidebar (style minimaliste)
+- [ ] Créer composant ProductGrid
+- [ ] Créer composant Pagination
+- [ ] Créer composant SortSelector
+- [ ] Connecter hook useProducts
+- [ ] Implémenter filtres et tri
 - [ ] Gérer états loading et error
-- [ ] Styling complet avec TailwindCSS
 
-#### 6.4 Page Product - Structure
-- [ ] Créer page Product.tsx
-- [ ] Créer layout avec galerie images et infos produit
-- [ ] Intégrer Header et Footer via Layout
-- [ ] Styling de base avec TailwindCSS
-
-#### 6.5 Composants Fiche Produit
-- [ ] Créer composant ProductGallery.tsx (carrousel ou grille images)
-- [ ] Créer composant ProductInfo.tsx (nom, description, prix)
-- [ ] Créer composant VariantSelector.tsx (couleur, taille)
-- [ ] Créer composant AddToCartButton.tsx
-- [ ] Créer composant StockIndicator.tsx (affichage stock)
+#### 7.2 Page Product - À créer
+- [ ] Créer page Product.tsx (inspiré style A-COLD-WALL*)
+- [ ] Créer composant ProductGallery
+- [ ] Créer composant ProductInfo
+- [ ] Créer composant VariantSelector
+- [ ] Créer composant AddToCartButton
+- [ ] Créer composant StockIndicator
+- [ ] Connecter hook useProduct
+- [ ] Implémenter sélection variantes
+- [ ] Implémenter ajout au panier
+- [ ] Gérer états loading et error
 
 #### 6.6 Page Product - Fonctionnalités
 - [ ] Intégrer hook useProduct avec id depuis URL
@@ -420,16 +473,27 @@ reboulstore/
 - [ ] Gérer états loading et error
 - [ ] Styling complet avec TailwindCSS
 
-### Phase 8 : Frontend - Pages Vitrine
-#### 8.1 Page Home
-- [ ] Créer page Home.tsx
-- [ ] Créer composant HeroSection.tsx (présentation concept-store)
+### Phase 8 : Frontend - Pages Vitrine - Homepage 🏠 EN COURS
+#### 8.1 Page Home 🚧 EN COURS
+- [ ] Créer page src/pages/Home.tsx (route `/`)
+- [ ] Intégrer Layout
+- [ ] Créer composant HeroSection.tsx (présentation concept-store, style A-COLD-WALL*)
 - [ ] Créer composant FeaturedCategories.tsx (catégories mises en avant)
-- [ ] Créer composant FeaturedProducts.tsx (produits mis en avant)
+- [x] **Créer composant FeaturedProducts.tsx** ✅
+  - Carousel Swiper horizontal avec navigation prev/next
+  - ProductImage intégré avec gestion erreurs (placeholder)
+  - Hover effect avec transition entre 2 images
+  - Calcul et affichage prix réduit (30%)
+  - Style inspiré A-COLD-WALL* (minimaliste, premium)
+  - Responsive (2.2 slides mobile → 5 slides desktop)
+  - Correction bug bouton Previous (événement init Swiper)
+  - Props : title, products
 - [ ] Créer composant LocalAnchor.tsx (ancrage local Marseille/Cassis/Sanary)
-- [ ] Intégrer tous les composants
+- [ ] Créer composant BlogCarousel.tsx (carrousel articles/actualités)
+- [ ] Intégrer tous les composants dans Home.tsx
 - [ ] Styling premium + streetwear avec TailwindCSS
 - [ ] Responsive design
+- [ ] Connecter route `/` dans App.tsx
 
 #### 8.2 Page About
 - [ ] Créer page About.tsx
@@ -441,7 +505,7 @@ reboulstore/
 - [ ] Styling avec TailwindCSS
 - [ ] Responsive design
 
-### Phase 9 : Frontend - Composants UI réutilisables
+### Phase 9 : Frontend - Composants UI réutilisables (Optionnel - si besoin)
 #### 9.1 Composants de base
 - [ ] Créer composant Button.tsx (variants, sizes, states)
 - [ ] Créer composant Input.tsx (text, email, tel, etc.)
@@ -498,6 +562,58 @@ reboulstore/
 
 ## 📝 Notes importantes
 
+### Architecture & Technique
+- **Architecture multi-shops** : Gestion de 4 shops (Reboul Adult, Kids, Sneakers, C.P.COMPANY) dans une seule application
+- **Panier universel** : Articles de plusieurs shops dans le même panier, groupés par shop à l'affichage
+- **Stripe Connect** : Répartition automatique des paiements vers le bon compte Stripe selon le shop
+- **Back-office** : Frontend séparé (`admin/`) connecté au même backend, sous-domaine `admin.reboulstore.com`, UI avec GeistUI
+- **Authentification** : JWT + OAuth (Google, Apple), commande en guest possible, reset password par email ou SMS
+- **Paiement** : Capture à la confirmation commande (pending → confirmed), devises EUR et USD
+- **Remboursements** : Automatisation via n8n (workflows)
+
+### Design & Frontend
+- **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium/streetwear
+- **Workflow Design** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS (pas de maquettes)
+- **Outils Design** : Références visuelles A-COLD-WALL*, création directe dans le code
+- **Style** : Minimaliste, premium, monochrome (noir/blanc/gris + accent rouge), espacement généreux
+- **shadcn/ui** : Disponible dans `/ui/shadcn` si besoin, sinon création custom
+- **Navigation** : Page d'accueil (`/`) = menu de sélection shop, switch shop dans header
+- **Responsive** : Mobile-first avec TailwindCSS breakpoints
+- **Images** : Lazy loading, gestion erreurs, placeholder
+- **Composants créés** :
+  - Layout ✅ (PromoBanner, Header, Footer)
+  - Header ✅ (Mega menu, recherche, badge panier, responsive)
+  - Footer 🚧 (structure de base)
+  - FeaturedProducts ✅ (Carousel Swiper, navigation, hover effect, prix réduit, style A-COLD-WALL*)
+
+### Fonctionnalités Métier
+- **Promotions** : Codes promo uniques par utilisateur, flash sales (24h/48h), cumulables ou non (à définir)
+- **Avis produits** : Ouverts à tous (pas besoin d'achat), auto-publication, pas de photos
+- **Stocks** : Alerte stock faible à 5 unités, notifications email admin + dashboard temps réel
+- **Blog** : Admin uniquement, catégories à définir, commentaires à définir
+- **Images produits** : Max 7 images, formats JPG/PNG/WebP, dimensions 1200x1200px recommandées
+
+### Intégrations
+- **Newsletter** : Service à définir (Mailchimp/SendGrid), popup (temps/scroll/exit intent)
+- **Analytics** : Google Analytics (version à définir), tracking vues/panier/commandes
+- **Chat** : Chatbot IA (Elevenlabs UI) 24/7
+
+### Performance & Optimisation
+- **Performance** : Objectif Lighthouse > 90, Core Web Vitals optimisés
+- **Cache** : Frontend (localStorage/sessionStorage pour données API) + Backend (Redis optionnel)
+- **SEO** : Pages prioritaires : /, /catalog, /product/:id, /cart, sitemap.xml, robots.txt
+
+### Administration
+- **Back-office** : Import/Export CSV/Excel produits/commandes, édition formulaire classique + inline
+- **Dashboard** : Statistiques ventes, produits populaires, revenus
+
+### Déploiement
+- **Environnements** : Dev (local Docker) → Prod (même serveur Docker), pas de staging
+- **Variables** : Gestion via `.env`, clés API (Cloudinary, Stripe) en variables d'environnement
+- **CI/CD** : À prévoir (automatisation tests et déploiement)
+- **Tests** : Couverture à définir, tests E2E prioritaires (catalog → product → cart → checkout)
+
+### Évolutivité
 - Architecture pensée pour évoluer (nouveaux produits, collections, catégories)
 - Code propre, organisé, extensible
 - Séparation claire des responsabilités (vitrine / catalogue / e-commerce)

@@ -170,6 +170,20 @@ backend/
 - Tables créées automatiquement en base de données (7 tables)
 - Clés étrangères et contraintes créées
 
+#### 📋 À venir (Phases futures)
+- Phase 10 : Architecture Multi-Shops (Shop entity, filtrage)
+- Phase 11 : Authentification & Utilisateurs (JWT, rôles, profils)
+- Phase 12 : Intégration Stripe (paiement, webhooks, remboursements)
+- Phase 13 : Cloudinary (upload, optimisation, CDN)
+- Phase 14 : Recherche Full-Text (PostgreSQL, suggestions)
+- Phase 15 : Promotions & Codes Promo (réductions, flash sales)
+- Phase 16 : Avis & Commentaires (notes, modération)
+- Phase 17 : Gestion Stocks Avancée (historique, alertes)
+- Phase 18 : Notifications & Emails (SMTP, WebSockets)
+- Phase 19 : Analytics & Tracking (vues, ventes, dashboard)
+- Phase 20 : Blog & Actualités (articles, carrousel)
+- Phase 21 : Tests & Optimisations (Jest, Swagger, cache)
+
 #### ✅ Complété (Phase 3 - Partiel)
 - Module Catégories créé et opérationnel :
   - Module, Service, Controller créés
@@ -576,8 +590,383 @@ backend/
 - [x] Ajouter validation avec ValidationPipe (global)
 - [x] Tester tous les endpoints avec curl (tous validés : création, récupération, mise à jour statut, vérification stock déduit)
 
-### Phase 10 : Tests & Optimisations
-#### 10.1 Tests unitaires
+### Phase 10 : Architecture Multi-Shops
+#### 10.1 Entité Shop
+- [ ] Créer entité Shop (id, name, slug, description, isFranchise, createdAt, updatedAt)
+- [ ] Définir shops initiaux (Reboul Adult, Reboul Kids, Reboul Sneakers, C.P.COMPANY)
+- [ ] Ajouter relation Product → Shop (ManyToOne)
+- [ ] Ajouter relation Category → Shop (ManyToOne)
+- [ ] Migrer données existantes vers shop par défaut
+- [ ] Tester relations multi-shops
+
+#### 10.2 Service Shops
+- [ ] Créer module Shops
+- [ ] Créer service Shops (findAll, findOne, findBySlug)
+- [ ] Créer controller Shops avec endpoints :
+  - [ ] GET /shops (liste shops)
+  - [ ] GET /shops/:id (détails shop)
+  - [ ] GET /shops/slug/:slug (par slug)
+- [ ] Tester endpoints
+
+#### 10.3 Filtrage par Shop
+- [ ] Modifier ProductsService pour filtrer par shopId
+- [ ] Modifier CategoriesService pour filtrer par shopId
+- [ ] Ajouter shopId dans ProductQueryDto
+- [ ] Ajouter shopId dans CategoryQueryDto
+- [ ] Tester filtrage multi-shops
+
+### Phase 11 : Authentification & Utilisateurs
+#### 11.1 Entités Auth
+- [ ] Créer entité User (id, email, password, firstName, lastName, role, createdAt, updatedAt)
+- [ ] Créer enum UserRole (ADMIN, CLIENT)
+- [ ] Créer entité UserProfile (id, userId, phone, address, city, postalCode, country, createdAt, updatedAt)
+- [ ] Configurer relation User → UserProfile (OneToOne)
+- [ ] Configurer relation User → Orders (OneToMany)
+- [ ] Hasher mots de passe (bcrypt)
+- [ ] Tester création tables
+
+#### 11.2 Module Auth
+- [ ] Installer @nestjs/jwt, @nestjs/passport, passport, passport-jwt, passport-google-oauth20, passport-apple, bcrypt
+- [ ] Créer module Auth
+- [ ] Créer DTOs (RegisterDto, LoginDto, ChangePasswordDto, ResetPasswordDto, OAuthDto)
+- [ ] Créer service Auth (register, login, validateUser, generateToken, resetPassword, verifyResetToken)
+- [ ] Implémenter OAuth Google (passport-google-oauth20)
+- [ ] Implémenter OAuth Apple (passport-apple)
+- [ ] Créer JWT strategy (passport-jwt)
+- [ ] Créer guards (JwtAuthGuard, RolesGuard, OptionalAuthGuard pour guest checkout)
+- [ ] Créer decorators (@CurrentUser, @Roles)
+- [ ] Créer service SMS (Twilio ou équivalent) pour reset password
+- [ ] Créer controller Auth avec endpoints :
+  - [ ] POST /auth/register (inscription)
+  - [ ] POST /auth/login (connexion email/password)
+  - [ ] POST /auth/google (OAuth Google)
+  - [ ] POST /auth/apple (OAuth Apple)
+  - [ ] GET /auth/me (profil utilisateur)
+  - [ ] POST /auth/change-password (changer mot de passe)
+  - [ ] POST /auth/forgot-password (demander reset - email ou SMS)
+  - [ ] POST /auth/reset-password (réinitialiser avec token)
+- [ ] Gérer commande en guest (sessionId sans authentification)
+- [ ] Tester endpoints
+
+#### 11.3 Module Users
+- [ ] Créer module Users
+- [ ] Créer service Users (findAll, findOne, update, delete)
+- [ ] Créer controller Users avec endpoints :
+  - [ ] GET /users (liste - admin only)
+  - [ ] GET /users/:id (détails - admin ou own)
+  - [ ] PATCH /users/:id (modifier - admin ou own)
+  - [ ] DELETE /users/:id (supprimer - admin only)
+- [ ] Protéger endpoints avec guards
+- [ ] Tester endpoints
+
+#### 11.4 Profils Utilisateurs
+- [ ] Créer module UserProfiles
+- [ ] Créer service UserProfiles (findOne, update)
+- [ ] Créer controller UserProfiles avec endpoints :
+  - [ ] GET /users/:id/profile (profil)
+  - [ ] PATCH /users/:id/profile (modifier profil)
+- [ ] Historique commandes dans profil
+- [ ] Tester endpoints
+
+### Phase 12 : Intégration Stripe & Stripe Connect
+#### 12.1 Configuration Stripe
+- [ ] Installer stripe, @stripe/stripe-js
+- [ ] Configurer clés API Stripe (variables d'environnement)
+- [ ] Configurer Stripe Connect (comptes connectés pour chaque shop)
+- [ ] Créer entité StripeAccount (id, shopId, accountId, isActive)
+- [ ] Créer module Payments
+- [ ] Créer service Stripe (createPaymentIntent, confirmPayment, refundPayment)
+- [ ] Créer service StripeConnect (createConnectedAccount, getAccount, transferFunds)
+- [ ] Configurer webhooks Stripe
+- [ ] Configurer devises (EUR, USD)
+
+#### 12.2 Service Payments
+- [ ] Créer DTOs (CreatePaymentDto, RefundPaymentDto, CreatePaymentIntentDto avec currency)
+- [ ] Implémenter createPaymentIntent(orderId, amount, currency, shopId)
+- [ ] Implémenter confirmPayment(paymentIntentId) - capture à la confirmation commande
+- [ ] Implémenter refundPayment(paymentId, amount) - via n8n ou manuel
+- [ ] Implémenter répartition Stripe Connect (transfer vers compte shop approprié)
+- [ ] Gérer multi-devises (EUR, USD)
+- [ ] Gérer erreurs Stripe
+- [ ] Logger transactions
+
+#### 12.3 Controller Payments
+- [ ] Créer controller Payments avec endpoints :
+  - [ ] POST /payments/intent (créer payment intent)
+  - [ ] POST /payments/confirm (confirmer paiement)
+  - [ ] POST /payments/:id/refund (remboursement)
+- [ ] Protéger endpoints (authentifié)
+- [ ] Tester avec Stripe test mode
+
+#### 12.4 Webhooks Stripe
+- [ ] Créer endpoint POST /payments/webhook
+- [ ] Vérifier signature webhook
+- [ ] Gérer événements (payment.succeeded, payment.failed, charge.refunded)
+- [ ] Mettre à jour statut commande automatiquement
+- [ ] Tester webhooks
+
+#### 12.5 Intégration Commandes
+- [ ] Modifier OrdersService pour intégrer Stripe
+- [ ] Créer payment intent lors création commande (avec shopId pour Stripe Connect)
+- [ ] Capturer paiement quand commande passe de PENDING → CONFIRMED
+- [ ] Répartir paiement vers compte Stripe approprié (Stripe Connect)
+- [ ] Mettre à jour statut commande selon paiement
+- [ ] Gérer remboursements (automatisation n8n ou manuel admin)
+- [ ] Gérer commandes multi-shops (répartir paiement par shop)
+- [ ] Tester flux complet
+
+### Phase 13 : Cloudinary - Gestion Images
+#### 13.1 Configuration Cloudinary
+- [ ] Installer cloudinary, @cloudinary/url-gen
+- [ ] Configurer credentials Cloudinary (variables d'environnement)
+- [ ] Créer service CloudinaryService
+- [ ] Configurer upload (format, qualité, transformations)
+
+#### 13.2 Migration Images
+- [ ] Modifier ProductsService pour utiliser Cloudinary
+- [ ] Implémenter upload vers Cloudinary (remplacer multer local)
+- [ ] Limiter à 7 images maximum par produit
+- [ ] Valider formats (JPG, PNG, WebP)
+- [ ] Configurer dimensions recommandées (1200x1200px)
+- [ ] Implémenter suppression depuis Cloudinary
+- [ ] Configurer transformations automatiques (resize, optimize)
+- [ ] Générer URLs optimisées (CDN inclus)
+- [ ] Migrer images existantes vers Cloudinary (script)
+
+#### 13.3 Optimisations Images
+- [ ] Configurer formats modernes (WebP, AVIF)
+- [ ] Configurer responsive images (sizes multiples)
+- [ ] Configurer lazy loading URLs
+- [ ] Tester optimisations
+
+### Phase 14 : Recherche Full-Text
+#### 14.1 Configuration PostgreSQL Full-Text
+- [ ] Activer extension pg_trgm (similarité)
+- [ ] Créer index GIN sur colonnes recherche (name, description)
+- [ ] Configurer recherche full-text PostgreSQL
+
+#### 14.2 Service Recherche
+- [ ] Créer module Search
+- [ ] Créer DTOs (SearchQueryDto avec query, shopId, filters)
+- [ ] Créer service Search (searchProducts, searchCategories)
+- [ ] Implémenter recherche avec ILike et pg_trgm
+- [ ] Implémenter suggestions de recherche (top résultats)
+- [ ] Implémenter recherche par marque, matériau (si ajoutés)
+
+#### 14.3 Controller Recherche
+- [ ] Créer controller Search avec endpoints :
+  - [ ] GET /search/products?q=query (recherche produits)
+  - [ ] GET /search/suggestions?q=query (suggestions)
+- [ ] Tester recherche
+
+### Phase 15 : Promotions & Codes Promo
+#### 15.1 Entités Promotions
+- [ ] Créer entité Promotion (id, code, type, value, minAmount, maxUses, usedCount, startDate, endDate, shopId, createdAt, updatedAt)
+- [ ] Créer enum PromotionType (PERCENTAGE, FIXED_AMOUNT)
+- [ ] Créer entité PromotionUsage (id, promotionId, userId, orderId, createdAt)
+- [ ] Configurer relations (Promotion → Shop, PromotionUsage → Promotion, User, Order)
+- [ ] Tester création tables
+
+#### 15.2 Service Promotions
+- [ ] Créer module Promotions
+- [ ] Créer DTOs (CreatePromotionDto, ApplyPromotionDto)
+- [ ] Créer service Promotions (create, findAll, findOne, findByCode, applyPromotion, validatePromotion)
+- [ ] Implémenter validation (dates, limites, montant minimum)
+- [ ] Implémenter codes promo uniques par utilisateur (un seul usage par user)
+- [ ] Implémenter flash sales (durée 24h/48h)
+- [ ] Implémenter calcul réduction
+- [ ] Implémenter tracking usage (PromotionUsage entity)
+- [ ] Gérer cumulabilité avec autres promotions (à définir)
+
+#### 15.3 Controller Promotions
+- [ ] Créer controller Promotions avec endpoints :
+  - [ ] POST /promotions (créer - admin only)
+  - [ ] GET /promotions (liste - admin only)
+  - [ ] GET /promotions/:id (détails)
+  - [ ] POST /promotions/apply (appliquer code promo)
+  - [ ] PATCH /promotions/:id (modifier - admin only)
+  - [ ] DELETE /promotions/:id (supprimer - admin only)
+- [ ] Protéger endpoints admin
+- [ ] Tester endpoints
+
+#### 15.4 Intégration Panier & Commandes
+- [ ] Modifier CartService pour appliquer promotions
+- [ ] Modifier OrdersService pour appliquer promotions
+- [ ] Calculer total avec réduction
+- [ ] Enregistrer promotion utilisée dans commande
+- [ ] Tester flux complet
+
+#### 15.5 Promotions Produits/Catégories
+- [ ] Ajouter champ discountPrice dans Product
+- [ ] Ajouter champ discountPercentage dans Product
+- [ ] Ajouter champ isOnSale dans Product
+- [ ] Implémenter promotions par produit
+- [ ] Implémenter promotions par catégorie
+- [ ] Tester promotions produits
+
+### Phase 16 : Avis & Commentaires
+#### 16.1 Entités Reviews
+- [ ] Créer entité Review (id, productId, userId, rating, comment, isApproved, createdAt, updatedAt)
+- [ ] Créer enum ReviewStatus (PENDING, APPROVED, REJECTED)
+- [ ] Configurer relations (Review → Product, Review → User)
+- [ ] Ajouter champ averageRating dans Product
+- [ ] Ajouter champ reviewCount dans Product
+- [ ] Tester création tables
+
+#### 16.2 Service Reviews
+- [ ] Créer module Reviews
+- [ ] Créer DTOs (CreateReviewDto, UpdateReviewDto, ReviewQueryDto)
+- [ ] Créer service Reviews (create, findAll, findOne, findByProduct, approve, reject, calculateAverageRating)
+- [ ] Implémenter validation (rating 1-5, un seul avis par utilisateur/produit)
+- [ ] Implémenter auto-publication (isApproved = true par défaut, pas de modération)
+- [ ] Implémenter avis ouverts à tous (pas besoin d'achat)
+- [ ] Pas de photos dans les avis
+- [ ] Implémenter calcul moyenne et comptage
+
+#### 16.3 Controller Reviews
+- [ ] Créer controller Reviews avec endpoints :
+  - [ ] POST /reviews (créer - authentifié)
+  - [ ] GET /reviews (liste avec filtres)
+  - [ ] GET /reviews/product/:productId (avis d'un produit)
+  - [ ] GET /reviews/:id (détails)
+  - [ ] PATCH /reviews/:id (modifier - own ou admin)
+  - [ ] PATCH /reviews/:id/approve (approuver - admin only)
+  - [ ] PATCH /reviews/:id/reject (rejeter - admin only)
+  - [ ] DELETE /reviews/:id (supprimer - own ou admin)
+- [ ] Protéger endpoints
+- [ ] Tester endpoints
+
+#### 16.4 Mise à jour Produits
+- [ ] Modifier ProductsService pour charger reviews
+- [ ] Calculer averageRating et reviewCount automatiquement
+- [ ] Afficher reviews dans GET /products/:id
+- [ ] Tester intégration
+
+### Phase 17 : Gestion Stocks Avancée
+#### 17.1 Entité StockMovement
+- [ ] Créer entité StockMovement (id, variantId, type, quantity, reason, userId, createdAt)
+- [ ] Créer enum StockMovementType (IN, OUT, ADJUSTMENT, RETURN)
+- [ ] Configurer relation StockMovement → Variant
+- [ ] Tester création table
+
+#### 17.2 Service Stock
+- [ ] Créer module Stock
+- [ ] Créer service Stock (recordMovement, getHistory, getLowStockAlerts)
+- [ ] Implémenter enregistrement mouvements (vente, retour, ajustement)
+- [ ] Implémenter historique mouvements
+- [ ] Implémenter alertes stock faible (seuil = 5 unités par défaut)
+- [ ] Implémenter notifications email admin lors alerte
+- [ ] Implémenter notifications dashboard temps réel (WebSockets)
+
+#### 17.3 Controller Stock
+- [ ] Créer controller Stock avec endpoints :
+  - [ ] GET /stock/variants/:id/history (historique)
+  - [ ] GET /stock/alerts (alertes stock faible - admin)
+  - [ ] POST /stock/adjust (ajustement manuel - admin)
+- [ ] Protéger endpoints admin
+- [ ] Tester endpoints
+
+#### 17.4 Intégration Commandes
+- [ ] Enregistrer mouvement OUT lors création commande
+- [ ] Enregistrer mouvement IN lors retour/annulation
+- [ ] Vérifier alertes après chaque mouvement
+- [ ] Tester intégration
+
+### Phase 18 : Notifications & Emails
+#### 18.1 Configuration Email
+- [ ] Installer @nestjs-modules/mailer, nodemailer
+- [ ] Configurer SMTP (variables d'environnement)
+- [ ] Créer templates email (Handlebars ou EJS)
+- [ ] Créer service EmailService
+
+#### 18.2 Templates Email
+- [ ] Créer template confirmation commande
+- [ ] Créer template suivi livraison
+- [ ] Créer template confirmation paiement
+- [ ] Créer template annulation commande
+- [ ] Créer template bienvenue (inscription)
+- [ ] Créer template réinitialisation mot de passe
+
+#### 18.3 Service Notifications
+- [ ] Créer module Notifications
+- [ ] Créer service Notifications (sendOrderConfirmation, sendShippingUpdate, sendPaymentConfirmation)
+- [ ] Implémenter envoi emails
+- [ ] Gérer erreurs envoi
+- [ ] Logger envois
+
+#### 18.4 Intégration Commandes
+- [ ] Envoyer email confirmation lors création commande
+- [ ] Envoyer email lors mise à jour statut (shipped, delivered)
+- [ ] Envoyer email lors paiement confirmé
+- [ ] Tester envois
+
+#### 18.5 WebSockets (Notifications Temps Réel)
+- [ ] Installer @nestjs/websockets, socket.io
+- [ ] Créer module NotificationsGateway
+- [ ] Configurer WebSocket server
+- [ ] Implémenter notifications temps réel (nouvelle commande, stock faible, etc.)
+- [ ] Tester WebSockets
+
+### Phase 19 : Analytics & Tracking
+#### 19.1 Entités Analytics
+- [ ] Créer entité ProductView (id, productId, userId, ipAddress, createdAt)
+- [ ] Créer entité SaleAnalytics (id, productId, variantId, quantity, revenue, orderId, createdAt)
+- [ ] Configurer relations
+- [ ] Tester création tables
+
+#### 19.2 Service Analytics
+- [ ] Créer module Analytics
+- [ ] Créer service Analytics (trackProductView, trackSale, getProductViews, getSalesStats, getPopularProducts)
+- [ ] Implémenter tracking vues produits
+- [ ] Implémenter tracking ventes
+- [ ] Implémenter statistiques (revenus, produits populaires, tendances)
+
+#### 19.3 Controller Analytics
+- [ ] Créer controller Analytics avec endpoints :
+  - [ ] POST /analytics/track/view (tracker vue produit)
+  - [ ] GET /analytics/products/popular (produits populaires)
+  - [ ] GET /analytics/sales/stats (statistiques ventes - admin)
+  - [ ] GET /analytics/products/:id/views (vues d'un produit - admin)
+- [ ] Protéger endpoints admin
+- [ ] Tester endpoints
+
+#### 19.4 Dashboard Admin
+- [ ] Créer endpoints dashboard :
+  - [ ] GET /analytics/dashboard (stats globales)
+  - [ ] GET /analytics/revenue (revenus par période)
+  - [ ] GET /analytics/products/top (top produits)
+- [ ] Tester dashboard
+
+### Phase 20 : Blog & Actualités
+#### 20.1 Entités Blog
+- [ ] Créer entité Article (id, title, slug, content, excerpt, imageUrl, authorId, publishedAt, createdAt, updatedAt)
+- [ ] Créer entité ArticleCategory (id, name, slug, description)
+- [ ] Configurer relations (Article → User, Article → ArticleCategory)
+- [ ] Tester création tables
+
+#### 20.2 Service Blog
+- [ ] Créer module Blog
+- [ ] Créer DTOs (CreateArticleDto, UpdateArticleDto, ArticleQueryDto)
+- [ ] Créer service Blog (create, findAll, findOne, findBySlug, update, delete)
+- [ ] Restreindre création/modification aux admins uniquement
+- [ ] Implémenter catégories d'articles (à définir : Actualités, Collections, Événements, etc.)
+- [ ] Implémenter commentaires sur articles (à définir si activé)
+- [ ] Implémenter pagination
+- [ ] Implémenter recherche
+
+#### 20.3 Controller Blog
+- [ ] Créer controller Blog avec endpoints :
+  - [ ] POST /blog/articles (créer - admin)
+  - [ ] GET /blog/articles (liste avec pagination)
+  - [ ] GET /blog/articles/:id (détails)
+  - [ ] GET /blog/articles/slug/:slug (par slug)
+  - [ ] PATCH /blog/articles/:id (modifier - admin)
+  - [ ] DELETE /blog/articles/:id (supprimer - admin)
+- [ ] Protéger endpoints admin
+- [ ] Tester endpoints
+
+### Phase 21 : Tests & Optimisations
+#### 21.1 Tests unitaires
 - [ ] Configurer Jest pour tests
 - [ ] Tests unitaires CategoriesService
 - [ ] Tests unitaires ProductsService
@@ -585,7 +974,7 @@ backend/
 - [ ] Tests unitaires OrdersService
 - [ ] Couverture de code > 80%
 
-#### 10.2 Tests d'intégration
+#### 21.2 Tests d'intégration
 - [ ] Configurer tests d'intégration (Test.createTestingModule)
 - [ ] Tests endpoints Categories
 - [ ] Tests endpoints Products
@@ -593,24 +982,87 @@ backend/
 - [ ] Tests endpoints Orders
 - [ ] Tests avec base de données de test
 
-#### 10.3 Optimisations
+#### 21.3 Optimisations
 - [ ] Optimiser requêtes TypeORM (select spécifiques, relations eager/lazy)
-- [ ] Ajouter index base de données (categoryId, productId, sessionId)
-- [ ] Implémenter cache si nécessaire (Redis)
+- [ ] Ajouter index base de données (categoryId, productId, sessionId, shopId)
+- [ ] Implémenter cache si nécessaire (Redis optionnel - à évaluer selon performance)
 - [ ] Optimiser pagination
 - [ ] Analyser requêtes lentes
+- [ ] Optimiser images (lazy loading, formats modernes WebP/AVIF)
 
-#### 10.4 Validation & Gestion erreurs
+#### 21.4 Validation & Gestion erreurs
 - [ ] Vérifier toutes les validations DTOs
 - [ ] Créer filtres d'exception global
 - [ ] Créer format d'erreur standardisé
 - [ ] Gérer erreurs base de données
 - [ ] Logger erreurs
 
-#### 10.5 Documentation API
+#### 21.5 Documentation API
 - [ ] Installer @nestjs/swagger
 - [ ] Configurer SwaggerModule
 - [ ] Ajouter décorateurs @ApiTags, @ApiOperation, @ApiResponse
 - [ ] Documenter tous les endpoints
 - [ ] Tester documentation Swagger
+
+### Phase 22 : Back-Office & Administration
+#### 22.1 Structure Back-Office
+- [ ] Créer frontend admin séparé (dossier `admin/`)
+- [ ] Configurer sous-domaine `admin.reboulstore.com`
+- [ ] Installer GeistUI pour composants UI admin
+- [ ] Connecter au même backend (API partagée)
+- [ ] Configurer authentification admin (JWT avec rôle ADMIN)
+
+#### 22.2 Dashboard Admin
+- [ ] Créer page Dashboard avec statistiques :
+  - [ ] Ventes (revenus, nombre commandes)
+  - [ ] Produits populaires
+  - [ ] Revenus par période
+  - [ ] Alertes stock faible
+- [ ] Implémenter graphiques (chart.js ou équivalent)
+- [ ] Implémenter filtres par période
+- [ ] Tester dashboard
+
+#### 22.3 Gestion Produits (Admin)
+- [ ] Créer interface CRUD produits
+- [ ] Implémenter import CSV/Excel (produits en masse)
+- [ ] Implémenter export CSV/Excel (produits, commandes)
+- [ ] Implémenter édition formulaire classique
+- [ ] Implémenter édition inline (tableau)
+- [ ] Gérer upload images Cloudinary (max 7)
+- [ ] Tester import/export
+
+#### 22.4 Gestion Commandes (Admin)
+- [ ] Créer interface liste commandes
+- [ ] Implémenter filtres (statut, date, shop)
+- [ ] Implémenter export CSV/Excel
+- [ ] Implémenter modification statut
+- [ ] Implémenter gestion remboursements
+- [ ] Tester interface
+
+#### 22.5 Gestion Stocks (Admin)
+- [ ] Créer interface gestion stocks
+- [ ] Afficher alertes stock faible (seuil 5)
+- [ ] Implémenter ajustements manuels
+- [ ] Afficher historique mouvements
+- [ ] Tester interface
+
+#### 22.6 Gestion Promotions (Admin)
+- [ ] Créer interface CRUD promotions
+- [ ] Implémenter création codes promo
+- [ ] Implémenter création flash sales
+- [ ] Afficher statistiques usage
+- [ ] Tester interface
+
+#### 22.7 Gestion Avis (Admin)
+- [ ] Créer interface modération avis (si nécessaire)
+- [ ] Afficher avis en attente (si modération activée)
+- [ ] Implémenter suppression avis
+- [ ] Tester interface
+
+#### 22.8 Gestion Blog (Admin)
+- [ ] Créer interface CRUD articles
+- [ ] Implémenter éditeur de texte riche
+- [ ] Gérer catégories articles
+- [ ] Gérer commentaires (si activés)
+- [ ] Tester interface
 

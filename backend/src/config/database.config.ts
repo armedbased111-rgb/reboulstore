@@ -14,4 +14,5 @@ export const getDatabaseConfig = (
   migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
   synchronize: configService.get<string>('NODE_ENV') === 'development',
   logging: configService.get<string>('NODE_ENV') === 'development',
+  autoLoadEntities: true,
 });

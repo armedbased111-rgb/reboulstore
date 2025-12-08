@@ -12,6 +12,7 @@ const getDatabaseConfig = (configService) => ({
     migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
     synchronize: configService.get('NODE_ENV') === 'development',
     logging: configService.get('NODE_ENV') === 'development',
+    autoLoadEntities: true,
 });
 exports.getDatabaseConfig = getDatabaseConfig;
 //# sourceMappingURL=database.config.js.map

@@ -5,14 +5,17 @@ WORKDIR /app
 # Copier les fichiers de dépendances
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm install
-
 # Copier le reste du code
 COPY . .
 
+# Rendre le script d'entrée exécutable
+RUN chmod +x /app/docker-entrypoint.sh
+
 # Exposer le port
 EXPOSE 3000
+
+# Utiliser le script d'entrée
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
 # Commande par défaut (sera surchargée par docker-compose)
 CMD ["npm", "run", "dev"]
