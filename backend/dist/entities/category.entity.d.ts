@@ -5,6 +5,14 @@ export declare class Category {
     slug: string;
     description: string | null;
     products: Product[];
+    imageUrl: string | null;
+    sizeChart: Array<{
+        size: string;
+        chest?: number;
+        length?: number;
+        waist?: number;
+        hip?: number;
+    }> | null;
     createdAt: Date;
     updatedAt: Date;
 }

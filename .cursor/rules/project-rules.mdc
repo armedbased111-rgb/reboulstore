@@ -83,11 +83,58 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 ### Fichiers de contexte à maintenir
 
-- **CONTEXT.md** : Contexte général du projet, architecture globale, roadmap générale
-- **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, **roadmap frontend**)
-- **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, **roadmap backend**)
+- **CONTEXT.md** : Contexte général du projet, architecture globale, état actuel
+- **ROADMAP_COMPLETE.md** : Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
+- **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
+- **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
+- **POLICIES_TODO.md** : Note pour finaliser politiques livraison/retour
 
-### Règles de maintenance
+### 🎯 Règle ROADMAP_COMPLETE.md - OBLIGATOIRE
+
+**ROADMAP_COMPLETE.md est la référence principale du projet.**
+
+#### Quand mettre à jour ROADMAP_COMPLETE.md ?
+
+1. **À CHAQUE étape complétée** : Cocher `[ ]` → `[x]` immédiatement
+2. **À CHAQUE phase terminée** : Ajouter ✅ au titre de la phase
+3. **Avant de commencer une nouvelle phase** : Vérifier ROADMAP_COMPLETE.md pour savoir quoi faire
+4. **Après chaque session de travail** : Mettre à jour l'avancement
+
+#### Comment mettre à jour ?
+
+```markdown
+### Phase 9 : Backend - Authentification & Utilisateurs ✅
+#### 9.1 Entité User
+- [x] Créer entité User (id, email, password hash, ...)
+- [x] Enum UserRole (CLIENT, ADMIN, SUPER_ADMIN)
+- [x] Créer entité Address (id, userId, ...)
+```
+
+#### Processus systématique
+
+1. **Avant de commencer une tâche** :
+   - ✅ Consulter ROADMAP_COMPLETE.md
+   - ✅ Identifier la phase et l'étape en cours
+   - ✅ Vérifier les dépendances
+
+2. **Pendant le développement** :
+   - ✅ Se référer à ROADMAP_COMPLETE.md pour la liste des tâches
+   - ✅ Noter mentalement ce qui est fait
+
+3. **Après CHAQUE tâche complétée** :
+   - ✅ **OBLIGATOIRE** : Mettre à jour ROADMAP_COMPLETE.md (cocher `[x]`)
+   - ✅ Mettre à jour CONTEXT.md (état actuel) si fin de phase
+   - ✅ Mettre à jour FRONTEND.md ou BACKEND.md si nécessaire
+
+#### Importance critique
+
+- **ROADMAP_COMPLETE.md = source de vérité du projet**
+- Permet de savoir exactement où on en est à tout moment
+- Facilite la reprise après pause
+- Évite les oublis et les doublons
+- Assure la cohérence du développement
+
+### Règles de maintenance générales
 
 - **Mise à jour continue** : Maintenir ces fichiers à jour tout au long du projet
 - **Travail par étapes** : Documenter chaque étape au fur et à mesure du développement
@@ -98,13 +145,23 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
   - Cocher les éléments terminés dans les roadmaps
   - Ajouter les nouvelles fonctionnalités planifiées
   - Mettre à jour les phases et priorités
-  - Synchroniser avec la roadmap générale dans CONTEXT.md
+  - **Synchroniser avec ROADMAP_COMPLETE.md (prioritaire)**
 
 ### Processus de documentation
 
-1. **Avant de commencer** : Consulter les fichiers de contexte pour comprendre l'état actuel
-2. **Pendant le développement** : Noter les changements et nouvelles fonctionnalités
-3. **Après chaque étape** : Mettre à jour les fichiers concernés (frontend/backend/context)
+1. **Avant de commencer** : 
+   - ✅ **Consulter ROADMAP_COMPLETE.md** (obligatoire)
+   - ✅ Consulter CONTEXT.md pour l'état actuel
+   - ✅ Consulter FRONTEND.md ou BACKEND.md selon le contexte
+
+2. **Pendant le développement** : 
+   - Noter les changements et nouvelles fonctionnalités
+
+3. **Après chaque étape** : 
+   - ✅ **Mettre à jour ROADMAP_COMPLETE.md** (obligatoire, cocher les tâches)
+   - ✅ Mettre à jour CONTEXT.md si fin de phase
+   - ✅ Mettre à jour FRONTEND.md ou BACKEND.md
+   
 4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
 
 ## Vérification et correction

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsUUID, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsUUID, Min, IsArray } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -16,4 +16,32 @@ export class CreateProductDto {
   @IsUUID()
   @IsNotEmpty()
   categoryId: string;
+
+  @IsUUID()
+  @IsOptional()
+  shopId?: string;
+
+  // Informations spécifiques au produit
+  @IsString()
+  @IsOptional()
+  materials?: string;
+
+  @IsString()
+  @IsOptional()
+  careInstructions?: string;
+
+  @IsString()
+  @IsOptional()
+  madeIn?: string;
+
+  // Size chart custom (override celui de la catégorie)
+  @IsArray()
+  @IsOptional()
+  customSizeChart?: Array<{
+    size: string;
+    chest?: number;
+    length?: number;
+    waist?: number;
+    hip?: number;
+  }>;
 }

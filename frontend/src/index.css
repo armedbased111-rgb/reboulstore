@@ -11,3 +11,52 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Classes typographiques A-COLD-WALL* */
+.text-h1 {
+  font-size: 2.25rem; /* 36px */
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.text-h2 {
+  font-size: 1.875rem; /* 30px */
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.text-h3 {
+  font-size: 1.5rem; /* 24px */
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.text-t2 {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.5;
+}
+
+.text-t3 {
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.5;
+}
+
+.text {
+  font-size: 1rem; /* 16px */
+  line-height: 1.5;
+}
+
+/* Classes de couleur de fond A-COLD-WALL* */
+.bg-grey {
+  background-color: #f8f8f8;
+}
+
+.light\:bg-inherit {
+  background-color: inherit;
+}
+
+@media (prefers-color-scheme: light) {
+  .light\:bg-inherit {
+    background-color: inherit;
+  }
+}

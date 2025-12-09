@@ -15,6 +15,16 @@ interface HeroSectionImageProps {
   buttonLink: string;
   /** URL de l'image de fond (placeholder pour l'instant) */
   imageSrc?: string;
+  /** Aspect ratio mobile (par défaut: "4/5") */
+  aspectRatioMobile?: string;
+  /** Aspect ratio desktop (par défaut: "2/1") - Ignoré si heightClass est fourni */
+  aspectRatioDesktop?: string;
+  /** Classe Tailwind pour la hauteur max desktop (par défaut: "md:max-h-[90vh]") */
+  maxHeightClass?: string;
+  /** Classe Tailwind pour une hauteur fixe desktop (ex: "md:h-[500px]") - Si fourni, remplace aspectRatioDesktop */
+  heightClass?: string;
+  /** Comportement de l'image : "cover" (remplit tout, peut couper) ou "contain" (affiche tout, peut laisser de l'espace) */
+  objectFit?: 'cover' | 'contain';
 }
 
 /**
@@ -33,7 +43,24 @@ export const HeroSectionImage = ({
   buttonText,
   buttonLink,
   imageSrc = '/placeholder-hero.jpg', // Placeholder par défaut
+  aspectRatioMobile = '4/5',
+  aspectRatioDesktop = '2/1',
+  maxHeightClass = 'md:max-h-[90vh]',
+  heightClass,
+  objectFit = 'cover',
 }: HeroSectionImageProps) => {
+  // Convertir les aspect ratios en classes Tailwind ou styles inline
+  const getAspectRatioClass = (ratio: string) => {
+    const ratioMap: Record<string, string> = {
+      '4/5': 'aspect-[4/5]',
+      '2/1': 'aspect-[2/1]',
+      '3/4': 'aspect-[3/4]',
+      '16/9': 'aspect-video',
+      '1/1': 'aspect-square',
+    };
+    return ratioMap[ratio] || `aspect-[${ratio}]`;
+  };
+
   return (
     <section className="last:mb-0">
       {/* Container principal avec padding et background */}
@@ -41,41 +68,51 @@ export const HeroSectionImage = ({
         <div className="pb-4">
           {/* Flex container pour layout responsive */}
           <div className="md:flex md:flex-wrap md:gap-3 flex-col relative">
-            {/* Image area avec aspect ratio responsive */}
-            <div className="w-full relative aspect-[4/5] md:aspect-[2/1] overflow-hidden md:max-h-[90vh]">
-              {/* Lien cliquable sur toute l'image */}
-              <Link to={buttonLink} className="block w-full h-full">
-                <img
-                  src={imageSrc}
-                  alt={title}
-                  className="w-full h-full object-cover"
-                  loading="eager" // Image hero = prioritaire, pas de lazy loading
-                />
-              </Link>
+            {/* Image area avec aspect ratio responsive ou hauteur fixe */}
+            <div 
+              className={`w-full relative overflow-hidden ${getAspectRatioClass(aspectRatioMobile)} ${
+                heightClass 
+                  ? heightClass 
+                  : `md:${getAspectRatioClass(aspectRatioDesktop)} ${maxHeightClass}`
+              }`}
+            >
+              <div className="w-full h-full relative">
+                {/* Lien cliquable sur toute l'image */}
+                <Link to={buttonLink} className="block w-full h-full absolute inset-0">
+                  <img
+                    src={imageSrc}
+                    alt={title}
+                    className={`w-full h-full ${
+                      objectFit === 'contain' ? 'object-contain' : 'object-cover'
+                    }`}
+                    loading="eager" // Image hero = prioritaire, pas de lazy loading
+                  />
+                </Link>
 
-              {/* Overlay noir semi-transparent (20% opacité) */}
-              <span className="absolute inset-0 bg-black opacity-20 pointer-events-none"></span>
+                {/* Overlay noir semi-transparent (20% opacité) */}
+                <span className="absolute inset-0 bg-black opacity-20 pointer-events-none"></span>
 
-              {/* Container texte centré - Positionné au centre */}
-              <div className="flex flex-col gap-3 mt-3 md:mt-0 absolute inset-0 m-3 text-white lg:m-4 justify-center">
-                {/* Titre principal - Responsive text sizes */}
-                <div className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold uppercase tracking-tight">
-                  {title}
-                </div>
+                {/* Container texte centré - Positionné au centre */}
+                <div className="flex flex-col gap-3 mt-3 md:mt-0 absolute inset-0 m-3 text-white lg:m-4 justify-center">
+                  {/* Titre principal - Responsive text sizes */}
+                  <div className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold uppercase tracking-tight">
+                    {title}
+                  </div>
 
-                {/* Sous-titre - Responsive text sizes */}
-                <div className="text-base md:text-lg lg:text-xl font-light uppercase">
-                  {subtitle}
-                </div>
+                  {/* Sous-titre - Responsive text sizes */}
+                  <div className="text-base md:text-lg lg:text-xl font-light uppercase">
+                    {subtitle}
+                  </div>
 
-                {/* Bouton CTA - Style A-COLD-WALL* */}
-                <div>
-                  <Link
-                    to={buttonLink}
-                    className="inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 whitespace-nowrap text-base md:text-sm bg-black text-white hover:opacity-90 transition-opacity"
-                  >
-                    {buttonText}
-                  </Link>
+                  {/* Bouton CTA - Style A-COLD-WALL* */}
+                  <div>
+                    <Link
+                      to={buttonLink}
+                      className="inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 whitespace-nowrap text-base md:text-sm bg-black text-white hover:opacity-90 transition-opacity"
+                    >
+                      {buttonText}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

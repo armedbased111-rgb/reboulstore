@@ -1,10 +1,15 @@
 # 🏪 Reboul Store - Contexte du Projet
 
+**Version** : 0.10.0  
+**Phase actuelle** : Phase 8 complétée - Prochaine : Phase 9 (Backend Auth)
+
+---
+
 ## 📋 Vue d'ensemble
 
 **Reboul Store** est un site e-commerce français spécialisé dans la vente de vêtements, sneakers et accessoires pour adultes et enfants. C'est un concept-store positionné sur la mode premium / streetwear, avec un ton moderne et lifestyle.
 
-### Structure Multi-Shops
+### 🏬 Structure Multi-Shops
 
 Le site gère **4 shops distincts** :
 
@@ -13,608 +18,215 @@ Le site gère **4 shops distincts** :
 3. **Reboul Sneakers** : Chaussures de sport
 4. **C.P.COMPANY Marseille** : Franchise avec droits de vente en ligne
 
-**Architecture** : Approche multi-tenant dans la même base de données avec entité `Shop` pour gérer la séparation des produits et catégories par shop.
+**Architecture** : Approche multi-tenant avec entité `Shop` pour séparer produits et catégories par shop.
 
-**Navigation** : Page d'accueil (`/`) = menu de sélection du shop. Navigation via header principal.
+**Panier** : Universel (articles de plusieurs shops), groupé par shop à l'affichage.
 
-**Panier** : Panier universel (articles de plusieurs shops possibles), groupé par shop à l'affichage.
+**Paiements** : Répartis via **Stripe Connect** (chaque shop a son compte Stripe).
 
-**Commandes** : Commandes regroupées (un seul checkout), mais paiements répartis via **Stripe Connect** (chaque shop a son compte Stripe).
+### 🎨 Positionnement
 
-### Positionnement
 - **Secteur** : Mode premium / streetwear
 - **Cible** : Adultes et enfants
 - **Ancrage local** : Sud de la France (Marseille / Cassis / Sanary)
-- **Univers visuel** : Premium + streetwear
-- **Typographie** : Geist
-- **Design** : Mobile-first, thème noir/blanc (personnalisable)
-- **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
+- **Design** : Mobile-first, minimaliste, noir/blanc
+- **Inspiration** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
 
-## 🎯 Objectif de la refonte
-
-Refonte complète from scratch avec une nouvelle architecture moderne, mieux organisée et scalable pour :
-
-- ✅ Offrir une expérience utilisateur plus fluide
-- ✅ Mieux structurer le catalogue et les catégories
-- ✅ Mieux gérer les fiches produits (variantes, tailles, photos, descriptions)
-- ✅ Moderniser l'esthétique et la lisibilité
-- ✅ Améliorer la performance et la cohérence globale du site
-- ✅ Séparer clairement la partie vitrine, la partie catalogue, et la partie e-commerce
-
-## 🛍️ Fonctionnalités principales
-
-### Navigation & Catalogue
-- Navigation dans un catalogue multi-catégories :
-  - **Adult** : Vêtements et accessoires pour adultes
-  - **Kids** : Vêtements et accessoires pour enfants
-  - **Sneakers** : Chaussures de sport
-  - **Vêtements / Accessoires** : Autres catégories
-
-### Fiches Produits
-- Affichage complet des produits :
-  - Galerie de photos multiples
-  - Variantes (couleurs, styles)
-  - Gestion des tailles
-  - Descriptions détaillées
-  - Prix
-
-### E-commerce
-- **Parcours utilisateur** :
-  1. Navigation dans le catalogue
-  2. Consultation de la fiche produit
-  3. Choix taille/couleur
-  4. Ajout au panier
-  5. Checkout et paiement
-
-### Vitrine Marque
-- Présentation du concept-store
-- Ancrage local (Marseille / Cassis / Sanary)
-- Univers visuel premium + streetwear
+---
 
 ## 🏗️ Architecture technique
 
 ### Stack Backend
 - **Framework** : NestJS
 - **ORM** : TypeORM
-- **Authentification** : JWT + OAuth (Google, Apple)
-- **Paiement** : Stripe + Stripe Connect (répartition multi-shops)
-- **Images** : Cloudinary (upload, optimisation, CDN, max 7 images/produit, 1200x1200px)
-- **Notifications** : Emails (Nodemailer) + SMS (réinitialisation mot de passe) + WebSockets (temps réel)
-- **Automatisation** : n8n (remboursements automatiques)
-- **Cache** : Redis (optionnel, à ajouter si nécessaire)
-- **Containerisation** : Docker
-
-### Base de données
-- **SGBD** : PostgreSQL
-- **Containerisation** : Docker
+- **BDD** : PostgreSQL
+- **Auth** : JWT + OAuth (Google, Apple)
+- **Paiement** : Stripe + Stripe Connect
+- **Images** : Cloudinary (max 7 images/produit, 1200x1200px)
+- **Emails** : Nodemailer
+- **SMS** : Twilio/Vonage (réinitialisation mot de passe)
+- **Temps réel** : WebSockets (Socket.io)
+- **Automatisation** : n8n (remboursements, workflows)
+- **Cache** : Redis (optionnel)
+- **Docker** : Containerisation complète
 
 ### Stack Frontend
-- **Build tool** : Vite
+- **Build** : Vite
 - **Framework** : React (TypeScript)
 - **Styling** : TailwindCSS v4
-- **Composants UI** : shadcn/ui (dans `/ui/shadcn`)
-- **Typographie** : Geist
-- **Design** : Mobile-first
-- **Inspiration Design** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium/streetwear
-- **Workflow Design** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS
-- **Containerisation** : Docker
+- **Composants UI** : shadcn/ui (disponible dans `/ui/shadcn`)
+- **Typo** : Geist
+- **Design** : Mobile-first, inspiration A-COLD-WALL*
+- **Docker** : Containerisation
+
+### Frontend Admin
+- **Build** : Vite
+- **Framework** : React (TypeScript)
+- **UI Library** : GeistUI
+- **Sous-domaine** : `admin.reboulstore.com`
+
+---
 
 ## 📁 Structure du projet
 
 ```
 reboulstore/
-├── backend/          # API NestJS + TypeORM
-├── frontend/         # Application React + Vite + TailwindCSS (e-commerce)
-├── admin/            # Frontend Admin séparé (React + GeistUI)
-├── docker/           # Configuration Docker
-├── CONTEXT.md        # Ce fichier
-└── DESIGN.md         # Notes sur le design system (A-COLD-WALL* inspiration)
+├── backend/              # API NestJS + TypeORM
+├── frontend/             # E-commerce React + Vite + TailwindCSS
+├── admin/                # Admin Panel séparé
+├── docker/               # Configuration Docker
+├── CONTEXT.md            # Ce fichier (contexte général)
+├── ROADMAP_COMPLETE.md   # Roadmap détaillée complète
+├── POLICIES_TODO.md      # Note pour finaliser politiques livraison/retour
+├── FRONTEND.md           # Documentation frontend détaillée
+└── BACKEND.md            # Documentation backend détaillée
 ```
 
-## 🗺️ Roadmap générale
+---
 
-### Phase 1 : Setup & Architecture de base
-#### 1.1 Configuration Docker globale
-- [x] Créer docker-compose.yml à la racine
-- [x] Configurer service PostgreSQL (port, volumes, variables d'environnement)
-- [x] Configurer service backend NestJS (port, dépendances, volumes)
-- [x] Configurer service frontend React (port, volumes)
-- [x] Créer réseau Docker pour communication entre services
-- [x] Tester démarrage des 3 services simultanément
+## ✅ État actuel (Version 0.10.0)
 
-#### 1.2 Setup Backend NestJS
-- [x] Initialiser projet NestJS dans backend/
-- [x] Configurer package.json avec dépendances (NestJS, TypeORM, PostgreSQL, etc.)
-- [x] Créer structure de dossiers (modules, entities, dto, config)
-- [x] Configurer TypeORM dans app.module.ts
-- [x] Créer fichier .env pour variables d'environnement backend
-- [x] Configurer connexion PostgreSQL via TypeORM
-- [x] Créer Dockerfile pour backend
-- [x] Configurer ValidationPipe global et CORS
-- [x] Tester connexion à la base de données
+### Backend complété ✅
+- ✅ **Infrastructure** : Docker + PostgreSQL + NestJS configurés
+- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop
+- ✅ **Modules API** :
+  - Categories (CRUD + slug)
+  - Products (CRUD + filtres + pagination + variants + images + upload local)
+  - Cart (gestion complète avec session)
+  - Orders (création + statuts + vérification stock)
+  - Shops (CRUD + politiques)
+- ✅ **Relations** : Toutes les relations TypeORM configurées
+- ✅ **Politiques** : Shop avec shippingPolicy et returnPolicy (jsonb)
+- ✅ **Size charts** : Category + Product (override possible)
+- ✅ **Upload images** : Multer + stockage local (à migrer vers Cloudinary)
 
-#### 1.3 Setup Frontend React + Vite
-- [x] Initialiser projet Vite + React + TypeScript dans frontend/
-- [x] Configurer package.json avec dépendances (React, Vite, TailwindCSS, React Router, etc.)
-- [x] Créer structure de dossiers (pages, components, services, hooks, types, utils)
-- [x] Configurer TailwindCSS (index.css avec @import tailwindcss, postcss.config.js)
-- [x] Configurer React Router pour routing
-- [x] Créer fichier .env pour variables d'environnement frontend
-- [x] Créer Dockerfile pour frontend
-- [x] Configurer Vite pour Docker (host 0.0.0.0, port 3000)
-- [x] Tester build et dev server
+### Frontend complété ✅
+- ✅ **Infrastructure** : Vite + React + TailwindCSS v4 + Docker
+- ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /checkout, /about)
+- ✅ **Services API** : products, categories, cart, orders
+- ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useLocalStorage
+- ✅ **Layout** : Header (mega menu catégories + recherche + badge panier) + Footer (style A-COLD-WALL*)
+- ✅ **Pages** :
+  - **Home** : HeroSectionImage, HeroSectionVideo, CategorySection, FeaturedProducts, PromoCard
+  - **Catalog** : ProductGrid, ProductCard, filtres par catégorie
+  - **Product** : ProductGallery (Swiper), ProductInfo, VariantSelector, AddToCartButton, ProductTabs (Details, Sizing, Shipping, Returns avec logique d'héritage)
+- ✅ **Composants** : Style A-COLD-WALL* minimaliste premium
+- ✅ **Responsive** : Mobile-first avec breakpoints TailwindCSS
 
-#### 1.4 Configuration TypeORM + PostgreSQL
-- [x] Configurer synchronisation automatique (dev) vs migrations (prod)
-- [x] Configurer migrations TypeORM (dossier migrations créé)
-- [ ] Définir schéma de base de données initial (à faire avec les entités)
-- [ ] Créer script de seed pour données de test
-- [x] Tester création de tables (synchronize activé en dev)
+### 🔄 En attente
+- ⏸️ **Politiques** : Validation finale avec direction (voir `POLICIES_TODO.md`)
+- ⏸️ **Admin Panel** : À créer (Phase 17)
+- ⏸️ **Auth** : JWT + OAuth à implémenter (Phase 9-10)
+- ⏸️ **Panier/Checkout UI** : À créer (Phase 12)
+- ⏸️ **Paiement Stripe** : À intégrer (Phase 13)
+- ⏸️ **Cloudinary** : Migration upload images (Phase 15)
 
-#### 1.5 Configuration TailwindCSS
-- [x] Installer et configurer TailwindCSS (v4)
-- [x] Définir thème personnalisé (couleurs premium/streetwear)
-- [x] Créer variables CSS personnalisées
-- [ ] Configurer plugins Tailwind (forms, typography, etc.) - à faire si nécessaire
-- [ ] Créer classes utilitaires personnalisées - à faire si nécessaire
-- [x] Tester compilation CSS
+---
 
-### Phase 2 : Backend - Modèles de données & Entités ✅
-#### 2.1 Entités de base
-- [x] Créer entité Category (id, name, slug, description, timestamps)
-- [x] Créer entité Product (id, name, description, price, categoryId, timestamps)
-- [x] Créer entité Image (id, productId, url, alt, order, timestamps)
-- [x] Créer entité Variant (id, productId, color, size, stock, sku, timestamps)
-- [x] Définir types TypeScript pour chaque entité
+## 🗺️ Roadmap & Prochaines Étapes
 
-#### 2.2 Relations entre entités
-- [x] Configurer relation Category → Products (OneToMany)
-- [x] Configurer relation Product → Images (OneToMany)
-- [x] Configurer relation Product → Variants (OneToMany)
-- [x] Configurer relations inverses (ManyToOne)
-- [x] Tester relations avec requêtes TypeORM (tables créées avec clés étrangères)
+**📌 Roadmap complète détaillée** : [`ROADMAP_COMPLETE.md`](./ROADMAP_COMPLETE.md)
 
-#### 2.3 Entités E-commerce
-- [x] Créer entité Cart (id, sessionId, timestamps)
-- [x] Créer entité CartItem (id, cartId, variantId, quantity, timestamps)
-- [x] Créer entité Order (id, cartId, status, total, customerInfo, timestamps)
-- [x] Configurer relation Cart → CartItems (OneToMany)
-- [x] Configurer relation CartItem → Variant (ManyToOne)
-- [x] Configurer relation Order → Cart (ManyToOne)
-- [x] Définir enum OrderStatus
+### 🔴 Priorité 1 - MVP E-commerce (Phases 9-14)
 
-#### 2.4 Migrations & Base de données
-- [x] Synchronisation automatique activée (dev) - tables créées automatiquement
-- [x] Toutes les tables créées en base de données (7 tables : categories, products, images, variants, carts, cart_items, orders)
-- [x] Vérifier intégrité des données (clés étrangères créées)
-- [ ] Créer script de seed pour catégories de base (à faire plus tard)
-- [ ] Créer script de seed pour produits de test (à faire plus tard)
-- [ ] Générer migration initiale pour production (à faire plus tard)
+**Objectif** : Site e-commerce fonctionnel de bout en bout
 
-### Phase 3 : Backend - API REST (Modules & Endpoints)
-#### 3.1 Module Catégories ✅
-- [x] Créer module Categories
-- [x] Créer DTOs (CreateCategoryDto, UpdateCategoryDto)
-- [x] Créer service Categories (findAll, findOne, findBySlug, create, update, delete)
-- [x] Créer controller Categories avec endpoints :
-  - [x] POST /categories (créer)
-  - [x] GET /categories (liste)
-  - [x] GET /categories/:id (par ID)
-  - [x] GET /categories/slug/:slug (par slug)
-  - [x] PATCH /categories/:id (modifier)
-  - [x] DELETE /categories/:id (supprimer)
-- [x] Ajouter validation avec class-validator
-- [x] Enregistrer module dans AppModule
-- [x] Tester endpoints (création, récupération, recherche par slug)
+1. **Phase 9** : Backend - Auth & Users (JWT + OAuth Google/Apple)
+2. **Phase 10** : Frontend - Auth UI (Login, Register, Profil)
+3. **Phase 11** : Backend - Commandes complètes (cycle de vie, stock, emails)
+4. **Phase 12** : Frontend - Panier & Checkout complet
+5. **Phase 13** : Backend - Stripe + Stripe Connect (paiements multi-shops)
+6. **Phase 14** : Frontend - Historique commandes
 
-#### 3.2 Module Produits ✅
-- [x] Créer module Products
-- [x] Créer DTOs (CreateProductDto, UpdateProductDto, ProductQueryDto)
-- [x] Créer service Products (findAll, findOne, findByCategory, create, update, delete)
-- [x] Créer controller Products avec endpoints :
-  - [x] POST /products (créer)
-  - [x] GET /products (liste avec filtres et pagination)
-  - [x] GET /products/:id (par ID avec relations)
-  - [x] GET /products/category/:categoryId (par catégorie)
-  - [x] PATCH /products/:id (modifier)
-  - [x] DELETE /products/:id (supprimer)
-- [x] Implémenter pagination (page, limit, totalPages)
-- [x] Implémenter filtres (category, price range, search)
-- [x] Implémenter tri (sortBy, sortOrder)
-- [x] Charger relations automatiquement (category, images, variants)
-- [x] Vérifier existence catégorie avant création/modification
-- [x] Ajouter validation avec class-validator
-- [x] Enregistrer module dans AppModule
-- [x] Tester endpoints (création, récupération, filtres, pagination validés)
+### 🟡 Priorité 2 - Gestion & Admin (Phases 15-17)
 
-#### 3.3 Module Variantes ✅
-- [x] Créer module Variants (intégré dans Products)
-- [x] Créer DTOs (CreateVariantDto, UpdateVariantDto)
-- [x] Créer service Variants (intégré dans ProductsService) :
-  - [x] findVariantsByProduct(productId)
-  - [x] findVariantById(id)
-  - [x] createVariant(productId, dto)
-  - [x] updateVariant(id, dto)
-  - [x] checkStock(variantId, quantity)
-  - [x] updateStock(variantId, quantity)
-- [x] Créer controller Variants (intégré dans ProductsController) avec endpoints :
-  - [x] GET /products/:id/variants (liste variantes d'un produit)
-  - [x] GET /products/:productId/variants/:variantId (détails variante)
-  - [x] POST /products/:id/variants (créer variante)
-  - [x] PATCH /products/:productId/variants/:variantId (mettre à jour variante)
-  - [x] GET /products/:productId/variants/:variantId/stock?quantity=X (vérifier stock)
-- [x] Implémenter vérification unicité SKU
-- [x] Implémenter vérification stock disponible (retourne objet avec available, currentStock, requestedQuantity)
-- [x] Ajouter validation avec class-validator
-- [x] Tester endpoints (création, récupération, vérification stock, mise à jour, validation SKU validés)
+7. **Phase 15** : Backend - Cloudinary (upload images optimisées)
+8. **Phase 16** : Backend - Admin & Permissions (rôles, CRUD admin)
+9. **Phase 17** : Frontend - Admin Panel (gestion produits/commandes/users)
 
-#### 3.4 Module Images ✅
-- [x] Créer module Images (intégré dans Products)
-- [x] Configurer upload de fichiers (multer avec diskStorage)
-- [x] Créer service pour gestion upload (intégré dans ProductsService)
-- [x] Créer DTOs (CreateImageDto, UpdateImageOrderDto)
-- [x] Créer endpoints Images (intégré dans ProductsController) :
-  - [x] GET /products/:id/images (liste images d'un produit)
-  - [x] POST /products/:id/images (upload image)
-  - [x] DELETE /products/:productId/images/:imageId (supprimer image)
-  - [x] PATCH /products/:productId/images/:imageId/order (mettre à jour ordre)
-- [x] Configurer stockage images (local : dossier uploads/)
-- [x] Configurer serveur fichiers statiques (main.ts)
-- [x] Implémenter suppression fichier physique lors delete
-- [x] Gérer conversion types form-data (order string → number)
-- [x] Tester upload et affichage (validé avec curl)
+### 🟢 Priorité 3 - Fonctionnalités avancées (Phases 18-19)
 
-#### 3.5 Module Panier ✅
-- [x] Créer module Cart
-- [x] Créer DTOs (AddToCartDto, UpdateCartItemDto, CartResponseDto)
-- [x] Créer service Cart (getOrCreate, findOne, addItem, updateItem, removeItem, clear, calculateTotal)
-- [x] Implémenter gestion session panier (sessionId via header X-Session-Id ou query param)
-- [x] Créer controller Cart avec endpoints :
-  - [x] GET /cart (récupérer panier)
-  - [x] POST /cart/items (ajouter article)
-  - [x] PUT /cart/items/:id (mettre à jour quantité)
-  - [x] DELETE /cart/items/:id (supprimer article)
-  - [x] DELETE /cart (vider panier)
-- [x] Implémenter vérification stock avant ajout et mise à jour
-- [x] Implémenter calcul total automatique
-- [x] Charger relations (variant, product, images) dans les réponses
-- [x] Gérer création automatique de panier si n'existe pas
-- [x] Tester endpoints avec curl (tous validés)
+10. Recherche avancée, Wishlist, Reviews, Promotions, WebSockets, SMS, Redis
+11. Pages vitrine (About, Contact, Stores, Shipping/Returns, CGV)
 
-#### 3.6 Module Commandes ✅
-- [x] Créer module Orders
-- [x] Créer DTOs (CreateOrderDto, OrderResponseDto, UpdateOrderStatusDto)
-- [x] Créer service Orders (create, findOne, findAll, updateStatus)
-- [x] Créer controller Orders avec endpoints :
-  - [x] POST /orders (créer commande depuis panier)
-  - [x] GET /orders/:id (récupérer commande par ID)
-  - [x] GET /orders (récupérer toutes les commandes)
-  - [x] PATCH /orders/:id/status (mettre à jour statut)
-- [x] Implémenter création commande depuis panier
-- [x] Implémenter vérification stock avant création
-- [x] Implémenter déduction stock après création
-- [x] Implémenter calcul total automatique
-- [x] Ajouter validation données client (email, adresse complète)
-- [x] Charger relations (cart, items, variant, product) dans les réponses
-- [x] Gérer statuts de commande (pending, confirmed, shipped, delivered, cancelled)
-- [x] Tester endpoints (création, récupération, mise à jour statut, vérification stock validés)
+### 🔵 Priorité 4 - Optimisation & Production (Phases 20-24)
 
-### Phase 4 : Frontend - Infrastructure & Services
-#### 4.1 Configuration API Client ✅
-- [x] Créer service api.ts (client HTTP avec axios)
-- [x] Configurer base URL depuis variables d'environnement (.env)
-- [x] Configurer intercepteurs (request/response)
-- [x] Implémenter gestion erreurs centralisée
-- [x] Implémenter gestion loading states (loadingManager)
-- [x] Créer types TypeScript pour réponses API (types/api.ts)
-- [x] Créer composant de test TestApi.tsx
-- [x] Tester connexion avec backend (GET /categories, GET /)
+12. Automatisation (n8n), Tests, SEO, Performance, Déploiement, Analytics
 
-#### 4.2 Services API métier ✅
-- [x] Créer service products.ts (getProducts, getProduct, getProductsByCategory)
-- [x] Créer service categories.ts (getCategories, getCategory, getCategoryBySlug)
-- [x] Créer service cart.ts (getCart, addToCart, updateCartItem, removeCartItem, clearCart)
-- [x] Créer service orders.ts (createOrder, getOrder)
-- [x] Créer types complets (Category, Product, Variant, Image, Cart, CartItem, Order, CustomerInfo, ProductQuery, PaginatedProductsResponse)
-- [x] Implémenter gestion erreurs par service
-- [x] Créer composant TestServices.tsx pour tester tous les services
-- [x] Tester chaque service avec backend (données réelles)
-- [x] Tester flux complet (Panier → Ajout article → Création commande)
+---
 
-#### 4.3 Custom Hooks ✅
-- [x] Créer hook useProducts (fetch, loading, error, refetch)
-- [x] Créer hook useProduct (fetch by id, loading, error)
-- [x] Créer hook useCategories (fetch, loading, error, refetch)
-- [x] Créer hook useCart (state, actions, sessionId management)
-- [x] Créer hook useLocalStorage (persistence)
-- [x] Tester chaque hook (composant TestHooks.tsx créé)
+## 🎯 Prochaine Phase : Phase 9 - Backend Auth & Users
 
-#### 4.4 Types TypeScript ✅
-- [x] Définir types Product, Category, Variant, Image
-- [x] Définir types Cart, CartItem, Order
-- [x] Définir types pour DTOs (ProductQuery, PaginatedProductsResponse, etc.)
-- [x] Définir types pour réponses API (dans types/api.ts)
-- [x] Créer fichier types/index.ts centralisé
+**Ce qu'on va faire** :
+1. Créer entité User + Address
+2. Module Auth (register, login, JWT, OAuth Google/Apple)
+3. Module Users (profil, adresses, CRUD)
+4. Guards & sécurité (rate limiting, validation email, reset password)
 
-### Phase 5 : Design System & Workflow ✅
-**Approche adoptée** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS
+**Pourquoi maintenant ?**
+- ✅ Essentiel pour checkout (user connecté)
+- ✅ Bloquant pour historique commandes
+- ✅ Base pour admin panel
+- ✅ Permet de tester OAuth
 
-#### 5.1 Design System défini ✅
-- [x] **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
-- [x] Définir palette de couleurs :
-  - Primary : #1A1A1A (noir premium)
-  - Secondary : #F3F3F3 (blanc cassé)
-  - Accent : #D93434 (rouge streetwear)
-  - Gris : texte secondaires, désactivés, bordures
-- [x] Définir typographie (Geist) :
-  - H1 : 48px/1.2, H2 : 38px/1.3, H3 : 28px/1.3
-  - Body : 16px/1.5, Body 2 : 14px/1.5
-- [x] Définir style Product Cards (A-COLD-WALL*) :
-  - Fond gris #F8F8F8, typo majuscules, prix barré
-
-#### 5.2 Workflow Design adopté ✅
-- [x] **Méthode** : Inspiration visuelle (A-COLD-WALL*) → Création directe en React/TailwindCSS
-- [x] Pas de phase maquettes séparée
-- [x] Création itérative des composants dans le code
-- [x] Style cohérent inspiré A-COLD-WALL*
-- [x] Mobile-first avec TailwindCSS breakpoints
-
-### Phase 6 : Frontend - Layout & Navigation (Intégration des maquettes) ✅
-#### 6.1 Composants Layout de base ✅
-- [x] Créer composant Layout.tsx (wrapper principal)
-- [x] Créer composant Header.tsx (complet avec fonctionnalités)
-- [x] Créer composant Footer.tsx (structure de base)
-- [x] Créer composant PromoBanner.tsx (intégré dans Layout)
-- [x] Intégrer PromoBanner, Header et Footer dans Layout
-- [x] Configurer routing dans App.tsx
-
-#### 6.2 Création Header - Inspiré A-COLD-WALL* ✅
-- [x] Créer Header.tsx en React/TailwindCSS (inspiré style A-COLD-WALL*)
-- [x] Logo REBOULSTORE 2.0* avec lien vers /
-- [x] Navigation principale (Catalogue avec mega menu, SALE, THE CORNER, C.P. COMPANY)
-- [x] Mega menu catégories (dropdown style A-COLD-WALL* avec colonne gauche catégories + images promotionnelles droite)
-- [x] Champ de recherche interactif (toggle au clic, input avec underline, autoFocus, fermeture Escape/Blur)
-- [x] Connecter hook useCart pour badge panier
-- [x] Connecter hook useCategories pour mega menu
-- [x] Menu mobile hamburger (structure de base)
-- [x] Tester responsive
-
-#### 6.3 Création Footer 🚧
-- [x] Créer composant Footer.tsx (structure de base avec placeholders)
-- [ ] Finaliser design Footer (inspiré A-COLD-WALL*)
-- [ ] Connecter les liens et réseaux sociaux
-- [ ] Tester responsive
-
-#### 6.4 Routing complet
-- [ ] Configurer toutes les routes React Router
-- [ ] Créer composant ProtectedRoute si nécessaire
-- [ ] Implémenter navigation programmatique
-- [ ] Tester toutes les routes
-- [ ] Intégrer Layout sur toutes les pages
-
-### Phase 7 : Frontend - Pages Catalogue & Produits (Style A-COLD-WALL*)
-#### 7.1 Page Catalog - À créer
-- [ ] Créer page Catalog.tsx (inspiré style A-COLD-WALL*)
-- [ ] Créer composant ProductCard (fond gris #F8F8F8, typo majuscules)
-- [ ] Créer composant FilterSidebar (style minimaliste)
-- [ ] Créer composant ProductGrid
-- [ ] Créer composant Pagination
-- [ ] Créer composant SortSelector
-- [ ] Connecter hook useProducts
-- [ ] Implémenter filtres et tri
-- [ ] Gérer états loading et error
-
-#### 7.2 Page Product - À créer
-- [ ] Créer page Product.tsx (inspiré style A-COLD-WALL*)
-- [ ] Créer composant ProductGallery
-- [ ] Créer composant ProductInfo
-- [ ] Créer composant VariantSelector
-- [ ] Créer composant AddToCartButton
-- [ ] Créer composant StockIndicator
-- [ ] Connecter hook useProduct
-- [ ] Implémenter sélection variantes
-- [ ] Implémenter ajout au panier
-- [ ] Gérer états loading et error
-
-#### 6.6 Page Product - Fonctionnalités
-- [ ] Intégrer hook useProduct avec id depuis URL
-- [ ] Implémenter affichage galerie images
-- [ ] Implémenter affichage informations produit
-- [ ] Implémenter sélection variantes (couleur, taille)
-- [ ] Implémenter vérification stock selon variante
-- [ ] Implémenter ajout au panier
-- [ ] Implémenter produits similaires
-- [ ] Gérer états loading et error
-- [ ] Styling complet avec TailwindCSS
-
-### Phase 7 : Frontend - Panier & Checkout
-#### 7.1 Page Cart - Structure
-- [ ] Créer page Cart.tsx
-- [ ] Créer layout avec liste articles et récapitulatif
-- [ ] Intégrer Header et Footer via Layout
-- [ ] Styling de base avec TailwindCSS
-
-#### 7.2 Composants Panier
-- [ ] Créer composant CartItem.tsx (image, infos, quantité, prix)
-- [ ] Créer composant CartSummary.tsx (sous-total, total, bouton checkout)
-- [ ] Créer composant EmptyCart.tsx (panier vide)
-- [ ] Créer composant QuantitySelector.tsx (+/-)
-
-#### 7.3 Page Cart - Fonctionnalités
-- [ ] Intégrer hook useCart
-- [ ] Implémenter affichage articles panier
-- [ ] Implémenter modification quantités
-- [ ] Implémenter suppression article
-- [ ] Implémenter calcul total
-- [ ] Implémenter bouton "Continuer les achats"
-- [ ] Implémenter bouton "Passer commande"
-- [ ] Gérer état panier vide
-- [ ] Styling complet avec TailwindCSS
-
-#### 7.4 Page Checkout - Structure
-- [ ] Créer page Checkout.tsx
-- [ ] Créer layout avec formulaire et récapitulatif
-- [ ] Intégrer Header et Footer via Layout
-- [ ] Styling de base avec TailwindCSS
-
-#### 7.5 Composants Checkout
-- [ ] Créer composant CheckoutForm.tsx (formulaire livraison)
-- [ ] Créer composant OrderSummary.tsx (récapitulatif commande)
-- [ ] Créer composant PaymentSection.tsx (section paiement)
-- [ ] Créer composant FormField.tsx (champ formulaire réutilisable)
-
-#### 7.6 Page Checkout - Fonctionnalités
-- [ ] Intégrer hook useCart pour récupérer panier
-- [ ] Implémenter formulaire livraison (validation)
-- [ ] Implémenter affichage récapitulatif commande
-- [ ] Implémenter validation formulaire
-- [ ] Implémenter création commande (POST /orders)
-- [ ] Implémenter page confirmation commande
-- [ ] Gérer états loading et error
-- [ ] Styling complet avec TailwindCSS
-
-### Phase 8 : Frontend - Pages Vitrine - Homepage 🏠 EN COURS
-#### 8.1 Page Home 🚧 EN COURS
-- [ ] Créer page src/pages/Home.tsx (route `/`)
-- [ ] Intégrer Layout
-- [ ] Créer composant HeroSection.tsx (présentation concept-store, style A-COLD-WALL*)
-- [ ] Créer composant FeaturedCategories.tsx (catégories mises en avant)
-- [x] **Créer composant FeaturedProducts.tsx** ✅
-  - Carousel Swiper horizontal avec navigation prev/next
-  - ProductImage intégré avec gestion erreurs (placeholder)
-  - Hover effect avec transition entre 2 images
-  - Calcul et affichage prix réduit (30%)
-  - Style inspiré A-COLD-WALL* (minimaliste, premium)
-  - Responsive (2.2 slides mobile → 5 slides desktop)
-  - Correction bug bouton Previous (événement init Swiper)
-  - Props : title, products
-- [ ] Créer composant LocalAnchor.tsx (ancrage local Marseille/Cassis/Sanary)
-- [ ] Créer composant BlogCarousel.tsx (carrousel articles/actualités)
-- [ ] Intégrer tous les composants dans Home.tsx
-- [ ] Styling premium + streetwear avec TailwindCSS
-- [ ] Responsive design
-- [ ] Connecter route `/` dans App.tsx
-
-#### 8.2 Page About
-- [ ] Créer page About.tsx
-- [ ] Créer composant BrandStory.tsx (histoire marque)
-- [ ] Créer composant ConceptSection.tsx (présentation concept-store)
-- [ ] Créer composant LocationSection.tsx (ancrage local)
-- [ ] Créer composant ContactSection.tsx (contact)
-- [ ] Intégrer tous les composants
-- [ ] Styling avec TailwindCSS
-- [ ] Responsive design
-
-### Phase 9 : Frontend - Composants UI réutilisables (Optionnel - si besoin)
-#### 9.1 Composants de base
-- [ ] Créer composant Button.tsx (variants, sizes, states)
-- [ ] Créer composant Input.tsx (text, email, tel, etc.)
-- [ ] Créer composant Select.tsx (dropdown)
-- [ ] Créer composant Modal.tsx (modal générique)
-- [ ] Créer composant Loading.tsx (spinner, skeleton)
-- [ ] Créer composant ErrorMessage.tsx (affichage erreurs)
-
-#### 9.2 Styling & Thème
-- [ ] Définir palette couleurs premium/streetwear
-- [ ] Créer composants avec variants TailwindCSS
-- [ ] Implémenter dark mode (si nécessaire)
-- [ ] Tester cohérence visuelle globale
-
-### Phase 10 : Optimisations & Finitions
-#### 10.1 Performance Frontend
-- [ ] Implémenter lazy loading images
-- [ ] Implémenter code splitting (React.lazy)
-- [ ] Optimiser bundle size
-- [ ] Implémenter memoization (React.memo, useMemo)
-- [ ] Optimiser re-renders
-
-#### 10.2 Performance Backend
-- [ ] Optimiser requêtes TypeORM (relations, select)
-- [ ] Implémenter cache si nécessaire
-- [ ] Optimiser endpoints avec pagination
-- [ ] Ajouter index base de données
-
-#### 10.3 SEO & Accessibilité
-- [ ] Ajouter meta tags (title, description)
-- [ ] Implémenter Open Graph tags
-- [ ] Ajouter alt text sur toutes les images
-- [ ] Vérifier accessibilité clavier
-- [ ] Vérifier contraste couleurs
-- [ ] Ajouter ARIA labels
-
-#### 10.4 Tests
-- [ ] Tests unitaires backend (services)
-- [ ] Tests d'intégration backend (endpoints)
-- [ ] Tests unitaires frontend (composants)
-- [ ] Tests E2E (parcours utilisateur)
-
-#### 10.5 Responsive & Mobile
-- [ ] Vérifier responsive toutes les pages
-- [ ] Optimiser expérience mobile
-- [ ] Tester sur différents devices
-- [ ] Ajuster breakpoints TailwindCSS
-
-#### 10.6 Documentation & Déploiement
-- [ ] Documenter API (Swagger/OpenAPI)
-- [ ] Mettre à jour README.md
-- [ ] Préparer configuration production
-- [ ] Configurer CI/CD (si nécessaire)
+---
 
 ## 📝 Notes importantes
 
-### Architecture & Technique
-- **Architecture multi-shops** : Gestion de 4 shops (Reboul Adult, Kids, Sneakers, C.P.COMPANY) dans une seule application
-- **Panier universel** : Articles de plusieurs shops dans le même panier, groupés par shop à l'affichage
-- **Stripe Connect** : Répartition automatique des paiements vers le bon compte Stripe selon le shop
-- **Back-office** : Frontend séparé (`admin/`) connecté au même backend, sous-domaine `admin.reboulstore.com`, UI avec GeistUI
-- **Authentification** : JWT + OAuth (Google, Apple), commande en guest possible, reset password par email ou SMS
-- **Paiement** : Capture à la confirmation commande (pending → confirmed), devises EUR et USD
-- **Remboursements** : Automatisation via n8n (workflows)
-
-### Design & Frontend
-- **Inspiration principale** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium/streetwear
-- **Workflow Design** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS (pas de maquettes)
-- **Outils Design** : Références visuelles A-COLD-WALL*, création directe dans le code
-- **Style** : Minimaliste, premium, monochrome (noir/blanc/gris + accent rouge), espacement généreux
-- **shadcn/ui** : Disponible dans `/ui/shadcn` si besoin, sinon création custom
-- **Navigation** : Page d'accueil (`/`) = menu de sélection shop, switch shop dans header
-- **Responsive** : Mobile-first avec TailwindCSS breakpoints
+### 🎨 Design & Frontend
+- **Inspiration** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
+- **Workflow** : Création directe en React/TailwindCSS (pas de maquettes)
+- **Style** : Noir/blanc/gris + accent rouge, espacement généreux
+- **Typo** : Geist (texte-h1, texte-h2, texte-t2, texte-t3, texte)
 - **Images** : Lazy loading, gestion erreurs, placeholder
-- **Composants créés** :
-  - Layout ✅ (PromoBanner, Header, Footer)
-  - Header ✅ (Mega menu, recherche, badge panier, responsive)
-  - Footer 🚧 (structure de base)
-  - FeaturedProducts ✅ (Carousel Swiper, navigation, hover effect, prix réduit, style A-COLD-WALL*)
 
-### Fonctionnalités Métier
-- **Promotions** : Codes promo uniques par utilisateur, flash sales (24h/48h), cumulables ou non (à définir)
-- **Avis produits** : Ouverts à tous (pas besoin d'achat), auto-publication, pas de photos
-- **Stocks** : Alerte stock faible à 5 unités, notifications email admin + dashboard temps réel
-- **Blog** : Admin uniquement, catégories à définir, commentaires à définir
-- **Images produits** : Max 7 images, formats JPG/PNG/WebP, dimensions 1200x1200px recommandées
+### 🛍️ Fonctionnalités Métier
+- **Multi-shops** : 4 shops, panier universel groupé par shop
+- **Promotions** : Codes promo, flash sales (24h/48h)
+- **Avis produits** : Ouverts à tous, auto-publication
+- **Stocks** : Alerte stock faible à 5 unités, notifications admin
+- **Images produits** : Max 7 images, 1200x1200px, JPG/PNG/WebP
+- **Politiques** : Livraison/retour par shop (jsonb)
+- **Size charts** : Par catégorie (override par produit possible)
 
-### Intégrations
-- **Newsletter** : Service à définir (Mailchimp/SendGrid), popup (temps/scroll/exit intent)
-- **Analytics** : Google Analytics (version à définir), tracking vues/panier/commandes
+### 🔗 Intégrations
+- **Paiement** : Stripe + Stripe Connect (répartition multi-shops)
+- **Auth** : JWT + OAuth (Google, Apple)
+- **Images** : Cloudinary (CDN, optimisation)
+- **Emails** : Nodemailer (confirmation commande, tracking, etc.)
+- **SMS** : Twilio/Vonage (reset password)
+- **Temps réel** : WebSockets (notifications, chat live)
+- **Automatisation** : n8n (remboursements, workflows)
+- **Analytics** : Google Analytics 4
 - **Chat** : Chatbot IA (Elevenlabs UI) 24/7
 
-### Performance & Optimisation
-- **Performance** : Objectif Lighthouse > 90, Core Web Vitals optimisés
-- **Cache** : Frontend (localStorage/sessionStorage pour données API) + Backend (Redis optionnel)
-- **SEO** : Pages prioritaires : /, /catalog, /product/:id, /cart, sitemap.xml, robots.txt
+### 🚀 Performance & Optimisation
+- **Objectif** : Lighthouse > 90, Core Web Vitals optimisés
+- **Cache** : Frontend (localStorage/sessionStorage) + Backend (Redis optionnel)
+- **SEO** : Sitemap.xml, robots.txt, meta tags, Open Graph
 
-### Administration
-- **Back-office** : Import/Export CSV/Excel produits/commandes, édition formulaire classique + inline
-- **Dashboard** : Statistiques ventes, produits populaires, revenus
+### 🔐 Sécurité
+- **Rate limiting** : Protection contre bruteforce
+- **Validation** : class-validator partout
+- **CORS** : Configuré
+- **Headers** : Helmet.js en prod
+- **SSL** : Let's Encrypt (prod)
 
-### Déploiement
-- **Environnements** : Dev (local Docker) → Prod (même serveur Docker), pas de staging
-- **Variables** : Gestion via `.env`, clés API (Cloudinary, Stripe) en variables d'environnement
-- **CI/CD** : À prévoir (automatisation tests et déploiement)
-- **Tests** : Couverture à définir, tests E2E prioritaires (catalog → product → cart → checkout)
+### 📦 Déploiement
+- **Environnements** : Dev (local Docker) → Prod (Docker)
+- **Variables** : `.env` (clés API Cloudinary, Stripe, etc.)
+- **CI/CD** : GitHub Actions (lint → test → build → deploy)
+- **Tests** : E2E prioritaires (catalog → product → cart → checkout)
 
-### Évolutivité
-- Architecture pensée pour évoluer (nouveaux produits, collections, catégories)
-- Code propre, organisé, extensible
-- Séparation claire des responsabilités (vitrine / catalogue / e-commerce)
+---
 
+## 📚 Documentation détaillée
+
+- **Frontend** : Voir [`FRONTEND.md`](./frontend/FRONTEND.md)
+- **Backend** : Voir [`BACKEND.md`](./backend/BACKEND.md)
+- **Roadmap complète** : Voir [`ROADMAP_COMPLETE.md`](./ROADMAP_COMPLETE.md)
+- **Politiques à finaliser** : Voir [`POLICIES_TODO.md`](./POLICIES_TODO.md)
+
+---
+
+**🎯 Focus actuel** : Passer à la Phase 9 (Backend Auth & Users) pour débloquer le tunnel d'achat complet.

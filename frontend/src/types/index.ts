@@ -2,6 +2,35 @@
  * Types pour les entités du backend
  */
 
+export interface SizeChartEntry {
+  size: string;
+  chest?: number;
+  length?: number;
+  waist?: number;
+  hip?: number;
+}
+
+export interface Shop {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  shippingPolicy?: {
+    freeShippingThreshold?: number;
+    deliveryTime?: string;
+    internationalShipping?: boolean;
+    shippingCost?: string;
+    description?: string;
+  };
+  returnPolicy?: {
+    returnWindow?: number;
+    returnShippingFree?: boolean;
+    conditions?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -9,6 +38,8 @@ export interface Category {
   description?: string;
   createdAt: string;
   updatedAt: string;
+  imageUrl?: string;
+  sizeChart?: SizeChartEntry[];
 }
 
 export interface Product {
@@ -18,10 +49,18 @@ export interface Product {
   price: number;
   categoryId: string;
   category?: Category;
+  shopId?: string;
+  shop?: Shop;
   images?: Image[];
   variants?: Variant[];
   createdAt: string;
   updatedAt: string;
+  
+  // Informations spécifiques au produit
+  materials?: string;
+  careInstructions?: string;
+  madeIn?: string;
+  customSizeChart?: SizeChartEntry[];
 }
 
 export interface Image {

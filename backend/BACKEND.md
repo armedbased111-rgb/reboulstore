@@ -50,6 +50,7 @@ backend/
 - `name` : string (Adult, Kids, Sneakers, etc.)
 - `slug` : string
 - `description` : text
+- `imageUrl` : string (nullable) - URL de l'image de la catégorie
 - `products` : relation (Products)
 - `createdAt` : timestamp
 - `updatedAt` : timestamp
@@ -325,11 +326,12 @@ backend/
 ### Phase 2 : Modèles de données - Entités de base ✅
 #### 2.1 Entité Category
 - [x] Créer entity Category dans src/entities/category.entity.ts
-- [x] Définir colonnes : id (UUID, primary), name (string), slug (string, unique), description (text nullable), createdAt, updatedAt
+- [x] Définir colonnes : id (UUID, primary), name (string), slug (string, unique), description (text nullable), imageUrl (varchar 500 nullable), createdAt, updatedAt
 - [x] Ajouter décorateurs TypeORM (@Entity, @PrimaryGeneratedColumn, @Column)
 - [x] Définir relation OneToMany vers Products
 - [x] Types TypeScript définis dans l'entité
 - [x] Tester création table en base
+- [x] Ajouter champ imageUrl pour afficher les images de catégories dans le frontend
 
 #### 2.2 Entité Product
 - [x] Créer entity Product dans src/entities/product.entity.ts
@@ -409,10 +411,11 @@ backend/
 
 #### 4.2 DTOs Catégories
 - [x] Créer CreateCategoryDto dans src/modules/categories/dto/create-category.dto.ts
-- [x] Ajouter validation (name: string, slug: string, description?: string)
+- [x] Ajouter validation (name: string, slug: string, description?: string, imageUrl?: string)
 - [x] Créer UpdateCategoryDto dans src/modules/categories/dto/update-category.dto.ts
 - [x] Utiliser PartialType de @nestjs/mapped-types
-- [x] Ajouter class-validator decorators (@IsString, @IsNotEmpty, @MaxLength, etc.)
+- [x] Ajouter class-validator decorators (@IsString, @IsNotEmpty, @MaxLength, @IsOptional, etc.)
+- [x] Ajouter validation imageUrl (optionnel, max 500 caractères)
 
 #### 4.3 Service Categories
 - [x] Implémenter findAll() : Promise<Category[]> (tri par nom)

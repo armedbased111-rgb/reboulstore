@@ -1,10 +1,12 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { useProducts } from '../../hooks/useProducts';
+import { getCategoryBySlug } from '../../services/categories';
 
 // Import Swiper styles
 import 'swiper/swiper-bundle.css';
@@ -51,10 +53,14 @@ const ProductImage = ({
  * Props du composant FeaturedProducts
  */
 interface FeaturedProductsProps {
-  /** Titre de la section (ex: "Winter Sale") */
+  /** Titre de la section (ex: "Winter Sale", "ACW* Arsenal") */
   title: string;
-  /** Liste des produits à afficher */
-  products: Product[];
+  /** Liste des produits à afficher (optionnel si categorySlug est fourni) */
+  products?: Product[];
+  /** Slug de la catégorie pour récupérer automatiquement les produits (optionnel) */
+  categorySlug?: string;
+  /** Nombre limite de produits à afficher (par défaut: 10) */
+  limit?: number;
 }
 
 /**
@@ -66,11 +72,60 @@ interface FeaturedProductsProps {
  * - Titre avec boutons de navigation
  * - Liste de produits en carousel horizontal avec Swiper
  * - Chaque produit : image avec hover effect, titre, prix
+ * 
+ * Deux modes d'utilisation :
+ * 1. Avec prop `products` : Liste de produits fournie directement
+ * 2. Avec prop `categorySlug` : Récupère automatiquement les produits de la catégorie
  */
-export const FeaturedProducts = ({ title, products }: FeaturedProductsProps) => {
+export const FeaturedProducts = ({ 
+  title, 
+  products: productsProp, 
+  categorySlug,
+  limit = 10 
+}: FeaturedProductsProps) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
+
+  // État pour stocker l'ID de la catégorie (récupéré depuis le slug)
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  // Si categorySlug est fourni, récupérer l'ID de la catégorie
+  useEffect(() => {
+    if (categorySlug) {
+      console.log('🔍 FeaturedProducts: Récupération catégorie avec slug:', categorySlug);
+      setCategoryLoading(true);
+      setCategoryError(null);
+      getCategoryBySlug(categorySlug)
+        .then((category) => {
+          console.log('✅ FeaturedProducts: Catégorie trouvée:', category);
+          setCategoryId(category.id);
+          setCategoryLoading(false);
+        })
+        .catch((err) => {
+          console.error('❌ FeaturedProducts: Erreur catégorie:', err);
+          setCategoryError(err instanceof Error ? err.message : 'Erreur lors du chargement de la catégorie');
+          setCategoryLoading(false);
+        });
+    } else {
+      setCategoryId(null);
+    }
+  }, [categorySlug]);
+
+  // Si categoryId est disponible, récupérer les produits de la catégorie
+  const query = useMemo(() => {
+    if (categoryId) {
+      return { category: categoryId, limit };
+    }
+    return undefined;
+  }, [categoryId, limit]);
+
+  const { products: productsFromCategory, loading, error } = useProducts(query);
+
+  // Déterminer quelle liste de produits utiliser
+  const products = categorySlug ? productsFromCategory : (productsProp || []);
 
   // Mettre à jour l'état des boutons selon la position du swiper
   useEffect(() => {
@@ -146,6 +201,26 @@ export const FeaturedProducts = ({ title, products }: FeaturedProductsProps) => 
     const numPrice = getPriceAsNumber(price);
     return Math.round(numPrice * 0.7 * 100) / 100; // 30% de réduction
   };
+
+  // Si chargement de la catégorie, ne rien afficher
+  if (categorySlug && categoryLoading) {
+    return null;
+  }
+
+  // Si erreur lors du chargement de la catégorie, ne rien afficher
+  if (categorySlug && categoryError) {
+    return null;
+  }
+
+  // Si chargement des produits, erreur ou pas de produits (mode categorySlug), ne rien afficher
+  if (categorySlug && (loading || error || products.length === 0)) {
+    return null;
+  }
+
+  // Si pas de produits (mode avec products prop), ne rien afficher
+  if (!categorySlug && (!productsProp || productsProp.length === 0)) {
+    return null;
+  }
 
   return (
     <section className="m-[2px] last:mb-0">

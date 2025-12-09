@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const category_entity_1 = require("./category.entity");
 const image_entity_1 = require("./image.entity");
 const variant_entity_1 = require("./variant.entity");
+const shop_entity_1 = require("./shop.entity");
 let Product = class Product {
     id;
     name;
@@ -21,8 +22,14 @@ let Product = class Product {
     price;
     categoryId;
     category;
+    shopId;
+    shop;
     images;
     variants;
+    materials;
+    careInstructions;
+    madeIn;
+    customSizeChart;
     createdAt;
     updatedAt;
 };
@@ -53,6 +60,15 @@ __decorate([
     __metadata("design:type", category_entity_1.Category)
 ], Product.prototype, "category", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "shopId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => shop_entity_1.Shop, (shop) => shop.products),
+    (0, typeorm_1.JoinColumn)({ name: 'shopId' }),
+    __metadata("design:type", Object)
+], Product.prototype, "shop", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => image_entity_1.Image, (image) => image.product),
     __metadata("design:type", Array)
 ], Product.prototype, "images", void 0);
@@ -60,6 +76,22 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => variant_entity_1.Variant, (variant) => variant.product),
     __metadata("design:type", Array)
 ], Product.prototype, "variants", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "materials", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "careInstructions", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "madeIn", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "customSizeChart", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

@@ -11,6 +11,7 @@ import {
 import { Category } from './category.entity';
 import { Image } from './image.entity';
 import { Variant } from './variant.entity';
+import { Shop } from './shop.entity';
 
 @Entity('products')
 export class Product {
@@ -33,11 +34,43 @@ export class Product {
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
+  @Column({ type: 'uuid', nullable: true })
+  shopId: string | null;
+
+  @ManyToOne(() => Shop, (shop) => shop.products)
+  @JoinColumn({ name: 'shopId' })
+  shop: Shop | null;
+
   @OneToMany(() => Image, (image) => image.product)
   images: Image[];
 
   @OneToMany(() => Variant, (variant) => variant.product)
   variants: Variant[];
+
+  /**
+   * Informations spécifiques au produit
+   */
+  @Column({ type: 'text', nullable: true })
+  materials: string | null; // Ex: "100% Cotton"
+
+  @Column({ type: 'text', nullable: true })
+  careInstructions: string | null; // Ex: "Machine wash cold"
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  madeIn: string | null; // Ex: "France"
+
+  /**
+   * Size chart custom pour ce produit (override celui de la catégorie)
+   * Si null, le produit utilise le size chart de sa catégorie
+   */
+  @Column({ type: 'jsonb', nullable: true })
+  customSizeChart: Array<{
+    size: string;
+    chest?: number;
+    length?: number;
+    waist?: number;
+    hip?: number;
+  }> | null;
 
   @CreateDateColumn()
   createdAt: Date;

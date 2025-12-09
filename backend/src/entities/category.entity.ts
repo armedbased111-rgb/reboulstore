@@ -25,6 +25,22 @@ export class Category {
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  imageUrl: string | null;
+
+  /**
+   * Size chart par défaut pour tous les produits de cette catégorie
+   * Structure JSON avec tableau de tailles
+   */
+  @Column({ type: 'jsonb', nullable: true })
+  sizeChart: Array<{
+    size: string;
+    chest?: number;
+    length?: number;
+    waist?: number;
+    hip?: number;
+  }> | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

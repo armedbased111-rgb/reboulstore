@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MaxLength, IsArray } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
@@ -14,4 +14,20 @@ export class CreateCategoryDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  imageUrl?: string;
+
+  // Size chart par défaut pour cette catégorie
+  @IsArray()
+  @IsOptional()
+  sizeChart?: Array<{
+    size: string;
+    chest?: number;
+    length?: number;
+    waist?: number;
+    hip?: number;
+  }>;
 }

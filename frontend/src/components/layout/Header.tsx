@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCart();
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
@@ -17,7 +17,7 @@ export const Header = () => {
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Logo + Navigation */}
-          <div className="flex items-center gap-[16px]">
+          <div className="flex items-center gap-[50px]">
             {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold text-black uppercase tracking-tight">
@@ -26,13 +26,13 @@ export const Header = () => {
           </Link>
 
           {/* Navigation à gauche après le logo */}
-            <nav className="hidden md:flex items-center gap-4">
+            <nav className="hidden md:flex items-center gap-[37px]">
             {/* Menu SHOP avec mega menu */}
             <div className="relative">
               <button
                 onClick={() => setIsShopMenuOpen(!isShopMenuOpen)}
                 onMouseEnter={() => setIsShopMenuOpen(true)}
-                className="flex items-center gap-1 text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
+                className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
                 Catalogue
                 <svg 
@@ -49,21 +49,21 @@ export const Header = () => {
             {/* Liens SALE et THE CORNER | C.P. COMPANY */}
             <Link 
               to="/catalog?sale=true" 
-              className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
+              className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
             >
               SALE
             </Link>
             <div className="flex items-center gap-2">
               <Link 
                 to="/the-corner" 
-                className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
+                className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
                 THE CORNER
               </Link>
-              <span className="text-black">|</span>
+              <span className="text-black text-[15px] font-light">|</span>
               <Link 
                 to="/cp-company" 
-                className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
+                className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
                 C.P. COMPANY
               </Link>
@@ -155,6 +155,10 @@ export const Header = () => {
                   <ul>
                     {categoriesLoading ? (
                       <li className="text-base text-gray-500">Chargement...</li>
+                    ) : categoriesError ? (
+                      <li className="text-base text-red-500">Erreur de chargement</li>
+                    ) : categories.length === 0 ? (
+                      <li className="text-base text-gray-500">Aucune catégorie</li>
                     ) : (
                       categories.map((category) => (
                         <li key={category.id}>

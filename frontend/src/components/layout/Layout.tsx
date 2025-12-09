@@ -28,7 +28,34 @@ export const Layout = ({ children }: LayoutProps) => {
       </main>
       
       {/* Footer en bas */}
-      <Footer />
+      <Footer
+  logo={
+    <img
+      src="https://res.cloudinary.com/dxen69pdo/image/upload/v1753365190/logo_w_hzhfoc.png"
+      alt="REBOUL STORE"
+      className="w-full h-[40px] object-contain filter invert ml-[2px]"
+      style={{ filter: 'invert(1)' }}
+    />
+  }
+  customerServiceLinks={[
+    { label: 'Livraison', to: '/livraison' },
+    { label: 'CGV', to: '/cgv' },
+    { label: 'Politique de confidentialité', to: '/politique-de-confidentialite' },
+    { label: 'Conditions générales de vente', to: '/conditions-generales-de-vente' },
+    { label: 'Mentions légales', to: '/mentions-legales' },
+    { label: 'Cookies', to: '/cookies' },
+  ]}
+  socialLinks={[
+    { label: 'Instagram', href: 'https://instagram.com/reboul', target: '_blank' },
+    { label: 'Facebook', href: 'https://facebook.com/reboul', target: '_blank' },
+  ]}
+  slogan="REBOUL STORE - Votre boutique de vêtements et accessoires"
+  legalInfo={{
+    companyName: 'REBOUL STORE',
+    registeredCompany: 'Société enregistrée en France - SIRET: 92802711500012',
+    vat: 'TVA: FR92802711500012',
+  }}
+/>
     </div>
   );
 };

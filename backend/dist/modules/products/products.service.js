@@ -47,7 +47,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'images', 'variants'],
+            relations: ['category', 'shop', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,
@@ -63,7 +63,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         const product = await this.productRepository.findOne({
             where: { id },
-            relations: ['category', 'images', 'variants'],
+            relations: ['category', 'shop', 'images', 'variants'],
         });
         if (!product) {
             throw new common_1.NotFoundException(`Product with ID ${id} not found`);
@@ -83,7 +83,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'images', 'variants'],
+            relations: ['category', 'shop', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,

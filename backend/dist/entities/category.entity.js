@@ -18,6 +18,8 @@ let Category = class Category {
     slug;
     description;
     products;
+    imageUrl;
+    sizeChart;
     createdAt;
     updatedAt;
 };
@@ -42,6 +44,14 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => product_entity_1.Product, (product) => product.category),
     __metadata("design:type", Array)
 ], Category.prototype, "products", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", Object)
+], Category.prototype, "imageUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Category.prototype, "sizeChart", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

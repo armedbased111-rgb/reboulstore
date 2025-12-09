@@ -15,6 +15,8 @@ class CreateCategoryDto {
     name;
     slug;
     description;
+    imageUrl;
+    sizeChart;
 }
 exports.CreateCategoryDto = CreateCategoryDto;
 __decorate([
@@ -34,4 +36,15 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(500),
+    __metadata("design:type", String)
+], CreateCategoryDto.prototype, "imageUrl", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateCategoryDto.prototype, "sizeChart", void 0);
 //# sourceMappingURL=create-category.dto.js.map
