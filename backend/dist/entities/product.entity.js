@@ -15,6 +15,7 @@ const category_entity_1 = require("./category.entity");
 const image_entity_1 = require("./image.entity");
 const variant_entity_1 = require("./variant.entity");
 const shop_entity_1 = require("./shop.entity");
+const brand_entity_1 = require("./brand.entity");
 let Product = class Product {
     id;
     name;
@@ -24,6 +25,8 @@ let Product = class Product {
     category;
     shopId;
     shop;
+    brandId;
+    brand;
     images;
     variants;
     materials;
@@ -68,6 +71,15 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'shopId' }),
     __metadata("design:type", Object)
 ], Product.prototype, "shop", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "brandId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => brand_entity_1.Brand, (brand) => brand.products),
+    (0, typeorm_1.JoinColumn)({ name: 'brandId' }),
+    __metadata("design:type", Object)
+], Product.prototype, "brand", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => image_entity_1.Image, (image) => image.product),
     __metadata("design:type", Array)

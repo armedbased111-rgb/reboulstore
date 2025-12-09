@@ -12,6 +12,7 @@ import { Category } from './category.entity';
 import { Image } from './image.entity';
 import { Variant } from './variant.entity';
 import { Shop } from './shop.entity';
+import { Brand } from './brand.entity';
 
 @Entity('products')
 export class Product {
@@ -40,6 +41,13 @@ export class Product {
   @ManyToOne(() => Shop, (shop) => shop.products)
   @JoinColumn({ name: 'shopId' })
   shop: Shop | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  brandId: string | null;
+
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  @JoinColumn({ name: 'brandId' })
+  brand: Brand | null;
 
   @OneToMany(() => Image, (image) => image.product)
   images: Image[];

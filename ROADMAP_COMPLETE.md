@@ -19,14 +19,84 @@
 
 **Résumé** :
 - ✅ Docker + PostgreSQL + NestJS + React configurés
-- ✅ Entités de base (Category, Product, Image, Variant, Cart, Order, Shop)
-- ✅ Modules API (Categories, Products, Cart, Orders, Shops)
+- ✅ Entités de base (Category, Product, Image, Variant, Cart, Order, Shop, Brand)
+- ✅ Modules API (Categories, Products, Cart, Orders, Shops, Brands)
 - ✅ Frontend : Layout, Header, Footer, Navigation
-- ✅ Pages : Home (partiel), Catalog, Product
+- ✅ Pages : Home (partiel), Catalog (filtres category + brand), Product
 - ✅ Composants produits (ProductCard, ProductGallery, ProductInfo, etc.)
 - ✅ Logique multi-shops (Shop entity + politiques)
+- ✅ **Navigation Brands** (onglet + mega menu avec hover, filtres produits)
+- ✅ **Support vidéo/image** (Brand et Category avec priorité vidéo dans hero sections)
 
-**État actuel** : Catalogue fonctionnel, pages produits OK, politiques de base OK
+**État actuel** : Catalogue fonctionnel avec filtres brands, pages produits OK, politiques de base OK, support vidéo/image complet
+
+---
+
+## ✅ Phase 8.5 : Feature Brands (COMPLÉTÉ)
+
+**Objectif** : Ajouter navigation par marques avec mega menu style A-COLD-WALL*
+
+### 8.5.1 Backend - Entité Brand ✅
+- [x] Créer entité Brand (id, name, slug, description, logoUrl, megaMenuImage1, megaMenuImage2)
+- [x] Relation Brand → Products (OneToMany)
+- [x] Relation Product → Brand (ManyToOne, brandId)
+
+### 8.5.2 Backend - Module Brands ✅
+- [x] Créer module Brands
+- [x] DTOs (CreateBrandDto, UpdateBrandDto)
+- [x] Service Brands (findAll, findOne, findBySlug, create, update, delete)
+- [x] Controller Brands (CRUD complet)
+- [x] Enregistrer dans AppModule
+
+### 8.5.3 Backend - Extension Products ✅
+- [x] Ajouter brandId dans Product entity
+- [x] Charger relation brand dans ProductsService
+- [x] Ajouter brandId dans CreateProductDto
+- [x] Ajouter filtre brand dans ProductQueryDto
+- [x] Implémenter filtre par brand dans findAll()
+
+### 8.5.4 Frontend - Types & Services ✅
+- [x] Créer interface Brand dans types/index.ts
+- [x] Étendre Product avec brand et brandId
+- [x] Créer service brands.ts (getBrands, getBrand, getBrandBySlug)
+- [x] Créer hook useBrands
+- [x] Ajouter brand dans ProductQuery
+
+### 8.5.5 Frontend - Header Navigation ✅
+- [x] Import useBrands dans Header
+- [x] Ajouter état isBrandsMenuOpen et hoveredBrand
+- [x] Créer onglet "Brands" après "Catalogue"
+- [x] Créer mega menu Brands (liste marques + 2 images)
+- [x] Implémenter hover pour changer images (transition 300ms)
+- [x] Gestion fermeture menus (mutually exclusive)
+
+### 8.5.6 Frontend - Page Catalog ✅
+- [x] Import getBrandBySlug
+- [x] Ajouter état brand, brandLoading, brandError
+- [x] Récupérer brand depuis URL (?brand=slug)
+- [x] Passer brand.id au hook useProducts
+- [x] Afficher titre avec nom de marque
+- [x] Afficher HeroSectionImage avec image de marque
+
+### 8.5.7 Tests ✅
+- [x] Créer 4 marques de test (A-COLD-WALL*, NIKE, ADIDAS, STONE ISLAND)
+- [x] Lier produit à marque
+- [x] Tester endpoint GET /brands
+- [x] Tester filtre GET /products?brand=:brandId
+- [x] Tester navigation et mega menu dans navigateur
+- [x] Tester hover images dans mega menu
+
+### 8.5.8 Améliorations Vidéo/Image ✅
+- [x] Ajouter support vidéo dans entité Brand (megaMenuVideo1, megaMenuVideo2)
+- [x] Ajouter support vidéo dans entité Category (videoUrl)
+- [x] Mettre à jour DTOs (CreateBrandDto, CreateCategoryDto)
+- [x] Mettre à jour types frontend (Brand, Category)
+- [x] Améliorer HeroSectionImage pour supporter vidéo OU image (priorité vidéo)
+- [x] Implémenter logique vidéo/image dans Header mega menu (priorité vidéo)
+- [x] Implémenter logique vidéo/image dans Catalog hero section (priorité vidéo)
+- [x] Corriger bug routing brands (ordre routes : slug avant :id)
+- [x] Corriger filtrage produits par brand (ajouter brand dans useMemo de useProducts)
+- [x] Tester affichage vidéo dans hero section et mega menu
 
 ---
 

@@ -13,8 +13,10 @@ interface HeroSectionImageProps {
   buttonText: string;
   /** Lien de destination du bouton (ex: "/catalog") */
   buttonLink: string;
-  /** URL de l'image de fond (placeholder pour l'instant) */
+  /** URL de l'image de fond (si pas de vidéo) */
   imageSrc?: string;
+  /** URL de la vidéo de fond (prioritaire sur imageSrc si fourni) */
+  videoSrc?: string;
   /** Aspect ratio mobile (par défaut: "4/5") */
   aspectRatioMobile?: string;
   /** Aspect ratio desktop (par défaut: "2/1") - Ignoré si heightClass est fourni */
@@ -23,19 +25,24 @@ interface HeroSectionImageProps {
   maxHeightClass?: string;
   /** Classe Tailwind pour une hauteur fixe desktop (ex: "md:h-[500px]") - Si fourni, remplace aspectRatioDesktop */
   heightClass?: string;
-  /** Comportement de l'image : "cover" (remplit tout, peut couper) ou "contain" (affiche tout, peut laisser de l'espace) */
+  /** Comportement de l'image/vidéo : "cover" (remplit tout, peut couper) ou "contain" (affiche tout, peut laisser de l'espace) */
   objectFit?: 'cover' | 'contain';
 }
 
 /**
- * Composant HeroSectionImage - Section hero avec image de fond et overlay texte
+ * Composant HeroSectionImage - Section hero avec image OU vidéo de fond et overlay texte
  * Style inspiré A-COLD-WALL* : Structure exacte avec aspect ratio responsive, overlay, texte centré
  * 
  * Structure A-COLD-WALL* :
  * - Container avec marges (m-[2px], p-[2px])
- * - Image area avec aspect ratio responsive (4/5 mobile, 2/1 desktop)
+ * - Image/Video area avec aspect ratio responsive (4/5 mobile, 2/1 desktop)
  * - Overlay noir 20% d'opacité
  * - Texte centré verticalement et horizontalement
+ * 
+ * Utilisation :
+ * - Fournir `videoSrc` pour une vidéo de fond (autoplay, loop, muted)
+ * - Fournir `imageSrc` pour une image de fond
+ * - Si les deux sont fournis, la vidéo a la priorité
  */
 export const HeroSectionImage = ({
   title,
@@ -43,6 +50,7 @@ export const HeroSectionImage = ({
   buttonText,
   buttonLink,
   imageSrc = '/placeholder-hero.jpg', // Placeholder par défaut
+  videoSrc,
   aspectRatioMobile = '4/5',
   aspectRatioDesktop = '2/1',
   maxHeightClass = 'md:max-h-[90vh]',
@@ -77,16 +85,31 @@ export const HeroSectionImage = ({
               }`}
             >
               <div className="w-full h-full relative">
-                {/* Lien cliquable sur toute l'image */}
+                {/* Lien cliquable sur toute l'image/vidéo */}
                 <Link to={buttonLink} className="block w-full h-full absolute inset-0">
-                  <img
-                    src={imageSrc}
-                    alt={title}
-                    className={`w-full h-full ${
-                      objectFit === 'contain' ? 'object-contain' : 'object-cover'
-                    }`}
-                    loading="eager" // Image hero = prioritaire, pas de lazy loading
-                  />
+                  {videoSrc ? (
+                    // Afficher vidéo si videoSrc est fourni
+                    <video
+                      src={videoSrc}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className={`w-full h-full ${
+                        objectFit === 'contain' ? 'object-contain' : 'object-cover'
+                      }`}
+                    />
+                  ) : (
+                    // Afficher image sinon
+                    <img
+                      src={imageSrc}
+                      alt={title}
+                      className={`w-full h-full ${
+                        objectFit === 'contain' ? 'object-contain' : 'object-cover'
+                      }`}
+                      loading="eager" // Image hero = prioritaire, pas de lazy loading
+                    />
+                  )}
                 </Link>
 
                 {/* Overlay noir semi-transparent (20% opacité) */}

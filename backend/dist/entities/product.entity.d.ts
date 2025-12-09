@@ -2,6 +2,7 @@ import { Category } from './category.entity';
 import { Image } from './image.entity';
 import { Variant } from './variant.entity';
 import { Shop } from './shop.entity';
+import { Brand } from './brand.entity';
 export declare class Product {
     id: string;
     name: string;
@@ -11,6 +12,8 @@ export declare class Product {
     category: Category;
     shopId: string | null;
     shop: Shop | null;
+    brandId: string | null;
+    brand: Brand | null;
     images: Image[];
     variants: Variant[];
     materials: string | null;

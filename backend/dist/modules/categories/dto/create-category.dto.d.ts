@@ -3,6 +3,7 @@ export declare class CreateCategoryDto {
     slug: string;
     description?: string;
     imageUrl?: string;
+    videoUrl?: string;
     sizeChart?: Array<{
         size: string;
         chest?: number;

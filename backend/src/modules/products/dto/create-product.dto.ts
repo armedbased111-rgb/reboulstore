@@ -21,6 +21,10 @@ export class CreateProductDto {
   @IsOptional()
   shopId?: string;
 
+  @IsUUID()
+  @IsOptional()
+  brandId?: string;
+
   // Informations spécifiques au produit
   @IsString()
   @IsOptional()

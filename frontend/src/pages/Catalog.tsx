@@ -4,8 +4,9 @@ import { useProducts } from '../hooks/useProducts';
 import { ProductGrid } from '../components/catalog/ProductGrid';
 import { HeroSectionImage } from '../components/home/HeroSectionImage';
 import { getCategoryBySlug } from '../services/categories';
+import { getBrandBySlug } from '../services/brands';
 import { getImageUrl } from '../utils/imageUtils';
-import type { Category } from '../types';
+import type { Category, Brand } from '../types';
 
 /**
  * Page Catalog - Catalogue de produits style A-COLD-WALL*
@@ -19,11 +20,17 @@ import type { Category } from '../types';
 export const Catalog = () => {
   const [searchParams] = useSearchParams();
   const categorySlug = searchParams.get('category');
+  const brandSlug = searchParams.get('brand');
   
   // État pour la catégorie
   const [category, setCategory] = useState<Category | null>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  // État pour la marque
+  const [brand, setBrand] = useState<Brand | null>(null);
+  const [brandLoading, setBrandLoading] = useState(false);
+  const [brandError, setBrandError] = useState<string | null>(null);
 
   // Récupérer la catégorie si un slug est présent dans l'URL
   useEffect(() => {
@@ -49,10 +56,35 @@ export const Catalog = () => {
     fetchCategory();
   }, [categorySlug]);
 
+  // Récupérer la marque si un slug est présent dans l'URL
+  useEffect(() => {
+    const fetchBrand = async () => {
+      if (brandSlug) {
+        setBrandLoading(true);
+        setBrandError(null);
+        try {
+          const br = await getBrandBySlug(brandSlug);
+          setBrand(br);
+          setBrandLoading(false);
+        } catch (err) {
+          setBrandError(err instanceof Error ? err.message : 'Erreur lors du chargement de la marque');
+          setBrandLoading(false);
+        }
+      } else {
+        setBrand(null);
+        setBrandLoading(false);
+        setBrandError(null);
+      }
+    };
+
+    fetchBrand();
+  }, [brandSlug]);
+
   const { products, loading, error, totalPages, page } = useProducts({
     limit: 20, // Nombre de produits par page
     page: 1,
     category: category?.id, // Filtrer par catégorie si présente
+    brand: brand?.id, // Filtrer par marque si présente (TODO: ajouter support backend)
   });
 
   return (
@@ -63,18 +95,33 @@ export const Catalog = () => {
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-[#FFFFFF] relative w-full pt-2">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 uppercase">
-                {category ? category.name : 'Shop All'}
+                {category ? category.name : brand ? brand.name : 'Shop All'}
               </h1>
               <div className="text-sm mb-4"></div>
               
-              {/* Hero Section avec image de catégorie */}
+              {/* Hero Section avec image/vidéo de catégorie */}
               {category && !categoryLoading && !categoryError && (
                 <HeroSectionImage
                   title={category.name}
                   subtitle={category.description || 'Découvrez notre collection'}
                   buttonText="Shop now"
                   buttonLink={`/catalog?category=${category.slug}`}
+                  videoSrc={category.videoUrl && category.videoUrl.trim() !== '' ? category.videoUrl : undefined}
                   imageSrc={getImageUrl(category.imageUrl) || '/placeholder-hero.jpg'}
+                  aspectRatioMobile="4/5"
+                  heightClass="md:h-[500px]"
+                />
+              )}
+
+              {/* Hero Section avec image/vidéo de marque */}
+              {brand && !brandLoading && !brandError && !category && (
+                <HeroSectionImage
+                  title={brand.name}
+                  subtitle={brand.description || 'Découvrez notre collection'}
+                  buttonText="Shop now"
+                  buttonLink={`/catalog?brand=${brand.slug}`}
+                  videoSrc={brand.megaMenuVideo1 && brand.megaMenuVideo1.trim() !== '' ? brand.megaMenuVideo1 : undefined}
+                  imageSrc={getImageUrl(brand.megaMenuImage1 || brand.logoUrl) || '/placeholder-hero.jpg'}
                   aspectRatioMobile="4/5"
                   heightClass="md:h-[500px]"
                 />

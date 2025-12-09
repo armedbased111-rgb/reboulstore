@@ -31,6 +31,20 @@ export interface Shop {
   updatedAt: string;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  logoUrl?: string;
+  megaMenuImage1?: string;
+  megaMenuImage2?: string;
+  megaMenuVideo1?: string;
+  megaMenuVideo2?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -39,6 +53,7 @@ export interface Category {
   createdAt: string;
   updatedAt: string;
   imageUrl?: string;
+  videoUrl?: string;
   sizeChart?: SizeChartEntry[];
 }
 
@@ -51,6 +66,8 @@ export interface Product {
   category?: Category;
   shopId?: string;
   shop?: Shop;
+  brandId?: string;
+  brand?: Brand;
   images?: Image[];
   variants?: Variant[];
   createdAt: string;
@@ -135,6 +152,7 @@ export interface CustomerInfo {
 // Types pour les paramètres de requête
 export interface ProductQuery {
   category?: string;
+  brand?: string;
   minPrice?: number;
   maxPrice?: number;
   search?: string;

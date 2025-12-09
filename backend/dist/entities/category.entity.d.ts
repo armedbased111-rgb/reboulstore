@@ -6,6 +6,7 @@ export declare class Category {
     description: string | null;
     products: Product[];
     imageUrl: string | null;
+    videoUrl: string | null;
     sizeChart: Array<{
         size: string;
         chest?: number;

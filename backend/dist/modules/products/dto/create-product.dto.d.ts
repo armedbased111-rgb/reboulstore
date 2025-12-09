@@ -4,6 +4,7 @@ export declare class CreateProductDto {
     price: number;
     categoryId: string;
     shopId?: string;
+    brandId?: string;
     materials?: string;
     careInstructions?: string;
     madeIn?: string;

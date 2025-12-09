@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import { useCategories } from '../../hooks/useCategories';
+import { useBrands } from '../../hooks/useBrands';
 import { Button } from "@/components/ui/button"
+import type { Brand } from '../../types';
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCart();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const { brands, loading: brandsLoading, error: brandsError } = useBrands();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
+  const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
   
   const cartItemsCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
@@ -27,16 +32,47 @@ export const Header = () => {
 
           {/* Navigation à gauche après le logo */}
             <nav className="hidden md:flex items-center gap-[37px]">
-            {/* Menu SHOP avec mega menu */}
+            {/* Menu CATALOGUE avec mega menu */}
             <div className="relative">
               <button
-                onClick={() => setIsShopMenuOpen(!isShopMenuOpen)}
-                onMouseEnter={() => setIsShopMenuOpen(true)}
+                onClick={() => {
+                  setIsShopMenuOpen(!isShopMenuOpen);
+                  setIsBrandsMenuOpen(false);
+                }}
+                onMouseEnter={() => {
+                  setIsShopMenuOpen(true);
+                  setIsBrandsMenuOpen(false);
+                }}
                 className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
                 Catalogue
                 <svg 
                   className={`w-3 h-3 transition-transform ${isShopMenuOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Menu BRANDS avec mega menu */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setIsBrandsMenuOpen(!isBrandsMenuOpen);
+                  setIsShopMenuOpen(false);
+                }}
+                onMouseEnter={() => {
+                  setIsBrandsMenuOpen(true);
+                  setIsShopMenuOpen(false);
+                }}
+                className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
+              >
+                Brands
+                <svg 
+                  className={`w-3 h-3 transition-transform ${isBrandsMenuOpen ? 'rotate-180' : ''}`}
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -135,7 +171,7 @@ export const Header = () => {
           </button>
         </div>
         
-        {/* Mega Menu - Style A-COLD-WALL* - Enfant du header pour être sticky */}
+        {/* Mega Menu CATALOGUE - Style A-COLD-WALL* - Enfant du header pour être sticky */}
         {isShopMenuOpen && (
           <>
             {/* Overlay avec blur/shadow sur le contenu - Commence après PromoBanner + Navbar */}
@@ -209,6 +245,117 @@ export const Header = () => {
                     />
                     <p className="text-xs text-black uppercase">
                       ARSENAL* X REBOULSTORE
+                    </p>
+                  </div> 
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Mega Menu BRANDS - Style A-COLD-WALL* avec hover images */}
+        {isBrandsMenuOpen && (
+          <>
+            {/* Overlay avec blur/shadow sur le contenu */}
+            <div 
+              className="fixed top-[92px] left-0 right-0 bottom-0 bg-black/10 backdrop-blur-sm z-[45]"
+              onClick={() => setIsBrandsMenuOpen(false)}
+            />
+            
+            {/* Menu */}
+            <div 
+              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[55]"
+              onMouseLeave={() => {
+                setIsBrandsMenuOpen(false);
+                setHoveredBrand(null);
+              }}
+            >
+              <div className="flex">
+                {/* Colonne gauche : Marques - Large espace */}
+                <div className="w-[500px] px-[4px] py-[1px] flex-shrink-0">
+                  <ul>
+                    {brandsLoading ? (
+                      <li className="text-base text-gray-500">Chargement...</li>
+                    ) : brandsError ? (
+                      <li className="text-base text-red-500">Erreur de chargement</li>
+                    ) : brands.length === 0 ? (
+                      <li className="text-base text-gray-500">Aucune marque</li>
+                    ) : (
+                      brands.map((brand) => (
+                        <li 
+                          key={brand.id}
+                          onMouseEnter={() => setHoveredBrand(brand)}
+                          onMouseLeave={() => setHoveredBrand(null)}
+                        >
+                          <Link
+                            to={`/catalog?brand=${brand.slug}`}
+                            className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
+                            onClick={() => setIsBrandsMenuOpen(false)}
+                          >
+                            {brand.name}
+                          </Link>
+                        </li>
+                      ))
+                    )}
+                    <li>
+                      <Link
+                        to="/catalog"
+                        className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
+                        onClick={() => setIsBrandsMenuOpen(false)}
+                      >
+                        Shop All Brands
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Section droite : Images/Vidéos qui changent au hover */}
+                <div className="flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end">
+                  {/* Image/Vidéo 1 */}
+                  <div className="max-w-[320px]">
+                    {hoveredBrand?.megaMenuVideo1 ? (
+                      <video 
+                        src={hoveredBrand.megaMenuVideo1}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                      />
+                    ) : (
+                      <img 
+                        src={hoveredBrand?.megaMenuImage1 || '/webdesign/AW25_LB_4_5_03_2.png'}
+                        alt={hoveredBrand?.name || 'Brand Collection'}
+                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                        loading="lazy"
+                      />
+                    )}
+                    <p className="text-xs text-black uppercase">
+                      {hoveredBrand?.name || 'OUR BRANDS'}
+                    </p>
+                  </div>
+
+                  {/* Image/Vidéo 2 */}
+                  <div className="max-w-[320px]">
+                    {hoveredBrand?.megaMenuVideo2 ? (
+                      <video 
+                        src={hoveredBrand.megaMenuVideo2}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                      />
+                    ) : (
+                      <img 
+                        src={hoveredBrand?.megaMenuImage2 || '/webdesign/publicity2.png'}
+                        alt={hoveredBrand?.name || 'Brand Collection'}
+                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                        loading="lazy"
+                      />
+                    )}
+                    <p className="text-xs text-black uppercase">
+                      {hoveredBrand ? `${hoveredBrand.name} COLLECTION` : 'PREMIUM BRANDS'}
                     </p>
                   </div> 
                 </div>

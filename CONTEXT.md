@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.10.0  
-**Phase actuelle** : Phase 8 complétée - Prochaine : Phase 9 (Backend Auth)
+**Version** : 0.10.1  
+**Phase actuelle** : Phase 8.5 complétée (Brands + Support Vidéo/Image) - Prochaine : Phase 9 (Backend Auth)
 
 ---
 
@@ -88,14 +88,15 @@ reboulstore/
 
 ### Backend complété ✅
 - ✅ **Infrastructure** : Docker + PostgreSQL + NestJS configurés
-- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop
+- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop, Brand
 - ✅ **Modules API** :
-  - Categories (CRUD + slug)
-  - Products (CRUD + filtres + pagination + variants + images + upload local)
+  - Categories (CRUD + slug + videoUrl + sizeChart)
+  - Products (CRUD + filtres + pagination + variants + images + upload local + filtre brand)
   - Cart (gestion complète avec session)
   - Orders (création + statuts + vérification stock)
   - Shops (CRUD + politiques)
-- ✅ **Relations** : Toutes les relations TypeORM configurées
+  - Brands (CRUD + slug + images/vidéos mega menu)
+- ✅ **Relations** : Toutes les relations TypeORM configurées (Product → Brand, Brand → Products)
 - ✅ **Politiques** : Shop avec shippingPolicy et returnPolicy (jsonb)
 - ✅ **Size charts** : Category + Product (override possible)
 - ✅ **Upload images** : Multer + stockage local (à migrer vers Cloudinary)
@@ -103,15 +104,16 @@ reboulstore/
 ### Frontend complété ✅
 - ✅ **Infrastructure** : Vite + React + TailwindCSS v4 + Docker
 - ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /checkout, /about)
-- ✅ **Services API** : products, categories, cart, orders
-- ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useLocalStorage
-- ✅ **Layout** : Header (mega menu catégories + recherche + badge panier) + Footer (style A-COLD-WALL*)
+- ✅ **Services API** : products, categories, cart, orders, brands
+- ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useBrands, useLocalStorage
+- ✅ **Layout** : Header (mega menu catégories + **mega menu brands avec hover** + recherche + badge panier) + Footer (style A-COLD-WALL*)
 - ✅ **Pages** :
-  - **Home** : HeroSectionImage, HeroSectionVideo, CategorySection, FeaturedProducts, PromoCard
-  - **Catalog** : ProductGrid, ProductCard, filtres par catégorie
+  - **Home** : HeroSectionImage (support vidéo/image), HeroSectionVideo, CategorySection, FeaturedProducts, PromoCard
+  - **Catalog** : ProductGrid, ProductCard, **filtres par catégorie + marque**, HeroSection avec vidéo/image pour brands/categories (priorité vidéo)
   - **Product** : ProductGallery (Swiper), ProductInfo, VariantSelector, AddToCartButton, ProductTabs (Details, Sizing, Shipping, Returns avec logique d'héritage)
 - ✅ **Composants** : Style A-COLD-WALL* minimaliste premium
 - ✅ **Responsive** : Mobile-first avec breakpoints TailwindCSS
+- ✅ **Navigation Brands** : Onglet Brands, mega menu avec images/vidéos changeantes au hover (priorité vidéo)
 
 ### 🔄 En attente
 - ⏸️ **Politiques** : Validation finale avec direction (voir `POLICIES_TODO.md`)

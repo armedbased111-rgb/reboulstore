@@ -19,6 +19,7 @@ let Category = class Category {
     description;
     products;
     imageUrl;
+    videoUrl;
     sizeChart;
     createdAt;
     updatedAt;
@@ -48,6 +49,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
     __metadata("design:type", Object)
 ], Category.prototype, "imageUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", Object)
+], Category.prototype, "videoUrl", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
     __metadata("design:type", Object)

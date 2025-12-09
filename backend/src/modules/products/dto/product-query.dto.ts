@@ -7,6 +7,10 @@ export class ProductQueryDto {
   category?: string;
 
   @IsOptional()
+  @IsUUID()
+  brand?: string;
+
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   @Min(0)

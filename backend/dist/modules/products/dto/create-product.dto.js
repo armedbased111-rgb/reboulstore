@@ -17,6 +17,7 @@ class CreateProductDto {
     price;
     categoryId;
     shopId;
+    brandId;
     materials;
     careInstructions;
     madeIn;
@@ -48,6 +49,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "shopId", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "brandId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

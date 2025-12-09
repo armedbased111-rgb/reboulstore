@@ -29,6 +29,13 @@ export class Category {
   imageUrl: string | null;
 
   /**
+   * URL de la vidéo pour le hero section
+   * Si fournie, sera affichée en priorité sur imageUrl
+   */
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  videoUrl: string | null;
+
+  /**
    * Size chart par défaut pour tous les produits de cette catégorie
    * Structure JSON avec tableau de tailles
    */

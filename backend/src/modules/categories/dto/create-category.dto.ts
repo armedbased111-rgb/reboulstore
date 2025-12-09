@@ -20,6 +20,11 @@ export class CreateCategoryDto {
   @MaxLength(500)
   imageUrl?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  videoUrl?: string;
+
   // Size chart par défaut pour cette catégorie
   @IsArray()
   @IsOptional()

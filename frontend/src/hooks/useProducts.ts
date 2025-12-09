@@ -28,6 +28,7 @@ export const useProducts = (query?: ProductQuery): UseProductsReturn => {
     // Comparer les valeurs plutôt que la référence de l'objet
     const queryString = useMemo(() => JSON.stringify(query || {}), [
         query?.category,
+        query?.brand,
         query?.minPrice,
         query?.maxPrice,
         query?.search,

@@ -34,10 +34,13 @@ let ProductsService = class ProductsService {
         this.imageRepository = imageRepository;
     }
     async findAll(query) {
-        const { category, minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
+        const { category, brand, minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
         const where = {};
         if (category) {
             where.categoryId = category;
+        }
+        if (brand) {
+            where.brandId = brand;
         }
         if (minPrice !== undefined || maxPrice !== undefined) {
             where.price = (0, typeorm_2.Between)(minPrice ?? 0, maxPrice ?? Number.MAX_SAFE_INTEGER);
@@ -47,7 +50,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'shop', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,
@@ -63,7 +66,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         const product = await this.productRepository.findOne({
             where: { id },
-            relations: ['category', 'shop', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'images', 'variants'],
         });
         if (!product) {
             throw new common_1.NotFoundException(`Product with ID ${id} not found`);
@@ -83,7 +86,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'shop', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,
