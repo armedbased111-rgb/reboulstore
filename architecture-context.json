@@ -1,0 +1,576 @@
+{
+  "system_name": "Reboul Store Platform",
+  "description": "Reboul Store Platform est un écosystème e-commerce français comprenant 3 sites indépendants spécialisés dans la mode premium et streetwear. Chaque site (Reboul, CP Company, Outlet) possède son propre frontend, backend et base de données. Une Admin Centrale unique permet de gérer les 3 sites depuis une seule interface. Focus actuel : Reboul (catégorie enfants) pour lancement février 2025, suivi de CP Company et Outlet.",
+  "stack": {
+    "frontend": [
+      "React 18 (TypeScript)",
+      "Vite (build tool)",
+      "TailwindCSS v4 (styling)",
+      "shadcn/ui (composants UI)",
+      "React Router (routing)",
+      "Geist (typographie)",
+      "Swiper (galeries produits)",
+      "Socket.io client (WebSockets, à venir)",
+      "Docker (containerisation)"
+    ],
+    "backend": [
+      "NestJS (framework Node.js)",
+      "TypeScript",
+      "TypeORM (ORM)",
+      "PostgreSQL 15 (base de données)",
+      "Express (sous-jacent à NestJS)",
+      "class-validator (validation)",
+      "class-transformer (transformation)",
+      "Multer (upload fichiers local, migration Cloudinary prévue)",
+      "bcrypt (hachage mots de passe)",
+      "jsonwebtoken (JWT, à venir)",
+      "@nestjs/jwt (auth JWT, à venir)",
+      "@nestjs/passport (auth strategies, à venir)",
+      "Docker (containerisation)"
+    ],
+    "infrastructure": [
+      "Docker Compose (orchestration locale)",
+      "PostgreSQL 15 Alpine (BDD principale)",
+      "Redis (cache optionnel, phase 18)",
+      "Nginx (reverse proxy en production)",
+      "Let's Encrypt (SSL production)",
+      "PM2 ou Docker Swarm (déploiement prod, phase 23)"
+    ],
+    "external_services": [
+      "Cloudinary (CDN images, optimisation - phase 15)",
+      "Stripe (paiement)",
+      "Stripe Connect (répartition paiements multi-shops - phase 13)",
+      "Nodemailer (emails transactionnels - phase 11)",
+      "Twilio ou Vonage (SMS réinitialisation mot de passe - phase 18)",
+      "Google OAuth (authentification)",
+      "Apple OAuth (authentification)",
+      "Socket.io (temps réel, notifications - phase 18)",
+      "n8n (automatisation workflows - phase 20)",
+      "Sentry (monitoring erreurs - phase 20)",
+      "Google Analytics 4 (analytics - phase 24)",
+      "Hotjar (heatmaps, analytics - phase 24)"
+    ]
+  },
+  "components": [
+    {
+      "id": "FRONTEND_REBOUL",
+      "name": "Frontend Reboul (Site Principal)",
+      "layer": "frontend",
+      "type": "ui_module",
+      "responsibilities": [
+        "Interface utilisateur e-commerce Reboul (navigation, catalogue, produits, panier)",
+        "Catégorie enfants uniquement (objectif février 2025)",
+        "Authentification utilisateur (login, register, OAuth)",
+        "Tunnel d'achat complet (panier, checkout, paiement Stripe)",
+        "Gestion profil utilisateur (adresses, historique commandes)",
+        "Affichage dynamique mega menu (catégories et marques avec images/vidéos au hover)",
+        "Responsive mobile-first (design minimaliste premium inspiré A-COLD-WALL*)"
+      ],
+      "tech": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "TailwindCSS v4",
+        "React Router",
+        "shadcn/ui"
+      ],
+      "exposed_interfaces": [
+        "HTTP GET / (page d'accueil)",
+        "HTTP GET /catalog (catalogue produits avec filtres)",
+        "HTTP GET /product/:id (détails produit)",
+        "HTTP GET /cart (panier)",
+        "HTTP GET /checkout (tunnel d'achat)",
+        "HTTP GET /login, /register (auth)",
+        "HTTP GET /profile (profil utilisateur)",
+        "HTTP GET /orders (historique commandes)",
+        "HTTP GET /orders/:id (détails commande)",
+        "HTTP GET /about, /contact, /stores (pages vitrine)"
+      ],
+      "data_owned": [
+        "État local panier (localStorage/sessionStorage)",
+        "JWT token utilisateur (localStorage)",
+        "Préférences UI (thème, langue future)"
+      ]
+    },
+    {
+      "id": "ADMIN_CENTRALE",
+      "name": "Admin Centrale (Application Unifiée)",
+      "layer": "frontend",
+      "type": "ui_module",
+      "responsibilities": [
+        "Interface unique pour gérer les 3 sites (Reboul, CP Company, Outlet)",
+        "Connexion aux 3 backends via API",
+        "Gestion produits par site (CRUD, upload images, variants, stocks)",
+        "Gestion commandes par site (liste, détails, statut, tracking, remboursements)",
+        "Gestion utilisateurs par site (liste, recherche, changement rôle)",
+        "Gestion politiques par site (livraison/retour, paiement Stripe)",
+        "Dashboard statistiques globales et par site (CA, commandes, produits, utilisateurs)",
+        "Switch entre sites depuis un seul menu",
+        "Accès réservé aux rôles ADMIN et SUPER_ADMIN"
+      ],
+      "tech": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "GeistUI ou TailwindCSS",
+        "React Router"
+      ],
+      "exposed_interfaces": [
+        "HTTP GET /admin/dashboard (tableau de bord)",
+        "HTTP GET /admin/products (gestion produits)",
+        "HTTP GET /admin/orders (gestion commandes)",
+        "HTTP GET /admin/users (gestion utilisateurs)",
+        "HTTP GET /admin/shops (gestion shops)"
+      ],
+      "data_owned": [
+        "JWT token admin (localStorage)",
+        "Cache statistiques (temporaire)"
+      ]
+    },
+    {
+      "id": "API_REBOUL",
+      "name": "API Backend Reboul (NestJS)",
+      "layer": "backend",
+      "type": "service",
+      "responsibilities": [
+        "Backend dédié au site Reboul (catégorie enfants)",
+        "Gestion catalogue produits (CRUD, filtres, pagination, recherche)",
+        "Gestion catégories et marques (CRUD, slug, images/vidéos mega menu)",
+        "Authentification JWT et OAuth (Google, Apple)",
+        "Gestion utilisateurs (profil, adresses, rôles)",
+        "Gestion panier (ajout/retrait produits, calcul totaux)",
+        "Gestion commandes (création, cycle de vie, statuts, tracking)",
+        "Intégration paiement Stripe (compte Reboul)",
+        "Upload images (local puis migration Cloudinary)",
+        "Gestion stock (décrémentation/incrémentation, alertes)",
+        "Envoi emails transactionnels (confirmation commande, tracking)",
+        "Routes admin pour Admin Centrale (CRUD complet)",
+        "Contrôle accès basé sur rôles (RBAC)"
+      ],
+      "tech": [
+        "NestJS",
+        "TypeScript",
+        "TypeORM",
+        "Express",
+        "class-validator",
+        "JWT",
+        "Passport"
+      ],
+      "exposed_interfaces": [
+        "HTTP REST /api/products (CRUD, GET /products?category=&brand=&minPrice=&maxPrice=)",
+        "HTTP REST /api/categories (CRUD, GET /categories?shop=)",
+        "HTTP REST /api/brands (CRUD, GET /brands, GET /brands/:slug)",
+        "HTTP REST /api/shops (CRUD, GET /shops, PATCH /shops/:id/policies)",
+        "HTTP REST /api/auth (POST /register, POST /login, GET /me, POST /refresh)",
+        "HTTP REST /api/users (GET /me, PATCH /me, GET /me/addresses, POST /me/addresses)",
+        "HTTP REST /api/cart (GET /cart/:sessionId, POST /cart, PATCH /cart/:id, DELETE /cart/:id)",
+        "HTTP REST /api/orders (POST /orders, GET /orders, GET /orders/:id, GET /orders/me)",
+        "HTTP POST /api/stripe/webhook (webhooks Stripe)",
+        "HTTP REST /api/admin/products, /admin/orders, /admin/users (routes admin)",
+        "WebSocket /ws (notifications temps réel, phase 18)"
+      ],
+      "data_owned": [
+        "User",
+        "Address",
+        "Product",
+        "Variant",
+        "Image",
+        "Category",
+        "Brand",
+        "Shop",
+        "Cart",
+        "CartItem",
+        "Order",
+        "OrderItem",
+        "Wishlist (phase 18)",
+        "Review (phase 18)",
+        "Coupon (phase 18)"
+      ]
+    },
+    {
+      "id": "DATABASE_REBOUL",
+      "name": "Base de données PostgreSQL Reboul",
+      "layer": "infrastructure",
+      "type": "database",
+      "responsibilities": [
+        "Base de données dédiée au site Reboul",
+        "Stockage persistant de toutes les données métier Reboul",
+        "Relations entre entités (produits, catégories, marques, utilisateurs, commandes)",
+        "Isolation complète des données par rapport aux autres sites",
+        "Indexation pour performance requêtes",
+        "Transactions ACID pour cohérence données (paiement, stock)",
+        "Backups automatiques quotidiens en production"
+      ],
+      "tech": [
+        "PostgreSQL 15 Alpine"
+      ],
+      "exposed_interfaces": [
+        "TCP 5432 (connexion TypeORM depuis backend)"
+      ],
+      "data_owned": [
+        "users (utilisateurs Reboul)",
+        "addresses (adresses livraison/facturation)",
+        "categories (catégories enfants)",
+        "brands (marques)",
+        "products (produits catégorie enfants)",
+        "variants (tailles/couleurs par produit)",
+        "images (images produits, URLs Cloudinary futures)",
+        "carts (paniers utilisateurs)",
+        "cart_items (articles dans paniers)",
+        "orders (commandes Reboul)",
+        "order_items (articles dans commandes)",
+        "wishlists (favoris, future)",
+        "reviews (avis clients, future)",
+        "coupons (codes promo, future)"
+      ]
+    },
+    {
+      "id": "API_CP_COMPANY",
+      "name": "API Backend CP Company (NestJS - Futur)",
+      "layer": "backend",
+      "type": "service",
+      "responsibilities": [
+        "Backend dédié au site CP Company (à créer après lancement Reboul)",
+        "Même structure que API_REBOUL",
+        "Base de données PostgreSQL dédiée",
+        "Compte Stripe dédié"
+      ],
+      "tech": ["NestJS", "TypeScript", "TypeORM", "PostgreSQL"],
+      "exposed_interfaces": ["HTTP REST API (même structure que Reboul)"],
+      "data_owned": ["Données CP Company isolées"]
+    },
+    {
+      "id": "API_OUTLET",
+      "name": "API Backend Outlet (NestJS - Futur)",
+      "layer": "backend",
+      "type": "service",
+      "responsibilities": [
+        "Backend dédié au site Outlet (à créer après CP Company)",
+        "Même structure que API_REBOUL",
+        "Base de données PostgreSQL dédiée",
+        "Compte Stripe dédié"
+      ],
+      "tech": ["NestJS", "TypeScript", "TypeORM", "PostgreSQL"],
+      "exposed_interfaces": ["HTTP REST API (même structure que Reboul)"],
+      "data_owned": ["Données Outlet isolées"]
+    },
+    {
+      "id": "CLOUDINARY",
+      "name": "Cloudinary CDN",
+      "layer": "external",
+      "type": "service",
+      "responsibilities": [
+        "Stockage images produits (max 7 par produit)",
+        "Optimisation automatique (compression, format WebP)",
+        "Génération thumbnails (200x200, 400x400, 1200x1200)",
+        "CDN distribution rapide images",
+        "Transformation images à la volée (crop, resize, quality)"
+      ],
+      "tech": [
+        "Cloudinary API REST"
+      ],
+      "exposed_interfaces": [
+        "HTTP REST API (upload, delete, transform)"
+      ],
+      "data_owned": [
+        "Images produits (JPG, PNG, WebP)",
+        "Metadata images (dimensions, format, URL)"
+      ]
+    },
+    {
+      "id": "STRIPE",
+      "name": "Stripe Payments",
+      "layer": "external",
+      "type": "service",
+      "responsibilities": [
+        "Traitement paiements par carte bancaire (3D Secure)",
+        "Création PaymentIntent pour chaque commande",
+        "Gestion remboursements",
+        "Webhooks pour synchronisation statuts paiement",
+        "Stripe Connect pour répartition paiements entre shops (plateforme multi-vendor)"
+      ],
+      "tech": [
+        "Stripe API",
+        "Stripe Connect"
+      ],
+      "exposed_interfaces": [
+        "HTTP REST API Stripe (create PaymentIntent, confirm, refund)",
+        "Webhooks (payment_intent.succeeded, charge.refunded)"
+      ],
+      "data_owned": [
+        "PaymentIntent (transactions paiement)",
+        "Stripe Account ID par shop (Stripe Connect)"
+      ]
+    },
+    {
+      "id": "EMAIL_SERVICE",
+      "name": "Service Email (Nodemailer)",
+      "layer": "external",
+      "type": "service",
+      "responsibilities": [
+        "Envoi emails transactionnels (confirmation inscription, commande, expédition)",
+        "Templates HTML emails branded",
+        "Support SMTP (Gmail, SendGrid, AWS SES)"
+      ],
+      "tech": [
+        "Nodemailer",
+        "SMTP Gmail ou SendGrid"
+      ],
+      "exposed_interfaces": [
+        "SMTP (interne depuis backend)"
+      ],
+      "data_owned": [
+        "Logs envois emails"
+      ]
+    },
+    {
+      "id": "SMS_SERVICE",
+      "name": "Service SMS (Twilio/Vonage)",
+      "layer": "external",
+      "type": "service",
+      "responsibilities": [
+        "Envoi SMS réinitialisation mot de passe",
+        "Envoi SMS notification expédition commande (tracking)",
+        "Limitation rate pour éviter spam"
+      ],
+      "tech": [
+        "Twilio ou Vonage API"
+      ],
+      "exposed_interfaces": [
+        "HTTP REST API (send SMS)"
+      ],
+      "data_owned": [
+        "Logs envois SMS"
+      ]
+    },
+    {
+      "id": "REDIS_CACHE",
+      "name": "Redis Cache (optionnel)",
+      "layer": "infrastructure",
+      "type": "database",
+      "responsibilities": [
+        "Cache produits (TTL 5 min)",
+        "Cache catégories et marques (TTL 10 min)",
+        "Sessions utilisateurs (alternative localStorage)",
+        "Invalidation cache après modification données"
+      ],
+      "tech": [
+        "Redis"
+      ],
+      "exposed_interfaces": [
+        "TCP 6379 (connexion depuis backend)"
+      ],
+      "data_owned": [
+        "Cache temporaire (produits, catégories, brands)"
+      ]
+    },
+    {
+      "id": "N8N_AUTOMATION",
+      "name": "n8n Workflow Automation",
+      "layer": "external",
+      "type": "service",
+      "responsibilities": [
+        "Auto-remboursement si retour validé",
+        "Relance panier abandonné (email après 24h)",
+        "Notification stock bas (email admin)",
+        "Export commandes vers comptabilité (CSV quotidien)"
+      ],
+      "tech": [
+        "n8n self-hosted ou cloud"
+      ],
+      "exposed_interfaces": [
+        "Webhooks HTTP (déclenchés depuis backend)",
+        "HTTP REST API (récupération données)"
+      ],
+      "data_owned": [
+        "Workflows configurations"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "FRONTEND_REBOUL",
+      "to": "API_REBOUL",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "high",
+      "description": "Le frontend Reboul appelle son API backend dédiée pour toutes les opérations métier : catalogue produits, panier, commandes, authentification, profil utilisateur. Toutes les requêtes passent par fetch() avec headers Authorization (JWT après login)."
+    },
+    {
+      "from": "ADMIN_CENTRALE",
+      "to": "API_REBOUL",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "L'Admin Centrale se connecte à l'API Reboul sur les routes /admin/* pour gérer produits, commandes, utilisateurs. Toutes les requêtes nécessitent JWT avec rôle ADMIN ou SUPER_ADMIN."
+    },
+    {
+      "from": "ADMIN_CENTRALE",
+      "to": "API_CP_COMPANY",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "L'Admin Centrale se connectera à l'API CP Company (futur) pour gérer ce site de la même manière que Reboul."
+    },
+    {
+      "from": "ADMIN_CENTRALE",
+      "to": "API_OUTLET",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "L'Admin Centrale se connectera à l'API Outlet (futur) pour gérer ce site de la même manière que Reboul."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "DATABASE_REBOUL",
+      "direction": "request_response",
+      "protocol": "internal_call",
+      "frequency": "high",
+      "description": "Le backend Reboul interroge et modifie sa base PostgreSQL dédiée via TypeORM. Isolation complète des données. Transactions ACID pour paiements et gestion stock."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "CLOUDINARY",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "Le backend Reboul upload les images produits vers Cloudinary (max 7 par produit, 1200x1200px). Cloudinary retourne URLs CDN optimisées stockées en BDD. Supporte JPG, PNG, WebP."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "STRIPE",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "high",
+      "description": "Le backend Reboul crée PaymentIntent Stripe lors checkout (compte Stripe Reboul), confirme paiement, gère remboursements. Reçoit webhooks pour synchronisation statuts."
+    },
+    {
+      "from": "STRIPE",
+      "to": "API_REBOUL",
+      "direction": "event",
+      "protocol": "HTTPS",
+      "frequency": "high",
+      "description": "Stripe envoie webhooks (payment_intent.succeeded, charge.refunded) au backend Reboul pour synchroniser statuts paiement, décrémentation stock, création commande finale."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "EMAIL_SERVICE",
+      "direction": "one_way",
+      "protocol": "SMTP",
+      "frequency": "high",
+      "description": "Le backend Reboul envoie emails transactionnels via Nodemailer : confirmation inscription, confirmation commande, notification expédition (avec tracking), livraison, annulation/remboursement."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "SMS_SERVICE",
+      "direction": "one_way",
+      "protocol": "HTTPS",
+      "frequency": "low",
+      "description": "Le backend Reboul envoie SMS via Twilio/Vonage pour réinitialisation mot de passe (code OTP) et notification expédition commande (numéro tracking) - Futur."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "REDIS_CACHE",
+      "direction": "request_response",
+      "protocol": "internal_call",
+      "frequency": "high",
+      "description": "Le backend Reboul cache produits et catégories dans Redis (TTL 5-10 min) pour réduire charge BDD. Invalide cache après modifications (CRUD produits/catégories) - Futur."
+    },
+    {
+      "from": "API_REBOUL",
+      "to": "N8N_AUTOMATION",
+      "direction": "event",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "Le backend Reboul déclenche workflows n8n via webhooks : auto-remboursement, relance panier abandonné, notification stock bas, export commandes CSV quotidien - Futur."
+    },
+    {
+      "from": "FRONTEND_REBOUL",
+      "to": "STRIPE",
+      "direction": "request_response",
+      "protocol": "HTTPS",
+      "frequency": "medium",
+      "description": "Le frontend utilise Stripe.js et Elements pour afficher formulaire paiement sécurisé (PCI DSS compliant). Confirme paiement côté client après création PaymentIntent backend."
+    }
+  ],
+  "constraints": {
+    "security": [
+      "Authentification JWT (access token 15min, refresh token 7 jours)",
+      "OAuth 2.0 Google et Apple (alternative login classique)",
+      "Hachage mots de passe avec bcrypt (salt rounds 10)",
+      "Rate limiting strict : 10 req/min login, 100 req/min API générale",
+      "Validation complète avec class-validator sur tous les DTOs backend",
+      "CORS configuré (whitelist domaines frontend et admin)",
+      "Helmet.js en production (headers sécurité HTTP)",
+      "SSL/TLS obligatoire en production (Let's Encrypt)",
+      "Isolation multi-sites : chaque site a sa propre base de données et backend",
+      "RBAC (Role-Based Access Control) : CLIENT, ADMIN, SUPER_ADMIN",
+      "Vérification email unique lors inscription",
+      "Protection CSRF pour formulaires sensibles",
+      "Audit dépendances régulier (npm audit, Snyk)"
+    ],
+    "performance": [
+      "Temps réponse API < 200ms pour 95% requêtes (hors paiement)",
+      "Pagination obligatoire : max 100 items par page",
+      "Cache Redis produits (TTL 5 min) et catégories (TTL 10 min)",
+      "Index PostgreSQL sur colonnes filtrées : shopId, categoryId, brandId, slug",
+      "Lazy loading images frontend (react-lazy-load-image)",
+      "Code splitting React (React.lazy, Suspense)",
+      "Optimisation Cloudinary : WebP, compression automatique, responsive images",
+      "CDN Cloudflare/CloudFront pour assets statiques en production",
+      "Compression gzip/brotli Nginx en production",
+      "Éviter requêtes N+1 TypeORM (eager loading relations nécessaires)",
+      "Lighthouse score > 90 (Performance, Accessibility, Best Practices, SEO)",
+      "Core Web Vitals optimisés (LCP < 2.5s, FID < 100ms, CLS < 0.1)"
+    ],
+    "scalability": [
+      "Architecture stateless backend (scaling horizontal facile)",
+      "Sessions stockées en Redis (alternative JWT pur stateless)",
+      "Upload images Cloudinary (pas de stockage local en prod)",
+      "Base PostgreSQL avec read replicas possibles (future)",
+      "Architecture multi-sites permet scaling illimité (nouveau site = nouveau container Docker)",
+      "Cache Redis partagé entre instances backend (scaling horizontal)",
+      "Queue jobs asynchrones pour tâches lourdes (future : Bull avec Redis)",
+      "WebSockets avec Socket.io (supporte clustering via Redis adapter)",
+      "Database migrations TypeORM (pas de synchronize en prod)",
+      "Monitoring Sentry pour détecter goulots étranglement",
+      "Auto-scaling Kubernetes ou Docker Swarm en production (optionnel)"
+    ],
+    "other": [
+      "RGPD compliant : droit accès, rectification, suppression données utilisateur",
+      "Conformité PCI DSS via Stripe (pas de stockage données carte)",
+      "Backups PostgreSQL automatiques quotidiens (rétention 30 jours)",
+      "Logs centralisés (Winston, export vers Sentry/Grafana)",
+      "Environnements séparés : dev (Docker local), staging, prod",
+      "CI/CD GitHub Actions : lint → test → build → deploy",
+      "Tests coverage minimum 70% (backend), E2E Playwright (frontend)",
+      "Accessibilité WCAG 2.1 AA (contraste couleurs, navigation clavier, ARIA)",
+      "SEO : sitemap.xml dynamique, robots.txt, Open Graph, JSON-LD",
+      "Mobile-first responsive design (breakpoints TailwindCSS)",
+      "Design system cohérent inspiré A-COLD-WALL* (minimaliste premium)",
+      "Support navigateurs : Chrome, Firefox, Safari, Edge (2 dernières versions)"
+    ]
+  },
+  "naming_conventions": {
+    "frontend": "PascalCase pour composants React (ProductCard.tsx, CartSummary.tsx). camelCase pour hooks (useAuth, useProducts). Dossiers lowercase (components/, pages/, services/). Fichiers types : types/index.ts avec interfaces PascalCase (Product, User, Order). Services API : camelCase (getProducts, createOrder).",
+    "backend": "PascalCase pour entités TypeORM (Product, User, Order). PascalCase pour modules NestJS (ProductsModule, AuthModule). Suffixes : .entity.ts, .dto.ts, .service.ts, .controller.ts, .module.ts. camelCase pour méthodes services (findAll, create, update). DTOs PascalCase avec suffixe (CreateProductDto, UpdateUserDto). Enums PascalCase (UserRole, OrderStatus).",
+    "api": "Routes kebab-case : /api/products, /api/cart-items, /api/auth/reset-password. Verbes HTTP standards : GET (lecture), POST (création), PATCH (modification partielle), DELETE (suppression). Query params camelCase : ?minPrice=10&maxPrice=100&categoryId=uuid. Response JSON camelCase : {id, name, createdAt}. Pagination : ?page=1&limit=20. Versioning future : /api/v1/products.",
+    "database": "Tables snake_case pluriels : users, products, cart_items, order_items. Colonnes snake_case : created_at, updated_at, user_id, shop_id. Clés étrangères suffixe _id : shop_id, category_id, brand_id. Index préfixe idx_ : idx_products_shop_id. Contraintes préfixe fk_, uq_, chk_. Enums snake_case majuscules : CLIENT, ADMIN, SUPER_ADMIN.",
+    "files_and_folders": "Frontend : src/components/, src/pages/, src/services/, src/hooks/, src/types/, src/assets/. Backend : src/entities/, src/modules/, src/common/, src/config/. Tests : *.spec.ts (backend), *.test.tsx (frontend). Config : .env.example, .env.local, .env.production. Dockerfiles majuscules : Dockerfile, docker-compose.yml. Markdown majuscules : README.md, CONTEXT.md."
+  },
+  "non_goals": [
+    "Pas de marketplace tiers : Reboul Store vend uniquement ses propres produits (pas de vendeurs externes)",
+    "Pas de CP Company ni Outlet avant lancement Reboul : focus absolu sur Reboul (catégorie enfants) pour février 2025",
+    "Pas de multi-catégories Reboul au lancement : uniquement catégorie enfants pour commencer",
+    "Pas de vente internationale immédiate : focus France métropole en MVP (multi-devise/multi-langue phase 24)",
+    "Pas de click & collect en MVP : fonctionnalité vente en magasin reportée (POS phase 24)",
+    "Pas d'application mobile native en MVP : focus web responsive, app React Native en phase 24",
+    "Pas de programme fidélité en MVP : reporté post-lancement",
+    "Pas de chat bot IA en MVP : reporté post-lancement",
+    "Pas de recommendations IA complexes : filtrage et tri simples suffisent en MVP",
+    "Pas de blockchain/crypto paiement : Stripe uniquement",
+    "Pas de dropshipping : gestion stock interne uniquement",
+    "Pas de ERP externe en MVP : gestion stock intégrée, sync ERP future si besoin",
+    "Pas de multi-région dès le départ : hébergement France, scaling international phase 24"
+  ]
+}

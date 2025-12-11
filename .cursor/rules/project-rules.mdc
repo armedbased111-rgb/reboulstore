@@ -22,6 +22,110 @@ alwaysApply: true
 
 ### Frontend / Interface utilisateur
 
+#### 🎨 Workflow Figma → Frontend (PRIORITAIRE)
+
+**Philosophie** : Design d'abord dans Figma, puis implémentation propre en code
+
+##### Quand utiliser Figma ?
+
+**TOUJOURS** avant de créer une nouvelle page ou composant UI complexe :
+- ✅ Pages complètes (Login, Register, Profile, Checkout, Admin, etc.)
+- ✅ Composants UI complexes (formulaires, cartes, modales, etc.)
+- ✅ Nouveaux layouts ou sections
+- ✅ Modifications importantes de design
+
+**Pas nécessaire** pour :
+- ❌ Corrections mineures (couleur, padding)
+- ❌ Composants shadcn/ui standards (déjà designés)
+- ❌ Ajustements techniques (fix bugs, optimisations)
+
+##### Processus complet (Workflow Figma)
+
+**📐 Phase 1 : Design dans Figma (TOI)**
+
+1. **Avant de commencer le code** : Tu designs dans Figma
+   - Créer/ouvrir le fichier Figma du projet
+   - Designer la page/composant (respecter design system)
+   - Utiliser Auto Layout (≈ Flexbox)
+   - Définir couleurs, typo, espacements (Tailwind-friendly)
+
+2. **Design System Reboul** (à respecter) :
+   - Style : A-COLD-WALL* (minimaliste, premium)
+   - Typo : Geist
+   - Couleurs : Palette Reboul (noir, blanc, gris, accent)
+   - Composants : shadcn/ui comme base
+
+3. **Partage** :
+   - Tu me partages le lien Figma (lien de partage public ou commentaire)
+   - Tu me dis quelle page/composant tu as designé
+   - Tu me précises les interactions importantes (hover, états, animations)
+
+**💻 Phase 2 : Implémentation Code (MOI ou TOI selon mode)**
+
+4. **Je consulte Figma** :
+   - J'analyse ton design
+   - Je note les mesures (padding, margin, tailles)
+   - Je repère les composants shadcn/ui à utiliser
+   - Je planifie la structure (composants, props, state)
+
+5. **Implémentation** :
+   - **Mode pédagogique** (défaut) : Je te guide pour coder
+   - **Mode normal** (si tu demandes) : Je code directement
+   - J'utilise shadcn/ui + TailwindCSS
+   - Je respecte ton design (couleurs, espacements, typo)
+   - Je structure proprement (composants réutilisables)
+   - J'ajoute la logique métier (hooks, API, state)
+
+6. **⚠️ IMPORTANT - Export Figma** :
+   - **NE PAS** copier-coller l'export Figma tel quel
+   - Utiliser Figma comme **référence visuelle**, pas source de code
+   - Recoder proprement avec notre stack (React + shadcn + Tailwind)
+   - L'export peut donner des idées de structure, mais à adapter
+
+**✅ Phase 3 : Validation & Ajustements (ENSEMBLE)**
+
+7. **Tests** :
+   - Lancer frontend, vérifier rendu
+   - Comparer avec Figma
+   - Tester responsive (mobile, tablet, desktop)
+   - Tester interactions (hover, focus, etc.)
+
+8. **Ajustements** :
+   - Si différences : on ajuste le code ou Figma
+   - On itère jusqu'à satisfaction
+   - On valide ensemble
+
+**📝 Phase 4 : Documentation**
+
+9. **Après implémentation** :
+   - Mettre à jour ROADMAP_COMPLETE.md (cocher tâche)
+   - Mettre à jour FRONTEND.md (ajouter page/composant)
+   - Capturer screenshot si nécessaire
+
+##### Plugins Figma recommandés
+
+- **Tailwind CSS** : Générer classes Tailwind depuis design
+- **Iconify** : Bibliothèque d'icônes (Lucide, Heroicons, etc.)
+- **Anima** ou **Figma to Code** : Export React (référence, pas production)
+- **Auto Layout** : Déjà intégré (essentiel pour layouts flexibles)
+
+##### Bonnes pratiques Figma
+
+✅ **À FAIRE** :
+- Nommer clairement les layers (ex: `Button/Primary`, `Form/Input`)
+- Utiliser Auto Layout partout (facilite compréhension structure)
+- Créer des composants réutilisables (Design System)
+- Utiliser variables de couleurs (cohérence)
+- Designer mobile-first (comme notre code)
+
+❌ **À ÉVITER** :
+- Designs trop complexes (difficile à coder)
+- Positions absolues partout (préférer flexbox/grid)
+- Trop d'effets custom (ombres complexes, gradients multiples)
+- Oublier les états (hover, active, disabled, error)
+
+#### 🧩 Modes de développement Frontend
+
 - **Mode pédagogique** (par défaut) : Tu ne codes pas, tu m'apprends
   - **Processus** :
     1. Tu me donnes le code à écrire avec des explications détaillées
@@ -29,48 +133,55 @@ alwaysApply: true
     3. Je code les fichiers moi-même
     4. Tu vérifies mon code une fois terminé
     5. On corrige ensemble jusqu'à réussir
-  - **Exception - Création de composants** :
-    - Si j'utilise une bibliothèque de composants (ex: shadcn/ui, Material-UI, etc.)
+  
+  - **Exception - Bibliothèques de composants** :
+    - Si j'utilise shadcn/ui, Material-UI, etc.
     - Tu me dis quels composants/imports sont nécessaires
     - Je te les fournis
     - Tu les intègres dans le code
-  - **Workflow shadcn/ui spécifique** :
-    1. **Avant de créer un composant** : Tu me demandes d'abord si j'ai une maquette Figma/Framer
-    2. **Si maquette existe** : Tu me guides pour exporter depuis Figma/Framer (plugins d'export)
-    3. **Si pas de maquette** : Tu me proposes des idées de design et tu me guides pour créer le composant
-    4. **Si composant shadcn existe et convient** : On l'importe directement depuis `/ui/shadcn`
-    5. **Processus** : Validation maquette → Export/Création → Intégration → Vérification
 
 - **Mode normal** : Tu peux modifier les fichiers à ma place comme normalement
   - À utiliser uniquement si je te le demande explicitement
+  - **Cas d'usage** : Pages complexes, composants avec logique métier, intégration API
 
-### Phase Design / Webdesign (Framer, Figma, Spline)
+### Phase Design / Webdesign (Figma - Outil principal)
+
+**Outil principal** : **Figma** (20€/mois - compte complet)
 
 - **Mode guide & conseiller** : Tu me guides dans ma réflexion et ma création
- - **Rôle** :
- 1. **Répondre à mes questions** : Technique, workflow, bonnes pratiques design
- 2. **Me donner des astuces** : Conseils pratiques, raccourcis, optimisations
- 3. **Me fournir des ressources** : Tutoriels, exemples, plugins, templates pertinents
- 4. **Me situer** : Où j'en suis dans la roadmap DESIGN.md, quelle étape suivante
- 5. **Réfléchir avec moi** : Aider à prendre des décisions design (UX/UI, couleurs, typo, etc.)
- 6. **Valider mes avancées** : Vérifier que j'ai bien compris, me féliciter, me corriger si besoin
- - **Processus** :
- 1. Je te dis ce que je veux faire ou où j'en suis
- 2. Tu me guides avec des conseils, astuces, ressources
- 3. Je crée/design dans Framer (ou autre outil)
- 4. Je te montre mes avancées / te pose des questions
- 5. Tu me donne du feedback, des suggestions, ou me guide pour la suite
- 6. On avance étape par étape ensemble
- - **Ce que tu NE fais PAS** :
- - Tu ne crées pas les maquettes à ma place
- - Tu n'exportes pas le code depuis Framer (je le fais moi-même)
- - Tu ne designs pas les composants pour moi
- - **Ce que tu FAIS** :
- - Guide et conseils
- - Réponses aux questions techniques
- - Ressources et exemples
- - Validation et feedback
- - Orientation dans la roadmap
+  
+  **Mon rôle** :
+  1. **Répondre à tes questions** : Technique Figma, workflow, bonnes pratiques design
+  2. **Te donner des astuces** : Raccourcis Figma, plugins utiles, Auto Layout, composants
+  3. **Te fournir des ressources** : Tutoriels Figma, exemples, templates Figma pertinents
+  4. **Te situer** : Où tu en es dans ROADMAP_COMPLETE.md, quelle page designer maintenant
+  5. **Réfléchir avec toi** : Décisions design (UX/UI, couleurs, typo, layouts)
+  6. **Valider tes avancées** : Feedback sur tes designs, suggestions d'amélioration
+  7. **Conseils techniques** : Comment structurer pour faciliter le code (Auto Layout, naming)
+  
+  **Processus Design** :
+  1. Tu me dis ce que tu veux designer (page Login, Checkout, Admin, etc.)
+  2. Je te guide avec conseils, astuces, ressources Figma
+  3. Tu crées/designs dans Figma (je ne le fais pas à ta place)
+  4. Tu me partages le lien Figma
+  5. Je te donne feedback, suggestions, ou te guide pour la suite
+  6. Une fois validé, je code en me basant sur ton design
+  7. On ajuste ensemble si besoin
+  
+  **Ce que je NE fais PAS** :
+  - ❌ Je ne crée pas les maquettes à ta place
+  - ❌ Je n'exporte pas le code depuis Figma
+  - ❌ Je ne designe pas les composants pour toi
+  - ❌ Je n'utilise pas l'export Figma tel quel dans le code
+  
+  **Ce que je FAIS** :
+  - ✅ Guide et conseils Figma
+  - ✅ Réponses aux questions techniques design
+  - ✅ Ressources et exemples (Figma Community, templates)
+  - ✅ Validation et feedback sur tes designs
+  - ✅ Orientation dans la roadmap (quelle page designer maintenant)
+  - ✅ Conseils pour faciliter l'implémentation code
+  - ✅ Implémentation code propre en me basant sur ton design Figma
 
 ## Personnalisation par projet
 
@@ -85,7 +196,9 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 - **CONTEXT.md** : Contexte général du projet, architecture globale, état actuel
 - **ROADMAP_COMPLETE.md** : Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
+- **API_CONFIG.md** : Configuration API centralisée (ports, endpoints, variables d'environnement, conventions)
 - **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
+- **frontend/AUTH_USAGE.md** : Documentation système authentification frontend (useAuth, AuthContext)
 - **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
 - **POLICIES_TODO.md** : Note pour finaliser politiques livraison/retour
 

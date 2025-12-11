@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import { useCategories } from '../../hooks/useCategories';
 import { useBrands } from '../../hooks/useBrands';
+import { useAuth } from '../../hooks/useAuth';
 import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
 
@@ -10,6 +11,7 @@ export const Header = () => {
   const { cart, loading: cartLoading } = useCart();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { brands, loading: brandsLoading, error: brandsError } = useBrands();
+  const { isAuthenticated, user } = useAuth();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -135,13 +137,14 @@ export const Header = () => {
           )  
           }
           
-            
+            {/* Account / Login button */}
             <Link 
-              to="/account" 
+              to={isAuthenticated ? "/profile" : "/login"} 
               className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
             >
-              MON COMPTE
+              {isAuthenticated ? (user?.firstName ? user.firstName.toUpperCase() : 'MON COMPTE') : 'CONNEXION'}
             </Link>
+            
             <Button asChild className="relative flex items-center gap-2 bg-black text-white rounded-md uppercase text-sm font-light hover:opacity-90 transition-opacity">
             <Link to="/cart">
               CART ({cartLoading ? '...' : cartItemsCount})

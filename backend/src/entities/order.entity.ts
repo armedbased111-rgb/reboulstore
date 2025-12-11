@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Cart } from './cart.entity';
+import { User } from './user.entity';
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -51,6 +52,13 @@ export class Order {
   @ManyToOne(() => Cart)
   @JoinColumn({ name: 'cartId' })
   cart: Cart;
+
+  @Column({ nullable: true })
+  userId: string;
+
+  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

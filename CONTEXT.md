@@ -1,28 +1,52 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.10.1  
-**Phase actuelle** : Phase 8.5 complétée (Brands + Support Vidéo/Image) - Prochaine : Phase 9 (Backend Auth)
+**Version** : 0.18.0  
+**Phase actuelle** : Phase 10.3 COMPLÈTE (Login + Register + Profile terminés) ✅ - Prochaine : Phase 10.4 (Protection routes)
+**Objectif Février 2025** : Lancement site Reboul avec première collection
 
 ---
 
 ## 📋 Vue d'ensemble
 
-**Reboul Store** est un site e-commerce français spécialisé dans la vente de vêtements, sneakers et accessoires pour adultes et enfants. C'est un concept-store positionné sur la mode premium / streetwear, avec un ton moderne et lifestyle.
+**Reboul Store** est un site e-commerce français spécialisé dans la vente de vêtements, sneakers et accessoires. C'est un concept-store positionné sur la mode premium / streetwear, avec un ton moderne et lifestyle.
 
-### 🏬 Structure Multi-Shops
+### 🏗️ Architecture Multi-Sites
 
-Le site gère **4 shops distincts** :
+Le projet prévoit **3 sites e-commerce indépendants** gérés depuis une **Admin Centrale** :
 
-1. **Reboul Adult** : Vêtements et accessoires pour adultes (mixte)
-2. **Reboul Kids** ("Les Minots de Reboul") : Vêtements et accessoires pour enfants
-3. **Reboul Sneakers** : Chaussures de sport
-4. **C.P.COMPANY Marseille** : Franchise avec droits de vente en ligne
+1. **Reboul** (🎯 Priorité actuelle - Février 2025)
+   - Catégorie : **Enfants** uniquement
+   - Première collection prête à la vente
+   - Backend + Frontend + Database dédiés
+   
+2. **CP Company** (🔜 Futur - Après lancement Reboul)
+   - Site indépendant
+   - Backend + Frontend + Database dédiés
+   
+3. **Outlet** (🔜 Futur - Après CP Company)
+   - Site déstockage/promotions
+   - Backend + Frontend + Database dédiés
 
-**Architecture** : Approche multi-tenant avec entité `Shop` pour séparer produits et catégories par shop.
+### 🎛️ Admin Centrale
 
-**Panier** : Universel (articles de plusieurs shops), groupé par shop à l'affichage.
+**Application admin unifiée** pour gérer les 3 sites :
+- Interface unique de gestion
+- Connexion aux backends des 3 sites
+- Gestion produits, commandes, clients pour chaque site
+- À créer en priorité (Phase 17) pour être connectée à Reboul
 
-**Paiements** : Répartis via **Stripe Connect** (chaque shop a son compte Stripe).
+### 🏛️ Architecture Technique
+
+**Chaque site est complètement autonome** :
+```
+Site = Frontend (React) + Backend (NestJS) + Database (PostgreSQL)
+```
+
+**Avantages** :
+- ✅ **Stabilité** : Si un site crash, les autres continuent
+- ✅ **Scalabilité** : Chaque site évolue indépendamment
+- ✅ **Isolation** : Base de données séparée par site
+- ✅ **Docker** : Chaque site dans son propre container
 
 ### 🎨 Positionnement
 
@@ -84,11 +108,11 @@ reboulstore/
 
 ---
 
-## ✅ État actuel (Version 0.10.0)
+## ✅ État actuel (Version 0.14.0)
 
 ### Backend complété ✅
 - ✅ **Infrastructure** : Docker + PostgreSQL + NestJS configurés
-- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop, Brand
+- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop, Brand, **User, Address**
 - ✅ **Modules API** :
   - Categories (CRUD + slug + videoUrl + sizeChart)
   - Products (CRUD + filtres + pagination + variants + images + upload local + filtre brand)
@@ -96,29 +120,74 @@ reboulstore/
   - Orders (création + statuts + vérification stock)
   - Shops (CRUD + politiques)
   - Brands (CRUD + slug + images/vidéos mega menu)
-- ✅ **Relations** : Toutes les relations TypeORM configurées (Product → Brand, Brand → Products)
+  - **Auth (register, login, JWT, guards)**
+  - **Users (profil, adresses CRUD)**
+- ✅ **Authentification** : JWT complète (tokens 7 jours, bcrypt, guards)
+- ✅ **Sécurité** : Passwords hachés, jamais retournés, routes protégées
+- ✅ **Relations** : Toutes les relations TypeORM (User → Addresses, User → Orders)
 - ✅ **Politiques** : Shop avec shippingPolicy et returnPolicy (jsonb)
 - ✅ **Size charts** : Category + Product (override possible)
 - ✅ **Upload images** : Multer + stockage local (à migrer vers Cloudinary)
 
 ### Frontend complété ✅
 - ✅ **Infrastructure** : Vite + React + TailwindCSS v4 + Docker
-- ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /checkout, /about)
-- ✅ **Services API** : products, categories, cart, orders, brands
-- ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useBrands, useLocalStorage
-- ✅ **Layout** : Header (mega menu catégories + **mega menu brands avec hover** + recherche + badge panier) + Footer (style A-COLD-WALL*)
+- ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /checkout, /about, /login, /register, /profile, /test-auth)
+- ✅ **Services API** : products, categories, cart, orders, brands, **auth**
+- ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useBrands, useLocalStorage, **useAuth**
+- ✅ **Context** : **AuthContext (gestion globale auth + persistance localStorage)**
+- ✅ **Authentification** : 
+  - Service auth.ts (register, login, getMe)
+  - Token JWT en localStorage, auto-revalidation
+  - **Page Login TERMINÉE - Pixel-perfect depuis Figma** ⭐
+    - Layout 2 colonnes (grid-cols-[478px_1fr])
+    - Vidéo background collée au form (gap-[10px])
+    - Typographie exacte (font-[Geist], leading-[20px])
+    - Responsive intelligent (mobile centré, desktop gauche)
+    - Code React propre (HTML sémantique, space-y-*)
+  - **Workflow Figma → Code MAÎTRISÉ** (voir FIGMA_DEV_GUIDE.md)
+  - **Pages Register (à faire), Profile (basique)**
+  - **ProtectedRoute (HOC pour protéger routes)**
+  - **Header intégré (CONNEXION vs prénom/MON COMPTE)**
+- ✅ **Layout** : Header (mega menu catégories + **mega menu brands avec hover** + recherche + **auth button** + badge panier) + Footer (style A-COLD-WALL*)
 - ✅ **Pages** :
   - **Home** : HeroSectionImage (support vidéo/image), HeroSectionVideo, CategorySection, FeaturedProducts, PromoCard
   - **Catalog** : ProductGrid, ProductCard, **filtres par catégorie + marque**, HeroSection avec vidéo/image pour brands/categories (priorité vidéo)
   - **Product** : ProductGallery (Swiper), ProductInfo, VariantSelector, AddToCartButton, ProductTabs (Details, Sizing, Shipping, Returns avec logique d'héritage)
+  - **Login TERMINÉE** ⭐ : **Pixel-perfect depuis Figma**
+    - Grid 2 colonnes largeurs fixes (478px + 1fr)
+    - Espacements exacts identiques partout (mb-[71px], gap-6, gap-[1.5px])
+    - Code React propre (HTML sémantique, minimum divs, space-y-*)
+    - Responsive intelligent (mobile centré, desktop gauche, vidéo masquée mobile)
+    - Workflow Figma → Code maîtrisé et documenté (FIGMA_DEV_GUIDE.md)
+  - **Register TERMINÉE** ✅ : **Structure identique Login + champs supplémentaires**
+    - Même grid 2 colonnes (478px + 1fr)
+    - Même responsive (mobile/desktop)
+    - Même vidéo background
+    - 6 champs : Prénom, Nom, Email, Téléphone, Password, Confirm Password
+    - Validation : password match + min 8 caractères
+    - **Espacements optimisés** pour formulaires longs (space-y-8, space-y-4, space-y-3)
+    - Tout visible sans scroll
+  - **Profile TERMINÉE** ✅ : **Pixel-perfect depuis Figma + Composants réutilisables**
+    - Design Figma (node-id: 6:273) implémenté exactement
+    - Grid 2 colonnes (`grid-cols-[1fr_720px]`)
+    - Card infos personnelles (Email, Prénom, Nom, Téléphone, Rôle, Date)
+    - 2 Quick actions (Mes Commandes, Mes Adresses)
+    - Bouton déconnexion (border rouge #e7000b)
+    - **Refactorisation en 6 composants** (ProfileHeader, ProfileInfoField, ProfileRoleBadge, ProfileInfoCard, ProfileQuickAction, ProfileActions)
+    - Code propre : 53 lignes au lieu de 130
+  - **TestAuth** : Composant test complet pour auth (register, login, logout, persistance)
+- ✅ **Composants UI** : Button, Input, Label, Separator (shadcn/ui)
 - ✅ **Composants** : Style A-COLD-WALL* minimaliste premium
 - ✅ **Responsive** : Mobile-first avec breakpoints TailwindCSS
 - ✅ **Navigation Brands** : Onglet Brands, mega menu avec images/vidéos changeantes au hover (priorité vidéo)
+- ✅ **Protection routes** : ProtectedRoute pour /profile (à étendre pour /orders, /checkout)
 
-### 🔄 En attente
+### 🔄 En cours / En attente
+- 🔄 **Page Profil complète** : Édition infos, gestion adresses CRUD (Phase 10.3)
+- ⏸️ **Forgot/Reset Password** : Pages reset mot de passe (Phase 18 - avancé)
+- ⏸️ **OAuth Google/Apple** : Authentification sociale (Phase 18 - avancé)
 - ⏸️ **Politiques** : Validation finale avec direction (voir `POLICIES_TODO.md`)
 - ⏸️ **Admin Panel** : À créer (Phase 17)
-- ⏸️ **Auth** : JWT + OAuth à implémenter (Phase 9-10)
 - ⏸️ **Panier/Checkout UI** : À créer (Phase 12)
 - ⏸️ **Paiement Stripe** : À intégrer (Phase 13)
 - ⏸️ **Cloudinary** : Migration upload images (Phase 15)
@@ -129,31 +198,43 @@ reboulstore/
 
 **📌 Roadmap complète détaillée** : [`ROADMAP_COMPLETE.md`](./ROADMAP_COMPLETE.md)
 
-### 🔴 Priorité 1 - MVP E-commerce (Phases 9-14)
+### 🎯 Objectif Février 2025 : REBOUL PRÊT À LA VENTE
 
-**Objectif** : Site e-commerce fonctionnel de bout en bout
+**Focus absolu** : Finir Reboul (catégorie enfants) + Admin Centrale
+
+### 🔴 Priorité 1 - Finaliser Reboul (Phases 9-14)
+
+**Objectif** : Site Reboul fonctionnel de bout en bout
 
 1. **Phase 9** : Backend - Auth & Users (JWT + OAuth Google/Apple)
 2. **Phase 10** : Frontend - Auth UI (Login, Register, Profil)
 3. **Phase 11** : Backend - Commandes complètes (cycle de vie, stock, emails)
 4. **Phase 12** : Frontend - Panier & Checkout complet
-5. **Phase 13** : Backend - Stripe + Stripe Connect (paiements multi-shops)
+5. **Phase 13** : Backend - Stripe (paiement Reboul)
 6. **Phase 14** : Frontend - Historique commandes
 
-### 🟡 Priorité 2 - Gestion & Admin (Phases 15-17)
+### 🟡 Priorité 2 - Admin Centrale (Phases 15-17)
+
+**Objectif** : Créer l'admin et la connecter à Reboul
 
 7. **Phase 15** : Backend - Cloudinary (upload images optimisées)
 8. **Phase 16** : Backend - Admin & Permissions (rôles, CRUD admin)
-9. **Phase 17** : Frontend - Admin Panel (gestion produits/commandes/users)
+9. **Phase 17** : Frontend - **Admin Centrale** (connectée à Reboul)
 
-### 🟢 Priorité 3 - Fonctionnalités avancées (Phases 18-19)
+### 🟢 Priorité 3 - Après lancement Reboul
 
-10. Recherche avancée, Wishlist, Reviews, Promotions, WebSockets, SMS, Redis
-11. Pages vitrine (About, Contact, Stores, Shipping/Returns, CGV)
+**Sites futurs** :
+- CP Company (même structure que Reboul)
+- Outlet (même structure que Reboul)
+- Connecter les 3 sites à l'Admin Centrale
 
-### 🔵 Priorité 4 - Optimisation & Production (Phases 20-24)
+**Fonctionnalités avancées** :
+- Recherche avancée, Wishlist, Reviews, Promotions, WebSockets, SMS, Redis
+- Pages vitrine (About, Contact, Stores, Shipping/Returns, CGV)
 
-12. Automatisation (n8n), Tests, SEO, Performance, Déploiement, Analytics
+### 🔵 Priorité 4 - Optimisation & Production
+
+- Automatisation (n8n), Tests, SEO, Performance, Déploiement, Analytics
 
 ---
 
@@ -177,30 +258,45 @@ reboulstore/
 
 ### 🎨 Design & Frontend
 - **Inspiration** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium
-- **Workflow** : Création directe en React/TailwindCSS (pas de maquettes)
+- **Workflow** : **Figma → Code → Validation** (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md) et [FIGMA_DEV_GUIDE.md](./FIGMA_DEV_GUIDE.md))
+  - Phase 1 : Design dans Figma (toi)
+  - Phase 2 : `get_design_context` + `get_screenshot`
+  - Phase 3 : Analyser structure Figma
+  - Phase 4 : Coder React propre (valeurs exactes)
+  - Phase 5 : Responsive dès le début
+  - Phase 6 : Validation visuelle
+  - Phase 7 : Ajustements précis
+  - Phase 8 : Documentation
+- **Succès validé** : **Login Page (10 déc 2025)** - Pixel-perfect + Responsive ⭐
+  - Grid largeurs fixes (478px + 1fr)
+  - Espacements exacts (mb-[71px], gap-[1.5px], gap-6)
+  - Code React propre (HTML sémantique, minimum divs)
+  - Workflow maîtrisé et documenté
 - **Style** : Noir/blanc/gris + accent rouge, espacement généreux
-- **Typo** : Geist (texte-h1, texte-h2, texte-t2, texte-t3, texte)
+- **Typo** : Geist (font-[Geist], leading-[20px], tracking-[-0.6px])
 - **Images** : Lazy loading, gestion erreurs, placeholder
+- **Responsive** : Mobile-first (grid-cols-1 lg:grid-cols-[478px_1fr])
 
 ### 🛍️ Fonctionnalités Métier
-- **Multi-shops** : 4 shops, panier universel groupé par shop
-- **Promotions** : Codes promo, flash sales (24h/48h)
-- **Avis produits** : Ouverts à tous, auto-publication
+- **Multi-sites** : 3 sites indépendants (Reboul, CP Company, Outlet)
+- **Focus actuel** : Reboul - Catégorie enfants uniquement
+- **Promotions** : Codes promo, flash sales (24h/48h) - Future
+- **Avis produits** : Ouverts à tous, auto-publication - Future
 - **Stocks** : Alerte stock faible à 5 unités, notifications admin
 - **Images produits** : Max 7 images, 1200x1200px, JPG/PNG/WebP
-- **Politiques** : Livraison/retour par shop (jsonb)
+- **Politiques** : Livraison/retour par site (jsonb)
 - **Size charts** : Par catégorie (override par produit possible)
 
 ### 🔗 Intégrations
-- **Paiement** : Stripe + Stripe Connect (répartition multi-shops)
+- **Paiement** : Stripe (un compte par site)
 - **Auth** : JWT + OAuth (Google, Apple)
-- **Images** : Cloudinary (CDN, optimisation)
-- **Emails** : Nodemailer (confirmation commande, tracking, etc.)
-- **SMS** : Twilio/Vonage (reset password)
-- **Temps réel** : WebSockets (notifications, chat live)
-- **Automatisation** : n8n (remboursements, workflows)
-- **Analytics** : Google Analytics 4
-- **Chat** : Chatbot IA (Elevenlabs UI) 24/7
+- **Images** : Cloudinary (CDN, optimisation) - À venir
+- **Emails** : Nodemailer (confirmation commande, tracking, etc.) - À venir
+- **SMS** : Twilio/Vonage (reset password) - Future
+- **Temps réel** : WebSockets (notifications) - Future
+- **Automatisation** : n8n (workflows) - Future
+- **Analytics** : Google Analytics 4 - Future
+- **Chat** : Chatbot IA - Future
 
 ### 🚀 Performance & Optimisation
 - **Objectif** : Lighthouse > 90, Core Web Vitals optimisés
@@ -231,4 +327,8 @@ reboulstore/
 
 ---
 
-**🎯 Focus actuel** : Passer à la Phase 9 (Backend Auth & Users) pour débloquer le tunnel d'achat complet.
+**🎯 Focus actuel** : 
+1. **IMMÉDIAT** : Phase 9 (Backend Auth & Users) - Démarrage maintenant 🚀
+2. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
+3. **Post-Février** : Ajout collection réelle via Admin → CP Company → Outlet
+4. **Home & Design** : Améliorations progressives au fil du temps

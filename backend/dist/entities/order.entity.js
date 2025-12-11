@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Order = exports.OrderStatus = void 0;
 const typeorm_1 = require("typeorm");
 const cart_entity_1 = require("./cart.entity");
+const user_entity_1 = require("./user.entity");
 var OrderStatus;
 (function (OrderStatus) {
     OrderStatus["PENDING"] = "pending";
@@ -27,6 +28,8 @@ let Order = class Order {
     total;
     customerInfo;
     cart;
+    userId;
+    user;
     createdAt;
     updatedAt;
 };
@@ -60,6 +63,15 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'cartId' }),
     __metadata("design:type", cart_entity_1.Cart)
 ], Order.prototype, "cart", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.orders, { onDelete: 'SET NULL' }),
+    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    __metadata("design:type", user_entity_1.User)
+], Order.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

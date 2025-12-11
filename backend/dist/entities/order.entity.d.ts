@@ -1,4 +1,5 @@
 import { Cart } from './cart.entity';
+import { User } from './user.entity';
 export declare enum OrderStatus {
     PENDING = "pending",
     CONFIRMED = "confirmed",
@@ -23,6 +24,8 @@ export declare class Order {
         };
     };
     cart: Cart;
+    userId: string;
+    user: User;
     createdAt: Date;
     updatedAt: Date;
 }

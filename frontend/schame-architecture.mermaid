@@ -1,0 +1,56 @@
+%% Schéma global architecture Docker (format Mermaid)
+%% Ce schéma représente l'ensemble des conteneurs du projet (backend, frontend, db, services externes)
+%% Pour chaque conteneur : nom, stack principale, liens réseau, volumes, dépendances
+
+flowchart LR
+  subgraph Docker_Network
+    direction LR
+    FE[Frontend<br/>(Next.js / React)]
+    BE[Backend API<br/>(NestJS)]
+    DB[(PostgreSQL DB)]
+    REDIS[(Redis Cache)]
+    MINIO[(MinIO<br/>S3 Compatible)]
+    MAILDEV[(MailDev<br/>Email Testing)]
+    PGADMIN[(pgAdmin<br/>PG Manager)]
+    NGINX[NGINX<br/>Reverse Proxy]
+    ADMINER[(Adminer<br/>DB Viewer)]
+  end
+
+  %% Dépendances
+  FE <-->|HTTP 3000→ API| BE
+  FE <-->|HTTP 443/80| NGINX
+
+  NGINX -->|HTTP 3000 (proxy)| FE
+  NGINX -->|HTTP 4000 (proxy)| BE
+
+  BE <-->|Postgres 5432| DB
+  BE <-->|Redis 6379| REDIS
+  BE <-->|S3 API| MINIO
+  BE <-->|SMTP 1025| MAILDEV
+
+  PGADMIN <-->|Postgres 5432| DB
+  ADMINER <-->|Postgres 5432| DB
+
+  subgraph Volumes
+    v_db[(db_data)]
+    v_minio[(minio_data)]
+  end
+  DB --- v_db
+  MINIO --- v_minio
+
+  %% Services externes / Outils dev
+  MAILDEV:::devtool
+  PGADMIN:::devtool
+  ADMINER:::devtool
+
+  %% Styles
+  classDef devtool fill:#FFD,stroke:#888,stroke-width:1px
+  class MAILDEV,PGADMIN,ADMINER devtool;
+
+  %% Légende :
+  %% - Les flèches précisent les échanges réseau/protocoles principaux.
+  %% - Les volumes sont montés sur la DB et MinIO pour la persistence.
+  %% - Les outils (pgAdmin, MailDev, Adminer) sont optionnels pour le développement.
+  %% - NGINX agit selon la prod ou pour SSL local.
+  %% Modifier et adapter selon la stack réelle si besoin.
+

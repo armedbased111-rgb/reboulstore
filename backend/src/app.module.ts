@@ -10,7 +10,8 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { BrandsModule } from './modules/brands/brands.module';
-
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +29,8 @@ import { BrandsModule } from './modules/brands/brands.module';
     OrdersModule,
     ShopsModule,
     BrandsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

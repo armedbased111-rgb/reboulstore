@@ -6,9 +6,14 @@ import { Product } from './pages/Product'
 import { Cart } from './pages/cart'
 import { Checkout } from './pages/Checkout'
 import { About } from './pages/About'
+import { Login } from './pages/Login'
+import { Register } from './pages/Register'
+import { Profile } from './pages/Profile'
+import { ProtectedRoute } from './components/ProtectedRoute'
 import { TestApi } from './components/TestApi'
 import { TestServices } from './components/TestServices'
 import { TestHooks } from './components/TestHooks'
+import { TestAuth } from './components/TestAuth'
 
 function App() {
   return (
@@ -63,11 +68,38 @@ function App() {
             </Layout>
           } 
         />
+        <Route 
+          path="/login" 
+          element={
+            <Layout>
+              <Login />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/register" 
+          element={
+            <Layout>
+              <Register />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            </Layout>
+          } 
+        />
         
         {/* Pages de test sans Layout */}
         <Route path="/test-api" element={<TestApi />} />
         <Route path="/test-services" element={<TestServices />} />
         <Route path="/test-hooks" element={<TestHooks />} />
+        <Route path="/test-auth" element={<TestAuth />} />
       </Routes>
     </BrowserRouter>
   )

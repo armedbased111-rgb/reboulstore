@@ -1,8 +1,19 @@
-# 🗺️ Roadmap Complète - Reboul Store
+# 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 2.0  
-**Date** : 9 décembre 2025  
-**Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes
+**Version** : 3.1  
+**Date** : 10 décembre 2025  
+**Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
+
+---
+
+## 🎯 OBJECTIF FÉVRIER 2025
+
+**🚀 Site REBOUL (catégorie enfants) prêt à la vente + Admin Centrale connectée**
+
+### Focus absolu :
+1. ✅ Finir **Reboul** (site e-commerce complet)
+2. ✅ Créer **Admin Centrale** (connectée à Reboul)
+3. 🔜 **CP Company** et **Outlet** après lancement Reboul
 
 ---
 
@@ -12,6 +23,8 @@
 2. **Fonctionnalités complètes** : Chaque phase livre une fonctionnalité utilisable de bout en bout
 3. **Incrémental** : On peut tester à chaque étape
 4. **MVP First** : Les fonctionnalités essentielles d'abord, les optimisations ensuite
+5. **Multi-sites** : Architecture 3 sites indépendants (Reboul → CP Company → Outlet)
+6. **🎨 Workflow Figma** : Design d'abord dans Figma, puis implémentation code (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
 
 ---
 
@@ -29,6 +42,8 @@
 - ✅ **Support vidéo/image** (Brand et Category avec priorité vidéo dans hero sections)
 
 **État actuel** : Catalogue fonctionnel avec filtres brands, pages produits OK, politiques de base OK, support vidéo/image complet
+
+**Note** : Page Home et données réelles de la collection seront ajoutées progressivement au fil du développement
 
 ---
 
@@ -100,57 +115,54 @@
 
 ---
 
-## 🔄 Phase 9 : Backend - Authentification & Utilisateurs
+## ✅ Phase 9 : Backend - Authentification & Utilisateurs (COMPLÉTÉ)
 
 **Objectif** : Permettre aux utilisateurs de créer un compte, se connecter, et gérer leur profil
 
-### 9.1 Entité User
-- [ ] Créer entité User (id, email, password hash, firstName, lastName, phone, role, isVerified, timestamps)
-- [ ] Enum UserRole (CLIENT, ADMIN, SUPER_ADMIN)
-- [ ] Créer entité Address (id, userId, street, city, postalCode, country, isDefault)
-- [ ] Relations User → Addresses (OneToMany)
-- [ ] Relations User → Orders (OneToMany)
+### 9.1 Entité User ✅
+- [x] Créer entité User (id, email, password hash, firstName, lastName, phone, role, isVerified, timestamps)
+- [x] Enum UserRole (CLIENT, ADMIN, SUPER_ADMIN)
+- [x] Créer entité Address (id, userId, street, city, postalCode, country, isDefault)
+- [x] Relations User → Addresses (OneToMany)
+- [x] Relations User → Orders (OneToMany)
 
-### 9.2 Module Auth - JWT
-- [ ] Installer @nestjs/jwt, @nestjs/passport, bcrypt
-- [ ] Créer module Auth
-- [ ] Service Auth : register(), login(), validateUser(), hashPassword()
-- [ ] Guard JwtAuthGuard pour protéger routes
-- [ ] DTOs : RegisterDto, LoginDto
-- [ ] Endpoints :
+### 9.2 Module Auth - JWT ✅
+- [x] Installer @nestjs/jwt, @nestjs/passport, bcrypt
+- [x] Créer module Auth
+- [x] Service Auth : register(), login(), validateUser(), hashPassword()
+- [x] Guard JwtAuthGuard pour protéger routes
+- [x] DTOs : RegisterDto, LoginDto
+- [x] Endpoints :
   - POST /auth/register (créer compte)
   - POST /auth/login (connexion, retourne JWT)
   - GET /auth/me (profil utilisateur, protégé)
-  - POST /auth/refresh (refresh token)
+- [x] Stratégie JWT (JwtStrategy)
+- [x] Tests Insomnia : Register, Login, Get Me
 
-### 9.3 Module Auth - OAuth (Google, Apple)
-- [ ] Installer @nestjs/passport-google-oauth20
-- [ ] Configurer stratégie Google OAuth
-- [ ] Endpoint GET /auth/google (redirect OAuth)
-- [ ] Endpoint GET /auth/google/callback (retour OAuth)
-- [ ] Installer passport-apple (ou équivalent)
-- [ ] Configurer stratégie Apple OAuth
-- [ ] Endpoint GET /auth/apple
-- [ ] Endpoint GET /auth/apple/callback
-- [ ] Créer ou lier compte User après OAuth
+### 9.3 Module Auth - OAuth (Google, Apple) - FUTUR
+- [ ] OAuth Google et Apple reportés après MVP (phase 18+)
 
-### 9.4 Module Users
-- [ ] Créer module Users
-- [ ] Service Users : findAll(), findOne(), findByEmail(), update(), delete()
-- [ ] Controller Users avec endpoints :
-  - GET /users/me (profil)
+### 9.4 Module Users ✅
+- [x] Créer module Users
+- [x] Service Users : findOne(), updateProfile(), gestion adresses complète
+- [x] Controller Users avec endpoints :
+  - GET /users/me (profil avec adresses)
   - PATCH /users/me (modifier profil)
   - GET /users/me/addresses (liste adresses)
   - POST /users/me/addresses (ajouter adresse)
   - PATCH /users/me/addresses/:id (modifier adresse)
   - DELETE /users/me/addresses/:id (supprimer adresse)
-- [ ] Guard RolesGuard pour admin
+- [x] Système d'adresse par défaut (isDefault)
+- [x] Tests Insomnia : Tous les endpoints fonctionnels
 
-### 9.5 Sécurité
-- [ ] Implémenter rate limiting (express-rate-limit)
-- [ ] Validation email unique lors register
-- [ ] Vérification email (envoi code vérification)
-- [ ] Réinitialisation mot de passe (forgot password)
+### 9.5 Sécurité ✅
+- [x] Passwords hachés avec bcrypt (salt rounds 10)
+- [x] Validation email unique lors register
+- [x] Password jamais retourné (select: false + delete)
+- [x] Routes protégées avec JwtAuthGuard
+- [ ] Rate limiting → Phase 18 (fonctionnalités avancées)
+- [ ] Vérification email → Phase 18 (fonctionnalités avancées)
+- [ ] Réinitialisation mot de passe → Phase 18 (fonctionnalités avancées)
 
 ---
 
@@ -158,32 +170,138 @@
 
 **Objectif** : Pages de connexion, inscription, profil utilisateur
 
-### 10.1 Context & Hooks Auth
-- [ ] Créer AuthContext (contexte global utilisateur)
-- [ ] Hook useAuth() (login, logout, register, user)
-- [ ] Service auth.ts (loginUser, registerUser, getMe, refreshToken)
-- [ ] Stockage JWT (localStorage ou cookie sécurisé)
-- [ ] Auto-refresh token avant expiration
+**📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
 
-### 10.2 Pages Auth
-- [ ] Page /login (formulaire connexion)
-- [ ] Page /register (formulaire inscription)
+### 10.1 Context & Hooks Auth ✅
+- [x] Créer AuthContext (contexte global utilisateur)
+- [x] Hook useAuth() (login, logout, register, user)
+- [x] Service auth.ts (loginUser, registerUser, getMe, refreshToken)
+- [x] Stockage JWT (localStorage ou cookie sécurisé)
+- [x] Auto-refresh token avant expiration
+- [x] Correction syntaxe import/export (export type + import type)
+- [x] Composant TestAuth.tsx pour tester le système auth
+- [x] Tests complets : Register, Login, Logout, Persistance, LocalStorage
+
+### 10.2 Pages Auth - Design & Implémentation ✅ (TERMINÉ - 10 déc 2025)
+
+**📐 Phase Design (Figma)** :
+- [x] Import code existant dans Figma (plugin "HTML to Design")
+- [x] Design page Login dans Figma (layout 2 colonnes, vidéo, typographie exacte)
+- [x] Utilisation de `get_design_context` + `get_screenshot` pour récupérer code Figma exact
+- [x] **Workflow Figma → Code maîtrisé** (voir FIGMA_WORKFLOW.md + FIGMA_DEV_GUIDE.md)
+
+**💻 Phase Implémentation - Login Page** :
+- [x] Créer composants shadcn/ui manquants (Input, Label)
+- [x] Coder page /login **pixel-perfect depuis Figma** ⭐
+  - [x] Layout 2 colonnes avec **largeurs fixes** (478px + 1fr, pas 50%/50%)
+  - [x] Typographie exacte (font-[Geist], leading-[20px], tracking-[-0.6px])
+  - [x] Espacements précis **identiques partout** (gap-[1.5px], mb-[71px], gap-6)
+  - [x] Couleurs exactes (#4a5565, #6a7282, rgba(0,0,0,0.5))
+  - [x] Logo overlay avec mix-blend-luminosity et opacity-[0.81]
+  - [x] **Responsive intelligent** :
+    - Mobile : Formulaire centré, vidéo masquée
+    - Desktop : Formulaire aligné gauche, vidéo collée avec gap-[10px]
+  - [x] Grid responsive : `grid-cols-1 lg:grid-cols-[478px_1fr]`
+  - [x] Padding container principal : `pb-[15px] pl-4 pr-[9px] pt-[10px]`
+  - [x] **Code React propre** : HTML sémantique, minimum divs, space-y-*
+- [x] Implémenter redirection après login (vers page précédente ou /)
+- [x] Créer page /profile basique (affichage infos user, déconnexion)
+- [x] Créer ProtectedRoute (HOC pour protéger routes)
+- [x] Mettre à jour Header (bouton CONNEXION / prénom selon état auth)
+- [x] Ajouter routes dans App.tsx (/login, /register, /profile)
+
+**💻 Phase Implémentation - Register Page** ✅ (TERMINÉ - 10 déc 2025) :
+- [x] Copier structure Login.tsx (même grid, même responsive, même vidéo)
+- [x] Ajouter champs supplémentaires :
+  - Prénom (optionnel)
+  - Nom (optionnel)
+  - Email (requis, uppercase)
+  - Téléphone (optionnel)
+  - Mot de passe (requis, min 8 caractères)
+  - Confirmer mot de passe (requis)
+- [x] Adapter responsive (même workflow que Login)
+- [x] Valider formulaire (password match, email valide, min 8 chars)
+- [x] **Optimiser espacements pour formulaires longs** :
+  - Header → Form : `space-y-8` (32px) au lieu de `space-y-[71px]`
+  - Entre champs : `space-y-4` (16px) au lieu de `space-y-6`
+  - Sections : `space-y-3` (12px) pour compacité
+  - Divider : `py-2` (8px) au lieu de `py-4`
+  - Tout visible sans scroll ✅
+
+**⏸️ Fonctionnalités avancées (Phase 18)** :
 - [ ] Page /forgot-password (demande reset)
 - [ ] Page /reset-password/:token (nouveau mot de passe)
-- [ ] Boutons OAuth Google/Apple
-- [ ] Redirection après login (vers page précédente ou /)
+- [ ] Boutons OAuth Google/Apple (UI + logique)
 
-### 10.3 Page Profil
-- [ ] Page /profile (affichage infos utilisateur)
-- [ ] Section "Mes informations" (nom, email, téléphone)
-- [ ] Section "Mes adresses" (liste, ajout, modification, suppression)
-- [ ] Section "Changer mot de passe"
-- [ ] Bouton déconnexion
+**📝 Documentation complète** :
+- [x] **FIGMA_WORKFLOW.md** : Retour d'expérience Login + leçons apprises
+- [x] **FIGMA_DEV_GUIDE.md** : Guide complet best practices Figma → React ⭐
+- [x] Login.tsx = **fichier de référence** pour toutes futures pages
+- [x] Workflow en 8 étapes validé et documenté
 
-### 10.4 Protection de routes
-- [ ] HOC ProtectedRoute (redirect /login si non connecté)
-- [ ] Protéger /profile, /orders, /checkout
-- [ ] Affichage conditionnel Header (bouton Login vs Profil)
+**✅ Phase Validation** :
+- [x] Tester page /login (formulaire, validation, erreurs)
+- [x] Tester page /register (formulaire, validation, erreurs)
+- [x] Tester page /profile (affichage, déconnexion, protection)
+- [x] Tester redirections (login → home, non-auth → login)
+- [x] Tester Header (CONNEXION vs prénom/MON COMPTE)
+- [x] Style A-COLD-WALL* respecté (minimaliste, noir/blanc, uppercase)
+
+### 10.3 Page Profil - Design & Implémentation ✅ (TERMINÉ - 10 déc 2025)
+
+**📐 Phase Design (Figma)** :
+- [x] Design Figma récupéré (node-id: 6:273)
+- [x] Layout 2 colonnes : Infos personnelles (gauche) + Quick actions (droite)
+- [x] Responsive analysé (mobile 1 colonne, desktop 2 colonnes)
+
+**💻 Phase Implémentation** :
+- [x] **get_design_context + get_screenshot** pour récupérer design exact
+- [x] Coder page /profile **pixel-perfect depuis Figma** ⭐
+  - Grid `grid-cols-1 lg:grid-cols-[1fr_720px]` (gauche flexible + droite 720px)
+  - Gap 24px entre colonnes
+  - Espacements exacts : p-[33px] (gauche), p-[25px] (droite)
+  - Typographie exacte (font-[Geist], text-[36px], text-[20px], text-[16px], text-[14px])
+  - Couleurs exactes (#4a5565, #e7000b)
+- [x] **Refactorisation en composants propres** :
+  - `ProfileHeader` (header)
+  - `ProfileInfoField` (field réutilisable)
+  - `ProfileRoleBadge` (badge rôle)
+  - `ProfileInfoCard` (card infos)
+  - `ProfileQuickAction` (card action réutilisable)
+  - `ProfileActions` (boutons déconnexion + retour)
+  - **Avant** : 130 lignes → **Après** : 53 lignes (Profile.tsx)
+- [x] Section "Mes informations" (affichage lecture seule)
+  - Email, Prénom, Nom, Téléphone
+  - Badge rôle (bg-black, text-white)
+  - Date membre depuis
+- [x] Quick actions (2 cards)
+  - "Mes Commandes" (lien vers /orders)
+  - "Mes Adresses" (disabled, bientôt disponible)
+  - Cards adaptées au contenu (`h-fit`)
+- [x] Bouton déconnexion (border rouge #e7000b)
+- [x] Responsive pixel-perfect
+  - Mobile : 1 colonne verticale
+  - Desktop : 2 colonnes (gauche + 2 cards droite)
+
+**📝 Composants créés** :
+- `ProfileHeader.tsx` (11 lignes)
+- `ProfileInfoField.tsx` (13 lignes)
+- `ProfileRoleBadge.tsx` (13 lignes)
+- `ProfileInfoCard.tsx` (38 lignes)
+- `ProfileQuickAction.tsx` (35 lignes)
+- `ProfileActions.tsx` (19 lignes)
+
+**⏸️ Fonctionnalités avancées (Phase 11)** :
+- [ ] Édition informations personnelles (formulaire)
+- [ ] Gestion adresses CRUD (liste, ajout, modification, suppression)
+- [ ] Changer mot de passe (formulaire, validation)
+
+### 10.4 Protection de routes ✅
+- [x] HOC ProtectedRoute (redirect /login si non connecté)
+- [x] Protéger /profile
+- [x] Affichage conditionnel Header (bouton CONNEXION vs prénom/MON COMPTE)
+- [ ] Protéger /orders (Phase 14)
+- [ ] Protéger /checkout (Phase 12)
 
 ---
 
@@ -232,24 +350,61 @@
 
 **Objectif** : Tunnel d'achat complet avec paiement
 
-### 12.1 Page Panier (/cart)
-- [ ] Créer page Cart.tsx complète
-- [ ] Composant CartItem (image, nom, variant, quantité, prix, supprimer)
-- [ ] Composant QuantitySelector (+/- pour changer quantité)
-- [ ] Composant CartSummary (sous-total, frais livraison, total)
-- [ ] Bouton "Procéder au paiement" (vers /checkout)
-- [ ] Gestion panier vide (EmptyCart)
-- [ ] Groupement par shop (si multi-shops)
-- [ ] Calcul frais de livraison dynamique selon shop
+**📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
 
-### 12.2 Page Checkout (/checkout)
-- [ ] Étape 1 : Vérification panier (récapitulatif articles)
-- [ ] Étape 2 : Adresse de livraison (liste adresses ou nouvelle)
-- [ ] Étape 3 : Mode de livraison (standard, express si dispo)
-- [ ] Étape 4 : Paiement (Stripe Payment Element)
-- [ ] Composant StepIndicator (indicateur d'étape)
+### 12.1 Page Panier (/cart) - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer page Cart dans Figma (layout, composants)
+- [ ] Designer CartItem (image, nom, variant, quantité, prix, actions)
+- [ ] Designer QuantitySelector (+/- ou input)
+- [ ] Designer CartSummary (sous-total, frais livraison, total)
+- [ ] Designer état panier vide (EmptyCart avec CTA)
+- [ ] Designer états responsive (mobile, tablet, desktop)
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder page Cart.tsx complète
+- [ ] Coder composant CartItem (image, nom, variant, quantité, prix, supprimer)
+- [ ] Coder composant QuantitySelector (+/- pour changer quantité)
+- [ ] Coder composant CartSummary (sous-total, frais livraison, total)
+- [ ] Ajouter bouton "Procéder au paiement" (vers /checkout)
+- [ ] Gérer panier vide (EmptyCart)
+- [ ] Calcul frais de livraison dynamique (standard/express)
+
+**✅ Phase Validation** :
+- [ ] Comparer rendu avec Figma
+- [ ] Tester ajout/suppression articles
+- [ ] Tester changement quantités
+- [ ] Tester calcul total (articles + livraison)
+- [ ] Tester responsive
+
+### 12.2 Page Checkout (/checkout) - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer layout Checkout (multi-étapes)
+- [ ] Designer StepIndicator (indicateur d'étape visuel)
+- [ ] Designer Étape 1 : Vérification panier
+- [ ] Designer Étape 2 : Adresse de livraison (liste + formulaire nouveau)
+- [ ] Designer Étape 3 : Mode de livraison (options standard/express)
+- [ ] Designer Étape 4 : Paiement (Stripe Elements)
+- [ ] Designer états d'erreur et validation
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder page Checkout.tsx (layout multi-étapes)
+- [ ] Coder composant StepIndicator (indicateur d'étape)
+- [ ] Coder Étape 1 : Vérification panier (récapitulatif articles)
+- [ ] Coder Étape 2 : Adresse de livraison (liste adresses ou nouvelle)
+- [ ] Coder Étape 3 : Mode de livraison (standard, express si dispo)
+- [ ] Coder Étape 4 : Paiement (Stripe Payment Element)
 - [ ] Validation chaque étape avant passage suivante
 - [ ] Affichage total final (articles + livraison)
+
+**✅ Phase Validation** :
+- [ ] Comparer rendu avec Figma
+- [ ] Tester navigation entre étapes
+- [ ] Tester validation de chaque étape
+- [ ] Tester sélection/création adresse
+- [ ] Tester calcul frais de livraison
 
 ### 12.3 Intégration Stripe (Frontend)
 - [ ] Installer @stripe/stripe-js, @stripe/react-stripe-js
@@ -259,51 +414,72 @@
 - [ ] Redirection vers /order-confirmation/:orderId après succès
 - [ ] Gestion erreurs paiement
 
-### 12.4 Page Confirmation Commande
-- [ ] Page /order-confirmation/:orderId
-- [ ] Affichage récapitulatif commande
-- [ ] Numéro de commande
-- [ ] Statut (payé, en cours de traitement)
-- [ ] Adresse de livraison
-- [ ] Articles commandés
-- [ ] Total payé
-- [ ] Bouton "Voir mes commandes"
+### 12.4 Page Confirmation Commande - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer page Order Confirmation (layout, infos commande)
+- [ ] Designer affichage numéro de commande (visuel, copiable)
+- [ ] Designer sections (statut, adresse, articles, total)
+- [ ] Designer CTA "Voir mes commandes", "Continuer shopping"
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder page /order-confirmation/:orderId
+- [ ] Affichage récapitulatif commande (fetch API /orders/:id)
+- [ ] Afficher numéro de commande
+- [ ] Afficher statut (payé, en cours de traitement)
+- [ ] Afficher adresse de livraison
+- [ ] Afficher articles commandés
+- [ ] Afficher total payé
+- [ ] Bouton "Voir mes commandes" (vers /orders)
+
+**✅ Phase Validation** :
+- [ ] Comparer rendu avec Figma
+- [ ] Tester affichage après paiement réussi
+- [ ] Tester récupération données commande (API)
+- [ ] Tester navigation vers /orders
 
 ---
 
-## 🔄 Phase 13 : Backend - Paiement Stripe + Stripe Connect
+## 🔄 Phase 13 : Backend - Paiement Stripe (Reboul)
 
-**Objectif** : Intégration paiement avec répartition multi-shops
+**Objectif** : Intégration paiement Stripe pour Reboul (simple, pas de Connect)
 
 ### 13.1 Module Stripe - Configuration
-- [ ] Installer stripe, @nestjs/stripe (ou wrapper)
-- [ ] Configurer clés API Stripe (STRIPE_SECRET_KEY)
+- [ ] Installer stripe, @nestjs/stripe
+- [ ] Configurer clés API Stripe (STRIPE_SECRET_KEY, STRIPE_PUBLIC_KEY)
 - [ ] Créer module Stripe
 - [ ] Service Stripe : createPaymentIntent(), confirmPayment(), refund()
+- [ ] Configuration compte Stripe Reboul
 
-### 13.2 Stripe Connect - Multi-shops
-- [ ] Ajouter stripeAccountId dans entité Shop
-- [ ] Configurer Stripe Connect (comptes connectés par shop)
-- [ ] Endpoint POST /shops/:id/connect-stripe (lier compte Stripe)
-- [ ] Calculer répartition paiement par shop dans panier
-- [ ] Créer PaymentIntent avec application_fee (pour chaque shop)
-- [ ] Transfer automatique vers comptes shops
+### 13.2 Création PaymentIntent
+- [ ] Endpoint POST /orders/create-payment-intent
+- [ ] Calculer montant total (articles + frais livraison)
+- [ ] Créer PaymentIntent Stripe avec metadata commande
+- [ ] Retourner client_secret au frontend
+- [ ] Gérer devise (EUR)
 
 ### 13.3 Webhooks Stripe
 - [ ] Endpoint POST /stripe/webhook (recevoir events Stripe)
-- [ ] Vérifier signature webhook
+- [ ] Vérifier signature webhook (sécurité)
 - [ ] Gérer events :
-  - payment_intent.succeeded → Créer commande, décrémenter stock
-  - payment_intent.payment_failed → Logger erreur
-  - charge.refunded → Marquer commande REFUNDED, incrémenter stock
+  - payment_intent.succeeded → Créer commande, décrémenter stock, envoyer email
+  - payment_intent.payment_failed → Logger erreur, notifier user
+  - charge.refunded → Marquer commande REFUNDED, incrémenter stock, envoyer email
 - [ ] Mettre à jour statut commande selon events
 
 ### 13.4 Gestion Remboursements
-- [ ] Endpoint POST /orders/:id/refund (admin uniquement)
+- [ ] Endpoint POST /admin/orders/:id/refund (admin uniquement)
+- [ ] Vérifier statut commande (PAID ou SHIPPED)
 - [ ] Appeler Stripe API pour créer refund
-- [ ] Mettre à jour statut commande
-- [ ] Incrémenter stock
+- [ ] Mettre à jour statut commande → REFUNDED
+- [ ] Incrémenter stock variants
 - [ ] Envoyer email confirmation remboursement
+
+### 13.5 Gestion Erreurs & Logs
+- [ ] Logger toutes transactions Stripe
+- [ ] Gestion erreurs paiement (carte refusée, fonds insuffisants, etc.)
+- [ ] Retry logic pour webhooks (si échec)
+- [ ] Dashboard Stripe : vérifier transactions en temps réel
 
 ---
 
@@ -311,29 +487,80 @@
 
 **Objectif** : Permettre à l'utilisateur de consulter ses commandes
 
-### 14.1 Page Mes Commandes (/orders)
-- [ ] Liste des commandes (OrderCard par commande)
-- [ ] Filtres par statut (toutes, en cours, livrées, annulées)
-- [ ] Tri (date, montant)
-- [ ] Pagination si beaucoup de commandes
+**📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
+
+### 14.1 Page Mes Commandes (/orders) - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer page /orders (layout liste commandes)
+- [ ] Designer OrderCard (résumé commande : date, statut, total, produits)
+- [ ] Designer filtres par statut (toutes, en cours, livrées, annulées)
+- [ ] Designer tri (date, montant)
+- [ ] Designer pagination (si beaucoup de commandes)
+- [ ] Designer état vide (aucune commande)
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder page /orders
+- [ ] Afficher liste des commandes (OrderCard par commande)
+- [ ] Implémenter filtres par statut (toutes, en cours, livrées, annulées)
+- [ ] Implémenter tri (date, montant)
+- [ ] Implémenter pagination si beaucoup de commandes
 - [ ] Clic sur commande → /orders/:id
 
-### 14.2 Page Détail Commande (/orders/:id)
-- [ ] Numéro de commande
-- [ ] Date et heure
-- [ ] Statut avec timeline visuelle
-- [ ] Articles commandés (liste avec images)
-- [ ] Adresse de livraison
-- [ ] Total payé (articles + livraison)
-- [ ] Tracking colis (si disponible)
+**✅ Phase Validation** :
+- [ ] Comparer rendu avec Figma
+- [ ] Tester récupération commandes (API /orders/me)
+- [ ] Tester filtres et tri
+- [ ] Tester navigation vers détail commande
+
+### 14.2 Page Détail Commande (/orders/:id) - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer page /orders/:id (layout détail commande)
+- [ ] Designer header (numéro commande, date, statut)
+- [ ] Designer OrderTimeline (visualisation étapes/statuts)
+- [ ] Designer section articles (liste avec images)
+- [ ] Designer section livraison (adresse, tracking)
+- [ ] Designer section paiement (total, moyens paiement)
+- [ ] Designer actions (annuler, télécharger facture)
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder page /orders/:id
+- [ ] Afficher numéro de commande
+- [ ] Afficher date et heure
+- [ ] Afficher statut avec timeline visuelle (OrderTimeline)
+- [ ] Afficher articles commandés (liste avec images)
+- [ ] Afficher adresse de livraison
+- [ ] Afficher total payé (articles + livraison)
+- [ ] Afficher tracking colis (si disponible)
 - [ ] Bouton "Annuler commande" (si statut PENDING/PAID)
 - [ ] Bouton "Télécharger facture" (PDF)
 
-### 14.3 Composants Commandes
-- [ ] Composant OrderCard (résumé commande dans liste)
-- [ ] Composant OrderTimeline (visualisation étapes)
-- [ ] Composant OrderItem (article dans commande)
-- [ ] Composant TrackingInfo (suivi colis)
+**✅ Phase Validation** :
+- [ ] Comparer rendu avec Figma
+- [ ] Tester affichage détails commande (API /orders/:id)
+- [ ] Tester timeline selon statut
+- [ ] Tester bouton annuler (API PATCH /orders/:id/cancel)
+- [ ] Tester téléchargement facture PDF
+
+### 14.3 Composants Commandes - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer composant OrderCard (pour liste)
+- [ ] Designer composant OrderTimeline (états visuels)
+- [ ] Designer composant OrderItem (article dans commande)
+- [ ] Designer composant TrackingInfo (suivi colis)
+- [ ] Partager composants Figma et valider
+
+**💻 Phase Implémentation** :
+- [ ] Coder composant OrderCard (résumé commande dans liste)
+- [ ] Coder composant OrderTimeline (visualisation étapes)
+- [ ] Coder composant OrderItem (article dans commande)
+- [ ] Coder composant TrackingInfo (suivi colis)
+
+**✅ Phase Validation** :
+- [ ] Comparer composants avec Figma
+- [ ] Tester réutilisabilité des composants
+- [ ] Tester tous les états (pending, paid, shipped, delivered, cancelled)
 
 ---
 
@@ -400,61 +627,219 @@
 
 ---
 
-## 🎨 Phase 17 : Frontend - Admin Panel (Application séparée)
+## 🎨 Phase 17 : Frontend - Admin Centrale (Connectée à Reboul)
 
-**Objectif** : Interface admin pour gérer le site
+**Objectif** : Créer Admin Centrale et la connecter au backend Reboul
 
-### 17.1 Setup Admin App
-- [ ] Créer dossier /admin séparé
+**📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
+
+**⚠️ IMPORTANT** : Pour **CHAQUE sous-phase** (Dashboard, Produits, Commandes, Users, etc.) :
+1. 📐 **Designer d'abord dans Figma** (layout, composants, formulaires, tables)
+2. 💻 **Partager design et valider** avant de coder
+3. 🔨 **Implémenter en code** (React + shadcn/ui + TailwindCSS)
+4. ✅ **Valider** rendu vs Figma + fonctionnel
+
+### 17.1 Setup Admin Centrale
+- [ ] Créer dossier `/admin` séparé (hors frontend Reboul)
 - [ ] Setup Vite + React + TypeScript
-- [ ] Installer TailwindCSS ou GeistUI (selon préférence)
+- [ ] Installer TailwindCSS v4 (cohérence avec Reboul)
 - [ ] Configurer routing (React Router)
-- [ ] Layout admin (sidebar + topbar)
+- [ ] Layout admin (sidebar + topbar + site selector)
+- [ ] Configuration API : pointer vers backend Reboul
 
 ### 17.2 Authentification Admin
-- [ ] Page login admin (/admin/login)
-- [ ] Vérifier rôle (ADMIN ou SUPER_ADMIN)
-- [ ] Context AuthAdmin
+- [ ] Page login admin (`/admin/login`)
+- [ ] Vérifier rôle (ADMIN ou SUPER_ADMIN uniquement)
+- [ ] Context AuthAdmin (JWT token)
+- [ ] Service API auth admin
 - [ ] Guard ProtectedRoute admin
+- [ ] Affichage nom utilisateur + rôle
 
-### 17.3 Dashboard
-- [ ] Page /admin/dashboard (statistiques globales)
-- [ ] Cartes : CA du jour/semaine/mois, nombre commandes, produits actifs, users
-- [ ] Graphiques : évolution ventes, top produits
-- [ ] Liste dernières commandes
+### 17.3 Dashboard Reboul
+- [ ] Page `/admin/dashboard` (statistiques Reboul)
+- [ ] Cartes métriques :
+  - CA du jour/semaine/mois
+  - Nombre commandes (total, en cours, livrées)
+  - Produits actifs/en rupture
+  - Nouveaux clients
+- [ ] Graphiques (Chart.js ou Recharts) :
+  - Évolution ventes (7 derniers jours)
+  - Top 5 produits vendus
+  - Répartition commandes par statut
+- [ ] Liste dernières commandes (5 dernières)
 
-### 17.4 Gestion Produits
-- [ ] Page /admin/products (liste produits, recherche, filtres)
-- [ ] Page /admin/products/new (formulaire création produit)
-- [ ] Page /admin/products/:id/edit (formulaire édition)
-- [ ] Upload images (drag & drop)
-- [ ] Gestion variants (tableau éditable)
-- [ ] Preview produit
+### 17.4 Gestion Produits Reboul
+- [ ] Page `/admin/products` (liste produits Reboul)
+  - Recherche par nom/SKU
+  - Filtres (catégorie, marque, stock)
+  - Tri (nom, prix, stock, date création)
+  - Pagination
+- [ ] Page `/admin/products/new` (créer produit)
+  - Formulaire complet (nom, description, prix, catégorie, marque)
+  - Upload images (drag & drop, max 7)
+  - Gestion variants (tableau taille/couleur/stock/prix)
+  - Bouton "Créer produit"
+- [ ] Page `/admin/products/:id/edit` (éditer produit)
+  - Mêmes champs que création
+  - Supprimer images existantes
+  - Modifier variants existants
+  - Preview produit (vue client)
+- [ ] Composants :
+  - ProductForm (formulaire réutilisable)
+  - ImageUploader (drag & drop multiple)
+  - VariantTable (tableau éditable variants)
 
-### 17.5 Gestion Commandes
-- [ ] Page /admin/orders (liste commandes, filtres par statut)
-- [ ] Page /admin/orders/:id (détails commande)
-- [ ] Changer statut commande (dropdown)
-- [ ] Ajouter numéro tracking
-- [ ] Bouton rembourser
-- [ ] Export CSV
+### 17.5 Gestion Commandes Reboul
+- [ ] Page `/admin/orders` (liste commandes)
+  - Filtres par statut (pending, paid, shipped, delivered, cancelled, refunded)
+  - Recherche par numéro commande/email client
+  - Tri (date, montant)
+  - Badge couleur par statut
+- [ ] Page `/admin/orders/:id` (détails commande)
+  - Infos client (nom, email, téléphone)
+  - Adresse livraison/facturation
+  - Liste articles (image, nom, variant, quantité, prix)
+  - Total commande
+  - Statut actuel avec timeline visuelle
+  - Actions :
+    - Changer statut (dropdown : processing → shipped → delivered)
+    - Ajouter numéro tracking (input + save)
+    - Rembourser commande (bouton avec confirmation)
+  - Historique changements statut
+- [ ] Export CSV commandes (bouton dans liste)
 
-### 17.6 Gestion Utilisateurs
-- [ ] Page /admin/users (liste users)
-- [ ] Recherche par nom/email
-- [ ] Voir détails user (commandes, adresses)
-- [ ] Changer rôle
-- [ ] Désactiver/supprimer compte
+### 17.6 Gestion Utilisateurs Reboul
+- [ ] Page `/admin/users` (liste users)
+  - Recherche par nom/email
+  - Filtres par rôle (CLIENT, ADMIN, SUPER_ADMIN)
+  - Tri (date inscription, nombre commandes)
+  - Badge rôle
+- [ ] Page `/admin/users/:id` (détails user)
+  - Infos personnelles (nom, email, téléphone, date inscription)
+  - Liste adresses
+  - Liste commandes (historique)
+  - Changer rôle (dropdown : CLIENT ↔ ADMIN)
+  - Désactiver/supprimer compte (avec confirmation)
 
-### 17.7 Gestion Shops
-- [ ] Page /admin/shops (liste shops)
-- [ ] Éditer politiques livraison/retour
-- [ ] Lier compte Stripe Connect
-- [ ] Statistiques par shop
+### 17.7 Gestion Catégories & Marques Reboul
+- [ ] Page `/admin/categories` (liste catégories enfants)
+  - CRUD catégories (create, edit, delete)
+  - Upload image/vidéo hero section
+  - Size chart par catégorie
+- [ ] Page `/admin/brands` (liste marques)
+  - CRUD marques (create, edit, delete)
+  - Upload logo + mega menu images/vidéos
+  - Statistiques par marque (nombre produits)
+
+### 17.8 Configuration Site Reboul
+- [ ] Page `/admin/settings` (paramètres Reboul)
+  - Politiques livraison (jsonb)
+  - Politiques retour (jsonb)
+  - Frais de livraison (standard, express)
+  - Informations shop (nom, adresse, email contact)
+  - Compte Stripe (affichage ID, lien dashboard Stripe)
+
+### 17.9 Multi-Sites Preparation (UI uniquement)
+- [ ] Sidebar : Section "Sites" avec liste
+  - 🟢 Reboul (actif - connecté)
+  - 🔴 CP Company (inactif - à venir)
+  - 🔴 Outlet (inactif - à venir)
+- [ ] Sélecteur de site (dropdown topbar)
+- [ ] Note : Pour février, seul Reboul est fonctionnel
+- [ ] UI préparée pour connexion futurs sites (CP Company, Outlet)
 
 ---
 
-## 🔄 Phase 18 : Backend - Fonctionnalités Avancées
+## 🐳 Phase 17.10 : Docker & Déploiement Production Ready
+
+**Objectif** : Préparer infrastructure Docker pour déploiement février 2025
+
+### 17.10.1 Docker Compose Production
+- [ ] Créer `docker-compose.prod.yml`
+- [ ] Service PostgreSQL Reboul (avec volumes persistants)
+- [ ] Service Backend Reboul (NestJS production build)
+- [ ] Service Frontend Reboul (Vite build + Nginx)
+- [ ] Service Admin Centrale (Vite build + Nginx)
+- [ ] Nginx reverse proxy (routage /api vers backend)
+- [ ] Variables d'environnement (.env.production)
+
+### 17.10.2 Configuration Nginx
+- [ ] Créer `nginx.conf` production
+- [ ] Routage `reboulstore.com` → Frontend Reboul
+- [ ] Routage `admin.reboulstore.com` → Admin Centrale
+- [ ] Routage `/api` → Backend Reboul
+- [ ] SSL/TLS (Let's Encrypt)
+- [ ] Compression gzip/brotli
+- [ ] Cache headers assets statiques
+
+### 17.10.3 Scripts Déploiement
+- [ ] Script `deploy-reboul.sh` (build + push Docker images)
+- [ ] Script `backup-db.sh` (backup PostgreSQL quotidien)
+- [ ] Script `rollback.sh` (retour version précédente)
+- [ ] Documentation déploiement (`DEPLOY.md`)
+
+### 17.10.4 Monitoring & Logs
+- [ ] Configuration logs centralisés (Winston)
+- [ ] Health check endpoints (`/health`, `/api/health`)
+- [ ] Monitoring uptime (simple ping)
+- [ ] Sentry (monitoring erreurs - optionnel)
+
+---
+
+## 🧪 Phase 17.11 : Tests E2E Critiques (Avant Février)
+
+**Objectif** : Tests bout en bout pour valider parcours utilisateur
+
+### 17.11.1 Setup Tests E2E
+- [ ] Installer Playwright (ou Cypress)
+- [ ] Configuration tests (`playwright.config.ts`)
+- [ ] Base de données de test (séparée)
+- [ ] Script `npm run test:e2e`
+
+### 17.11.2 Tests Parcours Client
+- [ ] Test : Parcours complet achat
+  1. Arriver sur homepage
+  2. Cliquer catégorie enfants
+  3. Filtrer par marque
+  4. Cliquer produit
+  5. Sélectionner variant (taille)
+  6. Ajouter au panier
+  7. Aller au panier
+  8. Modifier quantité
+  9. Procéder au checkout
+  10. Créer compte / Login
+  11. Ajouter adresse livraison
+  12. Payer (Stripe test mode)
+  13. Vérifier confirmation commande
+- [ ] Test : Inscription + Login + Profil
+- [ ] Test : Réinitialisation mot de passe
+- [ ] Test : Navigation (header, footer, mega menu)
+
+### 17.11.3 Tests Parcours Admin
+- [ ] Test : Login admin
+- [ ] Test : Créer produit complet (avec variants + images)
+- [ ] Test : Modifier produit existant
+- [ ] Test : Changer statut commande (paid → shipped → delivered)
+- [ ] Test : Ajouter tracking number
+- [ ] Test : Créer catégorie + marque
+- [ ] Test : Dashboard (vérifier chargement statistiques)
+
+### 17.11.4 Tests Critiques Paiement
+- [ ] Test : Paiement réussi (carte test Stripe)
+- [ ] Test : Paiement échoué (carte test refusée)
+- [ ] Test : Webhook Stripe (payment_intent.succeeded)
+- [ ] Test : Remboursement commande depuis admin
+- [ ] Test : Stock décrémenté après paiement
+- [ ] Test : Stock ré-incrémenté après remboursement
+
+### 17.11.5 CI/CD Tests
+- [ ] GitHub Actions : Run tests E2E sur push
+- [ ] Workflow : lint → test:unit → test:e2e → build
+- [ ] Badge statut tests dans README.md
+
+---
+
+## 🔄 Phase 18 : Backend - Fonctionnalités Avancées (POST-FÉVRIER)
 
 **Objectif** : Ajouter fonctionnalités manquantes
 
@@ -710,27 +1095,87 @@
 
 ## 📊 Récapitulatif par Priorité
 
-### 🔴 Priorité 1 (MVP) - Phases 9-14
-- Backend : Auth + Users + Commandes complètes
-- Frontend : Auth UI + Panier + Checkout + Historique
-- **Résultat** : Site e-commerce fonctionnel de bout en bout
+### 🔴 Priorité 1 (MVP Reboul - FÉVRIER 2025) - Phases 9-14
+- **Phases 9-10** : Backend Auth + Frontend Auth UI
+- **Phases 11-12** : Backend Commandes + Frontend Panier & Checkout
+- **Phases 13-14** : Backend Stripe + Frontend Historique Commandes
+- **Résultat** : Site Reboul (catégorie enfants) fonctionnel de bout en bout
 
-### 🟡 Priorité 2 (Essentiel) - Phases 15-17
-- Backend : Cloudinary + Admin + Stripe Connect
-- Frontend : Admin Panel
-- **Résultat** : Gestion complète du site, paiements multi-shops
+### 🟡 Priorité 2 (Admin Centrale - FÉVRIER 2025) - Phases 15-17.11
+- **Phases 15-16** : Backend Cloudinary + Admin & Permissions
+- **Phase 17** : **Admin Centrale** connectée à Reboul (interface complète)
+- **Phase 17.10** : Docker Production Ready
+- **Phase 17.11** : Tests E2E critiques
+- **Résultat** : Gestion complète de Reboul depuis l'Admin Centrale + Infrastructure prête pour déploiement
 
-### 🟢 Priorité 3 (Nice to have) - Phases 18-19
+### 📝 Notes :
+- **Page Home** : Améliorations progressives au fil du temps
+- **Données réelles** : Ajout de la collection réelle via Admin après Phase 17
+
+### 🟢 Priorité 3 (Expansion Multi-Sites) - Après Reboul
+- **CP Company** : Créer Frontend + Backend + Database (même structure que Reboul)
+- **Outlet** : Créer Frontend + Backend + Database (même structure que Reboul)
+- Connecter CP Company et Outlet à l'Admin Centrale
+- **Résultat** : 3 sites indépendants gérés depuis une seule Admin
+
+### 🟣 Priorité 4 (Fonctionnalités Avancées) - Phases 18-19
 - Backend : Recherche avancée, Wishlist, Reviews, Promos, WebSockets, SMS, Redis
 - Frontend : Recherche UI, Wishlist, Reviews, Promos, Notifications, Pages vitrine
-- **Résultat** : Expérience utilisateur premium
+- Déployer sur les 3 sites progressivement
+- **Résultat** : Expérience utilisateur premium sur tous les sites
 
-### 🔵 Priorité 4 (Optimisation) - Phases 20-24
+### 🔵 Priorité 5 (Optimisation) - Phases 20-24
 - Automatisation, Tests, SEO, Performance, Déploiement, Post-lancement
-- **Résultat** : Site professionnel, stable, performant, scalable
+- **Résultat** : 3 sites professionnels, stables, performants, scalables
 
 ---
 
-**Total estimé** : ~6-9 mois de développement (selon rythme et équipe)
+## 🎯 Timeline Estimée DÉTAILLÉE (Objectif Février 2025)
 
-**Prochaine phase recommandée** : **Phase 9 - Backend Auth & Users** 🚀
+### 📅 Semaine par semaine :
+
+**Semaine 1-2 (10-24 décembre 2025)** : Auth & Users
+- ✅ Phase 9 : Backend Auth & Users (7 jours)
+- ✅ Phase 10 : Frontend Auth UI (5 jours)
+
+**Semaine 3-4 (25 décembre - 7 janvier 2025)** : Commandes & Panier
+- ✅ Phase 11 : Backend Commandes complètes + Emails (7 jours)
+- ✅ Phase 12 : Frontend Panier & Checkout (7 jours)
+
+**Semaine 5-6 (8-21 janvier 2025)** : Paiement & Historique
+- ✅ Phase 13 : Backend Stripe (5 jours)
+- ✅ Phase 14 : Frontend Historique Commandes (3 jours)
+
+**🎉 CHECKPOINT 1** : Site Reboul fonctionnel (client peut acheter) ✅
+
+**Semaine 7 (22-28 janvier 2025)** : Images & Admin Backend
+- ✅ Phase 15 : Backend Cloudinary (3 jours)
+- ✅ Phase 16 : Backend Admin & Permissions (4 jours)
+
+**Semaine 8-9 (29 janvier - 11 février 2025)** : Admin Centrale
+- ✅ Phase 17.1-17.8 : Frontend Admin Centrale complète (10 jours)
+- ✅ Phase 17.9 : Préparation UI multi-sites (2 jours)
+
+**Semaine 10 (12-18 février 2025)** : Production & Tests
+- ✅ Phase 17.10 : Docker Production + Déploiement (4 jours)
+- ✅ Phase 17.11 : Tests E2E critiques (3 jours)
+
+**🎉 CHECKPOINT 2** : Admin Centrale connectée + Infrastructure prod ✅
+
+### 📊 Résumé :
+
+- **🔴 Reboul MVP (Phases 9-14)** : ~6 semaines (10 déc - 21 jan)
+- **🟡 Admin Centrale (Phases 15-17.11)** : ~4 semaines (22 jan - 18 fév)
+- **📦 TOTAL FÉVRIER 2025** : ~10 semaines (2,5 mois)
+
+### 🚀 Post-Février 2025 :
+
+- **📝 Ajout données réelles** : Utiliser Admin Centrale pour ajouter la collection
+- **🎨 Amélioration Home** : Progressivement selon idées
+- **🟢 CP Company + Outlet** : ~4-6 semaines (mars-avril 2025)
+- **🟣 Fonctionnalités avancées** : ~8-12 semaines (mai-juillet 2025)
+- **🔵 Optimisation** : Continu
+
+---
+
+**🎯 Prochaine phase recommandée** : **Phase 9 - Backend Auth & Users** 🚀
