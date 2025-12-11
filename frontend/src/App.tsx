@@ -3,8 +3,9 @@ import { Layout } from './components/layout/Layout'
 import { Home } from './pages/Home'
 import { Catalog } from './pages/Catalog'
 import { Product } from './pages/Product'
-import { Cart } from './pages/cart'
+import { Cart } from './pages/Cart'
 import { Checkout } from './pages/Checkout'
+import { OrderConfirmation } from './pages/OrderConfirmation'
 import { About } from './pages/About'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
@@ -57,6 +58,14 @@ function App() {
           element={
             <Layout>
               <Checkout />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/order-confirmation" 
+          element={
+            <Layout>
+              <OrderConfirmation />
             </Layout>
           } 
         />

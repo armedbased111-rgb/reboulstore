@@ -10,9 +10,11 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
+const mailer_1 = require("@nestjs-modules/mailer");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const database_config_1 = require("./config/database.config");
+const email_config_1 = require("./config/email.config");
 const categories_module_1 = require("./modules/categories/categories.module");
 const products_module_1 = require("./modules/products/products.module");
 const cart_module_1 = require("./modules/cart/cart.module");
@@ -21,6 +23,7 @@ const shops_module_1 = require("./modules/shops/shops.module");
 const brands_module_1 = require("./modules/brands/brands.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const users_module_1 = require("./modules/users/users.module");
+const checkout_module_1 = require("./modules/checkout/checkout.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +39,11 @@ exports.AppModule = AppModule = __decorate([
                 useFactory: database_config_1.getDatabaseConfig,
                 inject: [config_1.ConfigService],
             }),
+            mailer_1.MailerModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: email_config_1.getEmailConfig,
+                inject: [config_1.ConfigService],
+            }),
             categories_module_1.CategoriesModule,
             products_module_1.ProductsModule,
             cart_module_1.CartModule,
@@ -44,6 +52,7 @@ exports.AppModule = AppModule = __decorate([
             brands_module_1.BrandsModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
+            checkout_module_1.CheckoutModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

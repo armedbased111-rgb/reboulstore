@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../hooks/useCart';
+import { useCartContext } from '../../contexts/CartContext';
 import { useCategories } from '../../hooks/useCategories';
 import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
 
 export const Header = () => {
-  const { cart, loading: cartLoading } = useCart();
+  const { cart, loading: cartLoading } = useCartContext();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { brands, loading: brandsLoading, error: brandsError } = useBrands();
   const { isAuthenticated, user } = useAuth();

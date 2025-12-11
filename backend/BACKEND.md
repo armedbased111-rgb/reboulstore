@@ -229,6 +229,17 @@ backend/
   - Limites : 5MB max, formats jpg/jpeg/png/gif/webp
   - Tests validés (upload, récupération, suppression, mise à jour ordre)
 
+- Module Checkout créé et opérationnel :
+  - Module, Service, Controller créés
+  - Intégration Stripe Checkout (solution hébergée)
+  - Endpoints REST :
+    - POST /checkout/create-session (créer session Stripe Checkout)
+    - POST /checkout/webhook (recevoir webhooks Stripe)
+  - Gestion guest checkout (userId nullable)
+  - Enrichissement données produits (images, descriptions) sur Stripe
+  - Extraction complète données client (adresses, téléphone) depuis Stripe
+  - Workflow capture manuelle (PaymentIntent avec capture_method: 'manual')
+
 - Module Panier créé et opérationnel :
   - Module, Service, Controller créés
   - DTOs avec validation (AddToCartDto, UpdateCartItemDto, CartResponseDto)
@@ -240,6 +251,25 @@ backend/
     - DELETE /cart/items/:id (supprimer article)
     - DELETE /cart (vider panier)
   - Gestion sessionId via header X-Session-Id ou query param
+
+- Module Email créé et opérationnel :
+  - Service EmailService avec méthodes :
+    - sendRegistrationConfirmation() : Email bienvenue nouveau client
+    - sendOrderReceived() : Email réception commande (PENDING)
+    - sendOrderConfirmation() : Email confirmation paiement (PAID)
+    - sendShippingNotification() : Email expédition (SHIPPED)
+    - sendOrderDelivered() : Email livraison (DELIVERED)
+    - sendOrderCancelled() : Email annulation (CANCELLED/REFUNDED)
+  - Support invités : Utilise customerInfo.email || user.email
+  - Persistance BDD : Entité OrderEmail pour tracker tous les emails
+  - Logging : Logger NestJS pour tous les événements
+  - Gestion erreurs : Emails persistés même en cas d'échec (avec message erreur)
+  - Templates Handlebars : registration-confirmation, order-received, order-confirmation, shipping-notification, order-delivered, order-cancelled
+
+- Entité OrderEmail créée :
+  - Tracking complet emails envoyés
+  - Champs : orderId, emailType (enum), recipientEmail, subject, sent (bool), errorMessage, sentAt, createdAt
+  - Types email : ORDER_RECEIVED, ORDER_CONFIRMED, ORDER_SHIPPED, ORDER_DELIVERED, ORDER_CANCELLED
   - Vérification stock avant ajout et mise à jour
   - Calcul total automatique avec prix des produits
   - Relations chargées automatiquement (variant, product, images)
@@ -247,6 +277,30 @@ backend/
   - Tests validés (ajout, récupération, mise à jour, suppression, vider panier)
 
 - Module Commandes créé et opérationnel :
+  - Module, Service, Controller créés
+  - Entité Order avec statuts (PENDING, PAID, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED)
+  - DTOs avec validation (CreateOrderDto, UpdateOrderStatusDto, OrderResponseDto)
+  - Méthodes dans OrdersService :
+    - create() : Créer commande depuis panier (avec vérification stock)
+    - createFromStripeCheckout() : Créer commande depuis Stripe Checkout (PENDING)
+    - capturePayment() : Capture manuelle paiement (admin) avec vérification stock
+    - updateStatus() : Changer statut commande (avec gestion stock et emails)
+    - cancelOrder() : Annuler commande (avec gestion stock)
+    - refundOrder() : Rembourser commande (avec gestion stock)
+    - findByUser() : Récupérer commandes d'un utilisateur
+    - findOne() : Détails d'une commande
+  - Endpoints REST :
+    - POST /orders (créer depuis panier)
+    - GET /orders/:id (détails)
+    - GET /orders/user/:userId (commandes utilisateur)
+    - PATCH /orders/:id/status (changer statut)
+    - POST /orders/:id/capture (capture manuelle paiement - admin)
+    - POST /orders/:id/cancel (annuler)
+    - POST /orders/:id/refund (rembourser)
+  - Gestion stock : Vérification avant capture, décrément après capture
+  - Support guest checkout (userId nullable, customerInfo stocké dans Order)
+  - Stockage items dans Order.items (JSONB) pour commandes Stripe Checkout
+  - Workflow capture manuelle : PENDING → Admin vérifie stock → Capture → PAID
   - Module, Service, Controller créés
   - DTOs avec validation (CreateOrderDto avec nested validation, OrderResponseDto, UpdateOrderStatusDto)
   - Méthodes dans OrdersService (create, findOne, findAll, updateStatus)

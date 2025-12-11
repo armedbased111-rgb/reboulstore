@@ -52,6 +52,7 @@ FRONTEND_URL=http://localhost:3000
 # Stripe (Phase 13+)
 # STRIPE_SECRET_KEY=
 # STRIPE_PUBLIC_KEY=
+# STRIPE_WEBHOOK_SECRET= (pour vérifier la signature des webhooks)
 
 # Email (Phase 11+)
 # SMTP_HOST=
@@ -162,6 +163,12 @@ http://localhost:3001
 | POST | `/orders` | Créer commande | ❌ |
 | GET | `/orders/me` | Mes commandes | ✅ JWT |
 | GET | `/orders/:id` | Détails commande | ✅ JWT |
+
+### Checkout
+
+| Méthode | Endpoint | Description | Auth |
+|---------|----------|-------------|------|
+| POST | `/checkout/create-session` | Créer session Stripe Checkout | ✅ JWT |
 
 ### Shops
 

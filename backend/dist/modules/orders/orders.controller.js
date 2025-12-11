@@ -17,22 +17,52 @@ const common_1 = require("@nestjs/common");
 const orders_service_1 = require("./orders.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const update_order_status_dto_1 = require("./dto/update-order-status.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const email_service_1 = require("./email.service");
 let OrdersController = class OrdersController {
     ordersService;
-    constructor(ordersService) {
+    emailService;
+    constructor(ordersService, emailService) {
         this.ordersService = ordersService;
+        this.emailService = emailService;
     }
     async create(createOrderDto) {
         return this.ordersService.create(createOrderDto);
     }
-    async findOne(id) {
-        return this.ordersService.findOne(id);
+    async findMyOrders(req) {
+        return this.ordersService.findByUser(req.user.id);
     }
     async findAll() {
         return this.ordersService.findAll();
     }
+    async findOne(id, req) {
+        return this.ordersService.findOne(id, req.user.id);
+    }
+    async testEmail(body) {
+        if (process.env.NODE_ENV === 'production') {
+            return { message: 'This endpoint is disabled in production' };
+        }
+        try {
+            switch (body.type) {
+                case 'registration':
+                    await this.emailService.sendRegistrationConfirmation(body.email, body.firstName || 'Test User');
+                    return { message: 'Registration email sent successfully to ' + body.email };
+                default:
+                    return { error: 'Invalid email type. Use: registration' };
+            }
+        }
+        catch (error) {
+            return { error: error.message, stack: error.stack };
+        }
+    }
+    async cancel(id, req) {
+        return this.ordersService.cancel(id, req.user.id);
+    }
     async updateStatus(id, updateStatusDto) {
         return this.ordersService.updateStatus(id, updateStatusDto);
+    }
+    async capturePayment(id) {
+        return this.ordersService.capturePayment(id);
     }
 };
 exports.OrdersController = OrdersController;
@@ -45,18 +75,46 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('me'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], OrdersController.prototype, "findOne", null);
+], OrdersController.prototype, "findMyOrders", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)('test-email'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "testEmail", null);
+__decorate([
+    (0, common_1.Patch)(':id/cancel'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "cancel", null);
 __decorate([
     (0, common_1.Patch)(':id/status'),
     __param(0, (0, common_1.Param)('id')),
@@ -65,8 +123,18 @@ __decorate([
     __metadata("design:paramtypes", [String, update_order_status_dto_1.UpdateOrderStatusDto]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Post)(':id/capture'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "capturePayment", null);
 exports.OrdersController = OrdersController = __decorate([
     (0, common_1.Controller)('orders'),
-    __metadata("design:paramtypes", [orders_service_1.OrdersService])
+    __metadata("design:paramtypes", [orders_service_1.OrdersService,
+        email_service_1.EmailService])
 ], OrdersController);
 //# sourceMappingURL=orders.controller.js.map

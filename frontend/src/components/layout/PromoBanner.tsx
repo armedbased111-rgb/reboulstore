@@ -15,7 +15,7 @@ export const PromoBanner = () => {
         return (
     <div className="bg-[#1D1D1D] text-white py-2 px-4 flex items-center justify-between">
       {/* Texte promotionnel */}
-      <div className="flex-1 text-center">
+      <div className="flex-1 text-left">
         <span className="uppercase text-sm font-medium tracking-wide">
           WINTER SALE - UP TO 50% OFF
         </span>

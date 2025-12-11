@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.18.0  
-**Phase actuelle** : Phase 10.3 COMPLÈTE (Login + Register + Profile terminés) ✅ - Prochaine : Phase 10.4 (Protection routes)
+**Version** : 0.19.0  
+**Phase actuelle** : Phase 12.2 & 13 COMPLÈTES (Checkout Stripe + Emails invités) ✅ - Prochaine : Phase 14 (Historique commandes)
 **Objectif Février 2025** : Lancement site Reboul avec première collection
 
 ---
@@ -112,16 +112,18 @@ reboulstore/
 
 ### Backend complété ✅
 - ✅ **Infrastructure** : Docker + PostgreSQL + NestJS configurés
-- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop, Brand, **User, Address**
+- ✅ **Entités** : Category, Product, Image, Variant, Cart, CartItem, Order, Shop, Brand, **User, Address, OrderEmail**
 - ✅ **Modules API** :
   - Categories (CRUD + slug + videoUrl + sizeChart)
   - Products (CRUD + filtres + pagination + variants + images + upload local + filtre brand)
   - Cart (gestion complète avec session)
-  - Orders (création + statuts + vérification stock)
+  - Orders (création + statuts + vérification stock + capture manuelle paiements)
+  - Checkout (Stripe Checkout - session création + webhooks)
   - Shops (CRUD + politiques)
   - Brands (CRUD + slug + images/vidéos mega menu)
   - **Auth (register, login, JWT, guards)**
   - **Users (profil, adresses CRUD)**
+  - **Email (système complet avec persistance BDD)**
 - ✅ **Authentification** : JWT complète (tokens 7 jours, bcrypt, guards)
 - ✅ **Sécurité** : Passwords hachés, jamais retournés, routes protégées
 - ✅ **Relations** : Toutes les relations TypeORM (User → Addresses, User → Orders)
@@ -131,9 +133,10 @@ reboulstore/
 
 ### Frontend complété ✅
 - ✅ **Infrastructure** : Vite + React + TailwindCSS v4 + Docker
-- ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /checkout, /about, /login, /register, /profile, /test-auth)
+- ✅ **Routing** : React Router (/, /catalog, /product/:id, /cart, /order-confirmation, /about, /login, /register, /profile, /test-auth)
 - ✅ **Services API** : products, categories, cart, orders, brands, **auth**
 - ✅ **Hooks** : useProducts, useProduct, useCategories, useCart, useBrands, useLocalStorage, **useAuth**
+- ✅ **Context** : **CartContext (gestion globale panier + synchronisation état)**
 - ✅ **Context** : **AuthContext (gestion globale auth + persistance localStorage)**
 - ✅ **Authentification** : 
   - Service auth.ts (register, login, getMe)
@@ -183,14 +186,15 @@ reboulstore/
 - ✅ **Protection routes** : ProtectedRoute pour /profile (à étendre pour /orders, /checkout)
 
 ### 🔄 En cours / En attente
-- 🔄 **Page Profil complète** : Édition infos, gestion adresses CRUD (Phase 10.3)
+- 🔄 **Page Order Confirmation** : Améliorer affichage détails commande (Phase 12.4)
+- 🔄 **Historique commandes** : Page /orders pour clients (Phase 14)
+- ⏸️ **Page Profil complète** : Édition infos, gestion adresses CRUD (Phase 10.3 - basique fait)
 - ⏸️ **Forgot/Reset Password** : Pages reset mot de passe (Phase 18 - avancé)
 - ⏸️ **OAuth Google/Apple** : Authentification sociale (Phase 18 - avancé)
 - ⏸️ **Politiques** : Validation finale avec direction (voir `POLICIES_TODO.md`)
 - ⏸️ **Admin Panel** : À créer (Phase 17)
-- ⏸️ **Panier/Checkout UI** : À créer (Phase 12)
-- ⏸️ **Paiement Stripe** : À intégrer (Phase 13)
 - ⏸️ **Cloudinary** : Migration upload images (Phase 15)
+- ⏸️ **Améliorations page produit** : Affichage stocks, informations détaillées, recommandations
 
 ---
 
@@ -238,19 +242,18 @@ reboulstore/
 
 ---
 
-## 🎯 Prochaine Phase : Phase 9 - Backend Auth & Users
+## 🎯 Prochaine Phase : Phase 14 - Frontend Historique Commandes
 
 **Ce qu'on va faire** :
-1. Créer entité User + Address
-2. Module Auth (register, login, JWT, OAuth Google/Apple)
-3. Module Users (profil, adresses, CRUD)
-4. Guards & sécurité (rate limiting, validation email, reset password)
+1. Page `/orders` : Liste des commandes client (connecté)
+2. Page `/orders/:id` : Détail d'une commande
+3. Affichage statut, articles, adresses, tracking
+4. Actions : Télécharger facture, demander retour
 
 **Pourquoi maintenant ?**
-- ✅ Essentiel pour checkout (user connecté)
-- ✅ Bloquant pour historique commandes
-- ✅ Base pour admin panel
-- ✅ Permet de tester OAuth
+- ✅ Clients doivent pouvoir voir leurs commandes
+- ✅ Nécessaire après checkout (consultation après achat)
+- ✅ Complète le cycle de commande client
 
 ---
 
@@ -291,7 +294,7 @@ reboulstore/
 - **Paiement** : Stripe (un compte par site)
 - **Auth** : JWT + OAuth (Google, Apple)
 - **Images** : Cloudinary (CDN, optimisation) - À venir
-- **Emails** : Nodemailer (confirmation commande, tracking, etc.) - À venir
+- **Emails** : Nodemailer (confirmation commande, tracking, etc.) ✅ - Système complet avec persistance BDD
 - **SMS** : Twilio/Vonage (reset password) - Future
 - **Temps réel** : WebSockets (notifications) - Future
 - **Automatisation** : n8n (workflows) - Future
@@ -328,7 +331,8 @@ reboulstore/
 ---
 
 **🎯 Focus actuel** : 
-1. **IMMÉDIAT** : Phase 9 (Backend Auth & Users) - Démarrage maintenant 🚀
-2. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
-3. **Post-Février** : Ajout collection réelle via Admin → CP Company → Outlet
-4. **Home & Design** : Améliorations progressives au fil du temps
+1. **IMMÉDIAT** : Phase 14 (Frontend Historique Commandes) - Page /orders pour clients
+2. **Prochaine étape** : Phase 12.4 (Amélioration page Order Confirmation)
+3. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
+4. **Post-Février** : Ajout collection réelle via Admin → CP Company → Outlet
+5. **Home & Design** : Améliorations progressives au fil du temps

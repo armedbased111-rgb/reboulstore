@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { useProduct } from '../hooks/useProduct';
 import { useCategories } from '../hooks/useCategories';
-import { useCart } from '../hooks/useCart';
+import { useCartContext } from '../contexts/CartContext';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import type { ProductQuery } from '../types/index';
 
@@ -22,7 +22,7 @@ export const TestHooks = () => {
   const products = useProducts(testQuery);
   const product = useProduct(testProductId || undefined);
   const categories = useCategories();
-  const cart = useCart();
+  const cart = useCartContext();
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<string>('test_storage', 'Valeur initiale');
 
   return (

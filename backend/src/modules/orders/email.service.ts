@@ -1,0 +1,311 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { Order, OrderStatus } from '../../entities/order.entity';
+import { OrderEmail, EmailType } from '../../entities/order-email.entity';
+
+@Injectable()
+export class EmailService {
+  private frontendUrl: string;
+  private readonly logger = new Logger(EmailService.name);
+
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+    @InjectRepository(OrderEmail)
+    private orderEmailRepository: Repository<OrderEmail>,
+  ) {
+    this.frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') ||
+      'http://localhost:3000';
+  }
+
+  /**
+   * Envoie un email de confirmation d'inscription
+   */
+  async sendRegistrationConfirmation(
+    email: string,
+    firstName: string,
+  ): Promise<void> {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Bienvenue sur Reboul Store',
+        template: 'registration-confirmation',
+        context: {
+          firstName,
+          email,
+          frontendUrl: this.frontendUrl,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+    } catch (error) {
+      console.error('Error sending registration confirmation email:', error);
+      // Ne pas throw pour ne pas bloquer l'inscription si l'email échoue
+    }
+  }
+
+  /**
+   * Envoie un email de réception de commande (PENDING - commande reçue)
+   */
+  async sendOrderReceived(order: Order): Promise<void> {
+    const subject = `Commande reçue #${order.id.substring(0, 8)}`;
+    try {
+      const customerEmail =
+        order.customerInfo?.email || order.user?.email || '';
+      if (!customerEmail) {
+        this.logger.warn(`No email found for order ${order.id}`);
+        return;
+      }
+
+      await this.mailerService.sendMail({
+        to: customerEmail,
+        subject,
+        template: 'order-received',
+        context: {
+          customerName: order.customerInfo?.name || 'Client',
+          orderId: order.id.substring(0, 8),
+          orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
+          total: parseFloat(order.total.toString()).toFixed(2),
+          orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          frontendUrl: this.frontendUrl,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+
+      // Persister l'email envoyé
+      await this.persistEmail(order.id, EmailType.ORDER_RECEIVED, customerEmail, subject);
+    } catch (error: any) {
+      this.logger.error(`Error sending order received email for order ${order.id}:`, error);
+      // Persister l'erreur
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_RECEIVED,
+        order.customerInfo?.email || order.user?.email || '',
+        subject,
+        false,
+        error?.message || 'Unknown error',
+      );
+    }
+  }
+
+  /**
+   * Envoie un email de confirmation de commande (PAID - paiement confirmé)
+   */
+  async sendOrderConfirmation(order: Order): Promise<void> {
+    const subject = `Confirmation de commande #${order.id.substring(0, 8)}`;
+    try {
+      const customerEmail =
+        order.customerInfo?.email || order.user?.email || '';
+      if (!customerEmail) {
+        this.logger.warn(`No email found for order ${order.id}`);
+        return;
+      }
+
+      await this.mailerService.sendMail({
+        to: customerEmail,
+        subject,
+        template: 'order-confirmation',
+        context: {
+          customerName: order.customerInfo?.name || 'Client',
+          orderId: order.id.substring(0, 8),
+          orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
+          total: parseFloat(order.total.toString()).toFixed(2),
+          status: this.getStatusLabel(order.status),
+          orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+
+      // Persister l'email envoyé
+      await this.persistEmail(order.id, EmailType.ORDER_CONFIRMED, customerEmail, subject);
+    } catch (error: any) {
+      this.logger.error(`Error sending order confirmation email for order ${order.id}:`, error);
+      // Persister l'erreur
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_CONFIRMED,
+        order.customerInfo?.email || order.user?.email || '',
+        subject,
+        false,
+        error?.message || 'Unknown error',
+      );
+    }
+  }
+
+  /**
+   * Envoie un email de notification d'expédition
+   */
+  async sendShippingNotification(order: Order): Promise<void> {
+    const subject = `Votre commande #${order.id.substring(0, 8)} a été expédiée`;
+    try {
+      const customerEmail =
+        order.customerInfo?.email || order.user?.email || '';
+      if (!customerEmail) {
+        this.logger.warn(`No email found for order ${order.id}`);
+        return;
+      }
+
+      await this.mailerService.sendMail({
+        to: customerEmail,
+        subject,
+        template: 'shipping-notification',
+        context: {
+          customerName: order.customerInfo?.name || 'Client',
+          orderId: order.id.substring(0, 8),
+          trackingNumber: order.trackingNumber || null,
+          orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+
+      // Persister l'email envoyé
+      await this.persistEmail(order.id, EmailType.ORDER_SHIPPED, customerEmail, subject);
+    } catch (error) {
+      this.logger.error(`Error sending shipping notification email for order ${order.id}:`, error);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_SHIPPED,
+        order.customerInfo?.email || order.user?.email || '',
+        subject,
+        false,
+        error.message,
+      );
+    }
+  }
+
+  /**
+   * Envoie un email de confirmation de livraison
+   */
+  async sendOrderDelivered(order: Order): Promise<void> {
+    const subject = `Votre commande #${order.id.substring(0, 8)} a été livrée`;
+    try {
+      const customerEmail =
+        order.customerInfo?.email || order.user?.email || '';
+      if (!customerEmail) {
+        this.logger.warn(`No email found for order ${order.id}`);
+        return;
+      }
+
+      await this.mailerService.sendMail({
+        to: customerEmail,
+        subject,
+        template: 'order-delivered',
+        context: {
+          customerName: order.customerInfo?.name || 'Client',
+          orderId: order.id.substring(0, 8),
+          orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          frontendUrl: this.frontendUrl,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+
+      // Persister l'email envoyé
+      await this.persistEmail(order.id, EmailType.ORDER_DELIVERED, customerEmail, subject);
+    } catch (error: any) {
+      this.logger.error(`Error sending order delivered email for order ${order.id}:`, error);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_DELIVERED,
+        order.customerInfo?.email || order.user?.email || '',
+        subject,
+        false,
+        error?.message || 'Unknown error',
+      );
+    }
+  }
+
+  /**
+   * Envoie un email d'annulation/remboursement
+   */
+  async sendOrderCancelled(order: Order): Promise<void> {
+    const subject = `Commande #${order.id.substring(0, 8)} annulée`;
+    try {
+      const customerEmail =
+        order.customerInfo?.email || order.user?.email || '';
+      if (!customerEmail) {
+        this.logger.warn(`No email found for order ${order.id}`);
+        return;
+      }
+
+      const refundAmount =
+        order.status === 'refunded'
+          ? parseFloat(order.total.toString()).toFixed(2)
+          : null;
+
+      await this.mailerService.sendMail({
+        to: customerEmail,
+        subject,
+        template: 'order-cancelled',
+        context: {
+          customerName: order.customerInfo?.name || 'Client',
+          orderId: order.id.substring(0, 8),
+          cancellationDate: new Date().toLocaleDateString('fr-FR'),
+          refundAmount,
+          frontendUrl: this.frontendUrl,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+
+      // Persister l'email envoyé
+      await this.persistEmail(order.id, EmailType.ORDER_CANCELLED, customerEmail, subject);
+    } catch (error: any) {
+      this.logger.error(`Error sending order cancelled email for order ${order.id}:`, error);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_CANCELLED,
+        order.customerInfo?.email || order.user?.email || '',
+        subject,
+        false,
+        error?.message || 'Unknown error',
+      );
+    }
+  }
+
+  /**
+   * Persiste un email envoyé en base de données
+   */
+  private async persistEmail(
+    orderId: string,
+    emailType: EmailType,
+    recipientEmail: string,
+    subject: string,
+    sent: boolean = true,
+    errorMessage: string | null = null,
+  ): Promise<void> {
+    try {
+      const orderEmail = this.orderEmailRepository.create({
+        orderId,
+        emailType,
+        recipientEmail,
+        subject,
+        sent,
+        errorMessage,
+        sentAt: sent ? new Date() : null,
+      });
+      await this.orderEmailRepository.save(orderEmail);
+    } catch (error) {
+      // Log l'erreur mais ne throw pas pour ne pas bloquer l'envoi d'email
+      this.logger.error(`Error persisting email record for order ${orderId}:`, error);
+    }
+  }
+
+  /**
+   * Convertit le statut de commande en libellé français
+   */
+  private getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      pending: 'En attente de paiement',
+      paid: 'Payée',
+      processing: 'En cours de traitement',
+      confirmed: 'Confirmée',
+      shipped: 'Expédiée',
+      delivered: 'Livrée',
+      cancelled: 'Annulée',
+      refunded: 'Remboursée',
+    };
+    return labels[status] || status;
+  }
+}

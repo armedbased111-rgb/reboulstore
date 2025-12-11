@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votre commande a été expédiée - Reboul Store</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #000; color: #fff; padding: 20px; text-align: center;">
+    <h1 style="margin: 0;">REBOUL STORE</h1>
+  </div>
+  
+  <div style="padding: 30px 20px; background-color: #f9f9f9;">
+    <h2 style="color: #000; margin-top: 0;">Votre commande a été expédiée !</h2>
+    
+    <p>Bonjour {{customerName}},</p>
+    
+    <p>Bonne nouvelle ! Votre commande <strong>#{{orderId}}</strong> a été expédiée.</p>
+    
+    {{#if trackingNumber}}
+    <div style="background-color: #fff; padding: 20px; margin: 20px 0; border-left: 4px solid #000;">
+      <p style="margin: 0;"><strong>Numéro de suivi :</strong> {{trackingNumber}}</p>
+      <p style="margin: 5px 0 0 0;">Vous pouvez suivre votre colis directement depuis le site du transporteur.</p>
+    </div>
+    {{/if}}
+    
+    <p>Votre commande devrait vous parvenir sous peu.</p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{{orderUrl}}" style="display: inline-block; background-color: #000; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 4px;">Suivre ma commande</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
+    <p>© {{currentYear}} Reboul Store. Tous droits réservés.</p>
+  </div>
+</body>
+</html>

@@ -1,7 +1,8 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 3.1  
-**Date** : 10 décembre 2025  
+**Version** : 3.2  
+**Date** : 11 décembre 2025  
+**Dernière mise à jour** : Système emails invités + persistance BDD + capture manuelle paiements  
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -305,44 +306,46 @@
 
 ---
 
-## 🔄 Phase 11 : Backend - Gestion Commandes Complète
+## 🔄 Phase 11 : Backend - Gestion Commandes Complète ✅
 
 **Objectif** : Gérer le cycle de vie complet d'une commande
 
 ### 11.1 Extension entité Order
-- [ ] Ajouter userId (relation ManyToOne User)
-- [ ] Ajouter shippingAddress (jsonb)
-- [ ] Ajouter billingAddress (jsonb)
-- [ ] Ajouter paymentIntentId (Stripe)
-- [ ] Ajouter trackingNumber (suivi colis)
-- [ ] Enum OrderStatus enrichi (PENDING, PAID, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED)
-- [ ] Ajouter paidAt, shippedAt, deliveredAt
+- [x] Ajouter userId (relation ManyToOne User)
+- [x] Ajouter shippingAddress (jsonb)
+- [x] Ajouter billingAddress (jsonb)
+- [x] Ajouter paymentIntentId (Stripe)
+- [x] Ajouter trackingNumber (suivi colis)
+- [x] Enum OrderStatus enrichi (PENDING, PAID, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED)
+- [x] Ajouter paidAt, shippedAt, deliveredAt
 
 ### 11.2 Module Orders - Extension
-- [ ] Service Orders : findByUser(userId), updateStatus(), cancel(), refund()
-- [ ] Endpoint GET /orders/me (commandes utilisateur connecté)
-- [ ] Endpoint GET /orders/:id (détails commande, protégé)
-- [ ] Endpoint PATCH /orders/:id/cancel (annuler commande)
-- [ ] Guard : seul propriétaire ou admin peut voir commande
+- [x] Service Orders : findByUser(userId), updateStatus(), cancel(), refund()
+- [x] Endpoint GET /orders/me (commandes utilisateur connecté)
+- [x] Endpoint GET /orders/:id (détails commande, protégé)
+- [x] Endpoint PATCH /orders/:id/cancel (annuler commande)
+- [x] Guard : seul propriétaire ou admin peut voir commande
 
 ### 11.3 Gestion Stock
-- [ ] Service Stock : decrementStock(variantId, quantity), incrementStock()
-- [ ] Vérifier stock disponible avant création commande
-- [ ] Décrémenter stock après paiement validé
-- [ ] Re-incrémenter stock si commande annulée/remboursée
-- [ ] Webhook Stripe pour synchroniser stock
+- [x] Service Stock : decrementStock(variantId, quantity), incrementStock()
+- [x] Vérifier stock disponible avant création commande
+- [x] Décrémenter stock après paiement validé
+- [x] Re-incrémenter stock si commande annulée/remboursée
+- [ ] Webhook Stripe pour synchroniser stock (Phase 13)
 
 ### 11.4 Notifications Emails (Nodemailer)
-- [ ] Installer @nestjs-modules/mailer, nodemailer
-- [ ] Configurer Nodemailer (SMTP Gmail ou SendGrid)
-- [ ] Templates emails (HTML) :
+- [x] Installer @nestjs-modules/mailer, nodemailer
+- [x] Configurer Nodemailer (SMTP Gmail ou SendGrid)
+- [x] Templates emails (HTML) :
   - Confirmation inscription
   - Confirmation commande
   - Commande expédiée (avec tracking)
   - Commande livrée
   - Annulation/remboursement
-- [ ] Service Emails : sendOrderConfirmation(), sendShippingNotification()
-- [ ] Envoyer email après chaque changement statut commande
+- [x] Service Emails : sendOrderConfirmation(), sendShippingNotification()
+- [x] Envoyer email après chaque changement statut commande
+
+**📝 Note future** : Redesign des templates email dans Figma prévu post-lancement (basse priorité - voir section Post-Février 2025)
 
 ---
 
@@ -354,65 +357,54 @@
 
 ### 12.1 Page Panier (/cart) - Design & Implémentation
 **📐 Phase Design (Figma)** :
-- [ ] Designer page Cart dans Figma (layout, composants)
-- [ ] Designer CartItem (image, nom, variant, quantité, prix, actions)
-- [ ] Designer QuantitySelector (+/- ou input)
-- [ ] Designer CartSummary (sous-total, frais livraison, total)
-- [ ] Designer état panier vide (EmptyCart avec CTA)
-- [ ] Designer états responsive (mobile, tablet, desktop)
-- [ ] Partager design Figma et valider
+- [x] Designer page Cart dans Figma (layout, composants)
+- [x] Designer CartItem (image, nom, variant, quantité, prix, actions)
+- [x] Designer QuantitySelector (bouton + pour augmenter)
+- [x] Designer CartSummary (sous-total, shipping info, bouton checkout)
+- [x] Designer état panier vide (EmptyCart avec CTA)
+- [x] Designer états responsive (mobile, tablet, desktop)
+- [x] Partager design Figma et valider
 
 **💻 Phase Implémentation** :
-- [ ] Coder page Cart.tsx complète
-- [ ] Coder composant CartItem (image, nom, variant, quantité, prix, supprimer)
-- [ ] Coder composant QuantitySelector (+/- pour changer quantité)
-- [ ] Coder composant CartSummary (sous-total, frais livraison, total)
-- [ ] Ajouter bouton "Procéder au paiement" (vers /checkout)
-- [ ] Gérer panier vide (EmptyCart)
-- [ ] Calcul frais de livraison dynamique (standard/express)
+- [x] Coder page Cart.tsx complète
+- [x] Coder composant CartItem (image, nom, variant, quantité, prix, supprimer)
+- [x] Coder composant QuantitySelector (+ pour augmenter quantité)
+- [x] Coder composant CartSummary (sous-total, shipping info, bouton checkout)
+- [x] Ajouter bouton "Checkout now" (vers /checkout)
+- [x] Gérer panier vide (EmptyCart)
+- [x] Nettoyer code et structurer composants React proprement
+- [x] Ajouter responsive mobile-first (sans toucher valeurs desktop Figma)
+- [ ] Calcul frais de livraison dynamique (standard/express) - À faire dans Checkout
 
 **✅ Phase Validation** :
-- [ ] Comparer rendu avec Figma
-- [ ] Tester ajout/suppression articles
-- [ ] Tester changement quantités
-- [ ] Tester calcul total (articles + livraison)
-- [ ] Tester responsive
+- [x] Comparer rendu avec Figma (valeurs exactes pixel-perfect)
+- [x] Tester ajout/suppression articles
+- [x] Tester changement quantités
+- [x] Tester calcul total (articles)
+- [x] Tester responsive
 
-### 12.2 Page Checkout (/checkout) - Design & Implémentation
-**📐 Phase Design (Figma)** :
-- [ ] Designer layout Checkout (multi-étapes)
-- [ ] Designer StepIndicator (indicateur d'étape visuel)
-- [ ] Designer Étape 1 : Vérification panier
-- [ ] Designer Étape 2 : Adresse de livraison (liste + formulaire nouveau)
-- [ ] Designer Étape 3 : Mode de livraison (options standard/express)
-- [ ] Designer Étape 4 : Paiement (Stripe Elements)
-- [ ] Designer états d'erreur et validation
-- [ ] Partager design Figma et valider
+### 12.2 Intégration Stripe Checkout (Solution hébergée - MVP)
+**📝 Note** : Utilisation de Stripe Checkout (solution hébergée) pour MVP. Phase d'amélioration prévue plus tard (voir Post-Février 2025) pour version personnalisée avec Payment Element.
 
 **💻 Phase Implémentation** :
-- [ ] Coder page Checkout.tsx (layout multi-étapes)
-- [ ] Coder composant StepIndicator (indicateur d'étape)
-- [ ] Coder Étape 1 : Vérification panier (récapitulatif articles)
-- [ ] Coder Étape 2 : Adresse de livraison (liste adresses ou nouvelle)
-- [ ] Coder Étape 3 : Mode de livraison (standard, express si dispo)
-- [ ] Coder Étape 4 : Paiement (Stripe Payment Element)
-- [ ] Validation chaque étape avant passage suivante
-- [ ] Affichage total final (articles + livraison)
+- [x] Modifier bouton "Checkout now" dans CartSummary
+- [x] Créer service checkoutService.ts (appel API backend)
+- [x] Appeler backend POST /checkout/create-session avec items du panier
+- [x] Rediriger vers URL Checkout Session Stripe (redirectToCheckout)
+- [x] Gérer redirection après paiement (success_url vers /order-confirmation)
+- [x] Gérer annulation (cancel_url vers /cart)
+- [x] Gestion erreurs (session creation failed)
 
 **✅ Phase Validation** :
-- [ ] Comparer rendu avec Figma
-- [ ] Tester navigation entre étapes
-- [ ] Tester validation de chaque étape
-- [ ] Tester sélection/création adresse
-- [ ] Tester calcul frais de livraison
-
-### 12.3 Intégration Stripe (Frontend)
-- [ ] Installer @stripe/stripe-js, @stripe/react-stripe-js
-- [ ] Créer PaymentForm.tsx (Stripe Elements)
-- [ ] Appeler backend pour créer PaymentIntent
-- [ ] Confirmer paiement avec Stripe
-- [ ] Redirection vers /order-confirmation/:orderId après succès
-- [ ] Gestion erreurs paiement
+- [x] Tester redirection vers Stripe Checkout
+- [x] Tester paiement test (carte 4242 4242 4242 4242)
+- [x] Tester redirection après succès
+- [ ] Tester annulation checkout
+- [x] Vérifier création commande après paiement (via webhook)
+- [x] Tester checkout invité (guest) et authentifié
+- [x] Vérifier emails envoyés à chaque étape (PENDING, PAID, SHIPPED, DELIVERED, CANCELLED)
+- [x] Vérifier emails pour utilisateurs invités (via customerInfo.email)
+- [x] Implémenter persistance emails en BDD (entité OrderEmail)
 
 ### 12.4 Page Confirmation Commande - Design & Implémentation
 **📐 Phase Design (Figma)** :
@@ -440,32 +432,51 @@
 
 ---
 
-## 🔄 Phase 13 : Backend - Paiement Stripe (Reboul)
+## ✅ Phase 13 : Backend - Paiement Stripe Checkout (Reboul) ✅
 
-**Objectif** : Intégration paiement Stripe pour Reboul (simple, pas de Connect)
+**Objectif** : Intégration Stripe Checkout (solution hébergée) pour Reboul (simple, pas de Connect)
+
+**📝 Note** : Utilisation de Stripe Checkout (session-based) plutôt que PaymentIntent pour MVP. Plus simple et rapide à implémenter.
+
+**✅ Statut** : TERMINÉE - Checkout fonctionnel avec capture manuelle, emails invités, persistance BDD
 
 ### 13.1 Module Stripe - Configuration
-- [ ] Installer stripe, @nestjs/stripe
-- [ ] Configurer clés API Stripe (STRIPE_SECRET_KEY, STRIPE_PUBLIC_KEY)
-- [ ] Créer module Stripe
-- [ ] Service Stripe : createPaymentIntent(), confirmPayment(), refund()
-- [ ] Configuration compte Stripe Reboul
+- [x] Installer stripe, @nestjs/stripe
+- [x] Configurer clés API Stripe (STRIPE_SECRET_KEY, STRIPE_PUBLIC_KEY, STRIPE_WEBHOOK_SECRET)
+- [x] Créer module Stripe
+- [x] Service Stripe : createCheckoutSession(), refund()
+- [x] Configuration compte Stripe Reboul (mode test - CLI configuré)
 
-### 13.2 Création PaymentIntent
-- [ ] Endpoint POST /orders/create-payment-intent
-- [ ] Calculer montant total (articles + frais livraison)
-- [ ] Créer PaymentIntent Stripe avec metadata commande
-- [ ] Retourner client_secret au frontend
-- [ ] Gérer devise (EUR)
+### 13.2 Création Checkout Session
+- [x] Endpoint POST /checkout/create-session (public, guest checkout supporté)
+- [x] Recevoir items du panier (variantId, quantity) depuis frontend
+- [x] Vérifier stock disponible pour chaque item
+- [x] Calculer montant total (articles + frais livraison fixe pour MVP)
+- [x] Charger variants avec relations (Product, images, brand, category)
+- [x] Construire images produits pour Stripe (priorité image couleur variant)
+- [x] Enrichir descriptions produits (nom, marque, catégorie, couleur, taille)
+- [x] Créer Checkout Session Stripe avec :
+  - line_items (produits avec prix, quantité, images, descriptions)
+  - mode: 'payment'
+  - payment_intent_data: { capture_method: 'manual' } (capture manuelle)
+  - shipping_address_collection (avec pays autorisés)
+  - phone_number_collection (actif)
+  - success_url (vers /order-confirmation?session_id={CHECKOUT_SESSION_ID})
+  - cancel_url (vers /cart)
+  - metadata (userId nullable pour guest, items JSON, total, itemCount)
+- [x] Retourner session.url au frontend
+- [x] Gérer devise (EUR)
 
-### 13.3 Webhooks Stripe
-- [ ] Endpoint POST /stripe/webhook (recevoir events Stripe)
-- [ ] Vérifier signature webhook (sécurité)
-- [ ] Gérer events :
-  - payment_intent.succeeded → Créer commande, décrémenter stock, envoyer email
-  - payment_intent.payment_failed → Logger erreur, notifier user
-  - charge.refunded → Marquer commande REFUNDED, incrémenter stock, envoyer email
-- [ ] Mettre à jour statut commande selon events
+### 13.3 Webhooks Stripe Checkout
+- [x] Endpoint POST /checkout/webhook (recevoir events Stripe)
+- [x] Vérifier signature webhook (sécurité avec STRIPE_WEBHOOK_SECRET)
+- [x] Gérer events :
+  - checkout.session.completed → Créer commande PENDING (pas PAID, capture manuelle)
+  - checkout.session.async_payment_succeeded → Gérer si applicable
+- [x] Extraction complète données Stripe (adresses livraison/facturation, téléphone, email)
+- [x] Stockage items commande dans Order.items (JSONB) pour vérification stock lors capture
+- [x] Configuration Stripe CLI pour développement local
+- [x] Support guest checkout (userId nullable dans metadata)
 
 ### 13.4 Gestion Remboursements
 - [ ] Endpoint POST /admin/orders/:id/refund (admin uniquement)
@@ -480,6 +491,25 @@
 - [ ] Gestion erreurs paiement (carte refusée, fonds insuffisants, etc.)
 - [ ] Retry logic pour webhooks (si échec)
 - [ ] Dashboard Stripe : vérifier transactions en temps réel
+
+### 13.6 Configuration Stripe Live (Production) - À faire avant lancement
+**📝 Note** : Configuration Stripe en mode live pour la production. À faire juste avant la mise en production du site.
+
+**💻 Configuration** :
+- [ ] Passer du mode TEST au mode LIVE dans Stripe Dashboard
+- [ ] Récupérer les clés LIVE (STRIPE_SECRET_KEY, STRIPE_PUBLIC_KEY) depuis Dashboard Stripe
+- [ ] Configurer endpoint webhook HTTPS réel (pas localhost) dans Stripe Dashboard
+- [ ] Récupérer STRIPE_WEBHOOK_SECRET du webhook HTTPS (pas CLI)
+- [ ] Mettre à jour variables d'environnement production (.env.production)
+- [ ] Configurer success_url et cancel_url avec le domaine de production
+- [ ] Tester un paiement réel avec une carte de test (mode live mais montant minimal)
+- [ ] Vérifier que les webhooks sont bien reçus en production
+- [ ] Documenter les credentials Stripe Live (de manière sécurisée)
+
+**⚠️ IMPORTANT** :
+- Ne jamais commiter les clés LIVE dans Git
+- Utiliser un gestionnaire de secrets (variables d'environnement serveur, secrets Docker, etc.)
+- Tester en mode test jusqu'à la dernière minute avant la sortie
 
 ---
 
@@ -1172,6 +1202,10 @@
 
 - **📝 Ajout données réelles** : Utiliser Admin Centrale pour ajouter la collection
 - **🎨 Amélioration Home** : Progressivement selon idées
+- **📧 Redesign Templates Email** : Designer tous les templates d'email dans Figma et réimporter (basse priorité)
+  - Templates : confirmation inscription, confirmation commande, expédition, livraison, annulation
+  - Design cohérent avec l'identité de marque Reboul
+  - Adaptation HTML/CSS inline pour compatibilité email
 - **🟢 CP Company + Outlet** : ~4-6 semaines (mars-avril 2025)
 - **🟣 Fonctionnalités avancées** : ~8-12 semaines (mai-juillet 2025)
 - **🔵 Optimisation** : Continu

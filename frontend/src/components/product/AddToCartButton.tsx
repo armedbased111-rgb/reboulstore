@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCart } from '../../hooks/useCart';
+import { useCartContext } from '../../contexts/CartContext';
 import type { Variant } from '../../types';
 
 interface AddToCartButtonProps {
@@ -20,7 +20,7 @@ export const AddToCartButton = ({
   variant,
   quantity = 1,
 }: AddToCartButtonProps) => {
-  const { addToCart } = useCart();
+  const { addToCart } = useCartContext();
   const [isAdding, setIsAdding] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 

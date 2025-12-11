@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { EmailService } from '../orders/email.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +20,8 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    @Inject(forwardRef(() => EmailService))
+    private emailService: EmailService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{ user: User; access_token: string }> {
@@ -44,6 +53,14 @@ export class AuthService {
 
     // Ne pas retourner le password
     delete user.password;
+
+    // Envoyer email de confirmation d'inscription
+    if (user.firstName) {
+      this.emailService.sendRegistrationConfirmation(
+        user.email,
+        user.firstName,
+      );
+    }
 
     return { user, access_token };
   }

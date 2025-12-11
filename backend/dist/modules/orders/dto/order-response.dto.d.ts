@@ -1,7 +1,7 @@
 import { OrderStatus } from '../../../entities/order.entity';
 export declare class OrderResponseDto {
     id: string;
-    cartId: string;
+    cartId: string | null;
     status: OrderStatus;
     total: number;
     customerInfo: {

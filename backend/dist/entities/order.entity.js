@@ -16,10 +16,13 @@ const user_entity_1 = require("./user.entity");
 var OrderStatus;
 (function (OrderStatus) {
     OrderStatus["PENDING"] = "pending";
+    OrderStatus["PAID"] = "paid";
+    OrderStatus["PROCESSING"] = "processing";
     OrderStatus["CONFIRMED"] = "confirmed";
     OrderStatus["SHIPPED"] = "shipped";
     OrderStatus["DELIVERED"] = "delivered";
     OrderStatus["CANCELLED"] = "cancelled";
+    OrderStatus["REFUNDED"] = "refunded";
 })(OrderStatus || (exports.OrderStatus = OrderStatus = {}));
 let Order = class Order {
     id;
@@ -30,6 +33,14 @@ let Order = class Order {
     cart;
     userId;
     user;
+    shippingAddress;
+    billingAddress;
+    paymentIntentId;
+    items;
+    trackingNumber;
+    paidAt;
+    shippedAt;
+    deliveredAt;
     createdAt;
     updatedAt;
 };
@@ -39,8 +50,8 @@ __decorate([
     __metadata("design:type", String)
 ], Order.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", Object)
 ], Order.prototype, "cartId", void 0);
 __decorate([
     (0, typeorm_1.Column)({
@@ -65,13 +76,45 @@ __decorate([
 ], Order.prototype, "cart", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], Order.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.orders, { onDelete: 'SET NULL' }),
     (0, typeorm_1.JoinColumn)({ name: 'userId' }),
     __metadata("design:type", user_entity_1.User)
 ], Order.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Order.prototype, "shippingAddress", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Order.prototype, "billingAddress", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "paymentIntentId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], Order.prototype, "items", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "trackingNumber", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    __metadata("design:type", Date)
+], Order.prototype, "paidAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    __metadata("design:type", Date)
+], Order.prototype, "shippedAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    __metadata("design:type", Date)
+], Order.prototype, "deliveredAt", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

@@ -52,12 +52,15 @@ const typeorm_2 = require("typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 const user_entity_1 = require("../../entities/user.entity");
+const email_service_1 = require("../orders/email.service");
 let AuthService = class AuthService {
     userRepository;
     jwtService;
-    constructor(userRepository, jwtService) {
+    emailService;
+    constructor(userRepository, jwtService, emailService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
     async register(registerDto) {
         const { email, password, firstName, lastName, phone } = registerDto;
@@ -77,6 +80,9 @@ let AuthService = class AuthService {
         const payload = { sub: user.id, email: user.email, role: user.role };
         const access_token = this.jwtService.sign(payload);
         delete user.password;
+        if (user.firstName) {
+            this.emailService.sendRegistrationConfirmation(user.email, user.firstName);
+        }
         return { user, access_token };
     }
     async login(loginDto) {
@@ -110,7 +116,9 @@ exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => email_service_1.EmailService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        email_service_1.EmailService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

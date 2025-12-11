@@ -15,6 +15,7 @@ const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./jwt.strategy");
 const user_entity_1 = require("../../entities/user.entity");
+const orders_module_1 = require("../orders/orders.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -27,6 +28,7 @@ exports.AuthModule = AuthModule = __decorate([
                 secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
                 signOptions: { expiresIn: '7d' },
             }),
+            (0, common_1.forwardRef)(() => orders_module_1.OrdersModule),
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
