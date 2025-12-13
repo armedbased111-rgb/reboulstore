@@ -107,6 +107,25 @@ let OrdersService = OrdersService_1 = class OrdersService {
             throw new common_1.ForbiddenException('You do not have permission to access this order');
         }
     }
+    async findOneEntity(id, userId) {
+        const order = await this.orderRepository.findOne({
+            where: { id },
+            relations: [
+                'cart',
+                'cart.items',
+                'cart.items.variant',
+                'cart.items.variant.product',
+                'user',
+            ],
+        });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order with ID ${id} not found`);
+        }
+        if (userId) {
+            await this.checkOrderAccess(order, userId);
+        }
+        return order;
+    }
     async findOne(id, userId) {
         const order = await this.orderRepository.findOne({
             where: { id },

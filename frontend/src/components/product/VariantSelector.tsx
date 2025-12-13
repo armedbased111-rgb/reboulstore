@@ -14,6 +14,8 @@ interface VariantSelectorProps {
  * - Arrow custom (triangle noir)
  * - Border noir arrondie
  * - Callback onVariantChange
+ * - Grisage des variants épuisés
+ * - Badge stock pour la variante sélectionnée
  */
 export const VariantSelector = ({
   variants,
@@ -43,13 +45,22 @@ export const VariantSelector = ({
           className="appearance-none focus:outline-none border border-black rounded-md pl-4 pr-10 text-t2 bg-transparent py-[9px] md:py-[5px] cursor-pointer"
         >
           <option value="" disabled>
-            Select Size
+            SÉLECTIONNER UNE TAILLE
           </option>
-          {variants.map((variant) => (
-            <option key={variant.id} value={variant.id}>
-              {variant.size} {variant.color && `- ${variant.color}`}
-            </option>
-          ))}
+          {variants.map((variant) => {
+            const isOutOfStock = (variant.stock || 0) === 0;
+            return (
+              <option
+                key={variant.id}
+                value={variant.id}
+                disabled={isOutOfStock}
+                className={isOutOfStock ? 'opacity-50' : ''}
+              >
+                {variant.size} {variant.color && `- ${variant.color}`}
+                {isOutOfStock ? ' (ÉPUISÉ)' : ''}
+              </option>
+            );
+          })}
         </select>
       </div>
     </div>

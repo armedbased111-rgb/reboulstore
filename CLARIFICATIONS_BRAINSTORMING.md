@@ -2,11 +2,25 @@
 
 ## 🎯 Décisions prises lors du brainstorming
 
-### Architecture Multi-Shops
-- ✅ **Option A (Multi-Tenant)** choisie
-- Panier universel (articles de plusieurs shops)
-- Commandes regroupées (un seul checkout)
-- **Stripe Connect** pour répartir paiements vers bons comptes Stripe
+### Architecture Multi-Shops - ✅ VALIDÉE (11 décembre 2025)
+
+**Architecture finale validée** : **3 projets Docker séparés + 1 Admin Centralisée**
+
+- ✅ **3 projets e-commerce indépendants** :
+  - `reboulstore/` (MVP Février 2025)
+  - `cpcompany/` (Futur)
+  - `outlet/` (Futur)
+  - Chaque projet = Backend + Frontend + PostgreSQL + Docker Compose séparé
+
+- ✅ **1 application Admin Centralisée** :
+  - `admin-central/` (Frontend React + GeistUI + Backend NestJS)
+  - Connexion directe aux 3 bases de données via TypeORM (connexions multiples)
+  - Réseaux Docker partagés pour accéder aux databases
+
+- ✅ **Isolation totale** : Chaque site complètement indépendant
+- ✅ **Admin unifié** : Gestion centralisée des 3 sites depuis une interface
+
+**📚 Documentation complète** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ### Authentification
 - ✅ Commande en **guest** possible (pas d'inscription obligatoire)
@@ -48,12 +62,15 @@
 - ✅ Panier : Articles **groupés par shop** à l'affichage
 - ✅ Checkout : **Un seul checkout** pour tous les shops
 
-### Back-Office
-- ✅ **Frontend séparé** (`admin/`) connecté au même backend
-- ✅ Sous-domaine : `admin.reboulstore.com`
-- ✅ UI : **GeistUI**
+### Back-Office (Admin Centralisée)
+- ✅ **Application séparée** (`admin-central/`) avec Frontend + Backend séparés
+- ✅ Frontend : React + Vite + **GeistUI**
+- ✅ Backend : NestJS avec **connexions multiples TypeORM** (une par site)
+- ✅ Connexion directe aux 3 bases de données (pas via API)
+- ✅ Sous-domaine : `admin.reboulstore.com` (futur)
 - ✅ Import/Export : **CSV/Excel** produits et commandes
 - ✅ Édition : **Formulaire classique** + **Inline**
+- ✅ **Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ### Intégrations
 - ✅ Newsletter : Service à définir (Mailchimp/SendGrid), popup (temps/scroll/exit intent)
@@ -154,18 +171,25 @@
 
 ## ✅ Prochaines étapes
 
-1. **Phase 10** : Architecture Multi-Shops (entité Shop, filtrage)
-2. **Phase 11** : Authentification (JWT + OAuth Google/Apple)
-3. **Phase 12** : Stripe + Stripe Connect
-4. **Frontend** : Setup shadcn/ui + Workflow Figma/Framer
-5. **Back-Office** : Setup admin/ avec GeistUI
+1. **Phase 14** : Frontend - Historique Commandes (en cours)
+2. **Phase 14.5** : Page Produit Améliorée (stock + guide taille)
+3. **Phase 15** : Backend - Cloudinary (dans admin-central)
+4. **Phase 16** : Backend - Admin & Permissions (admin-central avec connexions multiples)
+5. **Phase 17** : Frontend - Admin Centrale (React + GeistUI)
+6. **Phase 20-21** : CP Company et Outlet (copier structure reboulstore)
+7. **Phase 22** : Admin Multi-Sites (ajouter connexions CP Company et Outlet)
+
+**Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ---
 
 ## 📚 Documents mis à jour
 
+- ✅ `ARCHITECTURE_ADMIN_CENTRAL.md` : Architecture complète Admin Centralisée ⭐
 - ✅ `CONTEXT.md` : Toutes les décisions et clarifications
+- ✅ `BRAINSTORMING_ROADMAP.md` : Décisions architecture validées
+- ✅ `CLARIFICATIONS_BRAINSTORMING.md` : Ce fichier (architecture validée)
+- ✅ `ROADMAP_COMPLETE.md` : Roadmap avec architecture (à mettre à jour)
 - ✅ `backend/BACKEND.md` : Roadmap complète avec détails techniques
 - ✅ `frontend/FRONTEND.md` : Roadmap frontend avec workflow design
-- ✅ `ARCHITECTURE_MULTI_SHOPS.md` : Analyse Option A vs B
-- ✅ `.cursor/rules/project-rules.mdc` : Workflow shadcn/ui
+- ✅ `.cursor/rules/project-rules.mdc` : Workflow shadcn/ui + architecture

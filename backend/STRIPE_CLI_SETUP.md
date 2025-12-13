@@ -44,7 +44,7 @@ stripe listen --forward-to localhost:3001/checkout/webhook
 Après avoir lancé `stripe listen`, tu verras quelque chose comme :
 
 ```
-> Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+> Ready! Your webhook signing secret is whsec_YOUR_TEMPORARY_SECRET_HERE
 ```
 
 **Copie ce secret** (il commence par `whsec_...`)
@@ -54,7 +54,7 @@ Après avoir lancé `stripe listen`, tu verras quelque chose comme :
 Ouvre `backend/.env` et ajoute :
 
 ```env
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_TEMPORARY_SECRET_HERE
 ```
 
 **⚠️ Note :** Ce secret change à chaque fois que tu relances `stripe listen`, donc tu devras le mettre à jour dans `.env` si tu relances la commande.

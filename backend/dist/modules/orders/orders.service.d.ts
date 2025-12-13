@@ -24,6 +24,7 @@ export declare class OrdersService {
     constructor(orderRepository: Repository<Order>, cartRepository: Repository<Cart>, cartItemRepository: Repository<CartItem>, variantRepository: Repository<Variant>, userRepository: Repository<User>, stockService: StockService, emailService: EmailService, configService: ConfigService);
     create(createOrderDto: CreateOrderDto): Promise<OrderResponseDto>;
     private checkOrderAccess;
+    findOneEntity(id: string, userId?: string): Promise<Order>;
     findOne(id: string, userId?: string): Promise<OrderResponseDto>;
     findAll(): Promise<OrderResponseDto[]>;
     updateStatus(id: string, updateStatusDto: UpdateOrderStatusDto): Promise<OrderResponseDto>;

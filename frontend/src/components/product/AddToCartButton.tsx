@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCartContext } from '../../contexts/CartContext';
+import { useToast } from '../../contexts/ToastContext';
+import { QuantitySelector } from './QuantitySelector';
 import type { Variant } from '../../types';
 
 interface AddToCartButtonProps {
   variant: Variant | null;
-  quantity?: number;
+  quantity: number;
+  onQuantityChange: (quantity: number) => void;
 }
 
 /**
@@ -13,61 +17,109 @@ interface AddToCartButtonProps {
  * Bouton avec :
  * - Disabled si pas de variante sélectionnée
  * - Loading state pendant ajout
- * - Success/error feedback
+ * - Toast notification après succès
  * - Vérification stock
  */
 export const AddToCartButton = ({
   variant,
-  quantity = 1,
+  quantity,
+  onQuantityChange,
 }: AddToCartButtonProps) => {
   const { addToCart } = useCartContext();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      onQuantityChange(quantity - 1);
+    }
+  };
+
+  const handleIncrease = () => {
+    const maxQuantity = variant ? (variant.stock || 0) : 1;
+    if (!maxQuantity || quantity < maxQuantity) {
+      onQuantityChange(quantity + 1);
+    }
+  };
 
   const handleAddToCart = async () => {
     if (!variant) {
-      setMessage('Please select a size');
+      showToast({
+        message: 'Veuillez sélectionner une taille',
+        duration: 2000,
+      });
       return;
     }
 
-    // Vérifier le stock
+    // Vérifier le stock (rupture de stock)
+    if ((variant.stock || 0) === 0) {
+      showToast({
+        message: 'Rupture de stock',
+        duration: 2000,
+      });
+      return;
+    }
+
+    // Vérifier le stock insuffisant
     if (variant.stock < quantity) {
-      setMessage('Not enough stock');
+      showToast({
+        message: `Stock insuffisant. Seulement ${variant.stock} ${variant.stock === 1 ? 'article disponible' : 'articles disponibles'}`,
+        duration: 2000,
+      });
       return;
     }
 
     try {
       setIsAdding(true);
-      setMessage(null);
       await addToCart(variant.id, quantity);
-      setMessage('Added to cart!');
       
-      // Effacer le message après 3 secondes
-      setTimeout(() => setMessage(null), 3000);
+      // Afficher toast de succès avec lien vers le panier
+      showToast({
+        message: 'Ajouté au panier !',
+        actionLabel: 'Voir le panier',
+        onAction: () => navigate('/cart'),
+        duration: 2000,
+      });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Error adding to cart');
+      showToast({
+        message: error instanceof Error ? error.message : 'Erreur lors de l\'ajout au panier',
+        duration: 2000,
+      });
     } finally {
       setIsAdding(false);
     }
   };
 
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={!variant || isAdding || (variant && variant.stock < quantity)}
-        className="inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 whitespace-nowrap text-t2 text-white bg-black cursor-pointer"
-      >
-        {isAdding ? 'Adding...' : 'Add to cart'}
-      </button>
+  const maxQuantity = variant ? (variant.stock || 0) : 1;
+  const isOutOfStock = variant ? (variant.stock || 0) === 0 : false;
 
-      {/* Message feedback */}
-      {message && (
-        <p className={`mt-2 text-sm ${message.includes('Error') || message.includes('Not enough') ? 'text-red-500' : 'text-green-600'}`}>
-          {message}
-        </p>
-      )}
-    </div>
+  return (
+    <button
+      type="button"
+      onClick={handleAddToCart}
+      disabled={!variant || isAdding || isOutOfStock || (variant && variant.stock < quantity)}
+      className="inline-flex items-center justify-between gap-4 py-[9px] md:py-[5px] px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 disabled:cursor-not-allowed text-t2 text-white bg-black cursor-pointer transition-opacity w-full md:w-auto h-full"
+    >
+      {/* Texte du bouton */}
+      <span className="whitespace-nowrap">
+        {isAdding ? 'AJOUT EN COURS...' : isOutOfStock ? 'RUPTURE DE STOCK' : 'AJOUTER AU PANIER'}
+      </span>
+
+      {/* Compteur quantité à droite (dans le bouton) */}
+      <div
+        onClick={(e) => e.stopPropagation()} // Empêcher le clic sur le compteur de déclencher le bouton
+        className="flex items-center"
+      >
+        <QuantitySelector
+          quantity={quantity}
+          onDecrease={handleDecrease}
+          onIncrease={handleIncrease}
+          min={1}
+          max={maxQuantity || undefined}
+          disabled={!variant || isOutOfStock}
+        />
+      </div>
+    </button>
   );
 };

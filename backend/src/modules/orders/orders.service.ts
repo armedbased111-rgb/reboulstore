@@ -144,6 +144,33 @@ export class OrdersService {
   }
 
   /**
+   * Récupère l'entité Order complète avec toutes les relations (pour génération PDF)
+   */
+  async findOneEntity(id: string, userId?: string): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      relations: [
+        'cart',
+        'cart.items',
+        'cart.items.variant',
+        'cart.items.variant.product',
+        'user',
+      ],
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    // Vérifier les droits d'accès si userId fourni
+    if (userId) {
+      await this.checkOrderAccess(order, userId);
+    }
+
+    return order;
+  }
+
+  /**
    * Récupère une commande par son ID
    * @param id - ID de la commande
    * @param userId - ID de l'utilisateur (optionnel, pour vérification de sécurité)

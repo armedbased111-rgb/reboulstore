@@ -2,10 +2,13 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { EmailService } from './email.service';
+import { InvoiceService } from './invoice.service';
+import type { Response } from 'express';
 export declare class OrdersController {
     private readonly ordersService;
     private readonly emailService;
-    constructor(ordersService: OrdersService, emailService: EmailService);
+    private readonly invoiceService;
+    constructor(ordersService: OrdersService, emailService: EmailService, invoiceService: InvoiceService);
     create(createOrderDto: CreateOrderDto): Promise<import("./dto/order-response.dto").OrderResponseDto>;
     findMyOrders(req: any): Promise<import("./dto/order-response.dto").OrderResponseDto[]>;
     findAll(): Promise<import("./dto/order-response.dto").OrderResponseDto[]>;
@@ -29,5 +32,6 @@ export declare class OrdersController {
     }>;
     cancel(id: string, req: any): Promise<import("./dto/order-response.dto").OrderResponseDto>;
     updateStatus(id: string, updateStatusDto: UpdateOrderStatusDto): Promise<import("./dto/order-response.dto").OrderResponseDto>;
+    downloadInvoice(id: string, req: any, res: Response): Promise<void>;
     capturePayment(id: string): Promise<import("./dto/order-response.dto").OrderResponseDto>;
 }

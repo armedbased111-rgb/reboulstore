@@ -48,7 +48,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const hasSale = true; // Pour l'instant, on affiche toujours le prix barré
 
   return (
-    <li>
+    <li className="product-card">
       <Link 
         to={`/product/${product.id}`} 
         className="text-t3 group block"

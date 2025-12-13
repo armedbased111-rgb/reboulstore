@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProduct } from '../hooks/useProduct';
 import { ProductGallery } from '../components/product/ProductGallery';
@@ -7,7 +7,14 @@ import { AddToCartButton } from '../components/product/AddToCartButton';
 import { ProductTabs } from '../components/product/ProductTabs';
 import { ProductInfo } from '../components/product/ProductInfo';
 import { RelatedProducts } from '../components/product/RelatedProducts';
+import { StockBadge } from '../components/product/StockBadge';
+import { ProductBadge } from '../components/product/ProductBadge';
+import { StockNotificationModal } from '../components/product/StockNotificationModal';
+import { Breadcrumbs } from '../components/ui/breadcrumbs';
+import { useToast } from '../contexts/ToastContext';
 import type { Variant } from '../types';
+import { animateFadeIn, animateSlideUp } from '../animations';
+import gsap from 'gsap';
 
 /**
  * Page Product - Fiche produit style A-COLD-WALL*
@@ -19,7 +26,67 @@ import type { Variant } from '../types';
 export const Product = () => {
   const { id } = useParams<{ id: string }>();
   const { product, loading, error } = useProduct(id);
+  const { showToast } = useToast();
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  
+  // Refs pour les animations
+  const pageRef = useRef<HTMLDivElement>(null);
+  const breadcrumbsRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const productInfoRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Animations orchestrées quand le produit est chargé
+  useEffect(() => {
+    if (product && pageRef.current) {
+      const tl = gsap.timeline();
+
+      // 1. Fade-in de la page
+      tl.add(animateFadeIn(pageRef.current, { duration: 0.3 }));
+
+      // 2. Slide-up breadcrumbs (délai court)
+      if (breadcrumbsRef.current) {
+        tl.add(animateSlideUp(breadcrumbsRef.current, {
+          duration: 0.5,
+          delay: 0,
+          distance: 20
+        }), "-=0.2"); // Commence 0.2s avant la fin de l'animation précédente
+      }
+
+      // 3. Slide-up galerie et infos produit en parallèle
+      if (galleryRef.current) {
+        tl.add(animateSlideUp(galleryRef.current, {
+          duration: 0.6,
+          distance: 30
+        }), "-=0.3");
+      }
+
+      if (productInfoRef.current) {
+        tl.add(animateSlideUp(productInfoRef.current, {
+          duration: 0.6,
+          distance: 30
+        }), "-=0.6"); // En parallèle avec la galerie
+      }
+
+      // 4. Slide-up actions (variant selector + add to cart)
+      if (actionsRef.current) {
+        tl.add(animateSlideUp(actionsRef.current, {
+          duration: 0.5,
+          distance: 20
+        }), "-=0.4");
+      }
+
+      // 5. Fade-in onglets
+      if (tabsRef.current) {
+        tl.add(animateFadeIn(tabsRef.current, {
+          duration: 0.4
+        }), "-=0.3");
+      }
+    }
+  }, [product]);
 
   // Gérer loading
   if (loading) {
@@ -28,7 +95,7 @@ export const Product = () => {
         <div className="w-full">
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
-              <div className="py-8 text-center uppercase">Loading...</div>
+              <div className="py-8 text-center uppercase">CHARGEMENT...</div>
             </div>
           </section>
         </div>
@@ -44,7 +111,7 @@ export const Product = () => {
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
               <div className="py-8 text-center uppercase text-red-500">
-                Error: {error}
+                ERREUR : {error}
               </div>
             </div>
           </section>
@@ -60,7 +127,7 @@ export const Product = () => {
         <div className="w-full">
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
-              <div className="py-8 text-center uppercase">Product not found</div>
+              <div className="py-8 text-center uppercase">PRODUIT INTROUVABLE</div>
             </div>
           </section>
         </div>
@@ -84,29 +151,39 @@ export const Product = () => {
 
   const sizeChart = getSizeChart();
 
+  // Préparer les breadcrumbs
+  const breadcrumbItems = [
+    { label: 'Accueil', href: '/' },
+    { label: 'Catalogue', href: '/catalog' },
+    ...(product.category
+      ? [{ label: product.category.name, href: `/catalog?category=${product.category.id}` }]
+      : []),
+    { label: product.name },
+  ];
+
   // Préparer les onglets avec les vraies données
   const tabs = [
     {
       id: 'details',
-      label: 'Details',
+      label: 'DETAILS',
       content: (
         <div>
-          <p className="mb-2">{product.description || 'No details available.'}</p>
+          <p className="mb-2 uppercase">{product.description || 'AUCUN DÉTAIL DISPONIBLE.'}</p>
           {(product.materials || product.madeIn || product.careInstructions) && (
             <div className="mt-4 space-y-1">
               {product.materials && (
-                <p className="text-sm">
-                  <strong>Materials:</strong> {product.materials}
+                <p className="text-sm uppercase">
+                  <strong>MATIÈRES :</strong> {String(product.materials).toUpperCase()}
                 </p>
               )}
               {product.madeIn && (
-                <p className="text-sm">
-                  <strong>Made in:</strong> {product.madeIn}
+                <p className="text-sm uppercase">
+                  <strong>FABRIQUÉ EN :</strong> {String(product.madeIn).toUpperCase()}
                 </p>
               )}
               {product.careInstructions && (
-                <p className="text-sm">
-                  <strong>Care:</strong> {product.careInstructions}
+                <p className="text-sm uppercase">
+                  <strong>ENTRETIEN :</strong> {String(product.careInstructions).toUpperCase()}
                 </p>
               )}
             </div>
@@ -116,120 +193,161 @@ export const Product = () => {
     },
     {
       id: 'sizing',
-      label: 'Sizing',
+      label: 'TAILLES',
       content: sizeChart ? (
         <div>
-          <p className="mb-4">Size chart:</p>
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2">Size</th>
-                {sizeChart.some((s) => s.chest) && <th className="py-2">Chest (cm)</th>}
-                {sizeChart.some((s) => s.length) && <th className="py-2">Length (cm)</th>}
-                {sizeChart.some((s) => s.waist) && <th className="py-2">Waist (cm)</th>}
-                {sizeChart.some((s) => s.hip) && <th className="py-2">Hip (cm)</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {sizeChart.map((entry) => (
-                <tr key={entry.size} className="border-b">
-                  <td className="py-2">{entry.size}</td>
-                  {sizeChart.some((s) => s.chest) && <td className="py-2">{entry.chest || '-'}</td>}
-                  {sizeChart.some((s) => s.length) && <td className="py-2">{entry.length || '-'}</td>}
-                  {sizeChart.some((s) => s.waist) && <td className="py-2">{entry.waist || '-'}</td>}
-                  {sizeChart.some((s) => s.hip) && <td className="py-2">{entry.hip || '-'}</td>}
+          <p className="mb-4 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] uppercase">Guide des tailles</p>
+          {/* Container avec scroll horizontal sur mobile */}
+          <div className="overflow-x-auto -mx-2 px-2 md:mx-0 md:px-0">
+            <table className="w-full min-w-[500px] text-left border-collapse">
+              <thead>
+                <tr className="border-b border-gray-300">
+                  <th className="py-2 pr-4 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Taille</th>
+                  {sizeChart.some((s) => s.chest) && (
+                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de poitrine (cm)</th>
+                  )}
+                  {sizeChart.some((s) => s.length) && (
+                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Longueur (cm)</th>
+                  )}
+                  {sizeChart.some((s) => s.waist) && (
+                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de taille (cm)</th>
+                  )}
+                  {sizeChart.some((s) => s.hip) && (
+                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de hanches (cm)</th>
+                  )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sizeChart.map((entry, index) => (
+                  <tr
+                    key={entry.size}
+                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  >
+                    <td className="py-3 pr-4 font-[Geist] font-medium text-[14px] leading-[20px] tracking-[-0.35px] text-black">
+                      {entry.size}
+                    </td>
+                    {sizeChart.some((s) => s.chest) && (
+                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
+                        {entry.chest || '-'}
+                      </td>
+                    )}
+                    {sizeChart.some((s) => s.length) && (
+                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
+                        {entry.length || '-'}
+                      </td>
+                    )}
+                    {sizeChart.some((s) => s.waist) && (
+                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
+                        {entry.waist || '-'}
+                      </td>
+                    )}
+                    {sizeChart.some((s) => s.hip) && (
+                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
+                        {entry.hip || '-'}
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
-        <p>Size chart coming soon.</p>
+        <p className="font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-600 uppercase">
+          GUIDE DES TAILLES BIENTÔT DISPONIBLE.
+        </p>
       ),
     },
     {
       id: 'shipping',
-      label: 'Shipping',
+      label: 'LIVRAISON',
       content: product.shop?.shippingPolicy ? (
         <div>
           {product.shop.shippingPolicy.description ? (
-            <p className="mb-2">{product.shop.shippingPolicy.description}</p>
+            <p className="mb-2 uppercase">{String(product.shop.shippingPolicy.description).toUpperCase()}</p>
           ) : (
             <>
               {product.shop.shippingPolicy.freeShippingThreshold && (
-                <p className="mb-2">
-                  <strong>Free shipping</strong> on orders over €
-                  {product.shop.shippingPolicy.freeShippingThreshold}
+                <p className="mb-2 uppercase">
+                  <strong>LIVRAISON GRATUITE</strong> POUR LES COMMANDES DE PLUS DE €{product.shop.shippingPolicy.freeShippingThreshold}
                 </p>
               )}
               {product.shop.shippingPolicy.deliveryTime && (
-                <p className="mb-2">
-                  <strong>Delivery time:</strong> {product.shop.shippingPolicy.deliveryTime}
+                <p className="mb-2 uppercase">
+                  <strong>DÉLAI DE LIVRAISON :</strong> {String(product.shop.shippingPolicy.deliveryTime).toUpperCase()}
                 </p>
               )}
               {product.shop.shippingPolicy.internationalShipping && (
-                <p className="mb-2">International shipping available</p>
+                <p className="mb-2 uppercase">LIVRAISON INTERNATIONALE DISPONIBLE</p>
               )}
               {product.shop.shippingPolicy.shippingCost && (
-                <p className="mb-2">
-                  <strong>Shipping cost:</strong> {product.shop.shippingPolicy.shippingCost}
+                <p className="mb-2 uppercase">
+                  <strong>FRAIS DE LIVRAISON :</strong> {String(product.shop.shippingPolicy.shippingCost).toUpperCase()}
                 </p>
               )}
             </>
           )}
-          <p className="mt-4 text-sm">Shipping costs are calculated at checkout.</p>
+          <p className="mt-4 text-sm uppercase">LES FRAIS DE LIVRAISON SONT CALCULÉS LORS DU CHECKOUT.</p>
         </div>
       ) : (
-        <p>Shipping information coming soon.</p>
+        <p className="uppercase">INFORMATIONS DE LIVRAISON BIENTÔT DISPONIBLES.</p>
       ),
     },
     {
       id: 'returns',
-      label: 'Returns',
+      label: 'RETOURS',
       content: product.shop?.returnPolicy ? (
         <div>
           {product.shop.returnPolicy.conditions ? (
-            <p className="mb-2">{product.shop.returnPolicy.conditions}</p>
+            <p className="mb-2 uppercase">{String(product.shop.returnPolicy.conditions).toUpperCase()}</p>
           ) : (
             <>
               {product.shop.returnPolicy.returnWindow && (
-                <p className="mb-2">
-                  We accept returns within <strong>{product.shop.returnPolicy.returnWindow} days</strong> of purchase.
+                <p className="mb-2 uppercase">
+                  NOUS ACCEPTONS LES RETOURS DANS LES <strong>{product.shop.returnPolicy.returnWindow} JOURS</strong> SUIVANT L'ACHAT.
                 </p>
               )}
               {product.shop.returnPolicy.returnShippingFree && (
-                <p className="mb-2">Return shipping is free for all orders.</p>
+                <p className="mb-2 uppercase">LES FRAIS DE RETOUR SONT GRATUITS POUR TOUTES LES COMMANDES.</p>
               )}
-              <p className="mb-2">
-                Items must be unworn, unwashed, and with all original tags attached.
+              <p className="mb-2 uppercase">
+                LES ARTICLES DOIVENT ÊTRE NON PORTÉS, NON LAVÉS ET AVEC TOUTES LES ÉTIQUETTES ORIGINALES ATTACHÉES.
               </p>
             </>
           )}
-          <p className="mt-4 text-sm">Please contact our customer service to initiate a return.</p>
+          <p className="mt-4 text-sm uppercase">VEUILLEZ CONTACTER NOTRE SERVICE CLIENT POUR INITIER UN RETOUR.</p>
         </div>
       ) : (
-        <p>Returns policy coming soon.</p>
+        <p className="uppercase">POLITIQUE DE RETOUR BIENTÔT DISPONIBLE.</p>
       ),
     },
   ];
 
   return (
-    <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
+    <main ref={pageRef} id="MainContent" role="main" tabIndex={-1} className="grow flex">
       <div className="w-full">
+        {/* Breadcrumbs */}
+        <div ref={breadcrumbsRef} className="px-4 md:px-0 ml-[4px]">
+          <Breadcrumbs items={breadcrumbItems} />
+        </div>
+
         <section className="m-[2px] last:mb-0">
           <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
             {/* Layout 2 colonnes */}
             <div className="lg:flex">
               {/* Colonne gauche : Galerie (40%) */}
-              <div className="lg:min-w-[40%] lg:basis-[40%] lg:mr-8">
+              <div ref={galleryRef} className="lg:min-w-[40%] lg:basis-[40%] lg:mr-8">
                 {product.images && product.images.length > 0 ? (
                   <ProductGallery
                     images={product.images}
                     productName={product.name}
+                    product={product}
                   />
                 ) : (
-                  <div className="bg-gray-200 aspect-[3/4] flex items-center justify-center">
-                    <span className="text-gray-400 uppercase">No images</span>
+                  <div className="bg-gray-200 aspect-[3/4] flex items-center justify-center relative">
+                    {/* Badge produit (overlay) */}
+                    <ProductBadge product={product} />
+                    <span className="text-gray-400 uppercase">AUCUNE IMAGE</span>
                   </div>
                 )}
               </div>
@@ -238,27 +356,65 @@ export const Product = () => {
               <div className="basis-[60%]">
                 <div className="lg:sticky pt-2" style={{ top: '78px' }}>
                   {/* Titre + Prix */}
-                  <ProductInfo product={product} />
+                  <div ref={productInfoRef}>
+                    <ProductInfo product={product} />
+                  </div>
 
                   {/* Formulaire variantes + Add to cart */}
-                  <div className="mt-8">
-                    <div className="flex flex-col items-start md:flex-row md:items-center gap-2">
-                      {/* Sélecteur de variante */}
-                      {product.variants && product.variants.length > 0 && (
-                        <VariantSelector
-                          variants={product.variants}
-                          selectedVariant={selectedVariant}
-                          onVariantChange={setSelectedVariant}
-                        />
-                      )}
+                  <div ref={actionsRef} className="mt-8">
+                    {/* Container fixe pour éviter le décalage des boutons */}
+                    <div className="flex flex-col gap-3">
+                      {/* Ligne 1 : Sélecteur de variante + Bouton Add to cart (côte à côte, même hauteur) */}
+                      <div className="flex flex-col items-start md:flex-row md:items-stretch gap-2 max-h-[48px] md:max-h-[40px]">
+                        {/* Sélecteur de variante */}
+                        {product.variants && product.variants.length > 0 && (
+                          <div className="flex items-center h-full">
+                            <VariantSelector
+                              variants={product.variants}
+                              selectedVariant={selectedVariant}
+                              onVariantChange={(variant) => {
+                                setSelectedVariant(variant);
+                                setQuantity(1); // Réinitialiser la quantité quand on change de variant
+                              }}
+                            />
+                          </div>
+                        )}
 
-                      {/* Bouton Add to cart */}
-                      <AddToCartButton variant={selectedVariant} />
+                        {/* Bouton Add to cart avec compteur quantité */}
+                        <div className="flex items-center h-full flex-1 md:flex-initial">
+                          <AddToCartButton 
+                            variant={selectedVariant} 
+                            quantity={quantity}
+                            onQuantityChange={setQuantity}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Ligne 2 : Badge stock (zone réservée fixe) */}
+                      <div className="min-h-[28px] flex items-center gap-2">
+                        {selectedVariant && (
+                          <>
+                            <StockBadge variant={selectedVariant} />
+                            {/* Bouton notification si rupture de stock */}
+                            {(selectedVariant.stock || 0) === 0 && (
+                              <button
+                                type="button"
+                                onClick={() => setIsNotificationModalOpen(true)}
+                                className="font-[Geist] text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-gray-600 hover:text-black underline transition-colors"
+                              >
+                                M'alerter quand disponible
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Onglets */}
-                  <ProductTabs tabs={tabs} />
+                  <div ref={tabsRef}>
+                    <ProductTabs tabs={tabs} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -272,6 +428,20 @@ export const Product = () => {
           limit={4}
         />
       </div>
+
+      {/* Modal notification rupture de stock */}
+      <StockNotificationModal
+        product={product}
+        variantId={selectedVariant?.id}
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        onSubscribe={() => {
+          showToast({
+            message: 'Vous serez notifié quand ce produit sera disponible',
+            duration: 2000,
+          });
+        }}
+      />
     </main>
   );
 };

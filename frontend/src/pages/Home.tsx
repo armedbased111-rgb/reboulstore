@@ -5,6 +5,8 @@ import { CategorySection } from '../components/home/CategorySection';
 import { useProducts } from '../hooks/useProducts';
 import { HeroSectionVideo } from '@/components/home/HeroSectionVideo';
 import { PromoCard } from '@/components/home/PromoCard';
+import { animateRevealUp, animateStaggerFadeIn } from '../animations';
+import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 
 /**
  * Page Home - Page d'accueil
@@ -17,44 +19,119 @@ export const Home = () => {
   // Récupérer les produits pour le carousel (limite à 10 pour l'instant)
   const { products, loading } = useProducts(query);
 
+  // Animations déclenchées au scroll pour chaque section (plus lentes)
+  const heroImageRef = useScrollAnimation((element) => {
+    animateRevealUp(element, {
+      duration: 1.5,
+      distance: 50
+    });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const featuredProductsRef1 = useScrollAnimation((element) => {
+    if (!loading && products.length > 0) {
+      const cards = element.querySelectorAll('.product-card');
+      if (cards.length > 0) {
+        animateStaggerFadeIn(cards, {
+          duration: 1.2,
+          stagger: 0.15,
+          distance: 30
+        });
+      }
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
+
+  const categorySectionRef = useScrollAnimation((element) => {
+    animateRevealUp(element, {
+      duration: 1.4,
+      distance: 40
+    });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const heroVideoRef = useScrollAnimation((element) => {
+    animateRevealUp(element, {
+      duration: 1.5,
+      distance: 50
+    });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const featuredProductsRef2 = useScrollAnimation((element) => {
+    const cards = element.querySelectorAll('.product-card');
+    if (cards.length > 0) {
+      animateStaggerFadeIn(cards, {
+        duration: 1.2,
+        stagger: 0.15,
+        distance: 30
+      });
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
+
+  const promoCardRef = useScrollAnimation((element) => {
+    animateRevealUp(element, {
+      duration: 1.4,
+      distance: 40
+    });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const featuredProductsRef3 = useScrollAnimation((element) => {
+    const cards = element.querySelectorAll('.product-card');
+    if (cards.length > 0) {
+      animateStaggerFadeIn(cards, {
+        duration: 1.2,
+        stagger: 0.15,
+        distance: 30
+      });
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
+
   return (
     <div className='px-[4px]'>
       {/* Hero Section avec image */}
-      <HeroSectionImage
-        title="Winter Sale"
-        subtitle="Up To 50% Off"
-        buttonText="Shop now"
-        buttonLink="/catalog"
-        imageSrc="/public/webdesign/background.png" // Tu remplaceras par ton image
-      />
+      <div ref={heroImageRef}>
+        <HeroSectionImage
+          title="Winter Sale"
+          subtitle="Up To 50% Off"
+          buttonText="Shop now"
+          buttonLink="/catalog"
+          imageSrc="/public/webdesign/background.png" // Tu remplaceras par ton image
+        />
+      </div>
 
       {/* Featured Products Carousel */}
       {!loading && products.length > 0 && (
-        <FeaturedProducts
-          title="Winter Sale"
-          products={products}
-        />
+        <div ref={featuredProductsRef1}>
+          <FeaturedProducts
+            title="Winter Sale"
+            products={products}
+          />
+        </div>
       )}
 
       {/* Category Section - Shop by category */}
-      <CategorySection />
+      <div ref={categorySectionRef}>
+        <CategorySection />
+      </div>
 
       
       {/* Hero Section with video */}
-      <HeroSectionVideo
-        title="Winter Sale"
-        subtitle="Up To 50% Off"
-        buttonText="Shop now"
-        buttonLink="/catalog"
-        videoSrc="/public/webdesign/acw-video.mp4"
-      />
+      <div ref={heroVideoRef}>
+        <HeroSectionVideo
+          title="Winter Sale"
+          subtitle="Up To 50% Off"
+          buttonText="Shop now"
+          buttonLink="/catalog"
+          videoSrc="/public/webdesign/acw-video.mp4"
+        />
+      </div>
       {/* Featured Products pour une catégorie spécifique */}
-      <FeaturedProducts
-      title="COLLECTION ENFANTS"
-      categorySlug="kids"
-      limit={10}
-      />
-      <PromoCard
+      <div ref={featuredProductsRef2}>
+        <FeaturedProducts
+          title="COLLECTION ENFANTS"
+          categorySlug="kids"
+          limit={10}
+        />
+      </div>
+      <div ref={promoCardRef}>
+        <PromoCard
       gridImage1='/webdesign/addon.jpeg'
       gridImage1Alt='VISAG3'
       gridImage1Link='/page1'
@@ -73,12 +150,15 @@ export const Home = () => {
     "Episode 03, curated by Tawanda Chiweshe and Francisco Gaspar of Alaska Alaska, whose practice is rooted in what they call \"contemporary landscapes\".",
     "Their work reflects a convergence of diverse worldviews, resulting in outcomes that are both deeply considered and open-ended. Objects, spaces, and ideas become vessels for conversation across disciplines."
   ]}
-/>
-<FeaturedProducts
-  title="OUTERWEAR WINTER SALE"
-  categorySlug="vestes"
-  limit={10}
-/>
+        />
+      </div>
+      <div ref={featuredProductsRef3}>
+        <FeaturedProducts
+          title="OUTERWEAR WINTER SALE"
+          categorySlug="vestes"
+          limit={10}
+        />
+      </div>
     </div>
   );
 };

@@ -22,6 +22,113 @@ alwaysApply: true
 
 ### Frontend / Interface utilisateur
 
+#### 🎬 Workflow Animations GSAP
+
+**Bibliothèque principale** : **GSAP (GreenSock Animation Platform)**
+
+##### Philosophie des animations
+
+- **Réutilisabilité** : Chaque animation doit être dans un fichier dédié et réutilisable
+- **Cohérence** : Utiliser les constantes définies dans `animations/utils/constants.ts`
+- **Performance** : GSAP garantit 60fps, utiliser `gsap.context()` pour le nettoyage
+- **Documentation** : Chaque animation doit être documentée avec JSDoc
+
+##### Structure des animations
+
+```
+frontend/src/animations/
+├── index.ts                 # Export centralisé
+├── presets/                 # Animations réutilisables
+│   ├── fade-in.ts
+│   ├── slide-up.ts
+│   └── scale-hover.ts
+├── components/              # Animations spécifiques à des composants
+│   └── [ComponentName]/
+│       └── [animation].ts
+└── utils/
+    ├── gsap-helpers.ts      # Hook useGSAP
+    └── constants.ts         # Durées, eases, délais standards
+```
+
+##### Processus de création d'animation
+
+1. **Décider du type** :
+   - Animation réutilisable → `animations/presets/`
+   - Animation spécifique → `animations/components/[ComponentName]/`
+
+2. **Créer le fichier** :
+   - Nommer en `kebab-case.ts`
+   - Exporter fonction nommée `animate[NomAnimation]`
+   - Documenter avec JSDoc
+   - Utiliser les constantes de `animations/utils/constants.ts`
+
+3. **Exporter** :
+   - Ajouter l'export dans `animations/index.ts`
+
+4. **Utiliser** :
+   - Importer depuis `animations/index.ts`
+   - Utiliser `useRef` + `useEffect` dans le composant
+   - Préférer `useGSAP` hook pour le nettoyage automatique
+
+##### Exemple d'animation réutilisable
+
+```typescript
+// animations/presets/fade-in.ts
+import gsap from 'gsap';
+import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+
+export const animateFadeIn = (
+  element: gsap.TweenTarget,
+  options: { duration?: number; delay?: number } = {}
+) => {
+  return gsap.fromTo(
+    element,
+    { opacity: 0 },
+    {
+      opacity: 1,
+      duration: options.duration || ANIMATION_DURATIONS.NORMAL,
+      delay: options.delay || 0,
+      ease: ANIMATION_EASES.DEFAULT,
+    }
+  );
+};
+```
+
+##### Utilisation dans un composant
+
+```typescript
+import { useRef, useEffect } from 'react';
+import { animateFadeIn } from '../../animations';
+
+const MyComponent = () => {
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (elementRef.current) {
+      animateFadeIn(elementRef.current, { duration: 0.6 });
+    }
+  }, []);
+
+  return <div ref={elementRef}>Content</div>;
+};
+```
+
+##### Documentation
+
+- **Consulter ANIMATIONS_GUIDE.md** pour les concepts, exemples et bonnes pratiques
+- **Workflow complet** : Voir ANIMATIONS_GUIDE.md section "Workflow de création d'animation"
+- **Références GSAP** : https://greensock.com/docs/
+
+##### Bonnes pratiques
+
+- ✅ Toujours créer des animations réutilisables dans `presets/`
+- ✅ Utiliser `useGSAP` hook ou `gsap.context()` pour le nettoyage
+- ✅ Respecter les constantes définies (`ANIMATION_DURATIONS`, `ANIMATION_EASES`)
+- ✅ Documenter avec JSDoc
+- ✅ Respecter `prefers-reduced-motion` pour l'accessibilité
+- ❌ Ne pas dupliquer le code d'animation dans plusieurs composants
+- ❌ Ne pas oublier de nettoyer les animations au démontage
+
 #### 🎨 Workflow Figma → Frontend (PRIORITAIRE)
 
 **Philosophie** : Design d'abord dans Figma, puis implémentation propre en code
@@ -194,13 +301,17 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 ### Fichiers de contexte à maintenir
 
+- **ARCHITECTURE_ADMIN_CENTRAL.md** : Architecture complète Admin Centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
 - **CONTEXT.md** : Contexte général du projet, architecture globale, état actuel
 - **ROADMAP_COMPLETE.md** : Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
+- **BRAINSTORMING_ROADMAP.md** : Brainstorming & décisions prises
+- **CLARIFICATIONS_BRAINSTORMING.md** : Clarifications et décisions validées
 - **API_CONFIG.md** : Configuration API centralisée (ports, endpoints, variables d'environnement, conventions)
 - **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
 - **frontend/AUTH_USAGE.md** : Documentation système authentification frontend (useAuth, AuthContext)
 - **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
 - **POLICIES_TODO.md** : Note pour finaliser politiques livraison/retour
+- **ANIMATIONS_GUIDE.md** : Guide complet des animations GSAP (workflow, exemples, bonnes pratiques) ⭐ **RÉFÉRENCE ANIMATIONS**
 
 ### 🎯 Règle ROADMAP_COMPLETE.md - OBLIGATOIRE
 
@@ -264,6 +375,7 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 1. **Avant de commencer** : 
    - ✅ **Consulter ROADMAP_COMPLETE.md** (obligatoire)
+   - ✅ **Consulter ARCHITECTURE_ADMIN_CENTRAL.md** si travail sur admin ou architecture
    - ✅ Consulter CONTEXT.md pour l'état actuel
    - ✅ Consulter FRONTEND.md ou BACKEND.md selon le contexte
 
@@ -276,6 +388,134 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
    - ✅ Mettre à jour FRONTEND.md ou BACKEND.md
    
 4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
+
+## 🔧 Project Commands Cursor
+
+**Commandes disponibles dans Cursor** : Utiliser avec `/nomcommande` dans le chat
+
+### Commandes de contexte et workflow
+
+- **`/getcontext [sujet]`** : Recherche rapide de contexte dans le projet
+  - Liste tous les fichiers de référence (ROADMAP, ARCHITECTURE, etc.)
+  - Guide de recherche par domaine fonctionnel
+  - Aide à trouver la documentation pertinente
+
+- **`/frontend-workflow`** : Workflow complet frontend
+  - Création de pages, composants, services
+  - Structure des fichiers, conventions de code
+  - Styling TailwindCSS, responsive
+  - Intégration animations GSAP
+
+- **`/backend-workflow`** : Workflow complet backend
+  - Création de modules NestJS
+  - Entités TypeORM, DTOs
+  - Endpoints API, authentification
+  - Base de données, migrations
+
+- **`/figma-workflow`** : Workflow Figma → Frontend
+  - Processus complet design → code
+  - Conventions design system
+  - Plugins Figma recommandés
+  - Conversion Figma → TailwindCSS
+
+- **`/animation-workflow`** : Workflow animations GSAP
+  - Création d'animations réutilisables
+  - Structure animations/, presets/, components/
+  - Utilisation hooks, constantes
+  - Bonnes pratiques GSAP
+
+- **`/documentation-workflow`** : Workflow documentation
+  - Quand et comment mettre à jour les docs
+  - Fichiers à maintenir (ROADMAP, CONTEXT, etc.)
+  - Format de documentation
+  - Checklist de vérification
+
+### Commandes de création
+
+- **`/component-create [nom] [domaine?]`** : Créer un composant React
+  - Template de base avec props typées
+  - Bonnes pratiques, documentation
+  - Exemples par domaine (UI, Product, etc.)
+
+- **`/page-create [nom]`** : Créer une page React
+  - Template de base avec structure standard
+  - Gestion loading/error states
+  - Intégration routes, services
+
+- **`/module-create [nom]`** : Créer un module NestJS complet
+  - Module, Service, Controller
+  - DTOs, Entités
+  - Enregistrement dans app.module
+
+### Commandes utilitaires
+
+- **`/update-roadmap`** : Mettre à jour ROADMAP_COMPLETE.md
+  - Quand et comment cocher les tâches
+  - Format de mise à jour
+  - Processus systématique
+
+### Utilisation des commandes
+
+1. **Dans le chat Cursor** : Taper `/nomcommande` pour afficher le guide
+2. **Référence rapide** : Les commandes contiennent tous les détails du workflow
+3. **Contexte partagé** : Les commandes servent de référence pour maintenir la cohérence
+4. **Documentation vivante** : Les commandes sont mises à jour avec les meilleures pratiques
+
+### 🔄 Utilisation automatique par l'IA
+
+**L'IA doit automatiquement utiliser ces commandes comme référence** selon le contexte :
+
+#### Quand utiliser automatiquement `/getcontext`
+- ✅ Au début de chaque session ou question complexe
+- ✅ Quand l'utilisateur demande "où trouver X" ou "comment faire Y"
+- ✅ Pour identifier les fichiers de documentation pertinents
+
+#### Quand utiliser automatiquement `/frontend-workflow`
+- ✅ Quand l'utilisateur veut créer une page, composant ou service frontend
+- ✅ Quand l'utilisateur demande des conventions de code frontend
+- ✅ Pour rappeler la structure des fichiers et les bonnes pratiques
+
+#### Quand utiliser automatiquement `/backend-workflow`
+- ✅ Quand l'utilisateur veut créer un module, entité ou endpoint backend
+- ✅ Quand l'utilisateur demande des conventions NestJS/TypeORM
+- ✅ Pour rappeler la structure des modules et les patterns
+
+#### Quand utiliser automatiquement `/figma-workflow`
+- ✅ Quand l'utilisateur mentionne Figma ou un design
+- ✅ Quand l'utilisateur veut implémenter un design depuis Figma
+- ✅ Pour rappeler le processus design → code
+
+#### Quand utiliser automatiquement `/animation-workflow`
+- ✅ Quand l'utilisateur veut créer une animation GSAP
+- ✅ Quand l'utilisateur demande comment animer un élément
+- ✅ Pour rappeler la structure animations/ et les bonnes pratiques
+
+#### Quand utiliser automatiquement `/component-create`, `/page-create`, `/module-create`
+- ✅ Quand l'utilisateur veut créer un nouveau composant/page/module
+- ✅ Pour fournir les templates et structures standard
+- ✅ Pour rappeler les conventions de nommage et structure
+
+#### Quand utiliser automatiquement `/update-roadmap` ou `/documentation-workflow`
+- ✅ Après chaque tâche complétée
+- ✅ Quand l'utilisateur demande comment documenter
+- ✅ Pour rappeler le processus de mise à jour de la documentation
+
+#### Processus automatique de l'IA
+
+1. **Détecter le contexte** de la demande utilisateur
+2. **Identifier les commandes pertinentes** à consulter
+3. **Lire automatiquement** les fichiers `.cursor/commands/[commande].md`
+4. **Utiliser le contenu** comme référence pour répondre
+5. **Référencer les workflows** dans la réponse si pertinent
+
+**L'IA ne doit pas attendre** que l'utilisateur tape `/commande`, elle doit **automatiquement** consulter et utiliser ces commandes selon le contexte.
+
+### Mise à jour des commandes
+
+- ✅ Les commandes doivent être maintenues à jour avec les workflows
+- ✅ Ajouter de nouvelles commandes pour de nouveaux workflows
+- ✅ Les commandes doivent référencer les fichiers de documentation
+- ✅ L'IA doit automatiquement utiliser ces commandes selon le contexte
 
 ## Vérification et correction
 

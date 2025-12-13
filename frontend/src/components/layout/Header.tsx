@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCartContext } from '../../contexts/CartContext';
 import { useCategories } from '../../hooks/useCategories';
@@ -6,6 +6,8 @@ import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
+import { animateSlideDown, animateFadeScale, animateStaggerFadeIn } from '../../animations';
+import gsap from 'gsap';
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
@@ -19,8 +21,118 @@ export const Header = () => {
   
   const cartItemsCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
+  // Refs pour les animations
+  const headerRef = useRef<HTMLElement>(null);
+  const shopMenuRef = useRef<HTMLDivElement>(null);
+  const brandsMenuRef = useRef<HTMLDivElement>(null);
+  const cartBadgeRef = useRef<HTMLButtonElement>(null);
+
+  // Animation d'apparition du header au chargement
+  useEffect(() => {
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      );
+    }
+  }, []);
+
+  // Animation d'ouverture/fermeture du mega menu CATALOGUE
+  useEffect(() => {
+    if (shopMenuRef.current) {
+      if (isShopMenuOpen) {
+        // Ouvrir : slide-down avec fade
+        animateSlideDown(shopMenuRef.current, {
+          duration: 0.4,
+          distance: -30,
+        });
+
+        // Animer les catégories en stagger
+        const categoryItems = shopMenuRef.current.querySelectorAll('li');
+        if (categoryItems.length > 0) {
+          animateStaggerFadeIn(categoryItems, {
+            duration: 0.3,
+            stagger: 0.05,
+            distance: 10,
+          });
+        }
+
+        // Animer les images
+        const images = shopMenuRef.current.querySelectorAll('img');
+        if (images.length > 0) {
+          animateStaggerFadeIn(images, {
+            duration: 0.4,
+            stagger: 0.1,
+            distance: 20,
+          });
+        }
+      } else {
+        // Fermer : fade out
+        gsap.to(shopMenuRef.current, {
+          opacity: 0,
+          y: -10,
+          duration: 0.2,
+          ease: "power2.in",
+        });
+      }
+    }
+  }, [isShopMenuOpen]);
+
+  // Animation d'ouverture/fermeture du mega menu BRANDS
+  useEffect(() => {
+    if (brandsMenuRef.current) {
+      if (isBrandsMenuOpen) {
+        // Ouvrir : slide-down avec fade
+        animateSlideDown(brandsMenuRef.current, {
+          duration: 0.4,
+          distance: -30,
+        });
+
+        // Animer les marques en stagger
+        const brandItems = brandsMenuRef.current.querySelectorAll('li');
+        if (brandItems.length > 0) {
+          animateStaggerFadeIn(brandItems, {
+            duration: 0.3,
+            stagger: 0.05,
+            distance: 10,
+          });
+        }
+
+        // Animer les images/vidéos
+        const media = brandsMenuRef.current.querySelectorAll('img, video');
+        if (media.length > 0) {
+          animateStaggerFadeIn(media, {
+            duration: 0.4,
+            stagger: 0.1,
+            distance: 20,
+          });
+        }
+      } else {
+        // Fermer : fade out
+        gsap.to(brandsMenuRef.current, {
+          opacity: 0,
+          y: -10,
+          duration: 0.2,
+          ease: "power2.in",
+        });
+      }
+    }
+  }, [isBrandsMenuOpen]);
+
+  // Animation du badge panier quand le nombre change
+  useEffect(() => {
+    if (cartBadgeRef.current && cartItemsCount > 0) {
+      gsap.fromTo(
+        cartBadgeRef.current,
+        { scale: 1 },
+        { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out" }
+      );
+    }
+  }, [cartItemsCount]);
+
   return (
-    <header className="bg-white sticky top-0 z-[60] relative">
+    <header ref={headerRef} className="bg-white sticky top-0 z-[60] relative">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Logo + Navigation */}
@@ -145,7 +257,7 @@ export const Header = () => {
               {isAuthenticated ? (user?.firstName ? user.firstName.toUpperCase() : 'MON COMPTE') : 'CONNEXION'}
             </Link>
             
-            <Button asChild className="relative flex items-center gap-2 bg-black text-white rounded-md uppercase text-sm font-light hover:opacity-90 transition-opacity">
+            <Button ref={cartBadgeRef} asChild className="relative flex items-center gap-2 bg-black text-white rounded-md uppercase text-sm font-light hover:opacity-90 transition-opacity">
             <Link to="/cart">
               CART ({cartLoading ? '...' : cartItemsCount})
             </Link>
@@ -185,6 +297,7 @@ export const Header = () => {
             
             {/* Menu */}
             <div 
+              ref={shopMenuRef}
               className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[55]"
               onMouseLeave={() => setIsShopMenuOpen(false)}
             >
@@ -267,6 +380,7 @@ export const Header = () => {
             
             {/* Menu */}
             <div 
+              ref={brandsMenuRef}
               className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[55]"
               onMouseLeave={() => {
                 setIsBrandsMenuOpen(false);

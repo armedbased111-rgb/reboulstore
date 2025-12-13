@@ -6,6 +6,8 @@ import { Product } from './pages/Product'
 import { Cart } from './pages/Cart'
 import { Checkout } from './pages/Checkout'
 import { OrderConfirmation } from './pages/OrderConfirmation'
+import { Orders } from './pages/Orders'
+import { OrderDetail } from './pages/OrderDetail'
 import { About } from './pages/About'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
@@ -99,6 +101,26 @@ function App() {
             <Layout>
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/orders" 
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/orders/:id" 
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <OrderDetail />
               </ProtectedRoute>
             </Layout>
           } 

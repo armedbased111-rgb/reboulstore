@@ -434,68 +434,85 @@
 
 ## 🏗️ Architecture Multi-Sites
 
-### Architecture Technique
+### Architecture Technique - ✅ VALIDÉE
 
-#### Option A : Multi-Tenant (Recommandée ✅)
+**Architecture finale validée** : **3 projets Docker séparés + 1 Admin Centralisée**
 
-**1 base de données, 1 backend, entité Shop pour séparation**
+#### Structure Validée
+
+**3 Projets E-commerce Indépendants** :
+```
+reboulstore/              # Projet 1 (MVP Février 2025)
+├── backend/ (NestJS)
+├── frontend/ (React + Vite + TailwindCSS)
+├── postgres/ (Database Reboul)
+└── docker-compose.yml
+
+cpcompany/                # Projet 2 (Futur - Phase 20)
+├── backend/ (NestJS)
+├── frontend/ (React + Vite + TailwindCSS)
+├── postgres/ (Database CP Company)
+└── docker-compose.yml
+
+outlet/                   # Projet 3 (Futur - Phase 21)
+├── backend/ (NestJS)
+├── frontend/ (React + Vite + TailwindCSS)
+├── postgres/ (Database Outlet)
+└── docker-compose.yml
+```
+
+**1 Application Admin Centralisée** :
+```
+admin-central/            # Application Admin (Phases 15-17.12)
+├── backend/ (NestJS - Connexions multiples TypeORM)
+│   ├── config/ (database.reboul.config.ts, etc.)
+│   └── modules/ (reboul/, cpcompany/, outlet/)
+├── frontend/ (React + Vite + GeistUI)
+└── docker-compose.yml (Réseaux Docker partagés)
+```
+
+**Connexion Admin** : L'admin se connecte **directement aux 3 bases de données** via TypeORM avec **connexions multiples** (une connexion par site).
+
+**Phases Architecture** :
+- **Phase 16** : Setup admin-central/backend avec connexions multiples TypeORM
+- **Phase 17** : Setup admin-central/frontend avec GeistUI
+- **Phase 17.10** : Docker Compose production (réseaux partagés)
+- **Phase 20-21** : Ajouter connexions CP Company et Outlet dans admin
 
 **Avantages** :
-- ✅ Simple à maintenir (1 codebase)
-- ✅ Coûts réduits (1 serveur, 1 BDD)
-- ✅ Partage ressources (utilisateurs, panier possible)
-- ✅ Migration facile (ajouter shopId aux entités)
+- ✅ **Isolation totale** : Chaque site complètement indépendant
+- ✅ **Stabilité** : Si un site crash, les autres continuent
+- ✅ **Scalabilité** : Chaque site évolue indépendamment
+- ✅ **Sécurité** : Bases de données séparées, pas de mélange
+- ✅ **Admin unifié** : Gestion centralisée des 3 sites
+- ✅ **Maintenance** : Codebases séparés, équipes peuvent travailler en parallèle
 
-**Structure** :
-```
-Database
-├── shops (id, name, slug)
-├── products (id, ..., shopId)
-├── categories (id, ..., shopId)
-└── orders (id, ..., shopId)
-```
+**📚 Documentation complète** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
-**Frontend** :
-- Routes : `/shop/reboul/catalog`, `/shop/cpcompany/catalog`
-- Ou sous-domaines : `reboul.reboulstore.com`, `cpcompany.reboulstore.com`
-
-**Admin** :
-- Sélecteur shop en haut
-- Filtre par shop dans toutes les vues
-
-#### Option B : Microservices (Non recommandée ❌)
-
-**Chaque site = backend + BDD séparés**
-
-**Inconvénients** :
-- ❌ Complexité (4 backends, 4 BDD)
-- ❌ Coûts élevés
-- ❌ Maintenance difficile
-- ❌ Overkill pour 4 shops
-
-### Questions à Discuter
+### Décisions Validées ✅
 
 1. **Sites à créer** :
-   - Reboul (Enfants) - ✅ En cours
-   - CP Company - 🔜 Quand ?
-   - Outlet - 🔜 Quand ?
-   - Autres sites prévus ?
+   - ✅ Reboul (Enfants) - En cours (MVP Février 2025)
+   - 🔜 CP Company - Après lancement Reboul
+   - 🔜 Outlet - Après CP Company
 
 2. **Timing** :
-   - Lancer Reboul d'abord (stabiliser)
-   - Puis CP Company (copier structure Reboul)
-   - Puis Outlet (structure similaire)
+   - ✅ Lancer Reboul d'abord (stabiliser)
+   - 🔜 Puis CP Company (copier structure Reboul)
+   - 🔜 Puis Outlet (structure similaire)
 
-3. **Partage utilisateurs** :
-   - Même compte utilisateur pour tous les sites ?
-   - Ou comptes séparés par site ?
-   - Partage panier entre sites possible ?
+3. **Architecture** :
+   - ✅ **3 projets Docker séparés** (reboulstore, cpcompany, outlet)
+   - ✅ **1 Admin Centralisée** (admin-central)
+   - ✅ **Connexions multiples TypeORM** (admin → 3 databases)
+   - ✅ **Réseaux Docker partagés** (admin accède aux databases)
 
 4. **Admin Centrale** :
-   - 1 admin pour tous les sites (filtre par shop)
-   - Ou admin séparé par site ?
+   - ✅ **1 admin pour tous les sites** (interface unifiée)
+   - ✅ **Connexion directe aux databases** (pas via API)
+   - ✅ **Modules séparés par site** (reboul/, cpcompany/, outlet/)
 
-**Recommandation** : Multi-tenant, partage utilisateurs, admin unifié
+**Architecture validée** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ---
 
@@ -591,7 +608,23 @@ Database
 
 ### Objectif Février 2025 : Reboul Prêt à la Vente
 
-### Priorité 1 : Finaliser Reboul (Phases 12-14) 🔴
+### Priorité 1 : Finaliser Reboul (Phases 9-14.5) 🔴
+
+#### Phase 9 : Backend - Auth & Users ✅ (TERMINÉ)
+- [x] Entité User (JWT, bcrypt)
+- [x] Register, Login, Profil
+- [x] Guards, protection routes
+
+#### Phase 10 : Frontend - Auth UI ✅ (TERMINÉ)
+- [x] Page Login (pixel-perfect Figma)
+- [x] Page Register (pixel-perfect Figma)
+- [x] Page Profile (pixel-perfect Figma)
+- [x] ProtectedRoute, AuthContext
+
+#### Phase 11 : Backend - Commandes Complètes ✅ (TERMINÉ)
+- [x] Cycle de vie commandes
+- [x] Gestion stock
+- [x] Système emails (persistance BDD)
 
 #### Phase 12 : Frontend - Panier & Checkout ✅ (TERMINÉ)
 - [x] Page panier (design Figma)
@@ -610,34 +643,64 @@ Database
 - [ ] Affichage statut, tracking, articles
 - [ ] Actions (télécharger facture, demander retour)
 
-#### Phase 14.5 : Page Produit Améliorée ⏳ (À FAIRE)
-- [ ] Affichage stock par variant
+#### Phase 14.5 : Frontend - Page Produit Améliorée ⏳ (À FAIRE - MVP)
+- [ ] Affichage stock par variant (statut + quantité si stock faible)
 - [ ] Désactivation variants épuisés
-- [ ] Guide taille (tableau)
-- [ ] Informations détaillées (matières, dimensions, entretien)
-- [ ] Produits similaires
+- [ ] Guide taille (tableau des tailles)
+- [ ] **Post-MVP** : Informations détaillées (matières, dimensions, entretien)
+- [ ] **Post-MVP** : Produits similaires
 
-### Priorité 2 : Admin Centrale (Phases 15-17) 🟡
+### Priorité 2 : Admin Centrale (Phases 15-17.12) 🟡
 
-#### Phase 15 : Backend - Cloudinary
+#### Phase 15 : Backend - Cloudinary (Dans admin-central)
 - [ ] Migration upload images vers Cloudinary
 - [ ] Optimisation images (resize, compression)
 - [ ] CDN pour images
+- [ ] **Note** : Cloudinary sera implémenté dans admin-central car c'est de là qu'on uploadera les images
 
-#### Phase 16 : Backend - Admin & Permissions
+#### Phase 16 : Backend - Admin & Permissions (admin-central)
+- [ ] Créer structure `admin-central/backend/`
+- [ ] Configurer connexions multiples TypeORM (Reboul pour MVP)
+- [ ] Copier entités Reboul dans `admin-central/backend/src/modules/reboul/entities/`
 - [ ] Entité AdminUser (séparée de User client)
 - [ ] Rôles (ADMIN, SUPER_ADMIN)
 - [ ] Guards admin (protection routes)
-- [ ] CRUD produits (admin)
-- [ ] CRUD commandes (admin)
+- [ ] Services Reboul (orders, products, stocks)
+- [ ] Controllers Reboul (CRUD produits, commandes)
 - [ ] Capture paiements (interface admin)
+- [ ] Docker Compose admin (réseaux partagés)
+- [ ] **Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
-#### Phase 17 : Frontend - Admin Centrale
-- [ ] Dashboard (métriques, alertes)
-- [ ] Gestion produits (CRUD, images, variants, stocks)
-- [ ] Gestion commandes (liste, détail, capture, statuts)
-- [ ] Gestion clients
-- [ ] Configuration
+#### Phase 17 : Frontend - Admin Centrale (admin-central)
+- [ ] Créer structure `admin-central/frontend/` (React + GeistUI)
+- [ ] Configurer Docker Compose admin (réseaux partagés)
+- [ ] Dashboard (métriques Reboul, alertes)
+- [ ] Gestion produits Reboul (CRUD, images, variants, stocks)
+- [ ] Gestion commandes Reboul (liste, détail, capture, statuts)
+- [ ] Gestion clients Reboul
+- [ ] Gestion catégories & marques Reboul
+- [ ] Configuration site Reboul
+- [ ] Préparation UI multi-sites (sélecteur shop)
+- [ ] **Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
+
+#### Phase 17.10 : Docker & Déploiement Production Ready
+- [ ] Docker Compose production (reboulstore + admin-central)
+- [ ] Configuration Nginx (reverse proxy)
+- [ ] Scripts déploiement (build, push, deploy)
+- [ ] Monitoring & logs
+- [ ] Health checks
+
+#### Phase 17.11 : Tests E2E Critiques
+- [ ] Setup tests E2E (Playwright ou Cypress)
+- [ ] Tests parcours client (catalog → product → cart → checkout)
+- [ ] Tests parcours admin (login → dashboard → commandes → capture)
+- [ ] Tests critiques avant lancement
+
+#### Phase 17.12 : Améliorations UI Reboul (Responsive & Animations)
+- [ ] Audit responsive complet (toutes pages)
+- [ ] Améliorations responsive (mobile, tablet, desktop)
+- [ ] Animations & transitions (hover, transitions, chargement)
+- [ ] Optimisations finales (Lighthouse, Core Web Vitals)
 
 ### Priorité 3 : Améliorations UX (Post-lancement) 🟢
 
@@ -657,20 +720,31 @@ Database
 ### Priorité 4 : Multi-Sites (Post-lancement Reboul) 🔵
 
 #### Phase 20 : CP Company
-- [ ] Copier structure Reboul
-- [ ] Créer shop CP Company
+- [ ] Créer projet `cpcompany/` (copier structure `reboulstore/`)
+- [ ] Adapter configuration (ports, noms, docker-compose.yml)
+- [ ] Créer base de données CP Company
 - [ ] Configurer catégories/marques
 - [ ] Importer produits
+- [ ] Ajouter connexion CP Company dans `admin-central/`
+- [ ] Créer modules CP Company dans admin
+- [ ] Ajouter pages CP Company dans frontend admin
 
 #### Phase 21 : Outlet
-- [ ] Créer shop Outlet
-- [ ] Logique déstockage (prix barrés, % réduction)
+- [ ] Créer projet `outlet/` (copier structure `reboulstore/`)
+- [ ] Adapter configuration (ports, noms, docker-compose.yml)
+- [ ] Implémenter logique déstockage (prix barrés, % réduction)
+- [ ] Créer base de données Outlet
 - [ ] Filtres promotions
+- [ ] Ajouter connexion Outlet dans `admin-central/`
+- [ ] Créer modules Outlet dans admin
+- [ ] Ajouter pages Outlet dans frontend admin
 
-#### Phase 22 : Admin Multi-Sites
-- [ ] Sélecteur shop dans admin
-- [ ] Vue globale tous sites
-- [ ] Filtres par shop
+#### Phase 22 : Admin Multi-Sites (Déjà prévu dans Phase 20-21)
+- [x] Architecture multi-sites validée (3 projets + 1 admin)
+- [ ] Sélecteur shop dans admin (frontend)
+- [ ] Vue globale tous sites (dashboard agrégé)
+- [ ] Filtres par shop dans toutes les vues
+- [ ] **Note** : Les connexions CP Company et Outlet seront ajoutées dans Phase 20-21
 
 ---
 
@@ -720,10 +794,12 @@ Database
 
 ### Objectif Février 2025
 
-1. [ ] **Reboul prêt** : Site fonctionnel, produits en ligne
-2. [ ] **Admin opérationnel** : Gestion complète commandes/produits
-3. [ ] **Tests finaux** : Tests utilisateurs, corrections bugs
-4. [ ] **Déploiement production** : Mise en ligne
+1. [ ] **Reboul prêt** : Site fonctionnel, produits en ligne (Phases 9-14.5)
+2. [ ] **Admin opérationnel** : Gestion complète commandes/produits (Phases 15-17)
+3. [ ] **Infrastructure production** : Docker, déploiement, monitoring (Phase 17.10)
+4. [ ] **Tests finaux** : Tests E2E critiques (Phase 17.11)
+5. [ ] **UI optimisée** : Responsive & animations (Phase 17.12)
+6. [ ] **Déploiement production** : Mise en ligne
 
 ---
 
@@ -756,6 +832,37 @@ Database
 
 ---
 
+---
+
+## ✅ Résumé Phases jusqu'à Février 2025
+
+### 🔴 Reboul (Priorité 1) - Phases 9-14.5
+- **Phase 9** : Backend Auth & Users ✅
+- **Phase 10** : Frontend Auth UI ✅
+- **Phase 11** : Backend Commandes ✅
+- **Phase 12** : Frontend Panier & Checkout ✅
+- **Phase 13** : Backend Stripe ✅
+- **Phase 14** : Frontend Historique Commandes 🔄
+- **Phase 14.5** : Frontend Page Produit Améliorée ⏳
+
+### 🟡 Admin Centralisée (Priorité 2) - Phases 15-17.12
+- **Phase 15** : Backend Cloudinary (dans admin-central) ⏳
+- **Phase 16** : Backend Admin & Permissions (admin-central) ⏳
+- **Phase 17** : Frontend Admin Centrale ⏳
+- **Phase 17.10** : Docker Production Ready ⏳
+- **Phase 17.11** : Tests E2E Critiques ⏳
+- **Phase 17.12** : Améliorations UI Reboul (Responsive & Animations) ⏳
+
+### 🏗️ Architecture
+- **Phase 16** : Setup admin-central/backend (connexions multiples TypeORM)
+- **Phase 17** : Setup admin-central/frontend (GeistUI)
+- **Phase 17.10** : Docker Compose production (réseaux partagés)
+- **Phase 20-21** : Ajouter connexions CP Company et Outlet (futur)
+
+**📚 Roadmap complète détaillée** : Voir [`ROADMAP_COMPLETE.md`](./ROADMAP_COMPLETE.md)
+
+---
+
 **📝 Document vivant** : Ce document doit être mis à jour régulièrement selon décisions prises.
 
-**🎯 Prochaine étape** : Discuter chaque section et valider priorités pour roadmap finale.
+**🎯 Prochaine étape** : Implémenter toutes les phases jusqu'à février 2025 pour Reboul et Admin Centralisée.

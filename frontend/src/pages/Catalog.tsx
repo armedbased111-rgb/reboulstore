@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { ProductGrid } from '../components/catalog/ProductGrid';
@@ -7,6 +7,8 @@ import { getCategoryBySlug } from '../services/categories';
 import { getBrandBySlug } from '../services/brands';
 import { getImageUrl } from '../utils/imageUtils';
 import type { Category, Brand } from '../types';
+import { animateSlideUp, animateRevealUp, animateStaggerFadeIn } from '../animations';
+import gsap from 'gsap';
 
 /**
  * Page Catalog - Catalogue de produits style A-COLD-WALL*
@@ -87,13 +89,50 @@ export const Catalog = () => {
     brand: brand?.id, // Filtrer par marque si présente (TODO: ajouter support backend)
   });
 
+  // Refs pour les animations
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const productGridRef = useRef<HTMLDivElement>(null);
+
+  // Animations orchestrées quand les produits sont chargés
+  useEffect(() => {
+    if (!loading && !error) {
+      const tl = gsap.timeline();
+
+      // 1. Banner titre
+      if (bannerRef.current) {
+        tl.add(animateSlideUp(bannerRef.current, {
+          duration: 0.6,
+          distance: 30
+        }));
+      }
+
+      // 2. Hero Section (si présente)
+      if (heroRef.current) {
+        tl.add(animateRevealUp(heroRef.current, {
+          duration: 0.8,
+          distance: 50
+        }), "-=0.4");
+      }
+
+      // 3. Product Grid avec stagger
+      if (productGridRef.current && products.length > 0) {
+        tl.add(animateStaggerFadeIn(productGridRef.current.querySelectorAll('.product-card'), {
+          duration: 0.5,
+          stagger: 0.08,
+          distance: 30
+        }), "-=0.5");
+      }
+    }
+  }, [loading, error, products]);
+
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
       <div className="w-full">
         {/* Section Banner - Titre de la collection */}
         <div id="shopify-section-template--27249844748613__banner" className="shopify-section">
           <section className="m-[2px] last:mb-0">
-            <div className="p-[2px] bg-[#FFFFFF] relative w-full pt-2">
+            <div ref={bannerRef} className="p-[2px] bg-[#FFFFFF] relative w-full pt-2">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 uppercase">
                 {category ? category.name : brand ? brand.name : 'Shop All'}
               </h1>
@@ -101,7 +140,8 @@ export const Catalog = () => {
               
               {/* Hero Section avec image/vidéo de catégorie */}
               {category && !categoryLoading && !categoryError && (
-                <HeroSectionImage
+                <div ref={heroRef}>
+                  <HeroSectionImage
                   title={category.name}
                   subtitle={category.description || 'Découvrez notre collection'}
                   buttonText="Shop now"
@@ -110,12 +150,14 @@ export const Catalog = () => {
                   imageSrc={getImageUrl(category.imageUrl) || '/placeholder-hero.jpg'}
                   aspectRatioMobile="4/5"
                   heightClass="md:h-[500px]"
-                />
+                  />
+                </div>
               )}
 
               {/* Hero Section avec image/vidéo de marque */}
               {brand && !brandLoading && !brandError && !category && (
-                <HeroSectionImage
+                <div ref={heroRef}>
+                  <HeroSectionImage
                   title={brand.name}
                   subtitle={brand.description || 'Découvrez notre collection'}
                   buttonText="Shop now"
@@ -124,7 +166,8 @@ export const Catalog = () => {
                   imageSrc={getImageUrl(brand.megaMenuImage1 || brand.logoUrl) || '/placeholder-hero.jpg'}
                   aspectRatioMobile="4/5"
                   heightClass="md:h-[500px]"
-                />
+                  />
+                </div>
               )}
             </div>
           </section>
@@ -145,7 +188,9 @@ export const Catalog = () => {
               )}
               
               {!loading && !error && (
-                <ProductGrid products={products} />
+                <div ref={productGridRef}>
+                  <ProductGrid products={products} />
+                </div>
               )}
             </div>
           </section>

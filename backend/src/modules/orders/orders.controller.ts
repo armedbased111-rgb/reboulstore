@@ -9,18 +9,22 @@ import {
   HttpStatus,
   UseGuards,
   Request,
+  Res,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmailService } from './email.service';
+import { InvoiceService } from './invoice.service';
+import type { Response } from 'express';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly emailService: EmailService,
+    private readonly invoiceService: InvoiceService,
   ) {}
 
   /**
@@ -105,6 +109,38 @@ export class OrdersController {
     @Body() updateStatusDto: UpdateOrderStatusDto,
   ) {
     return this.ordersService.updateStatus(id, updateStatusDto);
+  }
+
+  /**
+   * Télécharge la facture d'une commande (PDF)
+   */
+  @Get(':id/invoice')
+  @UseGuards(JwtAuthGuard)
+  async downloadInvoice(
+    @Param('id') id: string,
+    @Request() req,
+    @Res({ passthrough: false }) res: Response,
+  ) {
+    try {
+      // Récupérer l'entité Order complète avec toutes les relations pour le PDF
+      const order = await this.ordersService.findOneEntity(id, req.user.id);
+
+      // Générer le PDF
+      const pdfBuffer = await this.invoiceService.generateInvoicePDF(order);
+
+      // Configurer les headers pour le téléchargement
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename=facture-${order.id.slice(0, 8)}.pdf`,
+        'Content-Length': pdfBuffer.length,
+      });
+
+      // Envoyer le PDF
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Erreur génération facture:', error);
+      res.status(500).json({ message: 'Erreur lors de la génération de la facture' });
+    }
   }
 
   /**

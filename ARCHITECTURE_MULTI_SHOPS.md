@@ -1,6 +1,15 @@
 # 🏗️ Architecture Multi-Shops - Analyse & Recommandation
 
-## 📊 Comparaison des Options
+**⚠️ NOTE IMPORTANTE** : Ce document décrit l'ancienne approche (Option A : Multi-Tenant).  
+**✅ Architecture finale validée** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
+
+L'architecture finale choisie est : **3 projets Docker séparés + 1 Admin Centralisée** (connexions multiples TypeORM).
+
+Ce document est conservé pour référence historique mais n'est plus la référence principale.
+
+---
+
+## 📊 Comparaison des Options (Ancienne Analyse)
 
 ### Option A : Multi-Tenant (Recommandée ✅)
 

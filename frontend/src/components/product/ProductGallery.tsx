@@ -2,8 +2,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { useState } from 'react';
 import { Swiper as SwiperType } from 'swiper';
-import type { Image } from '../../types';
+import type { Image, Product } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
+import { ProductBadge } from './ProductBadge';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -11,6 +12,7 @@ import 'swiper/css/navigation';
 interface ProductGalleryProps {
   images: Image[];
   productName: string;
+  product?: Product;
 }
 
 /**
@@ -22,7 +24,7 @@ interface ProductGalleryProps {
  * - Aspect ratio 4:3
  * - Grille d'images sur desktop (pas de carrousel)
  */
-export const ProductGallery = ({ images, productName }: ProductGalleryProps) => {
+export const ProductGallery = ({ images, productName, product }: ProductGalleryProps) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -79,34 +81,39 @@ export const ProductGallery = ({ images, productName }: ProductGalleryProps) => 
       </div>
 
       {/* Carrousel Swiper (mobile) + Grille (desktop) */}
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={0}
-        slidesPerView={1}
-        onSwiper={handleSwiper}
-        onSlideChange={handleSlideChange}
-        className="lg:!grid lg:grid-cols-1 lg:gap-[2px]"
-      >
-        {sortedImages.map((image) => (
-          <SwiperSlide key={image.id}>
-            <picture className="block relative">
-              {/* Aspect ratio placeholder (4:3 = 133.33%) */}
-              <span
-                className="w-full block bg-black opacity-10"
-                style={{ paddingBottom: '133.33%' }}
-              ></span>
+      <div className="relative">
+        {/* Badge produit (overlay) */}
+        {product && <ProductBadge product={product} />}
 
-              {/* Image */}
-              <img
-                src={getImageUrl(image.url) || ''}
-                alt={image.alt || productName}
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover z-10"
-              />
-            </picture>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={0}
+          slidesPerView={1}
+          onSwiper={handleSwiper}
+          onSlideChange={handleSlideChange}
+          className="lg:!grid lg:grid-cols-1 lg:gap-[2px]"
+        >
+          {sortedImages.map((image) => (
+            <SwiperSlide key={image.id}>
+              <picture className="block relative">
+                {/* Aspect ratio placeholder (4:3 = 133.33%) */}
+                <span
+                  className="w-full block bg-black opacity-10"
+                  style={{ paddingBottom: '133.33%' }}
+                ></span>
+
+                {/* Image */}
+                <img
+                  src={getImageUrl(image.url) || ''}
+                  alt={image.alt || productName}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover z-10"
+                />
+              </picture>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </div>
   );
 };

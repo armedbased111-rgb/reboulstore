@@ -1,8 +1,8 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 3.2  
-**Date** : 11 décembre 2025  
-**Dernière mise à jour** : Système emails invités + persistance BDD + capture manuelle paiements  
+**Version** : 3.3  
+**Date** : 12 décembre 2025  
+**Dernière mise à jour** : Système animations GSAP complet + Animations Header/Navbar + Documentation complète  
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -24,8 +24,10 @@
 2. **Fonctionnalités complètes** : Chaque phase livre une fonctionnalité utilisable de bout en bout
 3. **Incrémental** : On peut tester à chaque étape
 4. **MVP First** : Les fonctionnalités essentielles d'abord, les optimisations ensuite
-5. **Multi-sites** : Architecture 3 sites indépendants (Reboul → CP Company → Outlet)
+5. **Multi-sites** : Architecture 3 projets Docker séparés + 1 Admin Centralisée
 6. **🎨 Workflow Figma** : Design d'abord dans Figma, puis implémentation code (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
+7. **🏗️ Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md) pour détails complets
+7. **🏗️ Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md) pour détails complets
 
 ---
 
@@ -513,11 +515,13 @@
 
 ---
 
-## 🎨 Phase 14 : Frontend - Historique Commandes
+## ✅ Phase 14 : Frontend - Historique Commandes ✅
 
 **Objectif** : Permettre à l'utilisateur de consulter ses commandes
 
 **📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
+
+**✅ Statut** : TERMINÉE - Implémentation complète avec génération PDF factures (design Figma à faire ensuite)
 
 ### 14.1 Page Mes Commandes (/orders) - Design & Implémentation
 **📐 Phase Design (Figma)** :
@@ -530,12 +534,12 @@
 - [ ] Partager design Figma et valider
 
 **💻 Phase Implémentation** :
-- [ ] Coder page /orders
-- [ ] Afficher liste des commandes (OrderCard par commande)
-- [ ] Implémenter filtres par statut (toutes, en cours, livrées, annulées)
-- [ ] Implémenter tri (date, montant)
-- [ ] Implémenter pagination si beaucoup de commandes
-- [ ] Clic sur commande → /orders/:id
+- [x] Coder page /orders
+- [x] Afficher liste des commandes (OrderCard par commande)
+- [x] Implémenter filtres par statut (toutes, en cours, livrées, annulées)
+- [x] Implémenter tri (date, montant)
+- [ ] Implémenter pagination si beaucoup de commandes (optionnel pour MVP)
+- [x] Clic sur commande → /orders/:id
 
 **✅ Phase Validation** :
 - [ ] Comparer rendu avec Figma
@@ -555,23 +559,23 @@
 - [ ] Partager design Figma et valider
 
 **💻 Phase Implémentation** :
-- [ ] Coder page /orders/:id
-- [ ] Afficher numéro de commande
-- [ ] Afficher date et heure
-- [ ] Afficher statut avec timeline visuelle (OrderTimeline)
-- [ ] Afficher articles commandés (liste avec images)
-- [ ] Afficher adresse de livraison
-- [ ] Afficher total payé (articles + livraison)
-- [ ] Afficher tracking colis (si disponible)
-- [ ] Bouton "Annuler commande" (si statut PENDING/PAID)
-- [ ] Bouton "Télécharger facture" (PDF)
+- [x] Coder page /orders/:id
+- [x] Afficher numéro de commande
+- [x] Afficher date et heure
+- [x] Afficher statut avec timeline visuelle (OrderTimeline)
+- [x] Afficher articles commandés (liste avec images)
+- [x] Afficher adresse de livraison
+- [x] Afficher total payé (articles + livraison)
+- [x] Afficher tracking colis (si disponible)
+- [x] Bouton "Annuler commande" (si statut PENDING/PAID)
+- [x] Bouton "Télécharger facture" (PDF généré avec pdfkit) ✅
 
 **✅ Phase Validation** :
 - [ ] Comparer rendu avec Figma
-- [ ] Tester affichage détails commande (API /orders/:id)
-- [ ] Tester timeline selon statut
-- [ ] Tester bouton annuler (API PATCH /orders/:id/cancel)
-- [ ] Tester téléchargement facture PDF
+- [x] Tester affichage détails commande (API /orders/:id)
+- [x] Tester timeline selon statut
+- [x] Tester bouton annuler (API PATCH /orders/:id/cancel)
+- [x] Tester téléchargement facture PDF
 
 ### 14.3 Composants Commandes - Design & Implémentation
 **📐 Phase Design (Figma)** :
@@ -582,19 +586,157 @@
 - [ ] Partager composants Figma et valider
 
 **💻 Phase Implémentation** :
-- [ ] Coder composant OrderCard (résumé commande dans liste)
-- [ ] Coder composant OrderTimeline (visualisation étapes)
-- [ ] Coder composant OrderItem (article dans commande)
-- [ ] Coder composant TrackingInfo (suivi colis)
+- [x] Coder composant OrderCard (résumé commande dans liste avec 1-3 miniatures)
+- [x] Coder composant OrderTimeline (visualisation étapes)
+- [x] Coder composant OrderItem (article dans commande)
+- [x] Coder composant TrackingInfo (suivi colis)
 
 **✅ Phase Validation** :
-- [ ] Comparer composants avec Figma
-- [ ] Tester réutilisabilité des composants
-- [ ] Tester tous les états (pending, paid, shipped, delivered, cancelled)
+- [x] Comparer composants avec Figma
+- [x] Tester réutilisabilité des composants
+- [x] Tester tous les états (pending, paid, shipped, delivered, cancelled)
 
 ---
 
-## 🔄 Phase 15 : Backend - Upload Images Cloudinary
+## ✅ Phase 14.5 : Frontend - Page Produit Améliorée (MVP) ✅
+
+**Objectif** : Améliorer la page produit avec affichage stock, guide taille et désactivation variants épuisés
+
+**📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
+
+**✅ Statut** : TERMINÉE - Implémentation complète avec améliorations UX
+
+**⚠️ MVP** : Seulement les fonctionnalités essentielles (stock + guide taille). Le reste (matières, dimensions, produits similaires) sera ajouté post-lancement.
+
+### 14.5.1 Affichage Stock par Variant - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer affichage stock par variant (badge "En stock" / "Stock faible" / "Rupture")
+- [ ] Designer sélecteurs couleur/taille avec grisage si épuisé
+- [ ] Designer badge "Dernières pièces" si stock ≤ seuil (5 unités)
+- [ ] Designer désactivation bouton "Ajouter au panier" si variant épuisé
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [x] Récupérer stock par variant depuis API
+- [x] Afficher statut stock (Option C hybride : statut si > seuil, quantité si ≤ seuil)
+- [x] Griser variants épuisés dans sélecteurs
+- [x] Désactiver bouton "Ajouter au panier" si variant épuisé
+- [x] Afficher badge "Dernières pièces" si stock ≤ 5
+- [x] Message "Rupture de stock" au clic sur variant épuisé
+
+**✅ Phase Validation** :
+- [x] Comparer rendu avec Figma
+- [x] Tester affichage stock (en stock, stock faible, rupture)
+- [x] Tester grisage variants épuisés
+- [x] Tester désactivation bouton si épuisé
+
+### 14.5.3 Améliorations UX Ajoutées ✅
+- [x] Toast notification après ajout au panier (bas à droite, 2 secondes)
+- [x] Compteur quantité intégré dans le bouton "Ajouter au panier"
+- [x] Breadcrumbs (fil d'Ariane) en haut de page
+- [x] Badge produit (Nouveau/Sale/Stocks insuffisants) sur galerie
+- [x] Modal notification rupture de stock avec localStorage
+- [x] Tous les textes en uppercase (style A-COLD-WALL*)
+
+### 14.5.2 Guide Taille - Design & Implémentation
+**📐 Phase Design (Figma)** :
+- [ ] Designer tableau des tailles (déjà prévu dans tab "Sizing")
+- [ ] Designer mesures (tour de poitrine, longueur, etc.)
+- [ ] Designer responsive (mobile : scroll horizontal, desktop : tableau complet)
+- [ ] Partager design Figma et valider
+
+**💻 Phase Implémentation** :
+- [x] Afficher tableau des tailles dans tab "Sizing"
+- [x] Récupérer size chart depuis catégorie ou produit (override)
+- [x] Afficher mesures par taille (tour de poitrine, longueur, etc.)
+- [x] Responsive : scroll horizontal sur mobile si tableau large
+- [ ] Bouton "Comment choisir sa taille ?" avec modal explicatif (optionnel MVP)
+
+**✅ Phase Validation** :
+- [x] Comparer rendu avec Figma
+- [x] Tester affichage size chart (catégorie vs produit override)
+- [x] Tester responsive (mobile scroll, desktop tableau)
+
+**⏸️ Post-MVP (Phase 18+)** :
+- [ ] Recommandation taille basée sur historique client
+- [ ] Recommandation taille basée sur taille moyenne par produit
+- [ ] Informations détaillées (matières, dimensions, entretien)
+- [ ] Produits similaires
+
+---
+
+## ✅ Phase 14.6 : Frontend - Animations GSAP ✅
+
+**Objectif** : Ajouter des animations fluides et professionnelles avec GSAP sur toutes les pages principales
+
+**✅ Statut** : TERMINÉE - Système d'animations complet avec workflow et presets réutilisables
+
+### 14.6.1 Workflow Animations GSAP ✅
+- [x] Créer documentation complète ANIMATIONS_GUIDE.md
+- [x] Créer structure animations/ (presets/, components/, utils/)
+- [x] Créer hook useGSAP pour nettoyage automatique
+- [x] Créer constantes (durées, eases, délais, stagger)
+- [x] Documenter workflow dans project-rules.mdc
+
+### 14.6.2 Presets d'animations créés ✅
+- [x] fade-in.ts : Animation fade-in réutilisable
+- [x] slide-up.ts : Animation slide-up avec fade-in
+- [x] slide-down.ts : Animation slide-down (pour menus dropdown)
+- [x] reveal-up.ts : Animation reveal depuis le bas (sections importantes)
+- [x] stagger-fade-in.ts : Animation en cascade pour listes/grilles
+- [x] scale-hover.ts : Animation scale au hover (boutons, interactifs)
+- [x] fade-scale.ts : Animation fade avec scale (zoom)
+
+### 14.6.3 Hook scroll animation ✅
+- [x] Créer useScrollAnimation avec Intersection Observer
+- [x] Support threshold, rootMargin, once
+- [x] Déclenchement automatique au scroll
+
+### 14.6.4 Animations Page Product ✅
+- [x] Fade-in de la page au chargement
+- [x] Slide-up breadcrumbs
+- [x] Slide-up galerie + infos produit en parallèle
+- [x] Slide-up actions (variant selector + add to cart)
+- [x] Fade-in onglets
+- [x] Timeline GSAP orchestrée
+
+### 14.6.5 Animations Page Home ✅
+- [x] HeroSectionImage : reveal-up au scroll (1.5s)
+- [x] FeaturedProducts : stagger-fade-in au scroll (1.2s, stagger 0.15s)
+- [x] CategorySection : reveal-up au scroll (1.4s)
+- [x] HeroSectionVideo : reveal-up au scroll (1.5s)
+- [x] PromoCard : reveal-up au scroll (1.4s)
+- [x] Animations déclenchées au scroll (useScrollAnimation)
+
+### 14.6.6 Animations Page Catalog ✅
+- [x] Banner titre : slide-up (0.6s)
+- [x] HeroSectionImage : reveal-up (0.8s)
+- [x] ProductGrid : stagger-fade-in des cartes produits (0.5s, stagger 0.08s)
+- [x] Timeline GSAP orchestrée
+
+### 14.6.7 Animations Header/Navbar ✅
+- [x] Header : fade-in + slide-down au chargement (0.6s)
+- [x] Mega menu CATALOGUE : slide-down à l'ouverture (0.4s)
+- [x] Catégories : stagger-fade-in dans le menu (0.3s, stagger 0.05s)
+- [x] Images menu : stagger-fade-in (0.4s, stagger 0.1s)
+- [x] Mega menu BRANDS : slide-down à l'ouverture (0.4s)
+- [x] Marques : stagger-fade-in dans le menu (0.3s, stagger 0.05s)
+- [x] Images/vidéos menu : stagger-fade-in (0.4s, stagger 0.1s)
+- [x] Badge panier : scale animation quand nombre change
+
+### 14.6.8 Exports & Documentation ✅
+- [x] Tous les presets exportés dans animations/index.ts
+- [x] Hook useScrollAnimation exporté
+- [x] Documentation complète dans ANIMATIONS_GUIDE.md
+- [x] Project commands créées (/animation-workflow, etc.)
+
+**📚 Documentation** :
+- **ANIMATIONS_GUIDE.md** : Guide complet animations GSAP
+- **.cursor/commands/animation-workflow.md** : Workflow animations
+
+---
+
+## 🔄 Phase 15 : Backend - Upload Images Cloudinary (Dans admin-central)
 
 **Objectif** : Gérer upload et optimisation images via Cloudinary
 
@@ -619,63 +761,106 @@
 
 ---
 
-## 🔄 Phase 16 : Backend - Admin & Permissions
+## 🔄 Phase 16 : Backend - Admin & Permissions (admin-central)
 
-**Objectif** : Panel admin pour gérer produits, commandes, utilisateurs
+**Objectif** : Créer backend admin-central avec connexions multiples TypeORM et gérer produits, commandes, utilisateurs Reboul
 
-### 16.1 Rôles & Permissions
-- [ ] Enum UserRole déjà créé (CLIENT, ADMIN, SUPER_ADMIN)
+**Architecture** : 
+- Créer structure `admin-central/backend/`
+- Configurer connexions multiples TypeORM (Reboul pour MVP)
+- Copier entités Reboul dans `admin-central/backend/src/modules/reboul/entities/`
+- Créer services et controllers pour Reboul
+
+**📚 Documentation** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
+
+### 16.1 Setup admin-central/backend
+- [ ] Créer structure `admin-central/backend/` (NestJS)
+- [ ] Configurer connexions multiples TypeORM
+  - [ ] Config connexion Reboul (`database.reboul.config.ts`)
+  - [ ] Config connexion CP Company (futur, commenté)
+  - [ ] Config connexion Outlet (futur, commenté)
+- [ ] Configurer `app.module.ts` avec connexions multiples
+- [ ] Copier entités Reboul dans `admin-central/backend/src/modules/reboul/entities/`
+- [ ] Créer module Reboul (`reboul.module.ts`)
+
+### 16.2 Rôles & Permissions
+- [ ] Créer entité AdminUser (séparée de User client)
+- [ ] Enum AdminRole (ADMIN, SUPER_ADMIN)
 - [ ] Guard RolesGuard pour vérifier rôle
 - [ ] Decorator @Roles('admin', 'super_admin')
 - [ ] Appliquer sur routes sensibles (création produit, gestion users, etc.)
 
-### 16.2 Module Admin - Produits
-- [ ] Endpoint GET /admin/products (tous produits, pagination)
-- [ ] Endpoint POST /admin/products (créer produit complet)
-- [ ] Endpoint PATCH /admin/products/:id (modifier)
-- [ ] Endpoint DELETE /admin/products/:id (supprimer avec images)
+### 16.3 Module Admin - Produits Reboul
+- [ ] Créer `ReboulProductsService` (injecter repository avec connexion 'reboul')
+- [ ] Créer `ReboulProductsController`
+- [ ] Endpoint GET /admin/reboul/products (tous produits Reboul, pagination)
+- [ ] Endpoint POST /admin/reboul/products (créer produit complet)
+- [ ] Endpoint PATCH /admin/reboul/products/:id (modifier)
+- [ ] Endpoint DELETE /admin/reboul/products/:id (supprimer avec images)
 - [ ] Gestion variants en bulk
-- [ ] Gestion images en bulk
+- [ ] Gestion images en bulk (Cloudinary)
 
-### 16.3 Module Admin - Commandes
-- [ ] Endpoint GET /admin/orders (toutes commandes, filtres)
-- [ ] Endpoint PATCH /admin/orders/:id/status (changer statut)
-- [ ] Endpoint POST /admin/orders/:id/tracking (ajouter tracking)
-- [ ] Endpoint POST /admin/orders/:id/refund (rembourser)
-- [ ] Statistiques commandes (CA, nombre, taux conversion)
+### 16.4 Module Admin - Commandes Reboul
+- [ ] Créer `ReboulOrdersService` (injecter repository avec connexion 'reboul')
+- [ ] Créer `ReboulOrdersController`
+- [ ] Endpoint GET /admin/reboul/orders (toutes commandes Reboul, filtres)
+- [ ] Endpoint PATCH /admin/reboul/orders/:id/status (changer statut)
+- [ ] Endpoint POST /admin/reboul/orders/:id/capture (capture paiement PENDING)
+- [ ] Endpoint POST /admin/reboul/orders/:id/tracking (ajouter tracking)
+- [ ] Endpoint POST /admin/reboul/orders/:id/refund (rembourser)
+- [ ] Statistiques commandes Reboul (CA, nombre, taux conversion)
 
-### 16.4 Module Admin - Utilisateurs
-- [ ] Endpoint GET /admin/users (liste users, recherche, filtres)
-- [ ] Endpoint PATCH /admin/users/:id/role (changer rôle)
-- [ ] Endpoint DELETE /admin/users/:id (supprimer compte)
-- [ ] Statistiques users (inscrits, actifs, taux conversion)
+### 16.5 Module Admin - Utilisateurs Reboul
+- [ ] Créer `ReboulUsersService` (injecter repository avec connexion 'reboul')
+- [ ] Créer `ReboulUsersController`
+- [ ] Endpoint GET /admin/reboul/users (liste users Reboul, recherche, filtres)
+- [ ] Endpoint PATCH /admin/reboul/users/:id/role (changer rôle)
+- [ ] Endpoint DELETE /admin/reboul/users/:id (supprimer compte)
+- [ ] Statistiques users Reboul (inscrits, actifs, taux conversion)
 
-### 16.5 Module Admin - Shops
-- [ ] Endpoint PATCH /admin/shops/:id (modifier shop, politiques)
-- [ ] Endpoint POST /admin/shops (créer nouveau shop)
-- [ ] Gestion Stripe Connect par shop (lier/délier compte)
+### 16.6 Module Admin - Stocks Reboul
+- [ ] Créer `ReboulStocksService` (injecter repository avec connexion 'reboul')
+- [ ] Endpoint GET /admin/reboul/stocks (vue stocks, filtres rupture/stock faible)
+- [ ] Endpoint PATCH /admin/reboul/stocks/:variantId (modifier stock variant)
+- [ ] Import CSV stocks (bulk update)
+- [ ] Alertes stock faible (notifications admin)
+
+### 16.7 Docker Compose Admin
+- [ ] Créer `admin-central/docker-compose.yml`
+- [ ] Configurer backend admin (port 4001)
+- [ ] Configurer frontend admin (port 4000)
+- [ ] Configurer réseaux Docker partagés (reboulstore-network)
+- [ ] Variables d'environnement (connexions databases)
 
 ---
 
-## 🎨 Phase 17 : Frontend - Admin Centrale (Connectée à Reboul)
+## 🎨 Phase 17 : Frontend - Admin Centrale (admin-central)
 
-**Objectif** : Créer Admin Centrale et la connecter au backend Reboul
+**Objectif** : Créer Frontend Admin Centrale (React + GeistUI) et le connecter au backend admin-central
+
+**Architecture** : 
+- Créer structure `admin-central/frontend/`
+- React + Vite + TypeScript + GeistUI
+- Connexion à `admin-central/backend` (port 4001)
 
 **📐 Workflow** : Design Figma → Code → Validation (voir [FIGMA_WORKFLOW.md](./FIGMA_WORKFLOW.md))
 
 **⚠️ IMPORTANT** : Pour **CHAQUE sous-phase** (Dashboard, Produits, Commandes, Users, etc.) :
 1. 📐 **Designer d'abord dans Figma** (layout, composants, formulaires, tables)
 2. 💻 **Partager design et valider** avant de coder
-3. 🔨 **Implémenter en code** (React + shadcn/ui + TailwindCSS)
+3. 🔨 **Implémenter en code** (React + GeistUI + TailwindCSS)
 4. ✅ **Valider** rendu vs Figma + fonctionnel
 
+**📚 Documentation** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
+
 ### 17.1 Setup Admin Centrale
-- [ ] Créer dossier `/admin` séparé (hors frontend Reboul)
+- [ ] Créer structure `admin-central/frontend/` (séparé de reboulstore)
 - [ ] Setup Vite + React + TypeScript
-- [ ] Installer TailwindCSS v4 (cohérence avec Reboul)
+- [ ] Installer GeistUI (bibliothèque UI admin)
+- [ ] Installer TailwindCSS v4
 - [ ] Configurer routing (React Router)
 - [ ] Layout admin (sidebar + topbar + site selector)
-- [ ] Configuration API : pointer vers backend Reboul
+- [ ] Configuration API : pointer vers `admin-central/backend` (http://localhost:4001)
 
 ### 17.2 Authentification Admin
 - [ ] Page login admin (`/admin/login`)
@@ -686,7 +871,7 @@
 - [ ] Affichage nom utilisateur + rôle
 
 ### 17.3 Dashboard Reboul
-- [ ] Page `/admin/dashboard` (statistiques Reboul)
+- [ ] Page `/admin/reboul/dashboard` (statistiques Reboul)
 - [ ] Cartes métriques :
   - CA du jour/semaine/mois
   - Nombre commandes (total, en cours, livrées)
@@ -699,17 +884,17 @@
 - [ ] Liste dernières commandes (5 dernières)
 
 ### 17.4 Gestion Produits Reboul
-- [ ] Page `/admin/products` (liste produits Reboul)
+- [ ] Page `/admin/reboul/products` (liste produits Reboul)
   - Recherche par nom/SKU
   - Filtres (catégorie, marque, stock)
   - Tri (nom, prix, stock, date création)
   - Pagination
-- [ ] Page `/admin/products/new` (créer produit)
+- [ ] Page `/admin/reboul/products/new` (créer produit)
   - Formulaire complet (nom, description, prix, catégorie, marque)
   - Upload images (drag & drop, max 7)
   - Gestion variants (tableau taille/couleur/stock/prix)
   - Bouton "Créer produit"
-- [ ] Page `/admin/products/:id/edit` (éditer produit)
+- [ ] Page `/admin/reboul/products/:id/edit` (éditer produit)
   - Mêmes champs que création
   - Supprimer images existantes
   - Modifier variants existants
@@ -720,12 +905,12 @@
   - VariantTable (tableau éditable variants)
 
 ### 17.5 Gestion Commandes Reboul
-- [ ] Page `/admin/orders` (liste commandes)
+- [ ] Page `/admin/reboul/orders` (liste commandes Reboul)
   - Filtres par statut (pending, paid, shipped, delivered, cancelled, refunded)
   - Recherche par numéro commande/email client
   - Tri (date, montant)
   - Badge couleur par statut
-- [ ] Page `/admin/orders/:id` (détails commande)
+- [ ] Page `/admin/reboul/orders/:id` (détails commande Reboul)
   - Infos client (nom, email, téléphone)
   - Adresse livraison/facturation
   - Liste articles (image, nom, variant, quantité, prix)
@@ -739,12 +924,12 @@
 - [ ] Export CSV commandes (bouton dans liste)
 
 ### 17.6 Gestion Utilisateurs Reboul
-- [ ] Page `/admin/users` (liste users)
+- [ ] Page `/admin/reboul/users` (liste users Reboul)
   - Recherche par nom/email
   - Filtres par rôle (CLIENT, ADMIN, SUPER_ADMIN)
   - Tri (date inscription, nombre commandes)
   - Badge rôle
-- [ ] Page `/admin/users/:id` (détails user)
+- [ ] Page `/admin/reboul/users/:id` (détails user Reboul)
   - Infos personnelles (nom, email, téléphone, date inscription)
   - Liste adresses
   - Liste commandes (historique)
@@ -752,17 +937,17 @@
   - Désactiver/supprimer compte (avec confirmation)
 
 ### 17.7 Gestion Catégories & Marques Reboul
-- [ ] Page `/admin/categories` (liste catégories enfants)
+- [ ] Page `/admin/reboul/categories` (liste catégories Reboul)
   - CRUD catégories (create, edit, delete)
   - Upload image/vidéo hero section
   - Size chart par catégorie
-- [ ] Page `/admin/brands` (liste marques)
+- [ ] Page `/admin/reboul/brands` (liste marques Reboul)
   - CRUD marques (create, edit, delete)
   - Upload logo + mega menu images/vidéos
   - Statistiques par marque (nombre produits)
 
 ### 17.8 Configuration Site Reboul
-- [ ] Page `/admin/settings` (paramètres Reboul)
+- [ ] Page `/admin/reboul/settings` (paramètres Reboul)
   - Politiques livraison (jsonb)
   - Politiques retour (jsonb)
   - Frais de livraison (standard, express)
@@ -777,6 +962,7 @@
 - [ ] Sélecteur de site (dropdown topbar)
 - [ ] Note : Pour février, seul Reboul est fonctionnel
 - [ ] UI préparée pour connexion futurs sites (CP Company, Outlet)
+- [ ] **Architecture** : Les connexions CP Company et Outlet seront ajoutées dans Phase 20-21
 
 ---
 
@@ -785,13 +971,16 @@
 **Objectif** : Préparer infrastructure Docker pour déploiement février 2025
 
 ### 17.10.1 Docker Compose Production
-- [ ] Créer `docker-compose.prod.yml`
+- [ ] Créer `reboulstore/docker-compose.prod.yml` (production Reboul)
 - [ ] Service PostgreSQL Reboul (avec volumes persistants)
 - [ ] Service Backend Reboul (NestJS production build)
 - [ ] Service Frontend Reboul (Vite build + Nginx)
-- [ ] Service Admin Centrale (Vite build + Nginx)
+- [ ] Créer `admin-central/docker-compose.prod.yml` (production Admin)
+- [ ] Service Backend Admin (NestJS production build)
+- [ ] Service Frontend Admin (Vite build + Nginx)
 - [ ] Nginx reverse proxy (routage /api vers backend)
 - [ ] Variables d'environnement (.env.production)
+- [ ] Réseaux Docker partagés (reboulstore-network)
 
 ### 17.10.2 Configuration Nginx
 - [ ] Créer `nginx.conf` production
@@ -918,6 +1107,19 @@
 - [ ] Cache produits (TTL 5 min)
 - [ ] Cache catégories (TTL 10 min)
 - [ ] Invalider cache après modification
+
+### 18.8 Notifications Rupture de Stock (Backend)
+**📝 Note** : Version MVP actuelle utilise localStorage. Cette phase migre vers backend pour notifications réelles.
+
+**💻 Phase Implémentation Backend** :
+- [ ] Créer entité StockNotification (productId, variantId nullable, email, phone nullable, createdAt, notifiedAt nullable)
+- [ ] Endpoint POST /products/:id/notify-stock (s'inscrire aux notifications)
+- [ ] Endpoint GET /products/:id/notify-stock (vérifier si déjà inscrit)
+- [ ] Service StockNotification : subscribe(), checkSubscription(), notifyAll()
+- [ ] Job cron : Vérifier stock quotidiennement, envoyer emails si stock > 0
+- [ ] Template email : "Votre produit est de nouveau disponible"
+- [ ] Migration données localStorage → Backend (script de migration)
+- [ ] Frontend : Remplacer localStorage par appels API
 
 ---
 
@@ -1125,18 +1327,19 @@
 
 ## 📊 Récapitulatif par Priorité
 
-### 🔴 Priorité 1 (MVP Reboul - FÉVRIER 2025) - Phases 9-14
+### 🔴 Priorité 1 (MVP Reboul - FÉVRIER 2025) - Phases 9-14.6
 - **Phases 9-10** : Backend Auth + Frontend Auth UI
 - **Phases 11-12** : Backend Commandes + Frontend Panier & Checkout
-- **Phases 13-14** : Backend Stripe + Frontend Historique Commandes
-- **Résultat** : Site Reboul (catégorie enfants) fonctionnel de bout en bout
+- **Phases 13-14.6** : Backend Stripe + Frontend Historique Commandes + Page Produit Améliorée + Animations GSAP
+- **Résultat** : Site Reboul (catégorie enfants) fonctionnel de bout en bout avec animations fluides
 
-### 🟡 Priorité 2 (Admin Centrale - FÉVRIER 2025) - Phases 15-17.11
+### 🟡 Priorité 2 (Admin Centrale - FÉVRIER 2025) - Phases 15-17.12
 - **Phases 15-16** : Backend Cloudinary + Admin & Permissions
 - **Phase 17** : **Admin Centrale** connectée à Reboul (interface complète)
 - **Phase 17.10** : Docker Production Ready
 - **Phase 17.11** : Tests E2E critiques
-- **Résultat** : Gestion complète de Reboul depuis l'Admin Centrale + Infrastructure prête pour déploiement
+- **Phase 17.12** : Améliorations UI Reboul (Responsive & Animations) - ✅ Animations déjà complétées (Phase 14.6)
+- **Résultat** : Gestion complète de Reboul depuis l'Admin Centrale + Infrastructure prête pour déploiement + UI optimisée
 
 ### 📝 Notes :
 - **Page Home** : Améliorations progressives au fil du temps
@@ -1172,9 +1375,11 @@
 - ✅ Phase 11 : Backend Commandes complètes + Emails (7 jours)
 - ✅ Phase 12 : Frontend Panier & Checkout (7 jours)
 
-**Semaine 5-6 (8-21 janvier 2025)** : Paiement & Historique
+**Semaine 5-6 (8-21 janvier 2025)** : Paiement & Historique & Page Produit & Animations
 - ✅ Phase 13 : Backend Stripe (5 jours)
 - ✅ Phase 14 : Frontend Historique Commandes (3 jours)
+- ✅ Phase 14.5 : Frontend Page Produit Améliorée (3 jours)
+- ✅ Phase 14.6 : Frontend Animations GSAP (2 jours)
 
 **🎉 CHECKPOINT 1** : Site Reboul fonctionnel (client peut acheter) ✅
 
@@ -1186,16 +1391,17 @@
 - ✅ Phase 17.1-17.8 : Frontend Admin Centrale complète (10 jours)
 - ✅ Phase 17.9 : Préparation UI multi-sites (2 jours)
 
-**Semaine 10 (12-18 février 2025)** : Production & Tests
-- ✅ Phase 17.10 : Docker Production + Déploiement (4 jours)
+**Semaine 10 (12-18 février 2025)** : Améliorations UI & Production & Tests
+- ✅ Phase 17.12 : Améliorations UI Reboul (Responsive & Animations) (2 jours)
+- ✅ Phase 17.10 : Docker Production + Déploiement (2 jours)
 - ✅ Phase 17.11 : Tests E2E critiques (3 jours)
 
-**🎉 CHECKPOINT 2** : Admin Centrale connectée + Infrastructure prod ✅
+**🎉 CHECKPOINT 2** : Admin Centrale connectée + Infrastructure prod + UI optimisée ✅
 
 ### 📊 Résumé :
 
-- **🔴 Reboul MVP (Phases 9-14)** : ~6 semaines (10 déc - 21 jan)
-- **🟡 Admin Centrale (Phases 15-17.11)** : ~4 semaines (22 jan - 18 fév)
+- **🔴 Reboul MVP (Phases 9-14.6)** : ~6 semaines (10 déc - 21 jan)
+- **🟡 Admin Centrale (Phases 15-17.12)** : ~4 semaines (22 jan - 18 fév)
 - **📦 TOTAL FÉVRIER 2025** : ~10 semaines (2,5 mois)
 
 ### 🚀 Post-Février 2025 :

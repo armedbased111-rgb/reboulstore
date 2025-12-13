@@ -5,6 +5,7 @@ import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { StockService } from './stock.service';
 import { EmailService } from './email.service';
+import { InvoiceService } from './invoice.service';
 import { Order } from '../../entities/order.entity';
 import { Cart } from '../../entities/cart.entity';
 import { CartItem } from '../../entities/cart-item.entity';
@@ -27,7 +28,7 @@ import { OrderEmail } from '../../entities/order-email.entity';
     ConfigModule, // Pour accéder aux variables d'environnement dans OrdersService
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, StockService, EmailService],
-  exports: [OrdersService, StockService, EmailService],
+  providers: [OrdersService, StockService, EmailService, InvoiceService],
+  exports: [OrdersService, StockService, EmailService, InvoiceService],
 })
 export class OrdersModule {}

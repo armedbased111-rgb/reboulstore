@@ -14,6 +14,7 @@ const orders_controller_1 = require("./orders.controller");
 const orders_service_1 = require("./orders.service");
 const stock_service_1 = require("./stock.service");
 const email_service_1 = require("./email.service");
+const invoice_service_1 = require("./invoice.service");
 const order_entity_1 = require("../../entities/order.entity");
 const cart_entity_1 = require("../../entities/cart.entity");
 const cart_item_entity_1 = require("../../entities/cart-item.entity");
@@ -39,8 +40,8 @@ exports.OrdersModule = OrdersModule = __decorate([
             config_1.ConfigModule,
         ],
         controllers: [orders_controller_1.OrdersController],
-        providers: [orders_service_1.OrdersService, stock_service_1.StockService, email_service_1.EmailService],
-        exports: [orders_service_1.OrdersService, stock_service_1.StockService, email_service_1.EmailService],
+        providers: [orders_service_1.OrdersService, stock_service_1.StockService, email_service_1.EmailService, invoice_service_1.InvoiceService],
+        exports: [orders_service_1.OrdersService, stock_service_1.StockService, email_service_1.EmailService, invoice_service_1.InvoiceService],
     })
 ], OrdersModule);
 //# sourceMappingURL=orders.module.js.map

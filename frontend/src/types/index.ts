@@ -120,10 +120,38 @@ export interface CartItem {
 
 export interface Order {
   id: string;
-  cartId: string;
+  cartId: string | null;
   status: OrderStatus;
   total: number;
   customerInfo: CustomerInfo;
+  userId?: string | null;
+  shippingAddress?: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone?: string;
+  } | null;
+  billingAddress?: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone?: string;
+  } | null;
+  paymentIntentId?: string | null;
+  items?: Array<{
+    variantId: string;
+    quantity: number;
+  }> | null;
+  trackingNumber?: string | null;
+  paidAt?: string | null;
+  shippedAt?: string | null;
+  deliveredAt?: string | null;
   cart?: Cart;
   createdAt: string;
   updatedAt: string;
@@ -131,10 +159,13 @@ export interface Order {
 
 export enum OrderStatus {
   PENDING = 'pending',
-  CONFIRMED = 'confirmed',
+  PAID = 'paid',
+  PROCESSING = 'processing',
+  CONFIRMED = 'confirmed', // @deprecated
   SHIPPED = 'shipped',
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
 }
 
 export interface CustomerInfo {

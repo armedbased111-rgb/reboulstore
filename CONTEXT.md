@@ -17,29 +17,44 @@ Le projet prévoit **3 sites e-commerce indépendants** gérés depuis une **Adm
 1. **Reboul** (🎯 Priorité actuelle - Février 2025)
    - Catégorie : **Enfants** uniquement
    - Première collection prête à la vente
-   - Backend + Frontend + Database dédiés
+   - Backend + Frontend + Database dédiés (Docker séparé)
    
 2. **CP Company** (🔜 Futur - Après lancement Reboul)
    - Site indépendant
-   - Backend + Frontend + Database dédiés
+   - Backend + Frontend + Database dédiés (Docker séparé)
    
 3. **Outlet** (🔜 Futur - Après CP Company)
    - Site déstockage/promotions
-   - Backend + Frontend + Database dédiés
+   - Backend + Frontend + Database dédiés (Docker séparé)
 
 ### 🎛️ Admin Centrale
 
-**Application admin unifiée** pour gérer les 3 sites :
-- Interface unique de gestion
-- Connexion aux backends des 3 sites
-- Gestion produits, commandes, clients pour chaque site
-- À créer en priorité (Phase 17) pour être connectée à Reboul
+**Application admin centralisée** pour gérer les 3 sites :
+- **Architecture** : Frontend (React + GeistUI) + Backend (NestJS) séparés
+- **Connexion** : Connexion directe aux 3 bases de données via TypeORM (connexions multiples)
+- **Fonctionnalités** : Gestion produits, commandes, clients pour chaque site depuis une interface unique
+- **À créer** : Phase 16-17 (Backend Admin + Frontend Admin)
+- **MVP** : Connecté uniquement à Reboul pour Février 2025
+
+**📚 Documentation complète** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ### 🏛️ Architecture Technique
 
-**Chaque site est complètement autonome** :
+**Chaque site e-commerce est complètement autonome** :
 ```
-Site = Frontend (React) + Backend (NestJS) + Database (PostgreSQL)
+reboulstore/
+├── backend/ (NestJS)
+├── frontend/ (React + Vite + TailwindCSS)
+├── postgres/ (PostgreSQL)
+└── docker-compose.yml (Docker séparé)
+```
+
+**Application Admin centralisée** :
+```
+admin-central/
+├── backend/ (NestJS - Connexions multiples TypeORM)
+├── frontend/ (React + Vite + GeistUI)
+└── docker-compose.yml (Réseaux Docker partagés)
 ```
 
 **Avantages** :
@@ -47,6 +62,8 @@ Site = Frontend (React) + Backend (NestJS) + Database (PostgreSQL)
 - ✅ **Scalabilité** : Chaque site évolue indépendamment
 - ✅ **Isolation** : Base de données séparée par site
 - ✅ **Docker** : Chaque site dans son propre container
+- ✅ **Admin unifié** : Gestion centralisée des 3 sites
+- ✅ **Sécurité** : Bases de données isolées, connexions sécurisées
 
 ### 🎨 Positionnement
 
@@ -94,16 +111,40 @@ Site = Frontend (React) + Backend (NestJS) + Database (PostgreSQL)
 ## 📁 Structure du projet
 
 ```
-reboulstore/
-├── backend/              # API NestJS + TypeORM
-├── frontend/             # E-commerce React + Vite + TailwindCSS
-├── admin/                # Admin Panel séparé
-├── docker/               # Configuration Docker
-├── CONTEXT.md            # Ce fichier (contexte général)
-├── ROADMAP_COMPLETE.md   # Roadmap détaillée complète
-├── POLICIES_TODO.md      # Note pour finaliser politiques livraison/retour
-├── FRONTEND.md           # Documentation frontend détaillée
-└── BACKEND.md            # Documentation backend détaillée
+reboulstore/                    # Projet Reboul (MVP Février 2025)
+├── backend/                    # API NestJS + TypeORM
+├── frontend/                   # E-commerce React + Vite + TailwindCSS
+├── docker-compose.yml          # Docker Compose Reboul
+└── .env                        # Variables d'environnement Reboul
+
+cpcompany/                      # Projet CP Company (Futur)
+├── backend/                    # API NestJS + TypeORM
+├── frontend/                   # E-commerce React + Vite + TailwindCSS
+├── docker-compose.yml          # Docker Compose CP Company
+└── .env                        # Variables d'environnement CP Company
+
+outlet/                         # Projet Outlet (Futur)
+├── backend/                    # API NestJS + TypeORM
+├── frontend/                   # E-commerce React + Vite + TailwindCSS
+├── docker-compose.yml          # Docker Compose Outlet
+└── .env                        # Variables d'environnement Outlet
+
+admin-central/                   # Application Admin Centralisée
+├── backend/                    # API NestJS (connexions multiples)
+├── frontend/                   # Admin React + Vite + GeistUI
+├── docker-compose.yml          # Docker Compose Admin
+└── .env                        # Variables d'environnement Admin
+
+Documentation/
+├── CONTEXT.md                  # Ce fichier (contexte général)
+├── ROADMAP_COMPLETE.md         # Roadmap détaillée complète
+├── ARCHITECTURE_ADMIN_CENTRAL.md # Architecture Admin Centralisée ⭐
+├── ARCHITECTURE_MULTI_SHOPS.md  # Architecture Multi-Sites (ancienne approche)
+├── BRAINSTORMING_ROADMAP.md     # Brainstorming & décisions
+├── CLARIFICATIONS_BRAINSTORMING.md # Clarifications validées
+├── POLICIES_TODO.md            # Note pour finaliser politiques livraison/retour
+├── FRONTEND.md                 # Documentation frontend détaillée
+└── BACKEND.md                  # Documentation backend détaillée
 ```
 
 ---
@@ -186,15 +227,15 @@ reboulstore/
 - ✅ **Protection routes** : ProtectedRoute pour /profile (à étendre pour /orders, /checkout)
 
 ### 🔄 En cours / En attente
-- 🔄 **Page Order Confirmation** : Améliorer affichage détails commande (Phase 12.4)
 - 🔄 **Historique commandes** : Page /orders pour clients (Phase 14)
+- 🔄 **Page Produit Améliorée** : Stock par variant, guide taille (Phase 14.5)
 - ⏸️ **Page Profil complète** : Édition infos, gestion adresses CRUD (Phase 10.3 - basique fait)
 - ⏸️ **Forgot/Reset Password** : Pages reset mot de passe (Phase 18 - avancé)
 - ⏸️ **OAuth Google/Apple** : Authentification sociale (Phase 18 - avancé)
 - ⏸️ **Politiques** : Validation finale avec direction (voir `POLICIES_TODO.md`)
 - ⏸️ **Admin Panel** : À créer (Phase 17)
-- ⏸️ **Cloudinary** : Migration upload images (Phase 15)
-- ⏸️ **Améliorations page produit** : Affichage stocks, informations détaillées, recommandations
+- ⏸️ **Cloudinary** : Migration upload images (Phase 15 - dans admin-central)
+- ⏸️ **Améliorations UI** : Responsive & Animations (Phase 17.12)
 
 ---
 
@@ -219,18 +260,23 @@ reboulstore/
 
 ### 🟡 Priorité 2 - Admin Centrale (Phases 15-17)
 
-**Objectif** : Créer l'admin et la connecter à Reboul
+**Objectif** : Créer l'admin centralisée et la connecter à Reboul
 
-7. **Phase 15** : Backend - Cloudinary (upload images optimisées)
-8. **Phase 16** : Backend - Admin & Permissions (rôles, CRUD admin)
-9. **Phase 17** : Frontend - **Admin Centrale** (connectée à Reboul)
+7. **Phase 15** : Backend - Cloudinary (upload images optimisées) - **Dans admin-central**
+8. **Phase 16** : Backend - Admin & Permissions (rôles, CRUD admin, connexions multi-databases)
+9. **Phase 17** : Frontend - **Admin Centrale** (React + GeistUI, connectée à Reboul)
+
+**Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md)
 
 ### 🟢 Priorité 3 - Après lancement Reboul
 
 **Sites futurs** :
-- CP Company (même structure que Reboul)
-- Outlet (même structure que Reboul)
-- Connecter les 3 sites à l'Admin Centrale
+- **CP Company** : Créer projet `cpcompany/` (copier structure `reboulstore/`)
+- **Outlet** : Créer projet `outlet/` (copier structure `reboulstore/`)
+- **Admin Centrale** : Ajouter connexions CP Company et Outlet dans `admin-central/`
+  - Décommenter configs dans `app.module.ts`
+  - Créer modules CP Company et Outlet
+  - Ajouter pages frontend pour chaque site
 
 **Fonctionnalités avancées** :
 - Recherche avancée, Wishlist, Reviews, Promotions, WebSockets, SMS, Redis
@@ -323,9 +369,12 @@ reboulstore/
 
 ## 📚 Documentation détaillée
 
+- **Architecture Admin Centralisée** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](./ARCHITECTURE_ADMIN_CENTRAL.md) ⭐
 - **Frontend** : Voir [`FRONTEND.md`](./frontend/FRONTEND.md)
 - **Backend** : Voir [`BACKEND.md`](./backend/BACKEND.md)
 - **Roadmap complète** : Voir [`ROADMAP_COMPLETE.md`](./ROADMAP_COMPLETE.md)
+- **Brainstorming** : Voir [`BRAINSTORMING_ROADMAP.md`](./BRAINSTORMING_ROADMAP.md)
+- **Clarifications** : Voir [`CLARIFICATIONS_BRAINSTORMING.md`](./CLARIFICATIONS_BRAINSTORMING.md)
 - **Politiques à finaliser** : Voir [`POLICIES_TODO.md`](./POLICIES_TODO.md)
 
 ---
