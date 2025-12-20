@@ -1,13 +1,9 @@
 import { UpdateImageOrderDto } from './dto/update-image-order.dto';
 interface MulterFile {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
+    buffer: Buffer;
     mimetype: string;
+    originalname: string;
     size: number;
-    destination: string;
-    filename: string;
-    path: string;
 }
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -20,6 +16,7 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     findImagesByProduct(id: string): Promise<import("../../entities/image.entity").Image[]>;
     createImage(productId: string, file: MulterFile | undefined, body: any): Promise<import("../../entities/image.entity").Image>;
+    createImagesBulk(productId: string, files: MulterFile[] | undefined, body: any): Promise<import("../../entities/image.entity").Image[]>;
     deleteImage(productId: string, imageId: string): Promise<void>;
     updateImageOrder(productId: string, imageId: string, updateOrderDto: UpdateImageOrderDto): Promise<import("../../entities/image.entity").Image>;
     create(createProductDto: CreateProductDto): Promise<import("../../entities/product.entity").Product>;

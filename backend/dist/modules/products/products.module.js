@@ -15,14 +15,13 @@ const product_entity_1 = require("../../entities/product.entity");
 const category_entity_1 = require("../../entities/category.entity");
 const image_entity_1 = require("../../entities/image.entity");
 const variant_entity_1 = require("../../entities/variant.entity");
+const cloudinary_module_1 = require("../cloudinary/cloudinary.module");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
 exports.ProductsModule = ProductsModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            typeorm_1.TypeOrmModule.forFeature([product_entity_1.Product, category_entity_1.Category, image_entity_1.Image, variant_entity_1.Variant]),
-        ],
+        imports: [typeorm_1.TypeOrmModule.forFeature([product_entity_1.Product, category_entity_1.Category, image_entity_1.Image, variant_entity_1.Variant]), cloudinary_module_1.CloudinaryModule],
         controllers: [products_controller_1.ProductsController],
         providers: [products_service_1.ProductsService],
         exports: [products_service_1.ProductsService],

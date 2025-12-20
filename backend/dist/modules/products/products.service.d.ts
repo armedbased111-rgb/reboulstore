@@ -10,22 +10,20 @@ import { UpdateVariantDto } from './dto/update-variant.dto';
 import { Image } from '../../entities/image.entity';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageOrderDto } from './dto/update-image-order.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 interface MulterFile {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
+    buffer: Buffer;
     mimetype: string;
+    originalname: string;
     size: number;
-    destination: string;
-    filename: string;
-    path: string;
 }
 export declare class ProductsService {
     private productRepository;
     private categoryRepository;
     private variantRepository;
     private imageRepository;
-    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>);
+    private readonly cloudinaryService;
+    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, cloudinaryService: CloudinaryService);
     findAll(query: ProductQueryDto): Promise<{
         products: Product[];
         total: number;
@@ -57,6 +55,7 @@ export declare class ProductsService {
     updateStock(variantId: string, quantity: number): Promise<Variant>;
     findImagesByProduct(productId: string): Promise<Image[]>;
     createImage(productId: string, file: MulterFile, createImageDto: CreateImageDto): Promise<Image>;
+    createImagesBulk(productId: string, files: MulterFile[], createImageDtos: CreateImageDto[]): Promise<Image[]>;
     deleteImage(id: string): Promise<void>;
     updateImageOrder(id: string, updateOrderDto: UpdateImageOrderDto): Promise<Image>;
 }

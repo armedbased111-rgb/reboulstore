@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
@@ -20,18 +21,19 @@ const product_entity_1 = require("../../entities/product.entity");
 const category_entity_1 = require("../../entities/category.entity");
 const variant_entity_1 = require("../../entities/variant.entity");
 const image_entity_1 = require("../../entities/image.entity");
-const path_1 = require("path");
-const fs_1 = require("fs");
+const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
 let ProductsService = class ProductsService {
     productRepository;
     categoryRepository;
     variantRepository;
     imageRepository;
-    constructor(productRepository, categoryRepository, variantRepository, imageRepository) {
+    cloudinaryService;
+    constructor(productRepository, categoryRepository, variantRepository, imageRepository, cloudinaryService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
         this.imageRepository = imageRepository;
+        this.cloudinaryService = cloudinaryService;
     }
     async findAll(query) {
         const { category, brand, minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
@@ -196,7 +198,13 @@ let ProductsService = class ProductsService {
     }
     async createImage(productId, file, createImageDto) {
         await this.findOne(productId);
-        const fileUrl = `/uploads/${file.filename}`;
+        const uploadResult = await this.cloudinaryService.uploadImage({
+            buffer: file.buffer,
+            mimetype: file.mimetype,
+            originalname: file.originalname,
+        }, {
+            folder: 'products',
+        });
         const lastImage = await this.imageRepository.findOne({
             where: { productId },
             order: { order: 'DESC' },
@@ -204,11 +212,57 @@ let ProductsService = class ProductsService {
         const order = createImageDto.order ?? (lastImage ? lastImage.order + 1 : 0);
         const image = this.imageRepository.create({
             productId,
-            url: fileUrl,
+            url: uploadResult.secure_url,
+            publicId: uploadResult.public_id,
             alt: createImageDto.alt || null,
             order,
         });
         return this.imageRepository.save(image);
+    }
+    async createImagesBulk(productId, files, createImageDtos) {
+        if (!files || files.length === 0) {
+            throw new common_1.BadRequestException('At least one image file is required');
+        }
+        if (files.length > 7) {
+            throw new common_1.BadRequestException('You can upload up to 7 images at once');
+        }
+        await this.findOne(productId);
+        const lastImage = await this.imageRepository.findOne({
+            where: { productId },
+            order: { order: 'DESC' },
+        });
+        let nextOrder = lastImage ? lastImage.order + 1 : 0;
+        const createdImages = [];
+        for (let i = 0; i < files.length; i += 1) {
+            const file = files[i];
+            const dto = createImageDtos[i] ?? {};
+            if (file.size > 10 * 1024 * 1024) {
+                throw new common_1.BadRequestException(`File ${file.originalname} exceeds the 10MB size limit`);
+            }
+            const uploadResult = await this.cloudinaryService.uploadImage({
+                buffer: file.buffer,
+                mimetype: file.mimetype,
+                originalname: file.originalname,
+            }, {
+                folder: 'products',
+            });
+            const order = dto.order !== undefined && dto.order !== null
+                ? dto.order
+                : nextOrder;
+            if (dto.order === undefined || dto.order === null) {
+                nextOrder += 1;
+            }
+            const image = this.imageRepository.create({
+                productId,
+                url: uploadResult.secure_url,
+                publicId: uploadResult.public_id,
+                alt: dto.alt || null,
+                order,
+            });
+            const savedImage = await this.imageRepository.save(image);
+            createdImages.push(savedImage);
+        }
+        return createdImages;
     }
     async deleteImage(id) {
         const image = await this.imageRepository.findOne({
@@ -217,9 +271,8 @@ let ProductsService = class ProductsService {
         if (!image) {
             throw new common_1.NotFoundException(`Image with ID ${id} not found`);
         }
-        const filePath = (0, path_1.join)(process.cwd(), image.url);
-        if ((0, fs_1.existsSync)(filePath)) {
-            (0, fs_1.unlinkSync)(filePath);
+        if (image.publicId) {
+            await this.cloudinaryService.deleteImage(image.publicId);
         }
         await this.imageRepository.remove(image);
     }
@@ -244,6 +297,6 @@ exports.ProductsService = ProductsService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository, typeof (_a = typeof cloudinary_service_1.CloudinaryService !== "undefined" && cloudinary_service_1.CloudinaryService) === "function" ? _a : Object])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map
