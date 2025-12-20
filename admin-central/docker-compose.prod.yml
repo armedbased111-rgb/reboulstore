@@ -78,6 +78,13 @@ services:
     networks:
       - reboulstore-network
     restart: unless-stopped
+    entrypoint: |
+      sh -c "
+        echo '📦 Copie des fichiers frontend vers le volume...' &&
+        docker cp admin-central-frontend-prod:/usr/share/nginx/html/. /usr/share/nginx/html/ &&
+        echo '✅ Fichiers copiés' &&
+        exec docker-entrypoint.sh nginx -g 'daemon off;'
+      "
     logging:
       driver: "json-file"
       options:
