@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export const ContactForm = () => {
   const [email, setEmail] = useState('');
-  const [newsletter, setNewsletter] = useState(true);
+  const [newsletter, _setNewsletter] = useState(true);
 
   return (
     <div className="flex flex-col items-start pt-[9px] text-left text-[21px] text-black">

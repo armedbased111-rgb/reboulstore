@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as cartService from '../services/cart';
 import { useLocalStorage } from './useLocalStorage';
-import type { Cart, CartItem } from '../types/index';
+import type { Cart } from '../types/index';
 
 interface UseCartReturn {
   cart: Cart | null;
@@ -22,7 +22,7 @@ const generateSessionId = (): string => {
 
 export const useCart = (): UseCartReturn => {
   // Persister sessionId dans localStorage
-  const [sessionId, setSessionId] = useLocalStorage<string>('cart_session_id', generateSessionId());
+  const [sessionId, _setSessionId] = useLocalStorage<string>('cart_session_id', generateSessionId());
   
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

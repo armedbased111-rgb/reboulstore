@@ -206,7 +206,7 @@ export default function BrandsPage() {
                         </td>
                         <td className="px-4 lg:px-6 py-4">
                           {brand.logoUrl ? (
-                            <ImageIcon className="w-4 h-4 text-gray-500" title="Logo présent" />
+                            <ImageIcon className="w-4 h-4 text-gray-500" />
                           ) : (
                             <span className="text-xs text-gray-400">—</span>
                           )}
@@ -214,11 +214,11 @@ export default function BrandsPage() {
                         <td className="px-4 lg:px-6 py-4">
                           <div className="flex items-center space-x-1">
                             {(brand.megaMenuVideo1 || brand.megaMenuVideo2) && (
-                              <Video className="w-4 h-4 text-blue-500" title="Vidéo(s) mega menu" />
+                              <Video className="w-4 h-4 text-blue-500" />
                             )}
                             {(brand.megaMenuImage1 || brand.megaMenuImage2) && 
                              !brand.megaMenuVideo1 && !brand.megaMenuVideo2 && (
-                              <ImageIcon className="w-4 h-4 text-gray-500" title="Image(s) mega menu" />
+                              <ImageIcon className="w-4 h-4 text-gray-500" />
                             )}
                             {!brand.megaMenuImage1 && !brand.megaMenuImage2 && 
                              !brand.megaMenuVideo1 && !brand.megaMenuVideo2 && (

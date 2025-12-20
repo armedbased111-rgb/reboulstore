@@ -59,7 +59,6 @@ export default function ShopSelectorPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {shops.map((shop) => {
             const isActive = shop.status === 'active';
-            const isComingSoon = shop.status === 'coming-soon';
 
             return (
               <div
@@ -111,7 +110,7 @@ export default function ShopSelectorPage() {
               </div>
             );
           })}
-        </div>
+          </div>
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500">

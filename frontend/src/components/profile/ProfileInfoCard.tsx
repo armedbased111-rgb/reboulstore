@@ -1,14 +1,6 @@
 import { ProfileInfoField } from './ProfileInfoField';
 import { ProfileRoleBadge } from './ProfileRoleBadge';
-
-interface User {
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  role: string;
-  createdAt: string;
-}
+import type { User } from '../../services/auth';
 
 interface ProfileInfoCardProps {
   user: User;

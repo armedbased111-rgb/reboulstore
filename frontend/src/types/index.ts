@@ -157,16 +157,18 @@ export interface Order {
   updatedAt: string;
 }
 
-export enum OrderStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  PROCESSING = 'processing',
-  CONFIRMED = 'confirmed', // @deprecated
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
-}
+export const OrderStatus = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  PROCESSING: 'processing',
+  CONFIRMED: 'confirmed', // @deprecated
+  SHIPPED: 'shipped',
+  DELIVERED: 'delivered',
+  CANCELLED: 'cancelled',
+  REFUNDED: 'refunded',
+} as const;
+
+export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
 
 export interface CustomerInfo {
   name: string;

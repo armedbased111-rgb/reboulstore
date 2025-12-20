@@ -84,7 +84,7 @@ export default function EditCategoryPage() {
     setSizeChartItems(sizeChartItems.filter((_, i) => i !== index));
   };
 
-  const updateSizeChartItem = (index: number, field: string, value: string | number) => {
+  const updateSizeChartItem = (index: number, field: string, value: string | number | undefined) => {
     const updated = [...sizeChartItems];
     updated[index] = { ...updated[index], [field]: value };
     setSizeChartItems(updated);
@@ -220,28 +220,40 @@ export default function EditCategoryPage() {
                         type="number"
                         placeholder="Chest"
                         value={item.chest || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'chest', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'chest', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Length"
                         value={item.length || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'length', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'length', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Waist"
                         value={item.waist || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'waist', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'waist', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Hip"
                         value={item.hip || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'hip', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'hip', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                     </div>

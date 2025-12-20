@@ -1,9 +1,9 @@
 # 🖥️ Configuration Serveur OVH - Guide Complet
 
-**Version** : 1.1  
+**Version** : 1.2  
 **Date** : 17 décembre 2025  
 **Phase** : 17.11.5 - Achat & Configuration Serveur OVH  
-**Statut** : 📋 Configuration actuelle (VPS Standard) - Migration prévue Phase 25
+**Statut** : ✅ Configuration initiale complétée - En cours : Configuration DNS
 
 ---
 
@@ -591,24 +591,37 @@ sudo systemctl status fail2ban
 
 ## 6. Configuration DNS
 
-### 6.1 Enregistrements DNS à Créer
+### 6.1 Stratégie DNS (Décision)
 
-Dans votre gestionnaire DNS (OVH ou autre) :
+**📋 Choix fait** :
+- ✅ **Phase 1 (Maintenant)** : Option 1 - Garder domaine sur Vercel, pointer DNS vers serveur OVH
+- 🔄 **Phase 2 (Mois prochain)** : Transfert domaine de Vercel vers OVH pour centralisation
+
+**Raison** :
+- Domaine actuellement hébergé sur Vercel (ancienne architecture)
+- DNS peuvent pointer vers OVH sans transférer le domaine immédiatement
+- Transfert prévu mois prochain pour centraliser (serveur + domaine chez OVH)
+
+### 6.2 Enregistrements DNS à Créer (Vercel)
+
+Dans votre gestionnaire DNS **Vercel** :
 
 ```
 Type    Nom                    Valeur              TTL     Priorité
-A       reboulstore.com        IP_SERVEUR          3600    -
-A       www                    IP_SERVEUR          3600    -
-A       admin                  IP_SERVEUR          3600    -
+A       reboulstore.com        152.228.218.35      3600    -
+A       www                    152.228.218.35      3600    -
+A       admin                  152.228.218.35      3600    -
 ```
 
-**Exemple** :
+**Enregistrements exacts** :
 ```
 Type    Nom                    Valeur              TTL
-A       reboulstore.com        51.XXX.XXX.XXX       3600
-A       www                    51.XXX.XXX.XXX       3600
-A       admin                  51.XXX.XXX.XXX       3600
+A       @ (ou reboulstore.com) 152.228.218.35      3600
+A       www                    152.228.218.35      3600
+A       admin                  152.228.218.35      3600
 ```
+
+**📝 Note** : Après transfert domaine vers OVH (mois prochain), ces enregistrements seront gérés directement dans OVH.
 
 ### 6.2 Vérifier la Propagation DNS
 
@@ -925,34 +938,57 @@ docker stats
 - [x] ✅ Type de serveur choisi
 - [x] ✅ Documentation créée
 
-### Phase 2 : Achat Serveur ⏳
+### Phase 2 : Achat Serveur ✅
 
-- [ ] ⏳ Serveur OVH commandé
-- [ ] ⏳ Informations d'accès notées (IP, credentials)
-- [ ] ⏳ Serveur activé et accessible
+- [x] ✅ Serveur OVH commandé : **VPS-3 (8 vCores / 24 GB RAM / 200 GB SSD NVMe)**
+- [x] ✅ Informations d'accès notées :
+  - [x] IP : **152.228.218.35**
+  - [x] Utilisateur : **deploy** (SSH avec clés)
+  - [x] Localisation : Gravelines (GRA) - France
+- [x] ✅ Serveur activé et accessible (SSH fonctionnel)
 
-### Phase 3 : Configuration Initiale ⏳
+### Phase 3 : Configuration Initiale ✅
 
-- [ ] ⏳ Accès SSH fonctionnel
-- [ ] ⏳ Système mis à jour
-- [ ] ⏳ Docker installé
-- [ ] ⏳ Firewall configuré
-- [ ] ⏳ Utilisateur `deploy` créé
-- [ ] ⏳ SSH sécurisé (clés, password auth désactivé)
-- [ ] ⏳ Fail2ban installé
+- [x] ✅ Accès SSH fonctionnel (utilisateur `deploy` avec clés SSH)
+- [x] ✅ Système mis à jour (Ubuntu 22.04.5 LTS)
+- [x] ✅ Docker installé (v29.1.3, Docker Compose v5.0.0)
+- [x] ✅ Firewall configuré (UFW : ports 22, 80, 443 ouverts)
+- [x] ✅ Utilisateur `deploy` créé (groupes: docker, sudo)
+- [x] ✅ SSH sécurisé (clés uniquement, password auth désactivé)
+- [x] ✅ Fail2ban installé et actif (protection bruteforce)
 
 ### Phase 4 : Configuration DNS ⏳
 
-- [ ] ⏳ Enregistrements DNS créés
-- [ ] ⏳ Propagation DNS vérifiée
-- [ ] ⏳ Domaines accessibles (reboulstore.com, admin.reboulstore.com)
+**Stratégie** : Option 1 - Garder domaine sur Vercel, pointer DNS vers OVH (transfert prévu mois prochain)
+
+- [x] ✅ Se connecter à Vercel (domaine reboulstore.com)
+- [x] ✅ Retirer domaine du projet Vercel
+- [x] ✅ Supprimer zone DNS Vercel (Delete DNS Zone)
+- [x] ✅ Recréer enregistrements DNS A :
+  - [x] A record : reboulstore → 152.228.218.35 ✅
+  - [x] A record : www → 152.228.218.35 ✅
+  - [x] A record : admin → 152.228.218.35 ✅
+- [x] ✅ Propagation DNS vérifiée :
+  - [x] ✅ `www.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - [x] ✅ `admin.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - [x] ⚠️ `reboulstore.com` → bloqué par ALIAS Vercel (non supprimables)
+- [ ] 🔄 Transfert domaine vers OVH prévu mois prochain (Phase 17.11.5.5) pour résoudre le domaine principal
+
+**📝 Note importante** :
+- Les ALIAS automatiques Vercel ne peuvent pas être supprimés manuellement
+- `www` et `admin` fonctionnent correctement et suffisent pour continuer
+- Le domaine principal sera résolu lors du transfert vers OVH
 
 ### Phase 5 : Préparation Déploiement ⏳
 
-- [ ] ⏳ Repository cloné
-- [ ] ⏳ Fichiers `.env.production` créés
-- [ ] ⏳ Secrets générés et configurés
-- [ ] ⏳ Ports vérifiés (80, 443 libres)
+- [ ] ⏳ Repository cloné (sur `/opt/reboulstore`)
+- [ ] ⏳ Fichiers `.env.production` créés (Reboul + Admin)
+- [ ] ⏳ Secrets générés et configurés :
+  - [ ] JWT_SECRET (générer avec `openssl rand -base64 32`)
+  - [ ] DB_PASSWORD (générer avec `openssl rand -base64 24`)
+  - [ ] Stripe keys (configurer depuis compte Stripe)
+  - [ ] Cloudinary keys (configurer depuis compte Cloudinary)
+- [ ] ⏳ Ports vérifiés (80, 443 libres) ✅
 
 ### Phase 6 : Vérifications Finales ⏳
 
@@ -1089,6 +1125,67 @@ docker compose -f docker-compose.prod.yml logs -f
 
 ---
 
-**🎯 Prochaine Étape** : Phase 23 - Déploiement & Production
+## 14. Informations Serveur (Documentation)
 
-**📅 Date de complétion** : À compléter après achat et configuration serveur
+### 14.1 Caractéristiques Serveur
+
+**Type** : VPS-3 (VPS 2026)  
+**Fournisseur** : OVHcloud  
+**Localisation** : Gravelines (GRA) - France  
+**Date d'activation** : 20 décembre 2025
+
+**Spécifications** :
+- **CPU** : 8 vCores
+- **RAM** : 24 GB
+- **Stockage** : 200 GB SSD NVMe
+- **Bande passante** : 1,5 Gbit/s (illimitée)
+- **OS** : Ubuntu 22.04.5 LTS
+
+**Prix** : 11,90 € HT/mois (~14,28 € TTC/mois)
+
+### 14.2 Accès Serveur
+
+**IP Publique IPv4** : `152.228.218.35`  
+**IP Publique IPv6** : `2001:41d0:305:2100::e470`  
+**Nom serveur** : `vps-f113a655.vps.ovh.net`
+
+**Utilisateurs** :
+- **ubuntu** : Utilisateur par défaut (accès SSH avec clés)
+- **deploy** : Utilisateur pour déploiement (SSH avec clés, sudo sans mot de passe, groupe docker)
+
+**Connexion SSH** :
+```bash
+ssh deploy@152.228.218.35
+# ou
+ssh ubuntu@152.228.218.35
+```
+
+### 14.3 Configuration Actuelle
+
+**Docker** :
+- Version : 29.1.3
+- Docker Compose : v5.0.0
+- Utilisateur `deploy` dans le groupe docker
+
+**Firewall (UFW)** :
+- Port 22 (SSH) : Ouvert
+- Port 80 (HTTP) : Ouvert
+- Port 443 (HTTPS) : Ouvert
+- Autres ports : Fermés
+
+**Sécurité** :
+- SSH : Authentification par clés uniquement (password auth désactivé)
+- Fail2ban : Actif et fonctionnel
+
+### 14.4 Notes Importantes
+
+- ⚠️ **Ne jamais commiter** ces informations dans Git
+- 🔐 **Clés SSH uniquement** pour connexion (pas de mot de passe)
+- 📋 **Backups automatiques** à configurer (Phase 23)
+- 🔄 **Mises à jour système** régulières recommandées
+
+---
+
+**🎯 Prochaine Étape** : Configuration DNS (Section 6) puis Phase 23 - Déploiement & Production
+
+**📅 Date de complétion** : 20/12/2025 (Configuration initiale complétée)

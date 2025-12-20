@@ -4,12 +4,13 @@ import { api } from './api';
  * Service pour la gestion du checkout Stripe
  */
 
-interface CreateCheckoutSessionRequest {
-  items: Array<{
-    variantId: string;
-    quantity: number;
-  }>;
-}
+// Interface pour créer une session de checkout (utilisée en interne)
+// interface CreateCheckoutSessionRequest {
+//   items: Array<{
+//     variantId: string;
+//     quantity: number;
+//   }>;
+// }
 
 interface CreateCheckoutSessionResponse {
   url: string; // URL de redirection vers Stripe Checkout

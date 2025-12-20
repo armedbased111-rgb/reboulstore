@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Order, OrderStatus } from '../../types/index';
 import { formatPrice } from '../../utils/priceFormatter';
-import { getImageUrl } from '../../utils/imageUtils';
+;
 
 interface OrderCardProps {
   order: Order;
@@ -69,19 +69,19 @@ const formatDate = (dateString: string): string => {
  */
 export const OrderCard = ({ order }: OrderCardProps) => {
   // Récupérer les items de la commande (depuis cart ou items)
-  const orderItems = order.cart?.items || [];
+  // const orderItems = order.cart?.items || [];
   
-  // Récupérer les 3 premières images de produits
-  const productImages = orderItems
-    .slice(0, 3)
-    .map((item) => {
-      const product = item.variant?.product;
-      if (product?.images && product.images.length > 0) {
-        return product.images[0];
-      }
-      return null;
-    })
-    .filter((img) => img !== null);
+  // Récupérer les 3 premières images de produits (TODO: utiliser productImages dans le rendu)
+  // const productImages = orderItems
+  //   .slice(0, 3)
+  //   .map((item) => {
+  //     const product = item.variant?.product;
+  //     if (product?.images && product.images.length > 0) {
+  //       return product.images[0];
+  //     }
+  //     return null;
+  //   })
+  //   .filter((img) => img !== null);
 
   return (
     <Link

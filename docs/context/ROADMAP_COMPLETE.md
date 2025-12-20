@@ -1,8 +1,8 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 4.0  
+**Version** : 4.1  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 17/12/2025 (Phase 17.10 Multi-Sites UI complétée + Phase 17.9 Brainstorming + Phase 24 Collection Réelle ajoutée + Réorganisation phases)
+**Dernière mise à jour** : 20/12/2025 (Phase 17.11.5 Serveur OVH acheté et configuration initiale complétée)
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -1471,70 +1471,169 @@
 
 **⏰ Timing** : À faire avant le déploiement final (Phase 23)
 
-#### 17.11.5.1 Achat Serveur OVH
-- [ ] Choisir le type de serveur (VPS, Dedicated, etc.)
-- [ ] Sélectionner les caractéristiques :
-  - [ ] CPU (minimum 2-4 cores recommandé)
-  - [ ] RAM (minimum 4-8 GB recommandé)
-  - [ ] Stockage (SSD, minimum 50 GB)
-  - [ ] Bande passante
-- [ ] Choisir la localisation (France recommandé)
-- [ ] Commander le serveur OVH
-- [ ] Noter les informations d'accès (IP, credentials)
+#### 17.11.5.1 Achat Serveur OVH ✅
+- [x] Choisir le type de serveur : **VPS-3 (VPS 2026)**
+- [x] Sélectionner les caractéristiques :
+  - [x] CPU : **8 vCores**
+  - [x] RAM : **24 GB**
+  - [x] Stockage : **200 GB SSD NVMe**
+  - [x] Bande passante : **1,5 Gbit/s (illimitée)**
+- [x] Choisir la localisation : **France (Gravelines)**
+- [x] OS : **Ubuntu 22.04 LTS**
+- [x] Commander le serveur OVH ✅
+- [x] Noter les informations d'accès :
+  - [x] IP : **152.228.218.35**
+  - [x] Utilisateur : **ubuntu** (puis **deploy** créé)
+  - [x] Connexion SSH avec clés configurée ✅
 
-#### 17.11.5.2 Configuration Initiale Serveur
-- [ ] Accéder au serveur (SSH)
-- [ ] Mettre à jour le système (apt update && apt upgrade)
-- [ ] Installer Docker et Docker Compose
-  ```bash
-  # Installation Docker
-  curl -fsSL https://get.docker.com -o get-docker.sh
-  sh get-docker.sh
-  
-  # Installation Docker Compose
-  apt-get install docker-compose-plugin
-  ```
-- [ ] Configurer le firewall (UFW)
-  - [ ] Ouvrir port 80 (HTTP)
-  - [ ] Ouvrir port 443 (HTTPS)
-  - [ ] Ouvrir port 22 (SSH)
-  - [ ] Bloquer les autres ports
-- [ ] Créer un utilisateur non-root pour Docker
-- [ ] Configurer SSH avec clés (désactiver password auth)
+#### 17.11.5.2 Configuration Initiale Serveur ✅
+- [x] Accéder au serveur (SSH avec clés) ✅
+- [x] Mettre à jour le système (apt update && apt upgrade) ✅
+- [x] Installer Docker et Docker Compose ✅
+  - [x] Docker version 29.1.3 installé
+  - [x] Docker Compose version v5.0.0 installé
+  - [x] Docker démarré au boot
+- [x] Configurer le firewall (UFW) ✅
+  - [x] Port 22 (SSH) ouvert ✅
+  - [x] Port 80 (HTTP) ouvert ✅
+  - [x] Port 443 (HTTPS) ouvert ✅
+  - [x] Autres ports bloqués ✅
+- [x] Créer un utilisateur non-root pour Docker ✅
+  - [x] Utilisateur `deploy` créé
+  - [x] Ajouté au groupe docker
+  - [x] Ajouté au groupe sudo (sans mot de passe)
+- [x] Configurer SSH avec clés ✅
+  - [x] Clé SSH copiée vers utilisateur `deploy`
+  - [x] PasswordAuthentication désactivé
+  - [x] PubkeyAuthentication activé
+  - [x] Connexion SSH fonctionnelle avec `deploy` ✅
+- [x] Installer Fail2ban (protection bruteforce) ✅
 
-#### 17.11.5.3 Configuration DNS
-- [ ] Configurer les enregistrements DNS pour reboulstore.com
-  - [ ] A record : reboulstore.com → IP serveur
-  - [ ] A record : www.reboulstore.com → IP serveur
-  - [ ] A record : admin.reboulstore.com → IP serveur
-- [ ] Vérifier propagation DNS (peut prendre 24-48h)
-- [ ] Tester avec `dig reboulstore.com` ou `nslookup reboulstore.com`
+#### 17.11.5.3 Configuration DNS ⏳
 
-#### 17.11.5.4 Préparation Déploiement
+**📋 Stratégie DNS** :
+- ✅ **Phase 1 (Maintenant)** : Option 1 - Garder domaine sur Vercel, pointer DNS vers serveur OVH
+- 🔄 **Phase 2 (Mois prochain)** : Option 2 - Transférer domaine de Vercel vers OVH (centralisation)
+
+**Configuration DNS Phase 1 (Vercel → OVH)** :
+- [x] Se connecter à Vercel (domaine reboulstore.com) ✅
+- [x] Retirer domaine du projet Vercel ✅
+- [x] Supprimer zone DNS Vercel ✅
+- [x] Recréer les enregistrements DNS A ✅
+  - [x] A record : reboulstore → 152.228.218.35 ✅
+  - [x] A record : www → 152.228.218.35 ✅
+  - [x] A record : admin → 152.228.218.35 ✅
+- [x] Vérification propagation DNS ✅
+  - [x] ✅ `www.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - [x] ✅ `admin.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - [x] ⚠️ `reboulstore.com` → encore bloqué par ALIAS Vercel (non supprimables)
+
+**📝 Notes** :
+- Domaine actuellement hébergé sur Vercel (ancienne architecture)
+- **www.reboulstore.com** et **admin.reboulstore.com** pointent correctement vers serveur OVH (152.228.218.35) ✅
+- **reboulstore.com** (domaine principal) reste bloqué par les ALIAS automatiques Vercel (non supprimables)
+- **Solution** : Transfert domaine vers OVH le mois prochain (Phase 17.11.5.5) résoudra ce problème
+- Pour l'instant, www et admin suffisent pour continuer le développement
+
+#### 17.11.5.4 Vérification Builds Locaux (Avant Déploiement) ⏳
+
+**🎯 Objectif** : S'assurer que les builds frontend et backend fonctionnent sans erreur avant de déployer sur le serveur
+
+**Processus** :
+- [ ] Vérifier build Backend (Reboul Store)
+  - [ ] `cd backend && npm run build`
+  - [ ] Vérifier qu'il n'y a aucune erreur TypeScript
+  - [ ] Vérifier qu'il n'y a aucune erreur de compilation
+  - [ ] Noter les warnings (si critiques)
+- [ ] Vérifier build Frontend (Reboul Store)
+  - [ ] `cd frontend && npm run build`
+  - [ ] Vérifier qu'il n'y a aucune erreur TypeScript
+  - [ ] Vérifier qu'il n'y a aucune erreur de compilation
+  - [ ] Noter les warnings (si critiques)
+- [ ] Vérifier build Backend Admin Central
+  - [ ] `cd admin-central/backend && npm run build`
+  - [ ] Vérifier qu'il n'y a aucune erreur TypeScript
+  - [ ] Vérifier qu'il n'y a aucune erreur de compilation
+- [ ] Vérifier build Frontend Admin Central
+  - [ ] `cd admin-central/frontend && npm run build`
+  - [ ] Vérifier qu'il n'y a aucune erreur TypeScript
+  - [ ] Vérifier qu'il n'y a aucune erreur de compilation
+- [ ] Utiliser CLI pour analyser et corriger les builds
+  - [ ] `python cli/main.py build verify` (⭐ RECOMMANDÉ : analyse, corrige et vérifie automatiquement)
+  - [ ] OU `python cli/main.py build analyze` puis `build fix` si erreurs détectées
+  - [ ] `python cli/main.py analyze code` (analyser le code pour erreurs potentielles)
+  - [ ] Vérifier que tous les builds passent sans erreurs
+
+**📝 Commandes CLI disponibles** :
+- `python cli/main.py build verify` : ⭐ Workflow automatique (analyse → corrige → vérifie en boucle)
+- `python cli/main.py build analyze` : Analyser tous les builds
+- `python cli/main.py build fix` : Corriger automatiquement les erreurs détectables
+- `python cli/main.py analyze code` : Analyser le code pour cohérence
+- `python cli/main.py analyze dependencies` : Vérifier les dépendances
+
+**📝 Notes** :
+- ⚠️ **Important** : Ne pas déployer si des erreurs de build existent
+- Les warnings sont acceptables, mais les erreurs doivent être corrigées
+- Utiliser le CLI Python pour automatiser la détection d'erreurs si possible
+
+#### 17.11.5.5 Préparation Déploiement ⏳
 - [ ] Cloner le repository sur le serveur
 - [ ] Créer les fichiers `.env.production` (Reboul + Admin)
-- [ ] Vérifier que les ports sont disponibles
-- [ ] Tester la connexion SSH depuis la machine locale
+- [ ] Générer les secrets (JWT_SECRET, DB_PASSWORD, etc.)
+- [ ] Vérifier que les ports sont disponibles (80, 443)
+- [ ] Tester la connexion SSH depuis la machine locale ✅
 - [ ] Préparer les scripts de déploiement sur le serveur
 
-#### 17.11.5.5 Documentation ✅
+#### 17.11.5.6 Transfert Domaine Vercel → OVH (Mois Prochain) 🔄
+
+**📋 Objectif** : Transférer complètement reboulstore.com de Vercel vers OVH pour centraliser (serveur + domaine)
+
+**⏰ Timing** : Mois prochain (pour ne pas oublier et centraliser tout chez OVH)
+
+**Étapes prévues** :
+- [ ] Vérifier code d'autorisation de transfert (Vercel)
+- [ ] Initier transfert depuis OVH
+- [ ] Valider le transfert (peut prendre 5-7 jours)
+- [ ] Vérifier que les DNS sont bien configurés après transfert
+- [ ] Documenter le processus complet
+
+**📝 Notes** :
+- Transfert optionnel mais recommandé pour centralisation
+- Pas urgent (DNS fonctionnent déjà avec Vercel)
+- Budget : ~10-15€ (frais de transfert domaine)
+
+#### 17.11.5.6 Documentation ✅
 - [x] Guide de configuration serveur OVH créé (`docs/OVH_SERVER_SETUP.md`)
   - [x] Analyse complète de l'architecture
   - [x] Calcul des besoins en ressources (CPU, RAM, stockage, bande passante)
-  - [x] Recommandations serveur (VPS vs Dédié)
+  - [x] Recommandations serveur (VPS-3 choisi)
   - [x] Guide d'achat OVH
   - [x] Configuration initiale complète
   - [x] Configuration DNS
   - [x] Préparation déploiement
   - [x] Checklist complète
-- [ ] ⏳ Documenter les informations serveur (IP, accès, etc.) dans un fichier sécurisé (à faire après achat)
-- [ ] ⏳ Compléter la documentation avec les informations réelles du serveur (à faire après configuration)
+- [x] Serveur configuré et opérationnel ✅
+  - [x] IP serveur : **152.228.218.35**
+  - [x] Utilisateur : **deploy** (SSH avec clés)
+  - [x] Docker fonctionnel
+  - [x] Firewall configuré
+  - [x] SSH sécurisé
+
+**✅ État actuel** :
+- ✅ Serveur OVH acheté (VPS-3, 8 vCores / 24 GB RAM / 200 GB SSD)
+- ✅ Configuration initiale complétée (Docker, firewall, SSH sécurisé, Fail2ban)
+- ✅ Serveur opérationnel et accessible
+- ✅ Configuration DNS Phase 1 complétée :
+  - ✅ `www.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - ✅ `admin.reboulstore.com` → `152.228.218.35` (fonctionne)
+  - ⚠️ `reboulstore.com` → bloqué par ALIAS Vercel (sera résolu lors du transfert)
+- ⏳ Préparation déploiement à faire (Phase 17.11.5.4)
 
 **📝 Notes importantes** :
 - ⚠️ Ne jamais commiter les credentials serveur dans Git
-- 🔐 Utiliser des mots de passe forts et des clés SSH
-- 📋 Garder une copie sécurisée des informations d'accès
-- 🔄 Le serveur doit être prêt avant Phase 23 (Déploiement & Production)
+- 🔐 Clés SSH uniquement pour connexion (password auth désactivé)
+- 📋 Informations serveur documentées dans `docs/OVH_SERVER_SETUP.md` section 14
+- 🔄 Le serveur est prêt pour Phase 23 (Déploiement & Production) après DNS configuré
 
 ---
 
@@ -1907,6 +2006,11 @@
 ## 🌍 Phase 23 : Déploiement & Production
 
 **Objectif** : Mettre en production sur le serveur OVH
+
+**📋 Prérequis** :
+- ✅ Phase 17.11.5 (Achat & Configuration Serveur OVH) - Configuration initiale complétée
+- ⏳ Phase 17.11.5.3 (Configuration DNS) - À compléter
+- ⏳ Phase 17.11.5.4 (Préparation Déploiement) - À compléter
 
 **Prérequis** : Phase 17.11.5 (Achat & Configuration Serveur OVH) doit être complétée
 

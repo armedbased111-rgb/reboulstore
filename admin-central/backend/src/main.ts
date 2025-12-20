@@ -13,23 +13,23 @@ async function bootstrap() {
         : ['error', 'warn', 'log', 'debug', 'verbose'], // Dev : tous les logs
     });
 
-    // Configuration globale de la validation
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+  // Configuration globale de la validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
-    // Configuration CORS pour le frontend admin
-    app.enableCors({
-      origin: process.env.FRONTEND_URL || 'http://localhost:4000',
-      credentials: true,
-    });
+  // Configuration CORS pour le frontend admin
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:4000',
+    credentials: true,
+  });
 
-    const port = process.env.PORT || 4001;
-    await app.listen(port);
+  const port = process.env.PORT || 4001;
+  await app.listen(port);
     
     logger.log(`🎛️ Admin Backend running on http://localhost:${port}`);
     logger.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);

@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.24.0  
-**Phase actuelle** : Phase 17.11.4 COMPLÈTE (Monitoring & Logs) ✅ - Prochaine : Phase 17.11.5 (Achat & Configuration Serveur OVH) ou Phase 17.12 (Tests E2E)
+**Version** : 0.25.0  
+**Phase actuelle** : Phase 17.11.5 EN COURS (Achat & Configuration Serveur OVH) 🔄 - Configuration initiale complétée, en cours : Configuration DNS
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
@@ -294,8 +294,25 @@ Documentation/
 - 🔄 **Phase 17.11.5** : Achat & Configuration Serveur OVH (VPS-3 : 8 vCores / 24 GB RAM / 200 GB SSD)
   - ✅ Documentation complète créée (`docs/OVH_SERVER_SETUP.md`)
   - ✅ Configuration choisie : VPS-3 (supporte architecture complète, pas de migration nécessaire)
-  - ⏳ Achat serveur à faire
-  - ⏳ Configuration serveur à faire
+  - ✅ Serveur OVH acheté et activé
+  - ✅ Configuration initiale complétée :
+    - [x] Système mis à jour (Ubuntu 22.04.5 LTS)
+    - [x] Docker installé (v29.1.3, Docker Compose v5.0.0)
+    - [x] Firewall configuré (ports 22, 80, 443)
+    - [x] Utilisateur `deploy` créé (SSH avec clés, sudo sans mot de passe)
+    - [x] SSH sécurisé (password auth désactivé)
+    - [x] Fail2ban installé
+  - ✅ Configuration DNS Phase 1 complétée :
+    - [x] Stratégie décidée : Option 1 (garder domaine sur Vercel, pointer DNS vers OVH) ✅
+    - [x] Retirer domaine du projet Vercel ✅
+    - [x] Supprimer zone DNS et recréer enregistrements A ✅
+    - [x] Vérification propagation DNS ✅
+      - ✅ `www.reboulstore.com` → `152.228.218.35` (fonctionne)
+      - ✅ `admin.reboulstore.com` → `152.228.218.35` (fonctionne)
+      - ⚠️ `reboulstore.com` → bloqué par ALIAS Vercel (non supprimables, sera résolu lors du transfert)
+    - 🔄 Transfert domaine vers OVH prévu mois prochain (Phase 17.11.5.5) pour résoudre le domaine principal
+  - ⏳ Vérification builds locaux (Phase 17.11.5.4) - À faire avant déploiement
+  - ⏳ Préparation déploiement (Phase 17.11.5.5) - Cloner repo, .env.production
 - 🔄 **Phase 17.12** : Tests E2E Critiques (à faire avant février)
 - ✅ **Phase 25** : Migration Serveur OVH (devenue optionnelle)
   - VPS-3 supporte déjà l'architecture complète (3 sites + Admin)
@@ -466,3 +483,5 @@ Documentation/
 - Phase 17.9 : Brainstorming & Plan d'Amélioration (audit complet documenté)
 - Phase 17.10 : Multi-Sites UI (ShopSelectorPage, routing multi-sites)
 - Phase 17.11.1-17.11.4 : Docker Production Ready (Compose, Nginx, Scripts, Monitoring)
+- Phase 17.11.5 : Serveur OVH acheté et configuré (VPS-3, Docker, firewall, SSH sécurisé)
+  - Stratégie DNS : Option 1 (Vercel → OVH maintenant, transfert domaine mois prochain)

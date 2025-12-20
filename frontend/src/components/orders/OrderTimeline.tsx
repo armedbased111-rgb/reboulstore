@@ -1,4 +1,4 @@
-import type { OrderStatus } from '../../types/index';
+import { OrderStatus } from '../../types/index';
 
 interface OrderTimelineProps {
   status: OrderStatus;
@@ -10,16 +10,17 @@ interface OrderTimelineProps {
 /**
  * Définition des étapes de la timeline
  */
+
 const timelineSteps: Array<{
   status: OrderStatus;
   label: string;
   icon: string;
 }> = [
-  { status: 'pending', label: 'En attente', icon: '⏳' },
-  { status: 'paid', label: 'Payée', icon: '💳' },
-  { status: 'processing', label: 'En traitement', icon: '📦' },
-  { status: 'shipped', label: 'Expédiée', icon: '🚚' },
-  { status: 'delivered', label: 'Livrée', icon: '✅' },
+  { status: OrderStatus.PENDING, label: 'En attente', icon: '⏳' },
+  { status: OrderStatus.PAID, label: 'Payée', icon: '💳' },
+  { status: OrderStatus.PROCESSING, label: 'En traitement', icon: '📦' },
+  { status: OrderStatus.SHIPPED, label: 'Expédiée', icon: '🚚' },
+  { status: OrderStatus.DELIVERED, label: 'Livrée', icon: '✅' },
 ];
 
 /**

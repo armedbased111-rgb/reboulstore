@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useOrders } from '../hooks/useOrders';
 import { OrderCard } from '../components/orders/OrderCard';
-import type { Order, OrderStatus } from '../types/index';
+import type { OrderStatus } from '../types/index';
 import { Link } from 'react-router-dom';
 
 /**

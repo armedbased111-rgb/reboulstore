@@ -6,7 +6,9 @@ import type { Image, Product } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
 import { ProductBadge } from './ProductBadge';
 
+// @ts-ignore - Swiper CSS imports (pas de déclarations TypeScript)
 import 'swiper/css';
+// @ts-ignore
 import 'swiper/css/navigation';
 
 interface ProductGalleryProps {

@@ -1,6 +1,9 @@
 import { api } from './api';
 import type { Order, CustomerInfo } from '../types/index';
 
+// Ré-exporter Order pour faciliter les imports
+export type { Order };
+
 /**
  * Service pour la gestion des commandes
  */

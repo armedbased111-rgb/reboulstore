@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Video, Loader2 } from 'lucide-react';
+import { X, Image as ImageIcon, Video, Loader2 } from 'lucide-react';
 import { uploadService } from '../../services/upload.service';
 import { cn } from '../../utils/cn';
 

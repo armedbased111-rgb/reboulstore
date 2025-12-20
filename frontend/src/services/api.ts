@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import type { AxiosError } from 'axios';
 import { loadingManager } from '../utils/loading';
 import type { ApiResponse, ApiError } from '../types/api';

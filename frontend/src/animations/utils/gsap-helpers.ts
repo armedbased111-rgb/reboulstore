@@ -1,4 +1,5 @@
-import { useEffect, useRef, RefObject, DependencyList } from 'react';
+import { useEffect, useRef } from 'react';
+import type { RefObject, DependencyList } from 'react';
 import gsap from 'gsap';
 
 /**
@@ -21,7 +22,7 @@ import gsap from 'gsap';
 export const useGSAP = (
   callback: (ctx: gsap.Context) => void,
   deps: DependencyList = []
-): RefObject<HTMLDivElement> => {
+): RefObject<HTMLDivElement | null> => {
   const scopeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, X, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 
 /**

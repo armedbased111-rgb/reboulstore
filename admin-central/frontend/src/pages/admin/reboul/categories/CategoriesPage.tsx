@@ -207,10 +207,10 @@ export default function CategoriesPage() {
                         <td className="px-4 lg:px-6 py-4">
                           <div className="flex items-center space-x-2">
                             {category.videoUrl && (
-                              <Video className="w-4 h-4 text-blue-500" title="Vidéo hero" />
+                              <Video className="w-4 h-4 text-blue-500" />
                             )}
                             {category.imageUrl && !category.videoUrl && (
-                              <ImageIcon className="w-4 h-4 text-gray-500" title="Image hero" />
+                              <ImageIcon className="w-4 h-4 text-gray-500" />
                             )}
                             {!category.imageUrl && !category.videoUrl && (
                               <span className="text-xs text-gray-400">—</span>

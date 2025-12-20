@@ -64,7 +64,7 @@ export default function CreateCategoryPage() {
     setSizeChartItems(sizeChartItems.filter((_, i) => i !== index));
   };
 
-  const updateSizeChartItem = (index: number, field: string, value: string | number) => {
+  const updateSizeChartItem = (index: number, field: string, value: string | number | undefined) => {
     const updated = [...sizeChartItems];
     updated[index] = { ...updated[index], [field]: value };
     setSizeChartItems(updated);
@@ -128,7 +128,7 @@ export default function CreateCategoryPage() {
             <textarea
               id="description"
               rows={4}
-              value={formData.description}
+              value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
             />
@@ -138,7 +138,7 @@ export default function CreateCategoryPage() {
           <div>
             <FileUpload
               label="Image Hero"
-              value={formData.imageUrl || undefined}
+              value={formData.imageUrl || ''}
               onChange={(url) => setFormData({ ...formData, imageUrl: url })}
               type="image"
               helpText="Si une vidéo est fournie, elle sera prioritaire"
@@ -149,7 +149,7 @@ export default function CreateCategoryPage() {
           <div>
             <FileUpload
               label="Vidéo Hero"
-              value={formData.videoUrl || undefined}
+              value={formData.videoUrl || ''}
               onChange={(url) => setFormData({ ...formData, videoUrl: url })}
               type="video"
               helpText="Prioritaire sur l'image si fournie"
@@ -190,28 +190,40 @@ export default function CreateCategoryPage() {
                         type="number"
                         placeholder="Chest"
                         value={item.chest || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'chest', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'chest', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Length"
                         value={item.length || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'length', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'length', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Waist"
                         value={item.waist || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'waist', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'waist', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="number"
                         placeholder="Hip"
                         value={item.hip || ''}
-                        onChange={(e) => updateSizeChartItem(index, 'hip', parseFloat(e.target.value) || undefined)}
+                        onChange={(e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : undefined;
+                          updateSizeChartItem(index, 'hip', val !== undefined && !isNaN(val) ? val : undefined);
+                        }}
                         className="w-full px-2 py-2 sm:py-1 border border-gray-300 rounded text-sm"
                       />
                     </div>

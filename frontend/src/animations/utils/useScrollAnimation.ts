@@ -1,4 +1,5 @@
-import { useEffect, useRef, RefObject } from 'react';
+import { useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
 
 export interface UseScrollAnimationOptions {
   /** Seuil de visibilité (0-1) pour déclencher l'animation (défaut: 0.2) */
@@ -29,7 +30,7 @@ export interface UseScrollAnimationOptions {
 export const useScrollAnimation = (
   callback: (element: HTMLDivElement) => void,
   options: UseScrollAnimationOptions = {}
-): RefObject<HTMLDivElement> => {
+): RefObject<HTMLDivElement | null> => {
   const elementRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
 

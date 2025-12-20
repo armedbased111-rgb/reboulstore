@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { PromoBanner } from './PromoBanner';
 import { Header } from './Header';
 import { Footer } from './Footer';

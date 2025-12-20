@@ -6,7 +6,7 @@ import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
-import { animateSlideDown, animateFadeScale, animateStaggerFadeIn } from '../../animations';
+import { animateSlideDown, animateStaggerFadeIn } from '../../animations';
 import gsap from 'gsap';
 
 export const Header = () => {

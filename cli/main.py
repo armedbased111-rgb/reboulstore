@@ -6,6 +6,7 @@ Automatise les tâches répétitives et améliore le contexte pour Cursor
 
 import click
 import re
+from typing import Dict
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -378,6 +379,242 @@ def suggest_components(description):
 def suggest():
     """Commandes pour suggérer des phases et améliorations"""
     pass
+
+@cli.group()
+def build():
+    """Commandes pour analyser les builds"""
+    pass
+
+@build.command('analyze')
+@click.option('--fix', is_flag=True, help='Essayer de corriger automatiquement les erreurs simples')
+@click.option('--verify', is_flag=True, help='Analyser, corriger et vérifier jusqu\'à ce qu\'il n\'y ait plus d\'erreurs')
+def analyze_builds(fix, verify):
+    """Analyser tous les builds pour détecter les erreurs"""
+    from commands.build_analyzer import build_analyzer
+    
+    if verify:
+        # Mode vérification avec boucle
+        max_iterations = 10
+        iteration = 0
+        
+        while iteration < max_iterations:
+            iteration += 1
+            console.print(f"[blue]🔨 Analyse des builds (itération {iteration})...[/blue]\n")
+            
+            result = build_analyzer.analyze_all()
+            
+            # Vérifier s'il y a des erreurs
+            if result['summary']['total_errors'] == 0:
+                console.print(Panel(
+                    f"[green]✅ Tous les builds sont réussis ![/green]\n\n"
+                    f"Warnings: {result['summary']['total_warnings']}\n"
+                    f"Itérations nécessaires: {iteration}",
+                    title="Succès",
+                    border_style="green"
+                ))
+                return
+            
+            # Corriger les erreurs
+            console.print("[yellow]🔧 Correction automatique des erreurs...[/yellow]\n")
+            fixes_applied = fix_build_errors(result)
+            
+            if not fixes_applied:
+                console.print("[red]❌ Aucune correction automatique possible. Erreurs restantes:[/red]")
+                break
+            
+            console.print(f"[green]✅ {fixes_applied} corrections appliquées. Vérification...[/green]\n")
+        
+        if iteration >= max_iterations:
+            console.print(f"[red]❌ Maximum d'itérations ({max_iterations}) atteint. Erreurs restantes:[/red]")
+        
+        # Afficher les résultats finaux
+        result = build_analyzer.analyze_all()
+    else:
+        console.print("[blue]🔨 Analyse des builds...[/blue]\n")
+        result = build_analyzer.analyze_all()
+        
+        if fix and result['summary']['total_errors'] > 0:
+            console.print("[yellow]🔧 Correction automatique des erreurs...[/yellow]\n")
+            fix_build_errors(result)
+    
+    # Afficher les résultats
+    for key, build_result in result['results'].items():
+        name = build_result.get('name', key)
+        status = build_result.get('status', 'unknown')
+        
+        if status == 'success':
+            icon = "[green]✅[/green]"
+        elif status == 'error':
+            icon = "[red]❌[/red]"
+        else:
+            icon = "[yellow]⚠️[/yellow]"
+        
+        console.print(f"{icon} [bold]{name}[/bold]")
+        
+        if status == 'error':
+            if 'error' in build_result:
+                console.print(f"  [red]Erreur: {build_result['error']}[/red]")
+            else:
+                errors_count = build_result.get('errors_count', 0)
+                warnings_count = build_result.get('warnings_count', 0)
+                console.print(f"  [red]Erreurs: {errors_count}[/red] | [yellow]Warnings: {warnings_count}[/yellow]")
+                
+                if errors_count > 0 and 'errors' in build_result:
+                    console.print("\n  [red]Premières erreurs:[/red]")
+                    for err in build_result['errors'][:5]:
+                        console.print(f"    • {err}")
+        elif status == 'warning':
+            console.print(f"  [yellow]⚠️  {build_result.get('warning', '')}[/yellow]")
+        else:
+            errors_count = build_result.get('errors_count', 0)
+            warnings_count = build_result.get('warnings_count', 0)
+            if errors_count > 0:
+                console.print(f"  [red]Erreurs: {errors_count}[/red]")
+            if warnings_count > 0:
+                console.print(f"  [yellow]Warnings: {warnings_count}[/yellow]")
+            if errors_count == 0 and warnings_count == 0:
+                console.print(f"  [green]✓ Build réussi sans erreurs ni warnings[/green]")
+        
+        console.print()
+    
+    # Résumé
+    summary = result['summary']
+    if summary['all_passed']:
+        console.print(Panel(
+            f"[green]✅ Tous les builds sont réussis ![/green]\n\n"
+            f"Warnings: {summary['total_warnings']}",
+            title="Résumé",
+            border_style="green"
+        ))
+    else:
+        console.print(Panel(
+            f"[red]❌ Erreurs détectées: {summary['total_errors']}[/red]\n"
+            f"[yellow]⚠️  Warnings: {summary['total_warnings']}[/yellow]",
+            title="Résumé",
+            border_style="red"
+        ))
+
+def fix_build_errors(result: Dict) -> int:
+    """Corriger automatiquement les erreurs de build"""
+    from commands.build_analyzer import build_analyzer
+    from utils.build_error_fixer import build_error_fixer
+    from pathlib import Path
+    
+    total_fixes = 0
+    project_root = Path(__file__).parent.parent
+    
+    for key, build_result in result['results'].items():
+        if build_result.get('status') != 'error' or 'errors' not in build_result:
+            continue
+        
+        errors = build_result.get('errors', [])
+        if not errors:
+            continue
+        
+        # Déterminer le chemin du projet
+        if 'backend' in key and 'reboul' in key:
+            project_path = project_root / "backend"
+        elif 'frontend' in key and 'reboul' in key:
+            project_path = project_root / "frontend"
+        elif 'backend' in key and 'admin' in key:
+            project_path = project_root / "admin-central" / "backend"
+        elif 'frontend' in key and 'admin' in key:
+            project_path = project_root / "admin-central" / "frontend"
+        else:
+            continue
+        
+        # Extraire les fichiers avec erreurs
+        file_errors = build_analyzer.extract_file_paths_from_errors(errors)
+        
+        # Corriger chaque fichier
+        for file_path_str, file_errors_list in file_errors.items():
+            file_path = project_path / file_path_str
+            if not file_path.exists():
+                # Essayer avec src/
+                file_path = project_path / "src" / file_path_str
+            
+            if file_path.exists():
+                fixed, fixes = build_error_fixer.fix_all(file_errors_list, file_path)
+                if fixed:
+                    total_fixes += len(fixes)
+                    for fix_msg in fixes:
+                        console.print(f"  [green]✓[/green] {file_path.relative_to(project_root)}: {fix_msg}")
+    
+    return total_fixes
+
+@build.command('fix')
+def fix_builds():
+    """Corriger automatiquement les erreurs de build"""
+    from commands.build_analyzer import build_analyzer
+    
+    console.print("[blue]🔨 Analyse des builds...[/blue]\n")
+    result = build_analyzer.analyze_all()
+    
+    if result['summary']['total_errors'] == 0:
+        console.print("[green]✅ Aucune erreur à corriger[/green]")
+        return
+    
+    console.print("[yellow]🔧 Correction automatique des erreurs...[/yellow]\n")
+    fixes_applied = fix_build_errors(result)
+    
+    if fixes_applied > 0:
+        console.print(f"\n[green]✅ {fixes_applied} corrections appliquées[/green]")
+        console.print("\n[blue]💡 Relancez 'build analyze' pour vérifier[/blue]")
+    else:
+        console.print("\n[yellow]⚠️  Aucune correction automatique possible. Erreurs nécessitent une intervention manuelle.[/yellow]")
+
+@build.command('verify')
+@click.option('--max-iterations', default=10, help='Nombre maximum d\'itérations (défaut: 10)')
+def verify_builds(max_iterations):
+    """Analyser, corriger et vérifier jusqu'à ce qu'il n'y ait plus d'erreurs"""
+    from commands.build_analyzer import build_analyzer
+    
+    iteration = 0
+    
+    while iteration < max_iterations:
+        iteration += 1
+        console.print(f"[blue]🔨 Analyse des builds (itération {iteration}/{max_iterations})...[/blue]\n")
+        
+        result = build_analyzer.analyze_all()
+        
+        # Vérifier s'il y a des erreurs
+        if result['summary']['total_errors'] == 0:
+            console.print(Panel(
+                f"[green]✅ Tous les builds sont réussis ![/green]\n\n"
+                f"Warnings: {result['summary']['total_warnings']}\n"
+                f"Itérations nécessaires: {iteration}",
+                title="Succès",
+                border_style="green"
+            ))
+            return
+        
+        # Afficher les erreurs
+        console.print(f"[red]❌ {result['summary']['total_errors']} erreur(s) détectée(s)[/red]\n")
+        
+        # Corriger les erreurs
+        console.print("[yellow]🔧 Correction automatique des erreurs...[/yellow]\n")
+        fixes_applied = fix_build_errors(result)
+        
+        if not fixes_applied:
+            console.print("[red]❌ Aucune correction automatique possible. Erreurs restantes:[/red]\n")
+            # Afficher les résultats pour voir les erreurs restantes
+            for key, build_result in result['results'].items():
+                if build_result.get('status') == 'error' and 'errors' in build_result:
+                    name = build_result.get('name', key)
+                    console.print(f"\n[red]{name}:[/red]")
+                    for err in build_result['errors'][:5]:
+                        console.print(f"  • {err}")
+            break
+        
+        console.print(f"[green]✅ {fixes_applied} correction(s) appliquée(s). Nouvelle vérification...[/green]\n")
+    
+    if iteration >= max_iterations:
+        console.print(Panel(
+            f"[red]❌ Maximum d'itérations ({max_iterations}) atteint.[/red]\n"
+            f"Il reste des erreurs qui nécessitent une intervention manuelle.",
+            title="Erreurs Restantes",
+            border_style="red"
+        ))
 
 @cli.group()
 def analyze():

@@ -1,12 +1,8 @@
-import type { OrderStatus } from '../../types/index';
-import {
-  Timeline,
-  TimelineItem,
-  TimelineIndicator,
-  TimelineTitle,
+import { OrderStatus } from '../../types/index';
+import { Timeline,
+  TimelineItem, TimelineTitle,
   TimelineDescription,
-  TimelineDate,
-} from '../ui/timeline';
+  TimelineDate, } from '../ui/timeline';
 
 // Chemins vers les SVG dans le dossier public
 const REFRESH_DOUBLE_ICON = '/webdesign/icon/http_/localhost_3000/orders/refresh-double.svg';
@@ -44,10 +40,10 @@ export const OrderTimelineVertical = ({
 }: OrderTimelineVerticalProps) => {
   // Déterminer quelle étape est active
   const getActiveStepIndex = (): number => {
-    if (status === 'delivered') return 3;
-    if (status === 'shipped') return 2;
-    if (status === 'processing') return 1;
-    if (status === 'paid') return 0;
+    if (status === OrderStatus.DELIVERED) return 3;
+    if (status === OrderStatus.SHIPPED) return 2;
+    if (status === OrderStatus.PROCESSING) return 1;
+    if (status === OrderStatus.PAID) return 0;
     return 0; // pending = première étape aussi (en attente de paiement)
   };
 
@@ -57,12 +53,12 @@ export const OrderTimelineVertical = ({
   const steps: Step[] = [
     {
       id: 0,
-      label: status === 'pending' ? 'EN ATTENTE DE PAIEMENT' : 'COMMANDE PAYÉE',
-      description: status === 'pending' 
+      label: status === OrderStatus.PENDING ? 'EN ATTENTE DE PAIEMENT' : 'COMMANDE PAYÉE',
+      description: status === OrderStatus.PENDING 
         ? 'Votre commande est en attente de confirmation de paiement.'
         : 'Votre paiement a été confirmé avec succès.',
       icon: REFRESH_DOUBLE_ICON,
-      status: ['paid', 'processing', 'shipped', 'delivered'],
+      status: [OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED],
       date: paidAt,
     },
     {
@@ -70,7 +66,7 @@ export const OrderTimelineVertical = ({
       label: 'EN PRÉPARATION',
       description: 'Votre commande est en cours de préparation dans nos entrepôts.',
       icon: BOX_ICON,
-      status: ['processing', 'shipped', 'delivered'],
+      status: [OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED],
       date: null,
     },
     {
@@ -78,7 +74,7 @@ export const OrderTimelineVertical = ({
       label: 'EXPÉDIÉE',
       description: 'Votre commande a été expédiée et est en cours de livraison.',
       icon: TRUCK_ICON,
-      status: ['shipped', 'delivered'],
+      status: [OrderStatus.SHIPPED, OrderStatus.DELIVERED],
       date: shippedAt,
     },
     {
@@ -86,7 +82,7 @@ export const OrderTimelineVertical = ({
       label: 'LIVRÉE',
       description: 'Votre commande a été livrée. Merci pour votre achat !',
       icon: CHECK_ICON,
-      status: ['delivered'],
+      status: [OrderStatus.DELIVERED],
       date: deliveredAt,
     },
   ];
@@ -94,7 +90,7 @@ export const OrderTimelineVertical = ({
   // Vérifier si une étape est complétée
   const isStepCompleted = (step: Step): boolean => {
     // Pour pending, aucune étape n'est complétée
-    if (status === 'pending') return false;
+    if (status === OrderStatus.PENDING) return false;
     return step.status.includes(status);
   };
 
@@ -117,7 +113,7 @@ export const OrderTimelineVertical = ({
           SUIVI DE COMMANDE
         </h2>
         <p className="font-[Geist] font-light text-xs text-gray-500 mt-1">
-          {status === 'pending'
+          {status === OrderStatus.PENDING
             ? 'En attente de confirmation'
             : `Statut : ${steps[activeIndex]?.label || 'En cours'}`}
         </p>
