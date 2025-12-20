@@ -10,7 +10,7 @@ import { Product } from './product.entity';
 
 /**
  * Entité Shop - Représente un shop/boutique (Reboul Adult, Reboul Kids, etc.)
- * 
+ *
  * Contient les politiques globales de livraison et retour pour le shop
  */
 @Entity('shops')

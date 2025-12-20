@@ -1,0 +1,33 @@
+# Dockerfile Production pour Frontend React + Vite
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer les dépendances
+RUN npm ci --legacy-peer-deps && \
+    npm cache clean --force
+
+# Copier le reste du code
+COPY . .
+
+# Build de production (génère le dossier dist/)
+RUN npm run build
+
+# Stage de production avec Nginx
+FROM nginx:alpine
+
+# Copier les fichiers build depuis le stage builder
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copier la configuration Nginx personnalisée (optionnel, sera monté via volume)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Créer un volume pour partager les fichiers build avec le container Nginx principal
+VOLUME ["/usr/share/nginx/html"]
+
+# Le container Nginx principal servira les fichiers depuis ce volume
+# Ce container sert juste à générer le build et le mettre dans le volume

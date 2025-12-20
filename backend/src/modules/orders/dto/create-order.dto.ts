@@ -1,4 +1,12 @@
-import { IsUUID, IsString, IsEmail, IsOptional, IsObject, ValidateNested, IsNotEmpty } from 'class-validator';
+import {
+  IsUUID,
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsObject,
+  ValidateNested,
+  IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class AddressDto {

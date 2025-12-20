@@ -3,9 +3,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 
-export const getEmailConfig = (
-  configService: ConfigService,
-): MailerOptions => {
+export const getEmailConfig = (configService: ConfigService): MailerOptions => {
   // En développement : __dirname pointe vers src/config
   // En production : __dirname pointe vers dist/config
   // Les templates sont copiés dans dist/templates lors du build (nest-cli.json)

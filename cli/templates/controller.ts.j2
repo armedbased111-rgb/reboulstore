@@ -1,0 +1,81 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { {{ entity_name }}Service } from './{{ entity_name_lower }}.service';
+import { Create{{ entity_name }}Dto } from './dto/create-{{ entity_name_lower }}.dto';
+import { Update{{ entity_name }}Dto } from './dto/update-{{ entity_name_lower }}.dto';
+
+/**
+ * Controller pour gérer les {{ entity_name_lower }}s
+ */
+@Controller('{{ route_name }}')
+export class {{ entity_name }}Controller {
+  constructor(private readonly {{ entity_name_lower }}Service: {{ entity_name }}Service) {}
+
+  /**
+   * Créer un nouveau {{ entity_name_lower }}
+   */
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() create{{ entity_name }}Dto: Create{{ entity_name }}Dto) {
+    return this.{{ entity_name_lower }}Service.create(create{{ entity_name }}Dto);
+  }
+
+  /**
+   * Récupérer tous les {{ entity_name_lower }}s avec pagination
+   * @param page - Numéro de page (défaut: 1)
+   * @param limit - Nombre d'éléments par page (défaut: 10)
+   */
+  @Get()
+  findAll(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.{{ entity_name_lower }}Service.findAll({
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 10,
+    });
+  }
+
+  /**
+   * Récupérer un {{ entity_name_lower }} par son ID
+   * @param id - ID du {{ entity_name_lower }}
+   */
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.{{ entity_name_lower }}Service.findOne(id);
+  }
+
+  /**
+   * Mettre à jour un {{ entity_name_lower }}
+   * @param id - ID du {{ entity_name_lower }}
+   * @param update{{ entity_name }}Dto - Données de mise à jour
+   */
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() update{{ entity_name }}Dto: Update{{ entity_name }}Dto,
+  ) {
+    return this.{{ entity_name_lower }}Service.update(id, update{{ entity_name }}Dto);
+  }
+
+  /**
+   * Supprimer un {{ entity_name_lower }}
+   * @param id - ID du {{ entity_name_lower }}
+   */
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.{{ entity_name_lower }}Service.remove(id);
+  }
+}
+

@@ -90,5 +90,6 @@ volumes:
 
 networks:
   reboulstore-network:
+    name: reboulstore-network  # Nom explicite pour partage avec admin-central
     driver: bridge
 

@@ -6,11 +6,10 @@ import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
 import { Image } from '../../entities/image.entity';
 import { Variant } from '../../entities/variant.entity';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Product, Category, Image, Variant]),
-  ],
+  imports: [TypeOrmModule.forFeature([Product, Category, Image, Variant]), CloudinaryModule],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports: [ProductsService],

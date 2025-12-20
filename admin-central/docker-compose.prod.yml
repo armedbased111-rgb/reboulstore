@@ -1,0 +1,95 @@
+services:
+  # Backend Admin NestJS (Production)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: admin-central-backend-prod
+    environment:
+      - NODE_ENV=production
+      - PORT=4001
+      - FRONTEND_URL=${FRONTEND_URL:-https://admin.reboulstore.com}
+      - JWT_SECRET=${JWT_SECRET}
+      
+      # Connexion Reboul Database (via réseau Docker partagé)
+      - REBOUL_DB_HOST=reboulstore-postgres-prod
+      - REBOUL_DB_PORT=5432
+      - REBOUL_DB_USER=${REBOUL_DB_USER:-reboulstore}
+      - REBOUL_DB_PASSWORD=${REBOUL_DB_PASSWORD}
+      - REBOUL_DB_NAME=${REBOUL_DB_NAME:-reboulstore_db}
+      
+      # Cloudinary
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      
+      # Connexion CP Company (FUTUR - Commenté)
+      # - CPCOMPANY_DB_HOST=cpcompany-postgres-prod
+      # - CPCOMPANY_DB_PORT=5433
+      
+      # Connexion Outlet (FUTUR - Commenté)
+      # - OUTLET_DB_HOST=outlet-postgres-prod
+      # - OUTLET_DB_PORT=5434
+    networks:
+      - reboulstore-network  # Réseau partagé avec reboulstore
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}/backend"
+
+  # Frontend Admin React + Vite (Production) - Build statique servi par Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: admin-central-frontend-prod
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://backend:4001}
+    depends_on:
+      - backend
+    networks:
+      - reboulstore-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}/frontend"
+
+  # Nginx Reverse Proxy Admin (Production)
+  nginx:
+    image: nginx:alpine
+    container_name: admin-central-nginx-prod
+    ports:
+      - "4000:80"
+      - "4443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - frontend_build:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - reboulstore-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}/nginx"
+
+volumes:
+  frontend_build:
+    name: admin_central_frontend_build
+
+networks:
+  reboulstore-network:
+    external: true  # Utiliser le réseau existant créé par reboulstore/docker-compose.prod.yml
+    name: reboulstore-network

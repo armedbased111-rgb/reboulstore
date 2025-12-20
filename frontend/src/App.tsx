@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { Layout } from './components/layout/Layout'
 import { Home } from './pages/Home'
 import { Catalog } from './pages/Catalog'
@@ -13,14 +14,41 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Profile } from './pages/Profile'
 import { ProtectedRoute } from './components/ProtectedRoute'
-import { TestApi } from './components/TestApi'
-import { TestServices } from './components/TestServices'
-import { TestHooks } from './components/TestHooks'
-import { TestAuth } from './components/TestAuth'
+import { NavigationLoader } from './components/loaders/NavigationLoader'
+import { PageLoader } from './components/loaders/PageLoader'
+import { LoaderPlayground } from './pages/LoaderPlayground'
 
 function App() {
+  const [showInitialLoader, setShowInitialLoader] = useState(true)
+
+  useEffect(() => {
+    // Précharger le logo du loader (ressource critique)
+    const img = new Image()
+    img.src = '/webdesign/logo/logo_w_hzhfoc.png'
+
+    const timeout = setTimeout(() => {
+      setShowInitialLoader(false)
+    }, 3500) // Loader d'ouverture légèrement plus long (~3,5s)
+
+    return () => clearTimeout(timeout)
+  }, [])
+
   return (
     <BrowserRouter>
+      {showInitialLoader && (
+        <PageLoader
+          state="default"
+          steps={[
+            'MISE EN PLACE DES STOCKS',
+            'CHARGEMENT DES COLLECTIONS',
+            'INITIALISATION DES BOUTIQUES',
+            'CONFIGURATION DES PARAMÈTRES',
+            'TESTING ET VALIDATION',
+            'LANCEMENT OFFICIEL',
+          ]}
+        />
+      )}
+      <NavigationLoader />
       <Routes>
         {/* Pages avec Layout */}
         <Route 
@@ -127,10 +155,8 @@ function App() {
         />
         
         {/* Pages de test sans Layout */}
-        <Route path="/test-api" element={<TestApi />} />
-        <Route path="/test-services" element={<TestServices />} />
-        <Route path="/test-hooks" element={<TestHooks />} />
-        <Route path="/test-auth" element={<TestAuth />} />
+
+        <Route path="/loader-playground" element={<LoaderPlayground />} />
       </Routes>
     </BrowserRouter>
   )

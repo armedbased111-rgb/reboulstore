@@ -1,0 +1,2 @@
+# Ce dossier contiendra les certificats SSL/TLS
+# Les fichiers .pem ne doivent JAMAIS être commités dans Git

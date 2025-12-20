@@ -39,7 +39,32 @@ backend/src/
 
 ## 📦 Créer un module NestJS
 
-### Étapes
+### 🚀 Option 1 : Utiliser le CLI Python (RECOMMANDÉ)
+
+**⭐ Gain de temps : 60min → 5min (92% de gain)**
+
+```bash
+# Générer un module complet (Entity + DTOs + Service + Controller + Module)
+python cli/main.py code generate module FeatureName --full
+
+# Ou générer les composants individuellement
+python cli/main.py code generate entity Category
+python cli/main.py code generate dto Product create
+python cli/main.py code generate service Product
+python cli/main.py code generate controller Product
+```
+
+Le CLI génère automatiquement :
+- ✅ Entité TypeORM avec relations
+- ✅ DTOs (Create, Update) avec validation class-validator
+- ✅ Service avec méthodes CRUD et gestion d'erreurs
+- ✅ Controller avec endpoints REST complets
+- ✅ Module avec configuration TypeORM
+- ✅ Enregistrement automatique dans `app.module.ts`
+
+Voir `/cli-workflow` pour le guide complet.
+
+### Option 2 : Création manuelle
 
 1. **Créer le dossier** : `backend/src/modules/[nom-module]/`
 

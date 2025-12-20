@@ -57,10 +57,7 @@ export class StockService {
    * @throws NotFoundException si la variante n'existe pas
    * @throws BadRequestException si le stock est insuffisant
    */
-  async decrementStock(
-    variantId: string,
-    quantity: number,
-  ): Promise<Variant> {
+  async decrementStock(variantId: string, quantity: number): Promise<Variant> {
     const variant = await this.checkStockAvailability(variantId, quantity);
 
     variant.stock -= quantity;
@@ -76,10 +73,7 @@ export class StockService {
    * @returns La variante mise à jour
    * @throws NotFoundException si la variante n'existe pas
    */
-  async incrementStock(
-    variantId: string,
-    quantity: number,
-  ): Promise<Variant> {
+  async incrementStock(variantId: string, quantity: number): Promise<Variant> {
     const variant = await this.variantRepository.findOne({
       where: { id: variantId },
     });

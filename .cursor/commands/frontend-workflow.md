@@ -46,6 +46,28 @@ frontend/src/
 
 ## 📄 Créer une page
 
+### 🚀 Option 1 : Utiliser le CLI Python (RECOMMANDÉ)
+
+**⭐ Gain de temps : 30min → 2min (93% de gain)**
+
+```bash
+# Page complète avec intégration entity
+python cli/main.py code page Checkout --entity Order
+
+# Page simple
+python cli/main.py code page About
+```
+
+Le CLI génère automatiquement :
+- ✅ Structure `<main>` standardisée
+- ✅ Gestion loading/error states
+- ✅ Intégration hooks et services
+- ✅ Layout responsive
+
+Voir `/cli-workflow` pour le guide complet.
+
+### Option 2 : Création manuelle
+
 ### Étapes
 
 1. **Créer le fichier** : `frontend/src/pages/[NomPage].tsx`

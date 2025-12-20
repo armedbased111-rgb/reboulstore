@@ -8,11 +8,11 @@ import * as path from 'path';
 
 /**
  * Script de seed pour créer des données de test
- * 
+ *
  * Ce script crée :
  * - Des catégories (Adult, Kids, Sneakers)
  * - Des produits avec images et variantes
- * 
+ *
  * Pour l'exécuter :
  * npm run seed
  * ou
@@ -28,7 +28,9 @@ async function seed() {
   let dbHost = process.env.DB_HOST || 'localhost';
   if (dbHost === 'postgres' && !process.env.DOCKER_ENV) {
     dbHost = 'localhost';
-    console.log('⚠️  Détection: exécution en local, utilisation de localhost au lieu de postgres');
+    console.log(
+      '⚠️  Détection: exécution en local, utilisation de localhost au lieu de postgres',
+    );
   }
 
   // Configuration de la connexion à la base de données (compatible TypeORM)
@@ -44,7 +46,9 @@ async function seed() {
     logging: process.env.NODE_ENV === 'development',
   });
 
-  console.log(`🔌 Connexion à PostgreSQL: ${dbHost}:${process.env.DB_PORT || '5432'}/${process.env.DB_DATABASE || 'reboulstore_db'}`);
+  console.log(
+    `🔌 Connexion à PostgreSQL: ${dbHost}:${process.env.DB_PORT || '5432'}/${process.env.DB_DATABASE || 'reboulstore_db'}`,
+  );
 
   try {
     await dataSource.initialize();
@@ -57,16 +61,22 @@ async function seed() {
 
     // 1. Créer ou récupérer les catégories
     console.log('📦 Création des catégories...');
-    
+
     const categoriesData = [
       { name: 'Adult', slug: 'adult', description: 'Vêtements pour adultes' },
       { name: 'Kids', slug: 'kids', description: 'Vêtements pour enfants' },
-      { name: 'Sneakers', slug: 'sneakers', description: 'Chaussures de sport' },
+      {
+        name: 'Sneakers',
+        slug: 'sneakers',
+        description: 'Chaussures de sport',
+      },
     ];
 
     const categories: Category[] = [];
     for (const catData of categoriesData) {
-      let category = await categoryRepository.findOne({ where: { slug: catData.slug } });
+      let category = await categoryRepository.findOne({
+        where: { slug: catData.slug },
+      });
       if (!category) {
         category = categoryRepository.create(catData);
         category = await categoryRepository.save(category);
@@ -83,12 +93,21 @@ async function seed() {
     const productsData = [
       {
         name: 'HOODIE BLACK',
-        description: 'Hoodie premium en coton noir, coupe oversize, style streetwear',
+        description:
+          'Hoodie premium en coton noir, coupe oversize, style streetwear',
         price: 89.99,
         categorySlug: 'adult',
         images: [
-          { url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=1000&fit=crop', alt: 'Hoodie Black - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=1000&fit=crop', alt: 'Hoodie Black - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=1000&fit=crop',
+            alt: 'Hoodie Black - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=1000&fit=crop',
+            alt: 'Hoodie Black - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Black', size: 'S', stock: 15, sku: 'HOOD-BLK-S' },
@@ -103,8 +122,16 @@ async function seed() {
         price: 29.99,
         categorySlug: 'adult',
         images: [
-          { url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=1000&fit=crop', alt: 'T-Shirt White - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=1000&fit=crop', alt: 'T-Shirt White - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=1000&fit=crop',
+            alt: 'T-Shirt White - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=1000&fit=crop',
+            alt: 'T-Shirt White - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'White', size: 'S', stock: 25, sku: 'TSH-WHT-S' },
@@ -114,12 +141,21 @@ async function seed() {
       },
       {
         name: 'SNEAKERS CLASSIC',
-        description: 'Sneakers classiques en cuir, semelle confortable, style minimaliste',
+        description:
+          'Sneakers classiques en cuir, semelle confortable, style minimaliste',
         price: 129.99,
         categorySlug: 'sneakers',
         images: [
-          { url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=1000&fit=crop', alt: 'Sneakers Classic - Vue de face', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=1000&fit=crop', alt: 'Sneakers Classic - Vue de profil', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=1000&fit=crop',
+            alt: 'Sneakers Classic - Vue de face',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=1000&fit=crop',
+            alt: 'Sneakers Classic - Vue de profil',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'White', size: '40', stock: 10, sku: 'SNK-WHT-40' },
@@ -134,8 +170,16 @@ async function seed() {
         price: 149.99,
         categorySlug: 'adult',
         images: [
-          { url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=1000&fit=crop', alt: 'Jacket Navy - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=1000&fit=crop', alt: 'Jacket Navy - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=1000&fit=crop',
+            alt: 'Jacket Navy - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=1000&fit=crop',
+            alt: 'Jacket Navy - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Navy', size: 'M', stock: 8, sku: 'JKT-NVY-M' },
@@ -149,8 +193,16 @@ async function seed() {
         price: 79.99,
         categorySlug: 'adult',
         images: [
-          { url: 'https://images.unsplash.com/photo-1506629905607-3e0c82e5e0a1?w=800&h=1000&fit=crop', alt: 'Pants Cargo - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1506629905607-3e0c82e5e0a1?w=800&h=1000&fit=crop', alt: 'Pants Cargo - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1506629905607-3e0c82e5e0a1?w=800&h=1000&fit=crop',
+            alt: 'Pants Cargo - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1506629905607-3e0c82e5e0a1?w=800&h=1000&fit=crop',
+            alt: 'Pants Cargo - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Olive', size: 'S', stock: 12, sku: 'PNT-OLV-S' },
@@ -164,8 +216,16 @@ async function seed() {
         price: 49.99,
         categorySlug: 'kids',
         images: [
-          { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1000&fit=crop', alt: 'Kids Hoodie - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1000&fit=crop', alt: 'Kids Hoodie - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1000&fit=crop',
+            alt: 'Kids Hoodie - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1000&fit=crop',
+            alt: 'Kids Hoodie - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Gray', size: '6Y', stock: 10, sku: 'KHD-GRY-6Y' },
@@ -175,12 +235,21 @@ async function seed() {
       },
       {
         name: 'SNEAKERS RUNNING',
-        description: 'Sneakers de running, légères et respirantes, semelle amortissante',
+        description:
+          'Sneakers de running, légères et respirantes, semelle amortissante',
         price: 99.99,
         categorySlug: 'sneakers',
         images: [
-          { url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=1000&fit=crop', alt: 'Sneakers Running - Vue de face', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=1000&fit=crop', alt: 'Sneakers Running - Vue de profil', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=1000&fit=crop',
+            alt: 'Sneakers Running - Vue de face',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=1000&fit=crop',
+            alt: 'Sneakers Running - Vue de profil',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Black', size: '40', stock: 9, sku: 'SNK-RUN-BLK-40' },
@@ -190,12 +259,21 @@ async function seed() {
       },
       {
         name: 'SWEATSHIRT CREAM',
-        description: 'Sweatshirt en coton crème, coupe oversize, style minimaliste',
+        description:
+          'Sweatshirt en coton crème, coupe oversize, style minimaliste',
         price: 69.99,
         categorySlug: 'adult',
         images: [
-          { url: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&h=1000&fit=crop', alt: 'Sweatshirt Cream - Vue avant', order: 0 },
-          { url: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&h=1000&fit=crop', alt: 'Sweatshirt Cream - Vue dos', order: 1 },
+          {
+            url: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&h=1000&fit=crop',
+            alt: 'Sweatshirt Cream - Vue avant',
+            order: 0,
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&h=1000&fit=crop',
+            alt: 'Sweatshirt Cream - Vue dos',
+            order: 1,
+          },
         ],
         variants: [
           { color: 'Cream', size: 'S', stock: 14, sku: 'SWT-CRM-S' },
@@ -217,7 +295,9 @@ async function seed() {
       }
 
       // Trouver la catégorie
-      const category = categories.find((c) => c.slug === productData.categorySlug);
+      const category = categories.find(
+        (c) => c.slug === productData.categorySlug,
+      );
       if (!category) {
         console.log(`  ✗ Catégorie non trouvée: ${productData.categorySlug}`);
         continue;
@@ -257,7 +337,9 @@ async function seed() {
         });
         await variantRepository.save(variant);
       }
-      console.log(`    → ${productData.variants.length} variante(s) ajoutée(s)`);
+      console.log(
+        `    → ${productData.variants.length} variante(s) ajoutée(s)`,
+      );
     }
 
     console.log('\n✅ Seed terminé avec succès!');

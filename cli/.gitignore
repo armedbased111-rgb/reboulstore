@@ -1,0 +1,22 @@
+# Environnement virtuel Python
+venv/
+env/
+.venv/
+
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Fichiers de sortie
+*.md.bak
+context-summary.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+

@@ -8,9 +8,7 @@ import { Variant } from '../../entities/variant.entity';
 import { Product } from '../../entities/product.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Cart, CartItem, Variant, Product]),
-  ],
+  imports: [TypeOrmModule.forFeature([Cart, CartItem, Variant, Product])],
   controllers: [CartController],
   providers: [CartService],
   exports: [CartService],

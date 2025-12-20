@@ -50,9 +50,6 @@ export class CheckoutController {
     if (!req.rawBody) {
       throw new Error('Raw body is required for webhook verification');
     }
-    return this.checkoutService.handleWebhook(
-      req.rawBody,
-      signature,
-    );
+    return this.checkoutService.handleWebhook(req.rawBody, signature);
   }
 }

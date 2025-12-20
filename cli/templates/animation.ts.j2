@@ -1,0 +1,58 @@
+import gsap from 'gsap';
+import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+
+/**
+ * Options pour l'animation {{ animation_name }}
+ */
+export interface {{ AnimationName }}Options {
+  /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.NORMAL) */
+  duration?: number;
+  /** Délai avant le début de l'animation en secondes (défaut: 0) */
+  delay?: number;
+  /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
+  ease?: string;
+}
+
+/**
+ * Animation {{ animation_name }} réutilisable
+ * 
+ * {{ description }}
+ * 
+ * @param element - Élément DOM, ref React, ou sélecteur CSS
+ * @param options - Options d'animation
+ * @returns Timeline GSAP (pour chaînage si besoin)
+ * 
+ * @example
+ * // Utilisation basique
+ * animate{{ AnimationName }}(elementRef.current);
+ * 
+ * @example
+ * // Avec options personnalisées
+ * animate{{ AnimationName }}(elementRef.current, {
+ *   duration: 0.8,
+ *   delay: 0.2,
+ *   ease: ANIMATION_EASES.SMOOTH
+ * });
+ */
+export const animate{{ AnimationName }} = (
+  element: gsap.TweenTarget,
+  options: {{ AnimationName }}Options = {}
+): gsap.core.Tween => {
+  const {
+    duration = ANIMATION_DURATIONS.NORMAL,
+    delay = 0,
+    ease = ANIMATION_EASES.DEFAULT,
+  } = options;
+
+  return gsap.fromTo(
+    element,
+    { {{ from_props }} },
+    {
+      {{ to_props }},
+      duration,
+      delay,
+      ease,
+    }
+  );
+};
+

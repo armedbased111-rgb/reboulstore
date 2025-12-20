@@ -1,0 +1,45 @@
+#!/usr/bin/env ts-node
+
+/**
+ * Script de seed pour {{ seed_name }}
+ * 
+ * Usage:
+ *   ts-node src/scripts/{{ seed_file }}.ts
+ */
+
+import { DataSource } from 'typeorm';
+import { {{ entities }} } from '../entities';
+
+async function seed() {
+  const dataSource = new DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432'),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DB_DATABASE || 'reboulstore_db',
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    synchronize: false,
+  });
+
+  await dataSource.initialize();
+
+  try {
+    console.log('🌱 Démarrage du seed...');
+
+    {{ seed_code }}
+
+    console.log('✅ Seed terminé avec succès');
+  } catch (error) {
+    console.error('❌ Erreur lors du seed:', error);
+    throw error;
+  } finally {
+    await dataSource.destroy();
+  }
+}
+
+seed().catch((error) => {
+  console.error('Erreur fatale:', error);
+  process.exit(1);
+});
+

@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,7 +27,7 @@ export class CheckoutService {
     private ordersService: OrdersService,
   ) {
     const stripeSecretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
-    
+
     if (!stripeSecretKey) {
       throw new Error('STRIPE_SECRET_KEY is not configured');
     }
@@ -75,13 +80,19 @@ export class CheckoutService {
     const apiBaseUrl = `http://localhost:${port}`;
 
     // Fonction pour construire l'URL d'image complète
-    const getImageUrl = (imageUrl: string | null | undefined): string | null => {
+    const getImageUrl = (
+      imageUrl: string | null | undefined,
+    ): string | null => {
       if (!imageUrl) return null;
       if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
         return imageUrl;
       }
-      const cleanBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
-      const cleanImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+      const cleanBaseUrl = apiBaseUrl.endsWith('/')
+        ? apiBaseUrl.slice(0, -1)
+        : apiBaseUrl;
+      const cleanImageUrl = imageUrl.startsWith('/')
+        ? imageUrl
+        : `/${imageUrl}`;
       return `${cleanBaseUrl}${cleanImageUrl}`;
     };
 
@@ -105,14 +116,16 @@ export class CheckoutService {
         let productImage: string | null = null;
         if (product.images && product.images.length > 0) {
           // Chercher une image correspondant à la couleur (si alt contient la couleur)
-          const colorImage = product.images.find(
-            (img) => img.alt?.toLowerCase().includes(variant.color.toLowerCase()),
+          const colorImage = product.images.find((img) =>
+            img.alt?.toLowerCase().includes(variant.color.toLowerCase()),
           );
           if (colorImage) {
             productImage = getImageUrl(colorImage.url);
           } else {
             // Sinon prendre la première image (order = 0 ou première)
-            const firstImage = product.images.find((img) => img.order === 0) || product.images[0];
+            const firstImage =
+              product.images.find((img) => img.order === 0) ||
+              product.images[0];
             productImage = getImageUrl(firstImage.url);
           }
         }
@@ -128,9 +141,10 @@ export class CheckoutService {
 
         // Limiter la description à 500 caractères (limite Stripe)
         const maxDescriptionLength = 500;
-        const finalDescription = description.length > maxDescriptionLength
-          ? description.substring(0, maxDescriptionLength - 3) + '...'
-          : description;
+        const finalDescription =
+          description.length > maxDescriptionLength
+            ? description.substring(0, maxDescriptionLength - 3) + '...'
+            : description;
 
         return {
           price_data: {
@@ -204,7 +218,8 @@ export class CheckoutService {
 
     // En développement avec Stripe CLI, le secret peut changer
     // En production, il doit être configuré
-    const isDevelopment = this.configService.get<string>('NODE_ENV') !== 'production';
+    const isDevelopment =
+      this.configService.get<string>('NODE_ENV') !== 'production';
 
     let event: Stripe.Event;
 
@@ -229,14 +244,16 @@ export class CheckoutService {
         );
       }
     } catch (err) {
-      this.logger.error(`Webhook signature verification failed: ${err.message}`);
+      this.logger.error(
+        `Webhook signature verification failed: ${err.message}`,
+      );
       throw new BadRequestException(`Webhook Error: ${err.message}`);
     }
 
     // Gérer les différents types d'événements
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object;
 
         // Avec capture manuelle, payment_status sera 'unpaid' initialement
         // On crée la commande en PENDING même si payment_status n'est pas 'paid'
@@ -246,7 +263,7 @@ export class CheckoutService {
       }
 
       case 'checkout.session.async_payment_succeeded': {
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = event.data.object;
         await this.handleCheckoutCompleted(session);
         break;
       }

@@ -112,10 +112,7 @@ export class OrdersService {
   /**
    * Vérifie que l'utilisateur peut accéder à la commande (propriétaire ou admin)
    */
-  private async checkOrderAccess(
-    order: Order,
-    userId: string,
-  ): Promise<void> {
+  private async checkOrderAccess(order: Order, userId: string): Promise<void> {
     // Si pas de userId, pas de vérification (route publique, déconseillé)
     if (!userId) {
       return;
@@ -206,22 +203,23 @@ export class OrdersService {
         ? {
             id: order.cart.id,
             sessionId: order.cart.sessionId,
-            items: order.cart.items?.map((item) => ({
-              id: item.id,
-              variantId: item.variantId,
-              quantity: item.quantity,
-              variant: {
-                id: item.variant.id,
-                color: item.variant.color,
-                size: item.variant.size,
-                sku: item.variant.sku,
-                product: {
-                  id: item.variant.product.id,
-                  name: item.variant.product.name,
-                  price: item.variant.product.price.toString(),
+            items:
+              order.cart.items?.map((item) => ({
+                id: item.id,
+                variantId: item.variantId,
+                quantity: item.quantity,
+                variant: {
+                  id: item.variant.id,
+                  color: item.variant.color,
+                  size: item.variant.size,
+                  sku: item.variant.sku,
+                  product: {
+                    id: item.variant.product.id,
+                    name: item.variant.product.name,
+                    price: item.variant.product.price.toString(),
+                  },
                 },
-              },
-            })) || [],
+              })) || [],
           }
         : undefined,
       createdAt: order.createdAt,
@@ -234,7 +232,12 @@ export class OrdersService {
    */
   async findAll(): Promise<OrderResponseDto[]> {
     const orders = await this.orderRepository.find({
-      relations: ['cart', 'cart.items', 'cart.items.variant', 'cart.items.variant.product'],
+      relations: [
+        'cart',
+        'cart.items',
+        'cart.items.variant',
+        'cart.items.variant.product',
+      ],
       order: { createdAt: 'DESC' },
     });
 
@@ -248,22 +251,23 @@ export class OrdersService {
         ? {
             id: order.cart.id,
             sessionId: order.cart.sessionId,
-            items: order.cart.items?.map((item) => ({
-              id: item.id,
-              variantId: item.variantId,
-              quantity: item.quantity,
-              variant: {
-                id: item.variant.id,
-                color: item.variant.color,
-                size: item.variant.size,
-                sku: item.variant.sku,
-                product: {
-                  id: item.variant.product.id,
-                  name: item.variant.product.name,
-                  price: item.variant.product.price.toString(),
+            items:
+              order.cart.items?.map((item) => ({
+                id: item.id,
+                variantId: item.variantId,
+                quantity: item.quantity,
+                variant: {
+                  id: item.variant.id,
+                  color: item.variant.color,
+                  size: item.variant.size,
+                  sku: item.variant.sku,
+                  product: {
+                    id: item.variant.product.id,
+                    name: item.variant.product.name,
+                    price: item.variant.product.price.toString(),
+                  },
                 },
-              },
-            })) || [],
+              })) || [],
           }
         : undefined,
       createdAt: order.createdAt,
@@ -309,7 +313,10 @@ export class OrdersService {
     }
 
     // Mettre à jour les dates selon le statut
-    if (newStatus === OrderStatus.SHIPPED && oldStatus !== OrderStatus.SHIPPED) {
+    if (
+      newStatus === OrderStatus.SHIPPED &&
+      oldStatus !== OrderStatus.SHIPPED
+    ) {
       order.shippedAt = new Date();
     }
 
@@ -370,22 +377,23 @@ export class OrdersService {
         ? {
             id: order.cart.id,
             sessionId: order.cart.sessionId,
-            items: order.cart.items?.map((item) => ({
-              id: item.id,
-              variantId: item.variantId,
-              quantity: item.quantity,
-              variant: {
-                id: item.variant.id,
-                color: item.variant.color,
-                size: item.variant.size,
-                sku: item.variant.sku,
-                product: {
-                  id: item.variant.product.id,
-                  name: item.variant.product.name,
-                  price: item.variant.product.price.toString(),
+            items:
+              order.cart.items?.map((item) => ({
+                id: item.id,
+                variantId: item.variantId,
+                quantity: item.quantity,
+                variant: {
+                  id: item.variant.id,
+                  color: item.variant.color,
+                  size: item.variant.size,
+                  sku: item.variant.sku,
+                  product: {
+                    id: item.variant.product.id,
+                    name: item.variant.product.name,
+                    price: item.variant.product.price.toString(),
+                  },
                 },
-              },
-            })) || [],
+              })) || [],
           }
         : undefined,
       createdAt: order.createdAt,
@@ -464,7 +472,10 @@ export class OrdersService {
     await this.checkOrderAccess(order, userId);
 
     // Vérifier que la commande peut être remboursée
-    if (order.status !== OrderStatus.PAID && order.status !== OrderStatus.PROCESSING) {
+    if (
+      order.status !== OrderStatus.PAID &&
+      order.status !== OrderStatus.PROCESSING
+    ) {
       throw new BadRequestException(
         `Order with ID ${id} cannot be refunded (current status: ${order.status})`,
       );
@@ -563,7 +574,8 @@ export class OrdersService {
       : null;
 
     // Construire customerInfo depuis les adresses
-    const customerInfoName = customerName ||
+    const customerInfoName =
+      customerName ||
       (shippingAddress
         ? `${shippingAddress.firstName} ${shippingAddress.lastName}`.trim()
         : '') ||

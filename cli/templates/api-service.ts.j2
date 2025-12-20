@@ -1,0 +1,41 @@
+import { api } from './api';
+import type { {{ entity_type }}, {{ query_type }}, {{ response_type }} } from '../types/index';
+
+/**
+ * Service pour la gestion des {{ entity_name_lower }}s
+ */
+
+// Récupérer tous les {{ entity_name_lower }}s avec filtres et pagination
+export const get{{ entity_name }}s = async (
+  query?: {{ query_type }}
+): Promise<{{ response_type }}> => {
+  return await api.get<{{ response_type }}>('/{{ route_name }}', {
+    params: query,
+  });
+};
+
+// Récupérer un {{ entity_name_lower }} par ID
+export const get{{ entity_name }} = async (id: string): Promise<{{ entity_type }}> => {
+  return await api.get<{{ entity_type }}>(`/{{ route_name }}/${id}`);
+};
+
+// Créer un nouveau {{ entity_name_lower }}
+export const create{{ entity_name }} = async (
+  data: Partial<{{ entity_type }}>
+): Promise<{{ entity_type }}> => {
+  return await api.post<{{ entity_type }}>('/{{ route_name }}', data);
+};
+
+// Mettre à jour un {{ entity_name_lower }}
+export const update{{ entity_name }} = async (
+  id: string,
+  data: Partial<{{ entity_type }}>
+): Promise<{{ entity_type }}> => {
+  return await api.patch<{{ entity_type }}>(`/{{ route_name }}/${id}`, data);
+};
+
+// Supprimer un {{ entity_name_lower }}
+export const delete{{ entity_name }} = async (id: string): Promise<void> => {
+  return await api.delete(`/{{ route_name }}/${id}`);
+};
+

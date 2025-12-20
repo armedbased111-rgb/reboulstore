@@ -68,7 +68,9 @@ export class OrdersController {
    */
   @Post('test-email')
   @HttpCode(HttpStatus.OK)
-  async testEmail(@Body() body: { type: string; email: string; firstName?: string }) {
+  async testEmail(
+    @Body() body: { type: string; email: string; firstName?: string },
+  ) {
     if (process.env.NODE_ENV === 'production') {
       return { message: 'This endpoint is disabled in production' };
     }
@@ -80,8 +82,10 @@ export class OrdersController {
             body.email,
             body.firstName || 'Test User',
           );
-          return { message: 'Registration email sent successfully to ' + body.email };
-        
+          return {
+            message: 'Registration email sent successfully to ' + body.email,
+          };
+
         default:
           return { error: 'Invalid email type. Use: registration' };
       }
@@ -139,7 +143,9 @@ export class OrdersController {
       res.send(pdfBuffer);
     } catch (error) {
       console.error('Erreur génération facture:', error);
-      res.status(500).json({ message: 'Erreur lors de la génération de la facture' });
+      res
+        .status(500)
+        .json({ message: 'Erreur lors de la génération de la facture' });
     }
   }
 
