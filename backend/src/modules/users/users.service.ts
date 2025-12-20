@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -19,7 +23,7 @@ export class UsersService {
 
   // Récupérer le profil utilisateur
   async findOne(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({ 
+    const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['addresses'],
     });
@@ -30,13 +34,16 @@ export class UsersService {
   }
 
   // Mettre à jour le profil
-  async updateProfile(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateProfile(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     const user = await this.findOne(userId);
 
     // Si changement d'email, vérifier qu'il n'existe pas déjà
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.userRepository.findOne({ 
-        where: { email: updateUserDto.email } 
+      const existingUser = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
       });
       if (existingUser) {
         throw new ConflictException('Email already exists');
@@ -56,19 +63,22 @@ export class UsersService {
 
   // Récupérer toutes les adresses de l'utilisateur
   async getAddresses(userId: string): Promise<Address[]> {
-    return this.addressRepository.find({ 
+    return this.addressRepository.find({
       where: { userId },
       order: { isDefault: 'DESC', createdAt: 'DESC' },
     });
   }
 
   // Créer une adresse
-  async createAddress(userId: string, createAddressDto: CreateAddressDto): Promise<Address> {
+  async createAddress(
+    userId: string,
+    createAddressDto: CreateAddressDto,
+  ): Promise<Address> {
     // Si isDefault = true, retirer le flag des autres adresses
     if (createAddressDto.isDefault) {
       await this.addressRepository.update(
         { userId, isDefault: true },
-        { isDefault: false }
+        { isDefault: false },
       );
     }
 
@@ -82,8 +92,8 @@ export class UsersService {
 
   // Récupérer une adresse spécifique
   async getAddress(userId: string, addressId: string): Promise<Address> {
-    const address = await this.addressRepository.findOne({ 
-      where: { id: addressId, userId } 
+    const address = await this.addressRepository.findOne({
+      where: { id: addressId, userId },
     });
     if (!address) {
       throw new NotFoundException('Address not found');
@@ -93,9 +103,9 @@ export class UsersService {
 
   // Mettre à jour une adresse
   async updateAddress(
-    userId: string, 
-    addressId: string, 
-    updateAddressDto: UpdateAddressDto
+    userId: string,
+    addressId: string,
+    updateAddressDto: UpdateAddressDto,
   ): Promise<Address> {
     const address = await this.getAddress(userId, addressId);
 
@@ -103,7 +113,7 @@ export class UsersService {
     if (updateAddressDto.isDefault) {
       await this.addressRepository.update(
         { userId, isDefault: true },
-        { isDefault: false }
+        { isDefault: false },
       );
     }
 

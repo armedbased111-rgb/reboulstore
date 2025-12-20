@@ -28,7 +28,8 @@ export class CartController {
     @Headers('x-session-id') sessionIdHeader?: string,
     @Query('sessionId') sessionIdQuery?: string,
   ) {
-    const sessionId = sessionIdHeader || sessionIdQuery || this.generateSessionId();
+    const sessionId =
+      sessionIdHeader || sessionIdQuery || this.generateSessionId();
     return this.cartService.findOne(sessionId);
   }
 
@@ -42,7 +43,8 @@ export class CartController {
     @Headers('x-session-id') sessionIdHeader?: string,
     @Query('sessionId') sessionIdQuery?: string,
   ) {
-    const sessionId = sessionIdHeader || sessionIdQuery || this.generateSessionId();
+    const sessionId =
+      sessionIdHeader || sessionIdQuery || this.generateSessionId();
     return this.cartService.addItem(sessionId, addToCartDto);
   }
 
@@ -75,7 +77,8 @@ export class CartController {
     @Headers('x-session-id') sessionIdHeader?: string,
     @Query('sessionId') sessionIdQuery?: string,
   ) {
-    const sessionId = sessionIdHeader || sessionIdQuery || this.generateSessionId();
+    const sessionId =
+      sessionIdHeader || sessionIdQuery || this.generateSessionId();
     return this.cartService.clear(sessionId);
   }
 

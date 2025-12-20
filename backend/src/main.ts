@@ -1,36 +1,54 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { MulterExceptionFilter } from './filters/multer-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    rawBody: true, // Nécessaire pour les webhooks Stripe (vérification signature)
-  });
-  
-  // Configuration globale de la validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-  
-  // Configuration CORS pour le frontend
-  app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-  });
-  
-  // Servir les fichiers statiques pour les images
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
-  
-  const port = process.env.PORT || 3001;
-  await app.listen(port);
-  console.log(`🚀 Backend running on http://localhost:${port}`);
+  const logger = new Logger('Bootstrap');
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  try {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+      rawBody: true, // Nécessaire pour les webhooks Stripe (vérification signature)
+      logger: isProduction
+        ? ['error', 'warn', 'log'] // Production : moins de logs
+        : ['error', 'warn', 'log', 'debug', 'verbose'], // Dev : tous les logs
+    });
+
+    // Configuration globale de la validation
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+
+    // Filtre d'exception global pour gérer les erreurs multer
+    app.useGlobalFilters(new MulterExceptionFilter());
+
+    // Configuration CORS pour le frontend
+    app.enableCors({
+      origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+      credentials: true,
+    });
+
+    // Servir les fichiers statiques pour les images
+    app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+      prefix: '/uploads/',
+    });
+
+    const port = process.env.PORT || 3001;
+    await app.listen(port);
+    
+    logger.log(`🚀 Backend running on http://localhost:${port}`);
+    logger.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.log(`🏥 Health check: http://localhost:${port}/health`);
+  } catch (error) {
+    logger.error('❌ Error starting application', error);
+    process.exit(1);
+  }
 }
 bootstrap();

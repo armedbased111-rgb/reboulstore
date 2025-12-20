@@ -1,0 +1,105 @@
+import { Injectable, NotFoundException{% if has_bad_request %}, BadRequestException{% endif %} } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { {{ entity_name }} } from '../../entities/{{ entity_name_lower }}.entity';
+import { Create{{ entity_name }}Dto } from './dto/create-{{ entity_name_lower }}.dto';
+import { Update{{ entity_name }}Dto } from './dto/update-{{ entity_name_lower }}.dto';
+
+/**
+ * Service pour gérer les {{ entity_name_lower }}s
+ */
+@Injectable()
+export class {{ entity_name }}Service {
+  constructor(
+    @InjectRepository({{ entity_name }})
+    private {{ entity_name_lower }}Repository: Repository<{{ entity_name }}>,
+  ) {}
+
+  /**
+   * Récupérer tous les {{ entity_name_lower }}s avec pagination
+   * @param options - Options de pagination (page, limit)
+   * @returns Liste paginée des {{ entity_name_lower }}s
+   */
+  async findAll(options?: { page?: number; limit?: number }): Promise<{
+    data: {{ entity_name }}[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const page = options?.page || 1;
+    const limit = options?.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.{{ entity_name_lower }}Repository.findAndCount({
+      order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
+{% if has_relations %}
+      relations: [{% for relation in relations %}'{{ relation.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+{% endif %}
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
+  }
+
+  /**
+   * Récupérer un {{ entity_name_lower }} par son ID
+   * @param id - ID du {{ entity_name_lower }}
+   * @returns Le {{ entity_name_lower }} trouvé
+   * @throws NotFoundException si le {{ entity_name_lower }} n'existe pas
+   */
+  async findOne(id: string): Promise<{{ entity_name }}> {
+    const {{ entity_name_lower }} = await this.{{ entity_name_lower }}Repository.findOne({
+      where: { id },
+{% if has_relations %}
+      relations: [{% for relation in relations %}'{{ relation.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+{% endif %}
+    });
+
+    if (!{{ entity_name_lower }}) {
+      throw new NotFoundException(`{{ entity_name }} with ID ${id} not found`);
+    }
+
+    return {{ entity_name_lower }};
+  }
+
+  /**
+   * Créer un nouveau {{ entity_name_lower }}
+   * @param create{{ entity_name }}Dto - Données du nouveau {{ entity_name_lower }}
+   * @returns Le {{ entity_name_lower }} créé
+   */
+  async create(create{{ entity_name }}Dto: Create{{ entity_name }}Dto): Promise<{{ entity_name }}> {
+    const {{ entity_name_lower }} = this.{{ entity_name_lower }}Repository.create(create{{ entity_name }}Dto);
+    return this.{{ entity_name_lower }}Repository.save({{ entity_name_lower }});
+  }
+
+  /**
+   * Mettre à jour un {{ entity_name_lower }}
+   * @param id - ID du {{ entity_name_lower }}
+   * @param update{{ entity_name }}Dto - Données de mise à jour
+   * @returns Le {{ entity_name_lower }} mis à jour
+   */
+  async update(
+    id: string,
+    update{{ entity_name }}Dto: Update{{ entity_name }}Dto,
+  ): Promise<{{ entity_name }}> {
+    const {{ entity_name_lower }} = await this.findOne(id);
+    Object.assign({{ entity_name_lower }}, update{{ entity_name }}Dto);
+    return this.{{ entity_name_lower }}Repository.save({{ entity_name_lower }});
+  }
+
+  /**
+   * Supprimer un {{ entity_name_lower }}
+   * @param id - ID du {{ entity_name_lower }}
+   */
+  async remove(id: string): Promise<void> {
+    const {{ entity_name_lower }} = await this.findOne(id);
+    await this.{{ entity_name_lower }}Repository.remove({{ entity_name_lower }});
+  }
+}
+

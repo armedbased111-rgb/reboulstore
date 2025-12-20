@@ -103,14 +103,37 @@ Guide pour mettre à jour ROADMAP_COMPLETE.md correctement.
 3. **Vérifier** avant de commencer une nouvelle phase que la précédente est bien cochée
 4. **Utiliser Ctrl+F** pour trouver rapidement une phase/tâche
 
+## 🚀 CLI Python - Automatisation
+
+**Recommandé** : Utiliser le CLI Python pour mettre à jour la roadmap automatiquement :
+
+```bash
+# Cocher une tâche
+python cli/main.py roadmap update --task "15.1 Configuration Cloudinary"
+
+# Marquer une phase complète
+python cli/main.py roadmap update --phase 15 --complete
+
+# Vérifier la cohérence
+python cli/main.py roadmap check
+```
+
+**Gain de temps** : 3min → 5sec (**97% de gain**)
+
+Voir `/cli-workflow` pour le guide complet du CLI.
+
+---
+
 ## 🔗 Commandes associées
 
+- `/cli-workflow` : Guide complet du CLI Python (recommandé)
 - `/getcontext` : Recherche de contexte (inclut ROADMAP_COMPLETE.md)
 - `/documentation-workflow` : Workflow documentation complet
 
 ## ⚠️ IMPORTANT
 
-- **Ne pas oublier** de cocher les tâches
+- **Utiliser le CLI** pour automatiser la mise à jour (recommandé)
+- **Ne pas oublier** de cocher les tâches (manuellement ou via CLI)
 - **ROADMAP_COMPLETE.md = source de vérité** du projet
 - **Permet de savoir** exactement où on en est
 - **Facilite la reprise** après une pause

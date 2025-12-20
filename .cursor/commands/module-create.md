@@ -249,8 +249,36 @@ backend/src/modules/[nom-module]/
 - [ ] backend/BACKEND.md mis à jour
 - [ ] API_CONFIG.md mis à jour
 
+## 🚀 CLI Python - Génération automatique
+
+**⭐ RECOMMANDÉ** : Utiliser le CLI Python pour générer automatiquement les modules :
+
+```bash
+# Module complet (Entity + DTOs + Service + Controller + Module)
+python cli/main.py code generate module FeatureName --full
+
+# Composants individuels
+python cli/main.py code generate entity Category
+python cli/main.py code generate dto Product create
+python cli/main.py code generate service Product
+python cli/main.py code generate controller Product
+```
+
+**Gain de temps** : 60min → 5min (**92% de gain**)
+
+Le CLI génère automatiquement :
+- ✅ Entité TypeORM avec relations
+- ✅ DTOs (Create, Update) avec validation
+- ✅ Service avec méthodes CRUD
+- ✅ Controller avec endpoints REST
+- ✅ Module avec configuration TypeORM
+- ✅ Enregistrement dans `app.module.ts`
+
+Voir `/cli-workflow` pour le guide complet du CLI.
+
 ## 🔗 Commandes associées
 
+- `/cli-workflow` : Guide complet du CLI Python ⭐ **NOUVEAU**
 - `/backend-workflow` : Workflow backend complet
 - `/getcontext` : Recherche de contexte
 

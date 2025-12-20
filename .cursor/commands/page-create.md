@@ -225,8 +225,31 @@ useEffect(() => {
 - [ ] ROADMAP_COMPLETE.md mis à jour
 - [ ] frontend/FRONTEND.md mis à jour
 
+## 🚀 CLI Python - Génération automatique
+
+**⭐ RECOMMANDÉ** : Utiliser le CLI Python pour générer automatiquement les pages :
+
+```bash
+# Page complète avec intégration entity
+python cli/main.py code page Checkout --entity Order
+
+# Page simple
+python cli/main.py code page About
+```
+
+**Gain de temps** : 30min → 2min (**93% de gain**)
+
+Le CLI génère automatiquement :
+- ✅ Structure `<main>` standardisée
+- ✅ Gestion loading/error states
+- ✅ Intégration hooks et services
+- ✅ Layout responsive
+
+Voir `/cli-workflow` pour le guide complet du CLI.
+
 ## 🔗 Commandes associées
 
+- `/cli-workflow` : Guide complet du CLI Python ⭐ **NOUVEAU**
 - `/frontend-workflow` : Workflow frontend complet
 - `/component-create` : Créer un composant
 - `/getcontext` : Recherche de contexte

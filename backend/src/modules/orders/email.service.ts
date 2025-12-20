@@ -18,8 +18,7 @@ export class EmailService {
     private orderEmailRepository: Repository<OrderEmail>,
   ) {
     this.frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') ||
-      'http://localhost:3000';
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
   }
 
   /**
@@ -76,9 +75,17 @@ export class EmailService {
       });
 
       // Persister l'email envoyé
-      await this.persistEmail(order.id, EmailType.ORDER_RECEIVED, customerEmail, subject);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_RECEIVED,
+        customerEmail,
+        subject,
+      );
     } catch (error: any) {
-      this.logger.error(`Error sending order received email for order ${order.id}:`, error);
+      this.logger.error(
+        `Error sending order received email for order ${order.id}:`,
+        error,
+      );
       // Persister l'erreur
       await this.persistEmail(
         order.id,
@@ -120,9 +127,17 @@ export class EmailService {
       });
 
       // Persister l'email envoyé
-      await this.persistEmail(order.id, EmailType.ORDER_CONFIRMED, customerEmail, subject);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_CONFIRMED,
+        customerEmail,
+        subject,
+      );
     } catch (error: any) {
-      this.logger.error(`Error sending order confirmation email for order ${order.id}:`, error);
+      this.logger.error(
+        `Error sending order confirmation email for order ${order.id}:`,
+        error,
+      );
       // Persister l'erreur
       await this.persistEmail(
         order.id,
@@ -162,9 +177,17 @@ export class EmailService {
       });
 
       // Persister l'email envoyé
-      await this.persistEmail(order.id, EmailType.ORDER_SHIPPED, customerEmail, subject);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_SHIPPED,
+        customerEmail,
+        subject,
+      );
     } catch (error) {
-      this.logger.error(`Error sending shipping notification email for order ${order.id}:`, error);
+      this.logger.error(
+        `Error sending shipping notification email for order ${order.id}:`,
+        error,
+      );
       await this.persistEmail(
         order.id,
         EmailType.ORDER_SHIPPED,
@@ -203,9 +226,17 @@ export class EmailService {
       });
 
       // Persister l'email envoyé
-      await this.persistEmail(order.id, EmailType.ORDER_DELIVERED, customerEmail, subject);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_DELIVERED,
+        customerEmail,
+        subject,
+      );
     } catch (error: any) {
-      this.logger.error(`Error sending order delivered email for order ${order.id}:`, error);
+      this.logger.error(
+        `Error sending order delivered email for order ${order.id}:`,
+        error,
+      );
       await this.persistEmail(
         order.id,
         EmailType.ORDER_DELIVERED,
@@ -250,9 +281,17 @@ export class EmailService {
       });
 
       // Persister l'email envoyé
-      await this.persistEmail(order.id, EmailType.ORDER_CANCELLED, customerEmail, subject);
+      await this.persistEmail(
+        order.id,
+        EmailType.ORDER_CANCELLED,
+        customerEmail,
+        subject,
+      );
     } catch (error: any) {
-      this.logger.error(`Error sending order cancelled email for order ${order.id}:`, error);
+      this.logger.error(
+        `Error sending order cancelled email for order ${order.id}:`,
+        error,
+      );
       await this.persistEmail(
         order.id,
         EmailType.ORDER_CANCELLED,
@@ -288,7 +327,10 @@ export class EmailService {
       await this.orderEmailRepository.save(orderEmail);
     } catch (error) {
       // Log l'erreur mais ne throw pas pour ne pas bloquer l'envoi d'email
-      this.logger.error(`Error persisting email record for order ${orderId}:`, error);
+      this.logger.error(
+        `Error persisting email record for order ${orderId}:`,
+        error,
+      );
     }
   }
 

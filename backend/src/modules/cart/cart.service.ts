@@ -29,7 +29,12 @@ export class CartService {
   async getOrCreate(sessionId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { sessionId },
-      relations: ['items', 'items.variant', 'items.variant.product', 'items.variant.product.images'],
+      relations: [
+        'items',
+        'items.variant',
+        'items.variant.product',
+        'items.variant.product.images',
+      ],
     });
 
     if (!cart) {
@@ -51,28 +56,29 @@ export class CartService {
     return {
       id: cart.id,
       sessionId: cart.sessionId,
-      items: cart.items?.map((item) => ({
-        id: item.id,
-        variantId: item.variantId,
-        quantity: item.quantity,
-        variant: {
-          id: item.variant.id,
-          color: item.variant.color,
-          size: item.variant.size,
-          stock: item.variant.stock,
-          sku: item.variant.sku,
-          product: {
-            id: item.variant.product.id,
-            name: item.variant.product.name,
-            price: item.variant.product.price.toString(),
-            images: item.variant.product.images?.map((img) => ({
-              url: img.url,
-              alt: img.alt,
-            })),
+      items:
+        cart.items?.map((item) => ({
+          id: item.id,
+          variantId: item.variantId,
+          quantity: item.quantity,
+          variant: {
+            id: item.variant.id,
+            color: item.variant.color,
+            size: item.variant.size,
+            stock: item.variant.stock,
+            sku: item.variant.sku,
+            product: {
+              id: item.variant.product.id,
+              name: item.variant.product.name,
+              price: item.variant.product.price.toString(),
+              images: item.variant.product.images?.map((img) => ({
+                url: img.url,
+                alt: img.alt,
+              })),
+            },
           },
-        },
-        createdAt: item.createdAt,
-      })) || [],
+          createdAt: item.createdAt,
+        })) || [],
       total,
       createdAt: cart.createdAt,
       updatedAt: cart.updatedAt,

@@ -1,0 +1,51 @@
+# Dockerfile Production pour Backend Admin NestJS
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer les dépendances (production uniquement)
+RUN npm ci --only=production --legacy-peer-deps && \
+    npm cache clean --force
+
+# Copier le reste du code
+COPY . .
+
+# Build de production
+RUN npm run build
+
+# Stage de production
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copier package.json pour réinstaller uniquement les dépendances de production
+COPY package*.json ./
+
+# Installer uniquement les dépendances de production
+RUN npm ci --only=production --legacy-peer-deps && \
+    npm cache clean --force
+
+# Copier le build depuis le stage builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+# Créer un utilisateur non-root pour la sécurité
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001 && \
+    chown -R nestjs:nodejs /app
+
+USER nestjs
+
+# Exposer le port
+EXPOSE 4001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:4001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Commande de démarrage production
+CMD ["npm", "run", "start:prod"]

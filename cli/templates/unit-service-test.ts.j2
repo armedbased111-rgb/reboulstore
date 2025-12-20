@@ -1,0 +1,117 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { {{ service_name }} } from './{{ service_file }}';
+import { {{ entity_name }} } from './../../entities/{{ entity_file }}';
+
+describe('{{ service_name }}', () => {
+  let service: {{ service_name }};
+  let repository: Repository<{{ entity_name }}>;
+
+  const mockRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        {{ service_name }},
+        {
+          provide: getRepositoryToken({{ entity_name }}),
+          useValue: mockRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get<{{ service_name }}>({{ service_name }});
+    repository = module.get<Repository<{{ entity_name }}>>(
+      getRepositoryToken({{ entity_name }}),
+    );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('findAll', () => {
+    it('should return an array of {{ entity_name_lower }}s', async () => {
+      const mock{{ entity_name }}s = [
+        { id: '1', name: 'Test 1' },
+        { id: '2', name: 'Test 2' },
+      ];
+      mockRepository.find.mockResolvedValue(mock{{ entity_name }}s);
+
+      const result = await service.findAll();
+
+      expect(result).toEqual(mock{{ entity_name }}s);
+      expect(mockRepository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a single {{ entity_name_lower }}', async () => {
+      const mock{{ entity_name }} = { id: '1', name: 'Test' };
+      mockRepository.findOne.mockResolvedValue(mock{{ entity_name }});
+
+      const result = await service.findOne('1');
+
+      expect(result).toEqual(mock{{ entity_name }});
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
+    });
+
+    it('should throw NotFoundException if {{ entity_name_lower }} not found', async () => {
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne('999')).rejects.toThrow();
+    });
+  });
+
+  describe('create', () => {
+    it('should create a new {{ entity_name_lower }}', async () => {
+      const createDto = { name: 'New {{ entity_name }}' };
+      const mock{{ entity_name }} = { id: '1', ...createDto };
+      mockRepository.create.mockReturnValue(mock{{ entity_name }});
+      mockRepository.save.mockResolvedValue(mock{{ entity_name }});
+
+      const result = await service.create(createDto);
+
+      expect(result).toEqual(mock{{ entity_name }});
+      expect(mockRepository.create).toHaveBeenCalledWith(createDto);
+      expect(mockRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('update', () => {
+    it('should update an existing {{ entity_name_lower }}', async () => {
+      const updateDto = { name: 'Updated {{ entity_name }}' };
+      const mock{{ entity_name }} = { id: '1', name: 'Updated {{ entity_name }}' };
+      mockRepository.findOne.mockResolvedValue({ id: '1', name: 'Old' });
+      mockRepository.save.mockResolvedValue(mock{{ entity_name }});
+
+      const result = await service.update('1', updateDto);
+
+      expect(result).toEqual(mock{{ entity_name }});
+      expect(mockRepository.findOne).toHaveBeenCalled();
+      expect(mockRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('remove', () => {
+    it('should delete a {{ entity_name_lower }}', async () => {
+      mockRepository.findOne.mockResolvedValue({ id: '1' });
+      mockRepository.delete.mockResolvedValue({ affected: 1 });
+
+      await service.remove('1');
+
+      expect(mockRepository.delete).toHaveBeenCalledWith('1');
+    });
+  });
+});
+

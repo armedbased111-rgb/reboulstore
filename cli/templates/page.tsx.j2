@@ -1,0 +1,92 @@
+import { useState, useMemo } from 'react';
+import { use{{ entity_name }} } from '../hooks/use{{ entity_name }}';
+import type { {{ entity_type }} } from '../types/index';
+
+/**
+ * Page {{ page_name }} - {{ description }}
+ */
+export const {{ page_name }} = () => {
+  const { {{ entity_name_lower }}s, loading, error, refetch } = use{{ entity_name }}();
+  const [filter, setFilter] = useState<string>('all');
+
+  // Filtrer les {{ entity_name_lower }}s
+  const filteredItems = useMemo(() => {
+    let filtered = {{ entity_name_lower }}s;
+
+    if (filter !== 'all') {
+      // TODO: Implémenter le filtre
+      filtered = filtered;
+    }
+
+    return filtered;
+  }, [{{ entity_name_lower }}s, filter]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl md:text-3xl font-medium uppercase tracking-tight mb-8">
+            {{ page_title }}
+          </h1>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl md:text-3xl font-medium uppercase tracking-tight mb-8">
+            {{ page_title }}
+          </h1>
+          <p className="text-red-600">Erreur: {error}</p>
+          <button
+            onClick={refetch}
+            className="mt-4 px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-2xl md:text-3xl font-medium uppercase tracking-tight mb-8">
+          {{ page_title }}
+        </h1>
+
+        {/* Filtres */}
+        <div className="mb-6">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded"
+          >
+            <option value="all">Tous</option>
+            {/* TODO: Ajouter les options de filtre */}
+          </select>
+        </div>
+
+        {/* Liste */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredItems.length === 0 ? (
+            <p className="col-span-full text-gray-600">Aucun {{ entity_name_lower }} trouvé.</p>
+          ) : (
+            filteredItems.map((item) => (
+              <div key={item.id} className="border border-gray-200 p-4 rounded">
+                {/* TODO: Implémenter l'affichage */}
+                <p>{/* item.name */}</p>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+

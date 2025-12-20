@@ -1,0 +1,83 @@
+services:
+  # Backend Admin NestJS
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: admin-central-backend
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4001
+      - FRONTEND_URL=http://localhost:4000
+      
+      # Connexion Reboul Database (via réseau Docker partagé)
+      - REBOUL_DB_HOST=reboulstore-postgres
+      - REBOUL_DB_PORT=5432
+      - REBOUL_DB_USER=reboulstore
+      - REBOUL_DB_PASSWORD=reboulstore_password
+      - REBOUL_DB_NAME=reboulstore_db
+      
+      # Connexion CP Company (FUTUR - Commenté)
+      # - CPCOMPANY_DB_HOST=cpcompany-postgres
+      # - CPCOMPANY_DB_PORT=5433
+      
+      # Connexion Outlet (FUTUR - Commenté)
+      # - OUTLET_DB_HOST=outlet-postgres
+      # - OUTLET_DB_PORT=5434
+      
+      # Cloudinary (Phase 17.7) - Variables chargées depuis backend/.env
+      # Le fichier .env est monté via le volume, NestJS ConfigModule le lit automatiquement
+    networks:
+      - reboulstore-network  # ⚠️ Réseau partagé avec reboulstore (doit exister)
+    # Installation automatique des dépendances puis démarrage
+    command: >
+      sh -c "
+        echo '📦 Installation des dépendances admin backend...' &&
+        npm install --legacy-peer-deps &&
+        echo '✅ Dépendances installées' &&
+        npm run start:dev
+      "
+    logging:
+      driver: "json-file"
+      options:
+        tag: "{{.Name}}/backend"
+
+  # Frontend Admin React + Vite
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: admin-central-frontend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:4001
+    depends_on:
+      - backend
+    networks:
+      - reboulstore-network
+    # Installation automatique des dépendances puis démarrage
+    command: >
+      sh -c "
+        echo '📦 Installation des dépendances admin frontend...' &&
+        npm install --legacy-peer-deps &&
+        echo '✅ Dépendances installées' &&
+        npm run dev
+      "
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
+
+networks:
+  reboulstore-network:
+    external: true  # ⚠️ Utiliser le réseau existant créé par reboulstore/docker-compose.yml
+    name: reboulstore-network

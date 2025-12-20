@@ -1,0 +1,27 @@
+import {
+{% for validator in validators %}
+  {{ validator }},
+{% endfor %}
+} from 'class-validator';
+
+/**
+ * DTO pour créer un nouveau {{ entity_name_lower }}
+ */
+export class Create{{ entity_name }}Dto {
+{% for field in fields %}
+  /**
+   * {{ field.description|default(field.name) }}
+   {% if field.required %}* @required{% endif %}
+   */
+  {% if field.required %}
+  @{{ field.validator }}()
+  @IsNotEmpty()
+  {% else %}
+  @{{ field.validator }}()
+  @IsOptional()
+  {% endif %}
+  {{ field.name }}: {{ field.ts_type }};
+
+{% endfor %}
+}
+

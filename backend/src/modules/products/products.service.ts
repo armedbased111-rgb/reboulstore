@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere, ILike, Between } from 'typeorm';
 import { Product } from '../../entities/product.entity';
@@ -12,19 +16,14 @@ import { UpdateVariantDto } from './dto/update-variant.dto';
 import { Image } from '../../entities/image.entity';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageOrderDto } from './dto/update-image-order.dto';
-import { join } from 'path';
-import { existsSync, unlinkSync } from 'fs';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 // Type pour les fichiers uploadés (basé sur multer)
 interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
+  buffer: Buffer;
   mimetype: string;
+  originalname: string;
   size: number;
-  destination: string;
-  filename: string;
-  path: string;
 }
 
 @Injectable()
@@ -38,6 +37,7 @@ export class ProductsService {
     private variantRepository: Repository<Variant>,
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async findAll(query: ProductQueryDto) {
@@ -67,10 +67,7 @@ export class ProductsService {
 
     // Filtre par prix
     if (minPrice !== undefined || maxPrice !== undefined) {
-      where.price = Between(
-        minPrice ?? 0,
-        maxPrice ?? Number.MAX_SAFE_INTEGER,
-      );
+      where.price = Between(minPrice ?? 0, maxPrice ?? Number.MAX_SAFE_INTEGER);
     }
 
     // Recherche par nom ou description
@@ -124,10 +121,7 @@ export class ProductsService {
     };
 
     if (minPrice !== undefined || maxPrice !== undefined) {
-      where.price = Between(
-        minPrice ?? 0,
-        maxPrice ?? Number.MAX_SAFE_INTEGER,
-      );
+      where.price = Between(minPrice ?? 0, maxPrice ?? Number.MAX_SAFE_INTEGER);
     }
 
     if (search) {
@@ -198,7 +192,7 @@ export class ProductsService {
   async findVariantsByProduct(productId: string): Promise<Variant[]> {
     // Vérifier que le produit existe
     await this.findOne(productId);
-    
+
     return this.variantRepository.find({
       where: { productId },
       order: { color: 'ASC', size: 'ASC' },
@@ -207,8 +201,8 @@ export class ProductsService {
 
   async findVariantById(id: string): Promise<Variant> {
     const variant = await this.variantRepository.findOne({
-        where : { id },
-        relations: ['product'],
+      where: { id },
+      relations: ['product'],
     });
 
     if (!variant) {
@@ -244,47 +238,50 @@ export class ProductsService {
   }
 
   async updateVariant(
-  id: string,
-  updateVariantDto: UpdateVariantDto,
-): Promise<Variant> {
-  const variant = await this.findVariantById(id);
+    id: string,
+    updateVariantDto: UpdateVariantDto,
+  ): Promise<Variant> {
+    const variant = await this.findVariantById(id);
 
-  // Si SKU est fourni, vérifier qu'il n'existe pas déjà (sauf pour cette variante)
-  if (updateVariantDto.sku) {
-    const existingVariant = await this.variantRepository.findOne({
-      where: { sku: updateVariantDto.sku },
-    });
+    // Si SKU est fourni, vérifier qu'il n'existe pas déjà (sauf pour cette variante)
+    if (updateVariantDto.sku) {
+      const existingVariant = await this.variantRepository.findOne({
+        where: { sku: updateVariantDto.sku },
+      });
 
-    if (existingVariant && existingVariant.id !== id) {
-      throw new BadRequestException(
-        `Variant with SKU ${updateVariantDto.sku} already exists`,
-      );
+      if (existingVariant && existingVariant.id !== id) {
+        throw new BadRequestException(
+          `Variant with SKU ${updateVariantDto.sku} already exists`,
+        );
+      }
     }
-  }
     Object.assign(variant, updateVariantDto);
     return this.variantRepository.save(variant);
-}
+  }
 
-async checkStock(variantId: string, quantity: number): Promise<{
-  available: boolean;
-  variantId: string;
-  currentStock: number;
-  requestedQuantity: number;
-}> {
-  const variant = await this.findVariantById(variantId);
-  return {
-    available: variant.stock >= quantity,
-    variantId: variant.id,
-    currentStock: variant.stock,
-    requestedQuantity: quantity,
-  };
-}
+  async checkStock(
+    variantId: string,
+    quantity: number,
+  ): Promise<{
+    available: boolean;
+    variantId: string;
+    currentStock: number;
+    requestedQuantity: number;
+  }> {
+    const variant = await this.findVariantById(variantId);
+    return {
+      available: variant.stock >= quantity,
+      variantId: variant.id,
+      currentStock: variant.stock,
+      requestedQuantity: quantity,
+    };
+  }
 
-async updateStock(variantId: string, quantity: number): Promise<Variant> {
+  async updateStock(variantId: string, quantity: number): Promise<Variant> {
     const variant = await this.findVariantById(variantId);
 
     if (variant.stock + quantity < 0) {
-        throw new BadRequestException('Stock insuffisant');
+      throw new BadRequestException('Stock insuffisant');
     }
 
     variant.stock += quantity;
@@ -309,8 +306,17 @@ async updateStock(variantId: string, quantity: number): Promise<Variant> {
     // Vérifier que le produit existe
     await this.findOne(productId);
 
-    // Construire l'URL relative du fichier
-    const fileUrl = `/uploads/${file.filename}`;
+    // Uploader l'image sur Cloudinary
+    const uploadResult = await this.cloudinaryService.uploadImage(
+      {
+        buffer: file.buffer,
+        mimetype: file.mimetype,
+        originalname: file.originalname,
+      },
+      {
+        folder: 'products',
+      },
+    );
 
     // Récupérer le dernier ordre pour ce produit
     const lastImage = await this.imageRepository.findOne({
@@ -322,12 +328,85 @@ async updateStock(variantId: string, quantity: number): Promise<Variant> {
 
     const image = this.imageRepository.create({
       productId,
-      url: fileUrl,
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
       alt: createImageDto.alt || null,
       order,
     });
 
     return this.imageRepository.save(image);
+  }
+
+  async createImagesBulk(
+    productId: string,
+    files: MulterFile[],
+    createImageDtos: CreateImageDto[],
+  ): Promise<Image[]> {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('At least one image file is required');
+    }
+
+    if (files.length > 7) {
+      throw new BadRequestException('You can upload up to 7 images at once');
+    }
+
+    // Vérifier que le produit existe
+    await this.findOne(productId);
+
+    // Récupérer le dernier ordre pour ce produit
+    const lastImage = await this.imageRepository.findOne({
+      where: { productId },
+      order: { order: 'DESC' },
+    });
+
+    let nextOrder = lastImage ? lastImage.order + 1 : 0;
+
+    const createdImages: Image[] = [];
+
+    for (let i = 0; i < files.length; i += 1) {
+      const file = files[i];
+      const dto = createImageDtos[i] ?? {};
+
+      // Vérification taille max 10MB par image
+      if (file.size > 10 * 1024 * 1024) {
+        throw new BadRequestException(
+          `File ${file.originalname} exceeds the 10MB size limit`,
+        );
+      }
+
+      const uploadResult = await this.cloudinaryService.uploadImage(
+        {
+          buffer: file.buffer,
+          mimetype: file.mimetype,
+          originalname: file.originalname,
+        },
+        {
+          folder: 'products',
+        },
+      );
+
+      const order =
+        dto.order !== undefined && dto.order !== null
+          ? dto.order
+          : nextOrder;
+
+      if (dto.order === undefined || dto.order === null) {
+        nextOrder += 1;
+      }
+
+      const image = this.imageRepository.create({
+        productId,
+        url: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        alt: dto.alt || null,
+        order,
+      });
+
+      const savedImage = await this.imageRepository.save(image);
+      createdImages.push(savedImage);
+    }
+
+    return createdImages;
   }
 
   async deleteImage(id: string): Promise<void> {
@@ -339,10 +418,9 @@ async updateStock(variantId: string, quantity: number): Promise<Variant> {
       throw new NotFoundException(`Image with ID ${id} not found`);
     }
 
-    // Supprimer le fichier physique
-    const filePath = join(process.cwd(), image.url);
-    if (existsSync(filePath)) {
-      unlinkSync(filePath);
+    // Supprimer l'image de Cloudinary si un publicId est présent
+    if (image.publicId) {
+      await this.cloudinaryService.deleteImage(image.publicId);
     }
 
     // Supprimer l'entrée en base de données
@@ -364,5 +442,4 @@ async updateStock(variantId: string, quantity: number): Promise<Variant> {
     image.order = updateOrderDto.order;
     return this.imageRepository.save(image);
   }
-
 }

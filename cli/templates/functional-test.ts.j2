@@ -1,0 +1,109 @@
+#!/usr/bin/env ts-node
+
+/**
+ * Script de test fonctionnel pour {{ test_name }}
+ * 
+ * Usage:
+ *   ts-node scripts/{{ test_file }} [options]
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+import FormData from 'form-data';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3001';
+
+// Couleurs pour la console
+const colors = {
+  reset: '\x1b[0m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+};
+
+function log(message: string, color: keyof typeof colors = 'reset') {
+  console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
+function logSuccess(message: string) {
+  log(`✅ ${message}`, 'green');
+}
+
+function logError(message: string) {
+  log(`❌ ${message}`, 'red');
+}
+
+function logInfo(message: string) {
+  log(`ℹ️  ${message}`, 'cyan');
+}
+
+function logWarning(message: string) {
+  log(`⚠️  ${message}`, 'yellow');
+}
+
+interface TestResult {
+  name: string;
+  passed: boolean;
+  error?: string;
+  duration: number;
+}
+
+const results: TestResult[] = [];
+
+async function runTest(name: string, testFn: () => Promise<void>): Promise<void> {
+  const start = Date.now();
+  try {
+    await testFn();
+    const duration = Date.now() - start;
+    results.push({ name, passed: true, duration });
+    logSuccess(`${name} (${duration}ms)`);
+  } catch (error: any) {
+    const duration = Date.now() - start;
+    results.push({ name, passed: false, error: error.message, duration });
+    logError(`${name}: ${error.message}`);
+  }
+}
+
+{{ test_cases }}
+
+async function main() {
+  logInfo(`🧪 Démarrage des tests pour {{ test_name }}`);
+  logInfo(`📍 API: ${API_BASE_URL}`);
+  console.log('');
+
+  {{ run_tests }}
+
+  // Résumé
+  console.log('');
+  logInfo('📊 Résumé des tests:');
+  const passed = results.filter(r => r.passed).length;
+  const failed = results.filter(r => !r.passed).length;
+  const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
+
+  logSuccess(`✅ ${passed} test(s) réussi(s)`);
+  if (failed > 0) {
+    logError(`❌ ${failed} test(s) échoué(s)`);
+  }
+  logInfo(`⏱️  Durée totale: ${totalDuration}ms`);
+
+  // Afficher les détails des échecs
+  const failures = results.filter(r => !r.passed);
+  if (failures.length > 0) {
+    console.log('');
+    logError('Détails des échecs:');
+    failures.forEach(f => {
+      logError(`  - ${f.name}: ${f.error}`);
+    });
+  }
+
+  process.exit(failed > 0 ? 1 : 0);
+}
+
+main().catch((error) => {
+  logError(`Erreur fatale: ${error.message}`);
+  process.exit(1);
+});
+

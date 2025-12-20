@@ -1,0 +1,86 @@
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { {{ service_function }} } from '../services/{{ service_name }}';
+import type { {{ entity_type }}, {{ query_type }}, {{ response_type }} } from '../types/index';
+
+/**
+ * Hook pour gérer les {{ entity_name_lower }}s
+ * 
+ * @param query - Paramètres de requête (optionnel)
+ * @returns Données, état de chargement, erreur et fonction de refetch
+ */
+interface Use{{ entity_name }}Return {
+    {{ entity_name_lower }}s: {{ entity_type }}[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+}
+
+export const use{{ entity_name }} = (query?: {{ query_type }}): Use{{ entity_name }}Return => {
+    // États pour stocker les données
+    const [data, setData] = useState<{{ response_type }}>({
+        {{ entity_name_lower }}s: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+    });
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Mémoriser la query pour éviter les re-renders infinis
+    const queryString = useMemo(() => JSON.stringify(query || {}), [
+        query?.page,
+        query?.limit,
+    ]);
+    
+    // Garder une référence de la dernière query exécutée
+    const lastQueryRef = useRef<string>('');
+
+    // Fonction pour récupérer les {{ entity_name_lower }}s
+    const fetch{{ entity_name }}s = useCallback(async () => {
+        // Éviter les appels multiples avec la même query
+        if (lastQueryRef.current === queryString) {
+            return;
+        }
+        
+        lastQueryRef.current = queryString;
+        
+        try {
+            setLoading(true);
+            setError(null);
+            const parsedQuery = queryString ? JSON.parse(queryString) : undefined;
+            const response = await {{ service_function }}(parsedQuery);
+            setData(response);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erreur lors du chargement des {{ entity_name_lower }}s');
+        } finally {
+            setLoading(false);
+        }
+    }, [queryString]);
+
+    // Charger les {{ entity_name_lower }}s au montage et à chaque changement de query
+    useEffect(() => {
+        fetch{{ entity_name }}s();
+    }, [fetch{{ entity_name }}s]);
+
+    // Fonction pour charger manuellement les {{ entity_name_lower }}s
+    const refetch = useCallback(() => {
+        fetch{{ entity_name }}s();
+    }, [fetch{{ entity_name }}s]);
+
+    return {
+        {{ entity_name_lower }}s: data.{{ entity_name_lower }}s,
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
+        loading,
+        error,
+        refetch,
+    };
+};
+

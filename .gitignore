@@ -1,5 +1,15 @@
 .env
+.env.production
+.env.local
 
 # Cursor/Claude settings (contient des clés API)
 .claude/
 *.claude/
+
+# Certificats SSL/TLS (ne jamais commiter)
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+admin-central/nginx/ssl/*.pem
+admin-central/nginx/ssl/*.key
+admin-central/nginx/ssl/*.crt

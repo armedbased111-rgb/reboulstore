@@ -143,9 +143,9 @@ backend/
 
 ## 📊 État actuel
 
-### Version : 0.3.0 - Phase 3 terminée ✅
+### Version : 0.24.0 - Phase 17.11.4 terminée ✅
 
-**Statut** : ✅ Phase 3 terminée - Tous les modules backend (Catégories, Produits, Variantes, Images, Panier, Commandes) sont complétés et testés
+**Statut** : ✅ Backend complet et production-ready - Tous les modules essentiels complétés, infrastructure Docker production configurée, monitoring & logs en place
 
 #### ✅ Complété (Phase 1)
 - Structure de base définie
@@ -1122,4 +1122,47 @@ backend/
 - [ ] Gérer catégories articles
 - [ ] Gérer commentaires (si activés)
 - [ ] Tester interface
+
+---
+
+## 🐳 Phase 17.11 : Docker & Déploiement Production Ready ✅
+
+### 17.11.1 Docker Compose Production ✅
+- [x] `docker-compose.prod.yml` créé (Reboul + Admin)
+- [x] Services PostgreSQL avec volumes persistants
+- [x] Services Backend (NestJS production build)
+- [x] Services Frontend (Vite build + Nginx)
+- [x] Nginx reverse proxy configuré
+- [x] Réseaux Docker partagés (reboulstore-network)
+- [x] Dockerfile.prod pour tous les services
+- [x] Health check endpoints (`/health`)
+
+### 17.11.2 Configuration Nginx ✅
+- [x] `nginx.prod.conf` créé (compression, cache, security headers)
+- [x] Routage `reboulstore.com` → Frontend Reboul
+- [x] Routage `admin.reboulstore.com` → Admin Centrale
+- [x] Routage `/api` → Backend (reverse proxy)
+- [x] SSL/TLS préparé (Let's Encrypt)
+- [x] Support React Router (SPA)
+
+### 17.11.3 Scripts Déploiement ✅
+- [x] `deploy-reboul.sh` (build + démarrage)
+- [x] `backup-db.sh` (backup PostgreSQL avec rotation)
+- [x] `rollback.sh` (retour version précédente)
+- [x] `deploy-admin.sh` (déploiement Admin)
+- [x] Documentation `DEPLOY_PRODUCTION.md`
+
+### 17.11.4 Monitoring & Logs ✅
+- [x] Logger NestJS configuré (niveaux selon environnement)
+- [x] Configuration Winston préparée (optionnel)
+- [x] Health check endpoints améliorés (`/health` avec uptime, version, environment)
+- [x] Configuration Sentry préparée (optionnel)
+- [x] Script `monitor-uptime.sh` créé
+- [x] Documentation complète (`MONITORING.md`)
+
+### 17.11.5 Achat & Configuration Serveur OVH 🔄
+- [ ] Acheter serveur OVH
+- [ ] Configuration initiale (Docker, firewall, utilisateur)
+- [ ] Configuration DNS
+- [ ] Préparation déploiement
 

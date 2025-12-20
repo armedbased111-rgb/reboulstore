@@ -24,11 +24,15 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{ user: User; access_token: string }> {
+  async register(
+    registerDto: RegisterDto,
+  ): Promise<{ user: User; access_token: string }> {
     const { email, password, firstName, lastName, phone } = registerDto;
 
     // Vérifier si l'email existe déjà
-    const existingUser = await this.userRepository.findOne({ where: { email } });
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -65,13 +69,26 @@ export class AuthService {
     return { user, access_token };
   }
 
-  async login(loginDto: LoginDto): Promise<{ user: User; access_token: string }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ user: User; access_token: string }> {
     const { email, password } = loginDto;
 
     // Trouver le user par email (avec password car select: false dans entity)
-    const user = await this.userRepository.findOne({ 
+    const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'firstName', 'lastName', 'phone', 'role', 'isVerified', 'createdAt', 'updatedAt']
+      select: [
+        'id',
+        'email',
+        'password',
+        'firstName',
+        'lastName',
+        'phone',
+        'role',
+        'isVerified',
+        'createdAt',
+        'updatedAt',
+      ],
     });
     if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');

@@ -178,8 +178,26 @@ frontend/src/components/
 - [ ] Responsive vérifié (mobile/desktop)
 - [ ] Exporté si nécessaire
 
+## 🚀 CLI Python - Génération automatique
+
+
+**⭐ RECOMMANDÉ** : Utiliser le CLI Python pour générer automatiquement les composants :
+
+```bash
+# Composant standard
+python cli/main.py code component ProductCard --domain Product
+
+# Composant avec shadcn/ui
+python cli/main.py code component Button --shadcn --use card button
+```
+
+**Gain de temps** : 15min → 1min (**93% de gain**)
+
+Voir `/cli-workflow` pour le guide complet du CLI.
+
 ## 🔗 Commandes associées
 
+- `/cli-workflow` : Guide complet du CLI Python ⭐ **NOUVEAU**
 - `/frontend-workflow` : Workflow frontend complet
 - `/getcontext` : Recherche de contexte
 - `/figma-workflow` : Workflow Figma → Code

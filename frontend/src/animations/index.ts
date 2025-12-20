@@ -21,4 +21,4 @@ export { animateFadeScale, type FadeScaleOptions } from './presets/fade-scale';
 // Utilitaires
 // export { useGSAP } from './utils/gsap-helpers';
 export { useScrollAnimation } from './utils/useScrollAnimation';
-
+export { animateTestSlide, type TestSlideOptions } from './presets/test-slide';

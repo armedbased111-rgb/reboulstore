@@ -1,0 +1,71 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+{% for relation in relations %}
+  {{ relation.type }},
+{% endfor %}
+  JoinColumn,
+} from 'typeorm';
+{% for import in imports %}
+import { {{ import }} } from '{{ import_paths[import] }}';
+{% endfor %}
+
+/**
+ * Entité {{ entity_name }}
+ * {{ description|default('') }}
+ */
+@Entity('{{ table_name }}')
+export class {{ entity_name }} {
+  /**
+   * Identifiant unique (UUID)
+   */
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+{% for field in fields %}
+  /**
+   * {{ field.description|default(field.name) }}
+   {% if field.unique %}* @unique{% endif %}
+   {% if field.nullable %}* @nullable{% endif %}
+   */
+  {% if field.type == 'string' %}
+  @Column({ type: 'varchar', length: {{ field.length|default(255) }}{% if field.unique %}, unique: true{% endif %}{% if field.nullable %}, nullable: true{% endif %} })
+  {% elif field.type == 'text' %}
+  @Column({ type: 'text'{% if field.nullable %}, nullable: true{% endif %} })
+  {% elif field.type == 'number' %}
+  @Column({ type: 'decimal', precision: 10, scale: 2{% if field.nullable %}, nullable: true{% endif %} })
+  {% elif field.type == 'jsonb' %}
+  @Column({ type: 'jsonb'{% if field.nullable %}, nullable: true{% endif %} })
+  {% elif field.type == 'uuid' %}
+  @Column({ type: 'uuid'{% if field.nullable %}, nullable: true{% endif %} })
+  {% endif %}
+  {{ field.name }}: {{ field.ts_type }};
+
+{% endfor %}
+{% for relation in relations %}
+  {% if relation.type == 'ManyToOne' %}
+  @ManyToOne(() => {{ relation.target }}, ({{ relation.target_lower }}) => {{ relation.target_lower }}.{{ relation.inverse }})
+  @JoinColumn({ name: '{{ relation.foreign_key }}' })
+  {{ relation.name }}: {{ relation.target }}{% if relation.nullable %} | null{% endif %};
+
+  {% elif relation.type == 'OneToMany' %}
+  @OneToMany(() => {{ relation.target }}, ({{ relation.target_lower }}) => {{ relation.target_lower }}.{{ relation.inverse }})
+  {{ relation.name }}: {{ relation.target }}[];
+
+  {% elif relation.type == 'OneToOne' %}
+  @OneToOne(() => {{ relation.target }}, ({{ relation.target_lower }}) => {{ relation.target_lower }}.{{ relation.inverse }})
+  @JoinColumn({ name: '{{ relation.foreign_key }}' })
+  {{ relation.name }}: {{ relation.target }}{% if relation.nullable %} | null{% endif %};
+
+  {% endif %}
+{% endfor %}
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+

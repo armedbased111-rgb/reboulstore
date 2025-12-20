@@ -1,0 +1,67 @@
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+/**
+ * Variants pour le composant {{ component_name }}
+ */
+const {{ component_name_lower }}Variants = cva(
+  "{{ base_classes }}",
+  {
+    variants: {
+      variant: {
+        default: "{{ default_variant_classes }}",
+        secondary: "{{ secondary_variant_classes }}",
+        outline: "{{ outline_variant_classes }}",
+        ghost: "{{ ghost_variant_classes }}",
+      },
+      size: {
+        default: "{{ default_size_classes }}",
+        sm: "{{ sm_size_classes }}",
+        lg: "{{ lg_size_classes }}",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface {{ component_name }}Props
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof {{ component_name_lower }}Variants> {
+  /** Contenu du composant */
+  children?: React.ReactNode;
+}
+
+/**
+ * Composant {{ component_name }}
+ * 
+ * {{ description }}
+ * 
+ * @example
+ * ```tsx
+ * <{{ component_name }} variant="default" size="lg">
+ *   Contenu
+ * </{{ component_name }}>
+ * ```
+ */
+const {{ component_name }} = React.forwardRef<HTMLDivElement, {{ component_name }}Props>(
+  ({ className, variant, size, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn({{ component_name_lower }}Variants({ variant, size, className }))}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+)
+{{ component_name }}.displayName = "{{ component_name }}"
+
+export { {{ component_name }}, {{ component_name_lower }}Variants }
+

@@ -12,22 +12,19 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from './multer.config';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageOrderDto } from './dto/update-image-order.dto';
 
 // Type pour les fichiers uploadés (basé sur multer)
 interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
+  buffer: Buffer;
   mimetype: string;
+  originalname: string;
   size: number;
-  destination: string;
-  filename: string;
-  path: string;
 }
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -57,14 +54,66 @@ export class ProductsController {
     if (!file) {
       throw new BadRequestException('File is required');
     }
-    
+
     // Convertir order en nombre si présent (form-data envoie tout en string)
     const createImageDto: CreateImageDto = {
       alt: body.alt,
       order: body.order ? Number(body.order) : undefined,
     };
-    
+
     return this.productsService.createImage(productId, file, createImageDto);
+  }
+
+  @Post(':id/images/bulk')
+  @UseInterceptors(FilesInterceptor('files', 7, multerConfig))
+  @HttpCode(HttpStatus.CREATED)
+  createImagesBulk(
+    @Param('id') productId: string,
+    @UploadedFiles() files: MulterFile[] | undefined,
+    @Body() body: any,
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('At least one image file is required');
+    }
+
+    if (files.length > 7) {
+      throw new BadRequestException('You can upload up to 7 images at once');
+    }
+
+    // alts peut être une string ou un tableau de strings
+    const altsRaw = body.alts ?? body['alts[]'];
+    const ordersRaw = body.orders ?? body['orders[]'];
+
+    const altsArray: (string | undefined)[] = Array.isArray(altsRaw)
+      ? altsRaw
+      : altsRaw
+      ? [altsRaw]
+      : [];
+
+    const ordersArray: (number | undefined)[] = Array.isArray(ordersRaw)
+      ? ordersRaw.map((value: string) =>
+          value !== undefined && value !== null && value !== ''
+            ? Number(value)
+            : undefined,
+        )
+      : ordersRaw
+      ? [
+          ordersRaw !== ''
+            ? Number(ordersRaw as string)
+            : undefined,
+        ]
+      : [];
+
+    const createImageDtos: CreateImageDto[] = files.map((_, index) => ({
+      alt: altsArray[index],
+      order: ordersArray[index],
+    }));
+
+    return this.productsService.createImagesBulk(
+      productId,
+      files,
+      createImageDtos,
+    );
   }
 
   @Delete(':productId/images/:imageId')
@@ -95,11 +144,11 @@ export class ProductsController {
   findAll(@Query() query: ProductQueryDto) {
     return this.productsService.findAll(query);
   }
-// Variants Endpoints
+  // Variants Endpoints
   @Get(':id/variants')
-    findVariantsByProduct(@Param('id') id: string) {
-        return this.productsService.findVariantsByProduct(id);
-    }
+  findVariantsByProduct(@Param('id') id: string) {
+    return this.productsService.findVariantsByProduct(id);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -160,9 +209,7 @@ export class ProductsController {
   ) {
     const quantityNum = +quantity;
     if (!quantity || isNaN(quantityNum) || quantityNum <= 0) {
-      throw new BadRequestException(
-        'Quantity must be a positive number',
-      );
+      throw new BadRequestException('Quantity must be a positive number');
     }
     return this.productsService.checkStock(variantId, quantityNum);
   }

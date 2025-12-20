@@ -15,6 +15,7 @@ import { BrandsModule } from './modules/brands/brands.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,6 +41,7 @@ import { CheckoutModule } from './modules/checkout/checkout.module';
     AuthModule,
     UsersModule,
     CheckoutModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
