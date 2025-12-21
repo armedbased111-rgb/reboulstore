@@ -1194,6 +1194,20 @@ def generate_components(output):
     else:
         console.print("[red]❌ Erreur lors de la génération de la documentation[/red]")
 
+# Importer les commandes serveur
+try:
+    from commands.server import server as server_group
+    from commands.deploy import deploy as deploy_group
+    from commands.health import health as health_group
+    from commands.logs import logs as logs_group
+    cli.add_command(server_group, 'server')
+    cli.add_command(deploy_group, 'deploy')
+    cli.add_command(health_group, 'health')
+    cli.add_command(logs_group, 'logs')
+except ImportError as e:
+    # Les commandes serveur sont optionnelles si les dépendances ne sont pas installées
+    pass
+
 if __name__ == '__main__':
     cli()
 
