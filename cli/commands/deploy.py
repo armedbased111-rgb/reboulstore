@@ -72,7 +72,7 @@ def check(service: str):
 @click.option('--service', type=click.Choice(['reboul', 'admin', 'all']), default='all', help='Service à déployer')
 @click.option('--build', is_flag=True, help='Rebuild les images Docker')
 @click.option('--pull', is_flag=True, help='Pull les dernières modifications git')
-def deploy(service: str, build: bool, pull: bool):
+def deploy_cmd(service: str, build: bool, pull: bool):
     """Déploie les services sur le serveur"""
     console.print(f"[bold]🚀 Déploiement de {service}...[/bold]\n")
     
