@@ -13,13 +13,16 @@ from utils.server_helper import ssh_exec, docker_compose_exec, SERVER_CONFIG
 
 console = Console()
 
-@click.group()
-def logs():
+@click.group('logs')
+def logs_group():
     """Commandes pour gérer les logs"""
     pass
 
+# Alias pour compatibilité
+logs = logs_group
 
-@logs.command('errors')
+
+@logs_group.command('errors')
 @click.option('--service', type=str, help='Service spécifique')
 @click.option('--last', type=str, default='24h', help='Période (ex: 24h, 1h, 30m)')
 @click.option('--admin', is_flag=True, help='Logs Admin Central')
@@ -43,7 +46,7 @@ def errors(service: str, last: str, admin: bool):
         console.print("[green]✅ Aucune erreur trouvée[/green]")
 
 
-@logs.command('search')
+@logs_group.command('search')
 @click.argument('pattern', required=True)
 @click.option('--service', type=str, help='Service spécifique')
 @click.option('--last', type=str, default='1h', help='Période (ex: 24h, 1h, 30m)')

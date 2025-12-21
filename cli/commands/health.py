@@ -13,10 +13,13 @@ from utils.server_helper import ssh_exec, docker_compose_exec, check_url, get_co
 
 console = Console()
 
-@click.group()
-def health():
+@click.group('health')
+def health_group():
     """Commandes pour vérifier la santé des services"""
     pass
+
+# Alias pour compatibilité
+health = health_group
 
 
 @health.command('check')
@@ -87,7 +90,7 @@ def check(service: str):
         console.print(f"[red]❌ {total - passed} service(s) en panne[/red]")
 
 
-@health.command('containers')
+@health_group.command('containers')
 def containers():
     """Vérifie l'état des containers Docker"""
     console.print("[bold]🐳 État des containers...[/bold]\n")

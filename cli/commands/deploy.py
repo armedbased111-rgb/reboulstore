@@ -13,13 +13,16 @@ from utils.server_helper import ssh_exec, docker_compose_exec, check_url, SERVER
 
 console = Console()
 
-@click.group()
-def deploy():
+@click.group('deploy')
+def deploy_group():
     """Commandes pour déployer sur le serveur"""
     pass
 
+# Alias pour compatibilité
+deploy = deploy_group
 
-@deploy.command('check')
+
+@deploy_group.command('check')
 @click.option('--service', type=click.Choice(['reboul', 'admin', 'all']), default='all', help='Service à vérifier')
 def check(service: str):
     """Vérifie que le déploiement fonctionne (healthchecks, APIs)"""
@@ -65,7 +68,7 @@ def check(service: str):
         console.print(f"\n[red]❌ {total - passed} test(s) échoué(s) ({passed}/{total})[/red]")
 
 
-@deploy.command('deploy')
+@deploy_group.command('deploy')
 @click.option('--service', type=click.Choice(['reboul', 'admin', 'all']), default='all', help='Service à déployer')
 @click.option('--build', is_flag=True, help='Rebuild les images Docker')
 @click.option('--pull', is_flag=True, help='Pull les dernières modifications git')
@@ -112,7 +115,7 @@ def deploy(service: str, build: bool, pull: bool):
         console.print(f"[yellow]{stderr}[/yellow]")
 
 
-@deploy.command('update')
+@deploy_group.command('update')
 @click.option('--pull', is_flag=True, help='Pull git avant déploiement')
 @click.option('--rebuild', is_flag=True, help='Rebuild les images')
 def update(pull: bool, rebuild: bool):

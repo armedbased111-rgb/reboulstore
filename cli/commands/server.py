@@ -19,10 +19,13 @@ from utils.server_helper import (
 
 console = Console()
 
-@click.group()
-def server():
+@click.group('server')
+def server_group():
     """Commandes pour gérer le serveur VPS"""
     pass
+
+# Alias pour compatibilité
+server = server_group
 
 
 @server.command('status')
@@ -74,7 +77,7 @@ def status(service: Optional[str], admin: bool):
     console.print(table)
 
 
-@server.command('logs')
+@server_group.command('logs')
 @click.argument('service', required=False)
 @click.option('--tail', type=int, default=100, help='Nombre de lignes à afficher')
 @click.option('--follow', '-f', is_flag=True, help='Suivre les logs en temps réel')
@@ -126,7 +129,7 @@ def restart(service: Optional[str], admin: bool):
         console.print(f"[red]Erreur: {stderr}[/red]")
 
 
-@server.command('ps')
+@server_group.command('ps')
 @click.option('--admin', is_flag=True, help='Containers Admin Central')
 def ps(admin: bool):
     """Liste les containers avec détails (ports, status, uptime)"""
@@ -172,7 +175,7 @@ def resources():
     console.print(f"Disk: [cyan]{disk.strip()}[/cyan]")
 
 
-@server.command('cleanup')
+@server_group.command('cleanup')
 @click.option('--volumes', is_flag=True, help='Supprimer volumes non utilisés')
 @click.option('--images', is_flag=True, help='Supprimer images non utilisées')
 @click.option('--all', is_flag=True, help='Tout nettoyer (volumes + images + containers arrêtés)')
@@ -215,7 +218,7 @@ def cleanup(volumes: bool, images: bool, all: bool, yes: bool):
             console.print(f"[yellow]{stderr}[/yellow]")
 
 
-@server.command('env')
+@server_group.command('env')
 @click.option('--check', is_flag=True, help='Vérifier les variables d\'environnement')
 @click.option('--backup', is_flag=True, help='Backup des fichiers .env')
 def env(check: bool, backup: bool):
