@@ -22,17 +22,18 @@ import EditBrandPage from './pages/admin/reboul/brands/EditBrandPage';
 import SettingsPage from './pages/admin/reboul/settings/SettingsPage';
 
 /**
- * Composant App principal
- * 
- * Configure :
- * - Le routing avec React Router
- * - Le provider d'authentification (AuthAdminProvider)
- * - Les routes protégées (ProtectedRoute)
+ * Router interne avec tracking GA4
  */
-function App() {
+function AppRouter() {
+  const location = useLocation();
+
+  // Track les changements de page (pour SPA)
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location]);
+
   return (
-    <AuthAdminProvider>
-      <Routes>
+    <Routes>
         {/* Route publique : Sélection de magasin */}
         <Route path="/" element={<Home />} />
         
