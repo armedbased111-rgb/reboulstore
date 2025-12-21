@@ -2104,8 +2104,8 @@
 
 ### 23.4 Sécurité Prod ✅
 - [x] Firewall (Cloudflare, AWS WAF) ✅ (Documentation créée - Configuration manuelle selon CDN choisi)
-- [x] Rate limiting strict ✅ (Configuration préparée dans nginx - zones à activer selon besoin)
-- [x] HTTPS obligatoire ✅ (Documentation Let's Encrypt créée - Configuration manuelle requise)
+- [x] Rate limiting strict ✅ **ACTIVÉ** (Zones configurées dans nginx.prod.conf : 10 req/s API, 5 req/s Auth)
+- [x] HTTPS obligatoire ✅ (Script setup-https.sh créé - Installation Let's Encrypt automatisée)
 - [x] Headers sécurité (Helmet.js) ✅ (Headers configurés dans nginx - Helmet.js optionnel documenté)
 - [x] Audit dépendances (npm audit, Snyk) ✅ (Script security-audit.sh créé - Documentation complète)
 

@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.28.0  
-**Phase actuelle** : Phase 17.11.5 TERMINÉE (Achat & Configuration Serveur OVH) ✅ - Toutes les préparations complétées, prêt pour Phase 23 (Déploiement Effectif)
+**Version** : 0.29.0  
+**Phase actuelle** : Phase 23 TERMINÉE ✅ (Déploiement & Production) - Applications déployées et opérationnelles sur serveur OVH
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
