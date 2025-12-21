@@ -291,10 +291,21 @@ Documentation/
   - ✅ Configuration Nginx (reverse proxy, SSL préparé, compression, cache)
   - ✅ Scripts Déploiement (deploy, backup, rollback)
   - ✅ Monitoring & Logs (Logger NestJS, health checks, Winston/Sentry préparés)
-- 🔄 **Phase 17.11.5** : Achat & Configuration Serveur OVH (VPS-3 : 8 vCores / 24 GB RAM / 200 GB SSD)
+- ✅ **Phase 17.11.5** : Achat & Configuration Serveur OVH (VPS-3 : 8 vCores / 24 GB RAM / 200 GB SSD) - TERMINÉE ✅
   - ✅ Documentation complète créée (`docs/OVH_SERVER_SETUP.md`)
   - ✅ Configuration choisie : VPS-3 (supporte architecture complète, pas de migration nécessaire)
   - ✅ Serveur OVH acheté et activé
+  
+- ✅ **Phase 23** : Déploiement & Production - TERMINÉE ✅
+  - ✅ Applications déployées et opérationnelles sur serveur OVH
+  - ✅ Reboul Store accessible sur www.reboulstore.com
+  - ✅ Admin Central accessible sur admin.reboulstore.com
+  - ✅ Backend APIs fonctionnelles (migrations TypeORM exécutées)
+  - ✅ Rate limiting activé (10 req/s API, 5 req/s Auth)
+  - ✅ Backups automatiques configurés (cron quotidien)
+  - ✅ Logs centralisés (Docker json-file)
+  - ✅ Scripts d'installation créés (HTTPS, CDN, Monitoring)
+  - ✅ Documentation complète (`docs/PRODUCTION_SECURITY.md`, `docs/PHASE_23_COMPLETION.md`)
   - ✅ Configuration initiale complétée :
     - [x] Système mis à jour (Ubuntu 22.04.5 LTS)
     - [x] Docker installé (v29.1.3, Docker Compose v5.0.0)
@@ -479,10 +490,10 @@ Documentation/
 ---
 
 **🎯 Focus actuel** : 
-1. **IMMÉDIAT** : Phase 17.11.5 (Achat & Configuration Serveur OVH) - Préparer infrastructure production
-2. **Prochaine étape** : Phase 17.12 (Tests E2E Critiques) - Valider parcours utilisateur avant février
+1. ✅ **TERMINÉE** : Phase 23 (Déploiement & Production) - Applications en production sur serveur OVH
+2. **Prochaine étape** : Phase 24 (Préparation Collection Réelle) - Intégration données réelles du magasin
 3. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
-4. **Post-Février** : Phase 24 (Préparation Collection Réelle) - Intégration AS400, images, politiques finales
+4. **Améliorations en cours** : CLI pour gestion VPS (voir `docs/VPS_CLI_IMPROVEMENTS.md`)
 5. **Home & Design** : Améliorations progressives au fil du temps
 
 **✅ Réalisations récentes** :
