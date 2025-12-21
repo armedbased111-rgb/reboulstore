@@ -2078,8 +2078,8 @@
 - [x] Docker containers UP et healthy ✅
 - [x] Routes API fonctionnelles ✅ (migrations exécutées)
 - [x] Migrations TypeORM créées et exécutées ✅ (toutes les tables créées en production)
-- [ ] Database backups automatiques (daily)
-- [ ] Logs centralisés
+- [x] Database backups automatiques (daily) ✅ (cron job configuré - backup quotidien à 2h)
+- [x] Logs centralisés ✅ (Docker logging driver json-file avec rotation - 10MB max, 3 fichiers)
 
 ### 23.3 Frontend Prod (Reboul Store)
 - [x] Build optimisé (Vite build) ✅
