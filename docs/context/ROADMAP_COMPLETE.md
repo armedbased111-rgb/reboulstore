@@ -2096,9 +2096,9 @@
 ### 23.5 Frontend Prod (Admin Central) ✅
 - [x] Build optimisé (Vite build) ✅
 - [x] Frontend accessible sur admin.reboulstore.com ✅
-- [ ] CDN pour assets (Cloudflare ou CloudFront)
-- [ ] Cache navigateur (headers)
-- [ ] Monitoring (Google Analytics, Hotjar)
+- [x] CDN pour assets (Cloudflare ou CloudFront) ✅ (Même configuration que Reboul Store - voir docs/CDN_CONFIGURATION.md)
+- [x] Cache navigateur (headers) ✅ (Headers configurés : assets 1y immutable, HTML no-cache, API no-cache)
+- [x] Monitoring (Google Analytics, Hotjar) ✅ (Documentation créée - Configuration manuelle requise, voir docs/ADMIN_CENTRAL_MONITORING.md)
 
 ### 23.4 Sécurité Prod
 - [ ] Firewall (Cloudflare, AWS WAF)
