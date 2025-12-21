@@ -208,10 +208,16 @@ def realtime(test, detailed, json, watch):
     try:
         from google.analytics.data_v1beta import BetaAnalyticsDataClient
         from google.analytics.data_v1beta.types import RunRealtimeReportRequest, Dimension, Metric
-        from google.oauth2 import service_account
     except ImportError:
         console.print("[red]❌ Bibliothèque google-analytics-data non installée[/red]")
         console.print("[yellow]Installe avec: pip install google-analytics-data[/yellow]")
+        return
+    
+    try:
+        from google.oauth2 import service_account
+    except ImportError:
+        console.print("[red]❌ Bibliothèque google-auth non installée[/red]")
+        console.print("[yellow]Installe avec: pip install google-auth[/yellow]")
         return
     
     # Charger les credentials

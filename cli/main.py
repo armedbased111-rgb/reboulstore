@@ -1204,6 +1204,10 @@ try:
     cli.add_command(deploy_group, 'deploy')
     cli.add_command(health_group, 'health')
     cli.add_command(logs_group, 'logs')
+    
+    # Analytics commands
+    from commands.analytics import analytics
+    cli.add_command(analytics, 'analytics')
 except ImportError as e:
     # Les commandes serveur sont optionnelles si les dépendances ne sont pas installées
     pass

@@ -16,3 +16,7 @@ admin-central/nginx/ssl/*.crt
 .secrets.production.local
 docs/STRIPE_LIVE_KEY.md
 docs/ADD_STRIPE_CLOUDINARY_KEYS.md
+
+# GA4 API Credentials
+cli/credentials/*.json
+cli/.env.ga4
