@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.29.0  
-**Phase actuelle** : Phase 23 TERMINÉE ✅ (Déploiement & Production) - Applications déployées et opérationnelles sur serveur OVH
+**Version** : 0.30.0  
+**Phase actuelle** : Phase 23 TERMINÉE ✅ (Déploiement & Production) - Applications déployées, HTTPS activé, Cloudflare configuré, GA4 opérationnel
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
@@ -197,7 +197,7 @@ Documentation/
 
 ---
 
-## ✅ État actuel (Version 0.23.0)
+## ✅ État actuel (Version 0.30.0)
 
 ### Backend complété ✅
 - ✅ **Infrastructure** : Docker + PostgreSQL + NestJS configurés
@@ -304,8 +304,12 @@ Documentation/
   - ✅ Rate limiting activé (10 req/s API, 5 req/s Auth)
   - ✅ Backups automatiques configurés (cron quotidien)
   - ✅ Logs centralisés (Docker json-file)
-  - ✅ Scripts d'installation créés (HTTPS, CDN, Monitoring)
-  - ✅ Documentation complète (`docs/PRODUCTION_SECURITY.md`, `docs/PHASE_23_COMPLETION.md`)
+  - ✅ **Configurations optionnelles activées** :
+    - ✅ HTTPS (Let's Encrypt) : Certificats SSL actifs pour www et admin, redirection HTTP → HTTPS
+    - ✅ Cloudflare CDN : Configuré (SSL/TLS "Full (strict)", Speed optimizations, Cache rules, WAF) - Propagation DNS en cours
+    - ✅ GA4 Monitoring : Tracking actif (Measurement ID: G-S8LMN95862), CLI realtime opérationnel
+  - ✅ Scripts d'installation créés (HTTPS, CDN, Monitoring, propagation DNS)
+  - ✅ Documentation complète (`docs/PRODUCTION_SECURITY.md`, `docs/HTTPS_SETUP_COMPLETE.md`, `docs/CLOUDFLARE_SETUP_COMPLETE.md`, `docs/GA4_SETUP_GUIDE.md`, `docs/GA4_API_SETUP.md`)
   - ✅ Configuration initiale complétée :
     - [x] Système mis à jour (Ubuntu 22.04.5 LTS)
     - [x] Docker installé (v29.1.3, Docker Compose v5.0.0)
@@ -489,12 +493,15 @@ Documentation/
 
 ---
 
-**🎯 Focus actuel** : 
-1. ✅ **TERMINÉE** : Phase 23 (Déploiement & Production) - Applications en production sur serveur OVH
-2. **Prochaine étape** : Phase 24 (Préparation Collection Réelle) - Intégration données réelles du magasin
-3. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
-4. **Améliorations en cours** : CLI pour gestion VPS (voir `docs/VPS_CLI_IMPROVEMENTS.md`)
-5. **Home & Design** : Améliorations progressives au fil du temps
+**🎯 Focus actuel** :
+1. ✅ **TERMINÉE** : Phase 23 (Déploiement & Production) - Applications en production, configurations optionnelles activées
+2. ✅ **Configurations Production** :
+   - ✅ HTTPS (Let's Encrypt) : Certificats SSL actifs pour www et admin
+   - ✅ Cloudflare CDN : Configuré (SSL/TLS, Speed, Caching, WAF) - Propagation DNS en cours
+   - ✅ GA4 Monitoring : Tracking actif + CLI realtime opérationnel (Measurement ID: G-S8LMN95862)
+3. **Prochaine étape** : Phase 24 (Préparation Collection Réelle) - Intégration données réelles du magasin
+4. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
+5. **Améliorations** : CLI pour gestion VPS, CLI GA4 realtime (voir `docs/VPS_CLI_IMPROVEMENTS.md`, `docs/GA4_API_SETUP.md`)
 
 **✅ Réalisations récentes** :
 - Phase 17.9 : Brainstorming & Plan d'Amélioration (audit complet documenté)

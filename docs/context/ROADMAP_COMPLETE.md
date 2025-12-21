@@ -2072,8 +2072,8 @@
   - [x] Containers Admin Central déployés ✅
   - [x] Configuration nginx pour admin.reboulstore.com ✅
   - [x] Frontend accessible sur admin.reboulstore.com ✅
-- [ ] Certificat SSL (Let's Encrypt) - Configuration préparée, activation manuelle optionnelle (voir docs/PRODUCTION_SECURITY.md)
-- [ ] Domain DNS (reboulstore.com) - Configuration partielle (www et admin pointent vers OVH, root reste sur Vercel)
+- [x] Certificat SSL (Let's Encrypt) ✅ **ACTIVÉ** (Certificats générés pour www et admin, HTTPS fonctionnel, renouvellement auto configuré)
+- [x] Domain DNS (reboulstore.com) ✅ **CONFIGURÉ** (www et admin pointent vers OVH, Cloudflare configuré - propagation DNS en cours)
 
 ### 23.2 Backend Prod (Reboul Store)
 - [x] Variables d'environnement sécurisées ✅
@@ -2086,7 +2086,7 @@
 ### 23.3 Frontend Prod (Reboul Store)
 - [x] Build optimisé (Vite build) ✅
 - [x] Frontend accessible et servi correctement ✅
-- [x] CDN pour assets (Cloudflare ou CloudFront) ✅ (Documentation créée - Configuration manuelle requise)
+- [x] CDN pour assets (Cloudflare) ✅ **CONFIGURÉ** (Cloudflare activé : SSL/TLS, Speed, Caching, WAF - propagation DNS en cours)
 - [x] Cache navigateur (headers) ✅ (Headers configurés : assets 1y immutable, HTML no-cache, API no-cache)
 
 ### 23.4 Backend Prod (Admin Central) ✅
@@ -2098,14 +2098,14 @@
 ### 23.5 Frontend Prod (Admin Central) ✅
 - [x] Build optimisé (Vite build) ✅
 - [x] Frontend accessible sur admin.reboulstore.com ✅
-- [x] CDN pour assets (Cloudflare ou CloudFront) ✅ (Même configuration que Reboul Store - voir docs/CDN_CONFIGURATION.md)
+- [x] CDN pour assets (Cloudflare) ✅ **CONFIGURÉ** (Même configuration que Reboul Store - Cloudflare activé)
 - [x] Cache navigateur (headers) ✅ (Headers configurés : assets 1y immutable, HTML no-cache, API no-cache)
-- [x] Monitoring (Google Analytics, Hotjar) ✅ (Documentation créée - Configuration manuelle requise, voir docs/ADMIN_CENTRAL_MONITORING.md)
+- [x] Monitoring (Google Analytics 4) ✅ **ACTIVÉ** (GA4 configuré : Measurement ID G-S8LMN95862, tracking actif, CLI realtime opérationnel)
 
 ### 23.4 Sécurité Prod ✅
-- [x] Firewall (Cloudflare, AWS WAF) ✅ (Documentation créée - Configuration manuelle selon CDN choisi)
+- [x] Firewall (Cloudflare WAF) ✅ **ACTIVÉ** (Cloudflare WAF configuré et activé - protection DDoS active)
 - [x] Rate limiting strict ✅ **ACTIVÉ** (Zones configurées dans nginx.prod.conf : 10 req/s API, 5 req/s Auth)
-- [x] HTTPS obligatoire ✅ (Script setup-https.sh créé - Installation Let's Encrypt automatisée)
+- [x] HTTPS obligatoire ✅ **ACTIVÉ** (Certificats Let's Encrypt générés et configurés, redirection HTTP → HTTPS active)
 - [x] Headers sécurité (Helmet.js) ✅ (Headers configurés dans nginx - Helmet.js optionnel documenté)
 - [x] Audit dépendances (npm audit, Snyk) ✅ (Script security-audit.sh créé - Documentation complète)
 
