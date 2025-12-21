@@ -2091,7 +2091,7 @@
 - [x] Déployer containers Admin Central ✅
 - [x] Variables d'environnement sécurisées ✅
 - [x] Backend Admin accessible sur admin.reboulstore.com/api ✅
-- [ ] Database backups automatiques (daily) - Utilise la même DB que Reboul Store
+- [x] Database backups automatiques (daily) ✅ (Utilise la même DB que Reboul Store - backups déjà configurés en Phase 23.2)
 
 ### 23.5 Frontend Prod (Admin Central) ✅
 - [x] Build optimisé (Vite build) ✅
