@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
+import { initAnalytics, trackPageView } from './utils/analytics'
 import { Home } from './pages/Home'
 import { Catalog } from './pages/Catalog'
 import { Product } from './pages/Product'
