@@ -37,23 +37,24 @@ curl -I https://www.reboulstore.com
 
 ---
 
-## 🔄 Configuration 3 : Cloudflare CDN
+## ✅ Configuration 3 : Cloudflare CDN
 
-**Statut** : ✅ **CONFIGURÉ - EN ATTENTE PROPAGATION DNS**
+**Statut** : ✅ **ACTIVÉ ET OPÉRATIONNEL**
 
-### Configuration terminée ✅
+### Configuration complète ✅
 
-**Nameservers changés** : ✅
+**Nameservers** : ✅ Propagés
 - `marty.ns.cloudflare.com`
 - `monroe.ns.cloudflare.com`
 
-**Configuration Cloudflare** : ✅ Complétée
+**Configuration Cloudflare** : ✅ Complétée et active
 - ✅ SSL/TLS configuré (Mode "Full (strict)")
 - ✅ Speed optimisations activées (Auto Minify, Brotli)
 - ✅ Cache rules configurées (assets, bypass API/admin)
 - ✅ WAF activé
+- ✅ CDN opérationnel (headers `cf-ray` présents, IPs Cloudflare)
 
-**Propagation DNS** : 🔄 En cours (peut prendre 5-30 minutes, jusqu'à 24h)
+**Propagation DNS** : ✅ **TERMINÉE** (24h après configuration)
 
 **Vérification** :
 ```bash
@@ -94,7 +95,7 @@ curl -I https://www.reboulstore.com | grep -i "cf-ray"
 - [x] Renouvellement automatique configuré
 - [x] Sites accessibles en HTTPS
 
-### Cloudflare ✅ (En attente propagation)
+### Cloudflare ✅ **ACTIVÉ**
 - [x] Compte Cloudflare créé
 - [x] Domaine ajouté
 - [x] DNS records configurés
@@ -103,7 +104,8 @@ curl -I https://www.reboulstore.com | grep -i "cf-ray"
 - [x] Speed optimisations activées (Auto Minify, Brotli)
 - [x] Cache rules configurées (assets, bypass API/admin)
 - [x] WAF activé
-- [ ] Propagation DNS terminée (en cours, 5-30 minutes)
+- [x] Propagation DNS terminée ✅ (24h après configuration)
+- [x] CDN opérationnel (headers Cloudflare présents)
 
 ---
 

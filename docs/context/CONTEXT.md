@@ -306,7 +306,7 @@ Documentation/
   - ✅ Logs centralisés (Docker json-file)
   - ✅ **Configurations optionnelles activées** :
     - ✅ HTTPS (Let's Encrypt) : Certificats SSL actifs pour www et admin, redirection HTTP → HTTPS
-    - ✅ Cloudflare CDN : Configuré (SSL/TLS "Full (strict)", Speed optimizations, Cache rules, WAF) - Propagation DNS en cours
+    - ✅ Cloudflare CDN : **ACTIVÉ** (CDN opérationnel, SSL/TLS "Full (strict)", Speed optimizations, Cache rules, WAF actif)
     - ✅ GA4 Monitoring : Tracking actif (Measurement ID: G-S8LMN95862), CLI realtime opérationnel
   - ✅ Scripts d'installation créés (HTTPS, CDN, Monitoring, propagation DNS)
   - ✅ Documentation complète (`docs/PRODUCTION_SECURITY.md`, `docs/HTTPS_SETUP_COMPLETE.md`, `docs/CLOUDFLARE_SETUP_COMPLETE.md`, `docs/GA4_SETUP_GUIDE.md`, `docs/GA4_API_SETUP.md`)
@@ -497,7 +497,7 @@ Documentation/
 1. ✅ **TERMINÉE** : Phase 23 (Déploiement & Production) - Applications en production, configurations optionnelles activées
 2. ✅ **Configurations Production** :
    - ✅ HTTPS (Let's Encrypt) : Certificats SSL actifs pour www et admin
-   - ✅ Cloudflare CDN : Configuré (SSL/TLS, Speed, Caching, WAF) - Propagation DNS en cours
+   - ✅ Cloudflare CDN : **ACTIVÉ** (CDN opérationnel, SSL/TLS, Speed, Caching, WAF actif)
    - ✅ GA4 Monitoring : Tracking actif + CLI realtime opérationnel (Measurement ID: G-S8LMN95862)
 3. **Prochaine étape** : Phase 24 (Préparation Collection Réelle) - Intégration données réelles du magasin
 4. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée

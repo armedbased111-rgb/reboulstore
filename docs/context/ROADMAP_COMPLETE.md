@@ -2073,7 +2073,7 @@
   - [x] Configuration nginx pour admin.reboulstore.com ✅
   - [x] Frontend accessible sur admin.reboulstore.com ✅
 - [x] Certificat SSL (Let's Encrypt) ✅ **ACTIVÉ** (Certificats générés pour www et admin, HTTPS fonctionnel, renouvellement auto configuré)
-- [x] Domain DNS (reboulstore.com) ✅ **CONFIGURÉ** (www et admin pointent vers OVH, Cloudflare configuré - propagation DNS en cours)
+- [x] Domain DNS (reboulstore.com) ✅ **ACTIVÉ** (Cloudflare actif : nameservers propagés, CDN opérationnel)
 
 ### 23.2 Backend Prod (Reboul Store)
 - [x] Variables d'environnement sécurisées ✅
@@ -2098,7 +2098,7 @@
 ### 23.5 Frontend Prod (Admin Central) ✅
 - [x] Build optimisé (Vite build) ✅
 - [x] Frontend accessible sur admin.reboulstore.com ✅
-- [x] CDN pour assets (Cloudflare) ✅ **CONFIGURÉ** (Même configuration que Reboul Store - Cloudflare activé)
+- [x] CDN pour assets (Cloudflare) ✅ **ACTIVÉ** (Même configuration que Reboul Store - Cloudflare opérationnel)
 - [x] Cache navigateur (headers) ✅ (Headers configurés : assets 1y immutable, HTML no-cache, API no-cache)
 - [x] Monitoring (Google Analytics 4) ✅ **ACTIVÉ** (GA4 configuré : Measurement ID G-S8LMN95862, tracking actif, CLI realtime opérationnel)
 
