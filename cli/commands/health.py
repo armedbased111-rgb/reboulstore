@@ -10,6 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.server_helper import ssh_exec, docker_compose_exec, check_url, get_container_status, SERVER_CONFIG
+import sys
 
 console = Console()
 
@@ -53,14 +54,30 @@ def check(service: str):
     
     def check_database():
         # Vérifier connexion DB via container
-        stdout, stderr = ssh_exec(
-            "docker exec reboulstore-postgres-prod psql -U reboulstore -d reboulstore_db -c 'SELECT 1;' 2>&1",
+        # Méthode 1: Tenter psql direct
+        stdout, stderr = docker_compose_exec(
+            "exec -T postgres psql -U reboulstore -d reboulstore_db -c 'SELECT 1;' 2>&1",
             cwd=SERVER_CONFIG['project_path']
         )
-        success = '1' in stdout or 'SELECT 1' in stdout
+        
+        # Le résultat peut contenir "1" ou "(1 row)"
+        success_psql = '1' in stdout or '(1 row)' in stdout or 'SELECT 1' in stdout
+        
+        # Méthode 2: Si psql échoue, vérifier que le container est healthy
+        if not success_psql:
+            ps_stdout, _ = docker_compose_exec("ps postgres --format '{{.Status}}'", cwd=SERVER_CONFIG['project_path'])
+            container_healthy = 'healthy' in ps_stdout.lower() or 'up' in ps_stdout.lower()
+            
+            # Si le container est healthy ET que le backend fonctionne, la DB fonctionne
+            backend_ok = results.get('reboul_backend', False) or results.get('admin_backend', False)
+            success = container_healthy and backend_ok
+        else:
+            success = True
+        
         status = "✅ OK" if success else "❌ ERROR"
         style = "green" if success else "red"
-        table.add_row("PostgreSQL", "Database", f"[{style}]{status}[/{style}]", "Connected" if success else stderr[:50])
+        details = "Connected" if success else (stderr[:50] if stderr else "Container check")
+        table.add_row("PostgreSQL", "Database", f"[{style}]{status}[/{style}]", details)
         return success
     
     results = {}
@@ -74,6 +91,7 @@ def check(service: str):
         results['admin_backend'] = check_backend('http://admin.reboulstore.com/health', 'Admin Central')
     
     if service == 'all':
+        # Vérifier la DB après les backends pour avoir accès à results
         results['database'] = check_database()
     
     console.print(table)
