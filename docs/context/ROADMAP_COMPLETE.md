@@ -2084,8 +2084,8 @@
 ### 23.3 Frontend Prod (Reboul Store)
 - [x] Build optimisé (Vite build) ✅
 - [x] Frontend accessible et servi correctement ✅
-- [ ] CDN pour assets (Cloudflare ou CloudFront)
-- [ ] Cache navigateur (headers)
+- [x] CDN pour assets (Cloudflare ou CloudFront) ✅ (Documentation créée - Configuration manuelle requise)
+- [x] Cache navigateur (headers) ✅ (Headers configurés : assets 1y immutable, HTML no-cache, API no-cache)
 
 ### 23.4 Backend Prod (Admin Central) ✅
 - [x] Déployer containers Admin Central ✅
