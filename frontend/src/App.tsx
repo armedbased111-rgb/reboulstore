@@ -174,5 +174,3 @@ function AppWithRouter() {
 }
 
 export default AppWithRouter
-
-export default App
