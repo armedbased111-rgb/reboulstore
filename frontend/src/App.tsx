@@ -160,8 +160,19 @@ function App() {
 
         <Route path="/loader-playground" element={<LoaderPlayground />} />
       </Routes>
+    </>
+  )
+}
+
+// Wrapper avec BrowserRouter pour avoir accès à useLocation
+function AppWithRouter() {
+  return (
+    <BrowserRouter>
+      <App />
     </BrowserRouter>
   )
 }
+
+export default AppWithRouter
 
 export default App

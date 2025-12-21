@@ -1,6 +1,8 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AuthAdminProvider } from './contexts/AuthAdminContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { trackPageView } from './utils/analytics';
 import Home from './pages/Home';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -166,6 +168,13 @@ function App() {
           element={<Navigate to="/admin/reboul/dashboard" replace />}
         />
       </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AuthAdminProvider>
+      <AppRouter />
     </AuthAdminProvider>
   );
 }
