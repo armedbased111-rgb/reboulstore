@@ -88,7 +88,7 @@ sleep 2
 
 # Générer les certificats
 info "Génération des certificats SSL..."
-certbot certonly --standalone \
+sudo certbot certonly --standalone \
     --preferred-challenges http \
     -d "$DOMAIN_ROOT" \
     -d "$DOMAIN_MAIN" \
