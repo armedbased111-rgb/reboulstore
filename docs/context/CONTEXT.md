@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.25.0  
-**Phase actuelle** : Phase 17.11.5 EN COURS (Achat & Configuration Serveur OVH) 🔄 - Configuration initiale complétée, en cours : Configuration DNS
+**Version** : 0.28.0  
+**Phase actuelle** : Phase 17.11.5 TERMINÉE (Achat & Configuration Serveur OVH) ✅ - Toutes les préparations complétées, prêt pour Phase 23 (Déploiement Effectif)
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
@@ -310,9 +310,15 @@ Documentation/
       - ✅ `www.reboulstore.com` → `152.228.218.35` (fonctionne)
       - ✅ `admin.reboulstore.com` → `152.228.218.35` (fonctionne)
       - ⚠️ `reboulstore.com` → bloqué par ALIAS Vercel (non supprimables, sera résolu lors du transfert)
-    - 🔄 Transfert domaine vers OVH prévu mois prochain (Phase 17.11.5.5) pour résoudre le domaine principal
-  - ⏳ Vérification builds locaux (Phase 17.11.5.4) - À faire avant déploiement
-  - ⏳ Préparation déploiement (Phase 17.11.5.5) - Cloner repo, .env.production
+    - 🔄 Transfert domaine vers OVH prévu mois prochain (Phase 17.11.5.6) pour résoudre le domaine principal
+  - ✅ Vérification builds locaux (Phase 17.11.5.4) - Complétée ✅ (tous les builds passent)
+  - ✅ Préparation déploiement (Phase 17.11.5.5) - Complétée ✅
+    - Repository cloné dans `/opt/reboulstore` sur serveur OVH
+    - Secrets générés (JWT Reboul/Admin, DB_PASSWORD)
+    - Clés Stripe LIVE configurées (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET)
+    - Clés Cloudinary configurées (CLOUDINARY_CLOUD_NAME, API_KEY, API_SECRET)
+    - Webhook Stripe configuré : `https://www.reboulstore.com/api/checkout/webhook`
+    - Tous les fichiers `.env.production` configurés et prêts
 - 🔄 **Phase 17.12** : Tests E2E Critiques (à faire avant février)
 - ✅ **Phase 25** : Migration Serveur OVH (devenue optionnelle)
   - VPS-3 supporte déjà l'architecture complète (3 sites + Admin)

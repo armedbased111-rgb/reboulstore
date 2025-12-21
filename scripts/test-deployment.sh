@@ -3,7 +3,8 @@
 # Script de test complet du déploiement
 # Usage: ./scripts/test-deployment.sh
 
-set -e
+# Ne pas s'arrêter en cas d'erreur pour pouvoir afficher tous les tests
+set +e
 
 # Couleurs
 GREEN='\033[0;32m'
@@ -41,7 +42,7 @@ test_url() {
     info "Test: $description"
     info "  URL: $url"
     
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$url" 2>/dev/null || echo "000")
     
     if [ "$HTTP_CODE" = "$expected_status" ]; then
         success "$description (HTTP $HTTP_CODE)"
@@ -61,7 +62,12 @@ test_json_response() {
     info "  URL: $url"
     info "  Clé JSON: $json_key"
     
-    RESPONSE=$(curl -s "$url" 2>/dev/null || echo "")
+    RESPONSE=$(curl -s --max-time 10 "$url" 2>/dev/null || echo "")
+    
+    if [ -z "$RESPONSE" ]; then
+        error "$description - Aucune réponse reçue"
+        return 1
+    fi
     
     if echo "$RESPONSE" | grep -q "\"$json_key\""; then
         success "$description (JSON valide avec clé '$json_key')"
@@ -122,7 +128,7 @@ echo "🔒 Tests Headers de sécurité"
 echo "-------------------------"
 
 info "Test: Headers de sécurité Reboul Store"
-SECURITY_HEADERS=$(curl -sI "$REBOUL_STORE_URL" 2>/dev/null || echo "")
+SECURITY_HEADERS=$(curl -sI --max-time 10 "$REBOUL_STORE_URL" 2>/dev/null || echo "")
 
 if echo "$SECURITY_HEADERS" | grep -q "X-Frame-Options"; then
     success "X-Frame-Options présent"
@@ -148,11 +154,11 @@ echo "💾 Tests Headers de cache"
 echo "----------------------"
 
 info "Test: Cache headers pour assets"
-ASSET_URL=$(curl -s "$REBOUL_STORE_URL" 2>/dev/null | grep -oP 'src="/assets/[^"]+' | head -1 | sed 's|src="|/|' || echo "")
+ASSET_URL=$(curl -s --max-time 10 "$REBOUL_STORE_URL" 2>/dev/null | grep -oE 'src="/assets/[^"]+' | head -1 | sed 's|src="|/|' || echo "")
 if [ -n "$ASSET_URL" ]; then
     FULL_ASSET_URL="$REBOUL_STORE_URL$ASSET_URL"
     info "  Asset trouvé: $FULL_ASSET_URL"
-    CACHE_HEADERS=$(curl -sI "$FULL_ASSET_URL" 2>/dev/null || echo "")
+    CACHE_HEADERS=$(curl -sI --max-time 10 "$FULL_ASSET_URL" 2>/dev/null || echo "")
     if echo "$CACHE_HEADERS" | grep -qi "cache-control.*public.*immutable"; then
         success "Cache-Control: public, immutable présent pour assets"
     else
@@ -174,7 +180,7 @@ if [ $FAILED -gt 0 ]; then
     echo "⚠️  Certains tests ont échoué. Vérifier les erreurs ci-dessus."
     exit 1
 else
-    echo -e "${GREEN}✗ Tests échoués: $FAILED${NC}"
+    echo -e "${RED}✗ Tests échoués: $FAILED${NC}"
     echo ""
     success "✅ Tous les tests sont passés ! Le déploiement fonctionne correctement."
     exit 0

@@ -2045,9 +2045,11 @@
 
 ---
 
-## 🌍 Phase 23 : Déploiement & Production 🔄
+## 🌍 Phase 23 : Déploiement & Production ✅
 
 **Objectif** : Mettre en production sur le serveur OVH
+
+**Status** : ✅ **COMPLÈTE** - Déploiement opérationnel et production-ready
 
 **📋 Prérequis** :
 - ✅ Phase 17.11.5 (Achat & Configuration Serveur OVH) - Configuration initiale complétée
@@ -2070,8 +2072,8 @@
   - [x] Containers Admin Central déployés ✅
   - [x] Configuration nginx pour admin.reboulstore.com ✅
   - [x] Frontend accessible sur admin.reboulstore.com ✅
-- [ ] Certificat SSL (Let's Encrypt) - Configuration préparée dans Phase 17.11.2
-- [ ] Domain DNS (reboulstore.com) - Configuration dans Phase 17.11.5
+- [ ] Certificat SSL (Let's Encrypt) - Configuration préparée, activation manuelle optionnelle (voir docs/PRODUCTION_SECURITY.md)
+- [ ] Domain DNS (reboulstore.com) - Configuration partielle (www et admin pointent vers OVH, root reste sur Vercel)
 
 ### 23.2 Backend Prod (Reboul Store)
 - [x] Variables d'environnement sécurisées ✅
