@@ -7,8 +7,8 @@ import { getCategoryBySlug } from '../services/categories';
 import { getBrandBySlug } from '../services/brands';
 import { getImageUrl } from '../utils/imageUtils';
 import type { Category, Brand } from '../types';
-import { animateSlideUp, animateRevealUp, animateStaggerFadeIn } from '../animations';
-import gsap from 'gsap';
+import * as anime from 'animejs';
+import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
 
 /**
  * Page Catalog - Catalogue de produits style A-COLD-WALL*
@@ -97,31 +97,40 @@ export const Catalog = () => {
   // Animations orchestrées quand les produits sont chargés
   useEffect(() => {
     if (!loading && !error) {
-      const tl = gsap.timeline();
+      const tl = anime.createTimeline();
 
       // 1. Banner titre
       if (bannerRef.current) {
-        tl.add(animateSlideUp(bannerRef.current, {
-          duration: 0.6,
-          distance: 30
-        }));
+        tl.add(bannerRef.current, {
+          opacity: [0, 1],
+          translateY: [30, 0],
+          duration: toMilliseconds(0.6),
+          easing: ANIMATION_EASES.DEFAULT,
+        });
       }
 
-      // 2. Hero Section (si présente)
+      // 2. Hero Section (si présente) - commence 0.4s avant la fin de l'animation précédente
       if (heroRef.current) {
-        tl.add(animateRevealUp(heroRef.current, {
-          duration: 0.8,
-          distance: 50
-        }), "-=0.4");
+        tl.add(heroRef.current, {
+          opacity: [0, 1],
+          translateY: [50, 0],
+          duration: toMilliseconds(0.8),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=400');
       }
 
-      // 3. Product Grid avec stagger
+      // 3. Product Grid avec stagger - commence 0.5s avant la fin de l'animation précédente
       if (productGridRef.current && products.length > 0) {
-        tl.add(animateStaggerFadeIn(productGridRef.current.querySelectorAll('.product-card'), {
-          duration: 0.5,
-          stagger: 0.08,
-          distance: 30
-        }), "-=0.5");
+        const productCards = productGridRef.current.querySelectorAll('.product-card');
+        if (productCards.length > 0) {
+          tl.add(productCards, {
+            opacity: [0, 1],
+            translateY: [30, 0],
+            duration: toMilliseconds(0.5),
+            delay: anime.stagger(toMilliseconds(0.08)),
+            easing: ANIMATION_EASES.DEFAULT,
+          }, '-=500');
+        }
       }
     }
   }, [loading, error, products]);

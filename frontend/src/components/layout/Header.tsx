@@ -6,8 +6,9 @@ import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
-import { animateSlideDown, animateStaggerFadeIn } from '../../animations';
-import gsap from 'gsap';
+import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
+import * as anime from 'animejs';
+import { toMilliseconds, convertEasing } from '../../animations/utils/constants';
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
@@ -19,6 +20,11 @@ export const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
   
+  // États pour le menu mobile
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileCatalogueOpen, setIsMobileCatalogueOpen] = useState(false);
+  const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
+  
   const cartItemsCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
   // Refs pour les animations
@@ -26,15 +32,22 @@ export const Header = () => {
   const shopMenuRef = useRef<HTMLDivElement>(null);
   const brandsMenuRef = useRef<HTMLDivElement>(null);
   const cartBadgeRef = useRef<HTMLButtonElement>(null);
+  
+  // Refs pour le menu mobile
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileCatalogueRef = useRef<HTMLUListElement>(null);
+  const mobileBrandsRef = useRef<HTMLUListElement>(null);
 
   // Animation d'apparition du header au chargement
   useEffect(() => {
     if (headerRef.current) {
-      gsap.fromTo(
-        headerRef.current,
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-      );
+      anime.animate(headerRef.current, {
+        opacity: [0, 1],
+        translateY: [-20, 0],
+        duration: toMilliseconds(0.6),
+        easing: convertEasing("power2.out"),
+      });
     }
   }, []);
 
@@ -69,11 +82,10 @@ export const Header = () => {
         }
       } else {
         // Fermer : fade out
-        gsap.to(shopMenuRef.current, {
-          opacity: 0,
-          y: -10,
+        animateFadeOut(shopMenuRef.current, {
           duration: 0.2,
-          ease: "power2.in",
+          distance: -10,
+          easing: convertEasing("power2.in"),
         });
       }
     }
@@ -110,11 +122,10 @@ export const Header = () => {
         }
       } else {
         // Fermer : fade out
-        gsap.to(brandsMenuRef.current, {
-          opacity: 0,
-          y: -10,
+        animateFadeOut(brandsMenuRef.current, {
           duration: 0.2,
-          ease: "power2.in",
+          distance: -10,
+          easing: convertEasing("power2.in"),
         });
       }
     }
@@ -123,20 +134,206 @@ export const Header = () => {
   // Animation du badge panier quand le nombre change
   useEffect(() => {
     if (cartBadgeRef.current && cartItemsCount > 0) {
-      gsap.fromTo(
-        cartBadgeRef.current,
-        { scale: 1 },
-        { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out" }
-      );
+      animateScalePulse(cartBadgeRef.current, {
+        scale: 1.1,
+        duration: 0.2,
+        iterations: 1,
+        easing: convertEasing("power2.out"),
+      });
     }
   }, [cartItemsCount]);
 
+  // Animation d'ouverture/fermeture du menu mobile
+  useEffect(() => {
+    if (mobileMenuRef.current) {
+      if (isMobileMenuOpen) {
+        // Ouvrir : slide depuis la gauche
+        anime.animate(mobileMenuRef.current, {
+          translateX: ['-100%', '0%'],
+          opacity: [0, 1],
+          duration: toMilliseconds(0.4),
+          easing: convertEasing('power2.out'),
+        });
+
+        // Bloquer le scroll du body
+        document.body.style.overflow = 'hidden';
+      } else {
+        // Fermer : slide vers la gauche
+        anime.animate(mobileMenuRef.current, {
+          translateX: ['0%', '-100%'],
+          opacity: [1, 0],
+          duration: toMilliseconds(0.3),
+          easing: convertEasing('power2.in'),
+        });
+
+        // Restaurer le scroll
+        document.body.style.overflow = '';
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Animation transformation hamburger → X
+  useEffect(() => {
+    if (hamburgerButtonRef.current) {
+      const line1 = hamburgerButtonRef.current.querySelector('#hamburger-line-1');
+      const line2 = hamburgerButtonRef.current.querySelector('#hamburger-line-2');
+      const line3 = hamburgerButtonRef.current.querySelector('#hamburger-line-3');
+
+      if (line1 && line2 && line3) {
+        if (isMobileMenuOpen) {
+          // Transformation en X
+          anime.animate(line1, {
+            rotate: [0, 45],
+            translateY: [0, 6],
+            duration: toMilliseconds(0.3),
+            easing: convertEasing('power2.out'),
+          });
+          anime.animate(line2, {
+            opacity: [1, 0],
+            duration: toMilliseconds(0.2),
+          });
+          anime.animate(line3, {
+            rotate: [0, -45],
+            translateY: [0, -6],
+            duration: toMilliseconds(0.3),
+            easing: convertEasing('power2.out'),
+          });
+        } else {
+          // Retour à hamburger
+          anime.animate(line1, {
+            rotate: [45, 0],
+            translateY: [6, 0],
+            duration: toMilliseconds(0.3),
+            easing: convertEasing('power2.out'),
+          });
+          anime.animate(line2, {
+            opacity: [0, 1],
+            duration: toMilliseconds(0.2),
+          });
+          anime.animate(line3, {
+            rotate: [-45, 0],
+            translateY: [-6, 0],
+            duration: toMilliseconds(0.3),
+            easing: convertEasing('power2.out'),
+          });
+        }
+      }
+    }
+  }, [isMobileMenuOpen]);
+
+  // Animation accordéon CATALOGUE mobile
+  useEffect(() => {
+    if (mobileCatalogueRef.current) {
+      if (isMobileCatalogueOpen) {
+        // Ouvrir accordéon : calculer la hauteur réelle
+        const height = mobileCatalogueRef.current.scrollHeight;
+        anime.animate(mobileCatalogueRef.current, {
+          height: [0, height],
+          opacity: [0, 1],
+          duration: toMilliseconds(0.3),
+          easing: convertEasing('power2.out'),
+        });
+      } else {
+        // Fermer accordéon
+        const height = mobileCatalogueRef.current.scrollHeight;
+        anime.animate(mobileCatalogueRef.current, {
+          height: [height, 0],
+          opacity: [1, 0],
+          duration: toMilliseconds(0.2),
+          easing: convertEasing('power2.in'),
+        });
+      }
+    }
+  }, [isMobileCatalogueOpen]);
+
+  // Animation accordéon BRANDS mobile
+  useEffect(() => {
+    if (mobileBrandsRef.current) {
+      if (isMobileBrandsOpen) {
+        // Ouvrir accordéon : calculer la hauteur réelle
+        const height = mobileBrandsRef.current.scrollHeight;
+        anime.animate(mobileBrandsRef.current, {
+          height: [0, height],
+          opacity: [0, 1],
+          duration: toMilliseconds(0.3),
+          easing: convertEasing('power2.out'),
+        });
+      } else {
+        // Fermer accordéon
+        const height = mobileBrandsRef.current.scrollHeight;
+        anime.animate(mobileBrandsRef.current, {
+          height: [height, 0],
+          opacity: [1, 0],
+          duration: toMilliseconds(0.2),
+          easing: convertEasing('power2.in'),
+        });
+      }
+    }
+  }, [isMobileBrandsOpen]);
+
+  // Fermeture du menu mobile avec Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen]);
+
   return (
+    <>
     <header ref={headerRef} className="bg-white sticky top-0 z-[60] relative">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
-          {/* Section gauche : Logo + Navigation */}
+          {/* Section gauche : Menu hamburger mobile + Logo + Navigation */}
           <div className="flex items-center gap-[50px]">
+            {/* Menu mobile hamburger - À gauche avant le logo */}
+            <button 
+              ref={hamburgerButtonRef}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 relative z-[100]"
+              aria-label="Menu mobile"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                strokeWidth={1.5} 
+                stroke="currentColor" 
+                className="w-6 h-6"
+              >
+                <path 
+                  id="hamburger-line-1"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
+                  {...({ transformOrigin: 'center' } as any)}
+                />
+                <path 
+                  id="hamburger-line-2"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
+                  {...({ transformOrigin: 'center' } as any)}
+                />
+                <path 
+                  id="hamburger-line-3"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
+                  {...({ transformOrigin: 'center' } as any)}
+                />
+              </svg>
+            </button>
+
             {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold text-black uppercase tracking-tight">
@@ -266,8 +463,11 @@ export const Header = () => {
 
           {/* Menu mobile hamburger */}
           <button 
-            className="md:hidden flex items-center justify-center w-10 h-10 ml-auto"
+            ref={hamburgerButtonRef}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden flex items-center justify-center w-10 h-10 ml-auto relative z-[100]"
             aria-label="Menu mobile"
+            aria-expanded={isMobileMenuOpen}
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -277,10 +477,26 @@ export const Header = () => {
               stroke="currentColor" 
               className="w-6 h-6"
             >
+              {/* Ligne 1 */}
               <path 
+                id="hamburger-line-1"
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
+                d="M3.75 6.75h16.5"
+              />
+              {/* Ligne 2 */}
+              <path 
+                id="hamburger-line-2"
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M3.75 12h16.5"
+              />
+              {/* Ligne 3 */}
+              <path 
+                id="hamburger-line-3"
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M3.75 17.25h16.5"
               />
             </svg>
           </button>
@@ -480,7 +696,200 @@ export const Header = () => {
             </div>
           </>
         )}
+
       </div>
     </header>
+    
+    {/* Menu Mobile Hamburger - Rendu en dehors du header pour éviter les problèmes de z-index */}
+    {isMobileMenuOpen && (
+      <>
+        {/* Overlay */}
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        
+          {/* Menu */}
+          <div 
+            ref={mobileMenuRef}
+            className="fixed top-0 left-0 w-[85vw] max-w-[400px] h-full bg-white z-[9999] md:hidden flex flex-col shadow-2xl"
+            style={{ transform: 'translateX(-100%)' }}
+          >
+          {/* Header du menu */}
+          <div className="flex justify-between items-center p-6 border-b border-gray-200">
+            <Link 
+              to="/" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-xl font-bold uppercase tracking-wider"
+            >
+              REBOULSTORE 2.0*
+            </Link>
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+              aria-label="Fermer le menu"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                strokeWidth={2} 
+                stroke="currentColor" 
+                className="w-6 h-6"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto p-6 space-y-1">
+            {/* CATALOGUE avec accordéon */}
+            <div>
+              <button
+                onClick={() => setIsMobileCatalogueOpen(!isMobileCatalogueOpen)}
+                className="w-full flex justify-between items-center py-4 text-left uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+              >
+                <span>CATALOGUE</span>
+                <span className="text-sm">{isMobileCatalogueOpen ? '▲' : '▼'}</span>
+              </button>
+              <ul 
+                ref={mobileCatalogueRef}
+                className="overflow-hidden"
+                style={{ height: 0, opacity: 0 }}
+              >
+                {categoriesLoading ? (
+                  <li className="py-2 text-sm text-gray-500">Chargement...</li>
+                ) : categoriesError ? (
+                  <li className="py-2 text-sm text-red-500">Erreur</li>
+                ) : (
+                  categories.map((category) => (
+                    <li key={category.id} className="py-2">
+                      <Link
+                        to={`/catalog?category=${category.slug}`}
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          setIsMobileCatalogueOpen(false);
+                        }}
+                        className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+
+            {/* BRANDS avec accordéon */}
+            <div>
+              <button
+                onClick={() => setIsMobileBrandsOpen(!isMobileBrandsOpen)}
+                className="w-full flex justify-between items-center py-4 text-left uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+              >
+                <span>BRANDS</span>
+                <span className="text-sm">{isMobileBrandsOpen ? '▲' : '▼'}</span>
+              </button>
+                <ul 
+                  ref={mobileBrandsRef}
+                  className="overflow-hidden"
+                  style={{ height: 0, opacity: 0, display: 'block' }}
+                >
+                {brandsLoading ? (
+                  <li className="py-2 text-sm text-gray-500">Chargement...</li>
+                ) : brandsError ? (
+                  <li className="py-2 text-sm text-red-500">Erreur</li>
+                ) : (
+                  brands.map((brand) => (
+                    <li key={brand.id} className="py-2">
+                      <Link
+                        to={`/catalog?brand=${brand.slug}`}
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          setIsMobileBrandsOpen(false);
+                        }}
+                        className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                      >
+                        {brand.name}
+                      </Link>
+                    </li>
+                  ))
+                )}
+                <li className="py-2">
+                  <Link
+                    to="/catalog"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsMobileBrandsOpen(false);
+                    }}
+                    className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                  >
+                    Shop All Brands
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Séparateur */}
+            <div className="border-t border-gray-200 my-4" />
+
+            {/* Liens secondaires */}
+            <Link
+              to="/catalog?sale=true"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+            >
+              SALE
+            </Link>
+            <Link
+              to="/the-corner"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+            >
+              THE CORNER
+            </Link>
+            <Link
+              to="/cp-company"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+            >
+              C.P. COMPANY
+            </Link>
+          </nav>
+
+          {/* Footer du menu */}
+          <div className="border-t border-gray-200 p-6 space-y-4">
+            {/* Compte */}
+            {isAuthenticated ? (
+              <Link
+                to="/profile"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+              >
+                MON COMPTE
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+              >
+                LOGIN
+              </Link>
+            )}
+
+            {/* Panier */}
+            <Link
+              to="/cart"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+            >
+              PANIER ({cartLoading ? '...' : cartItemsCount})
+            </Link>
+          </div>
+        </div>
+      </>
+    )}
+    </>
   );
 };

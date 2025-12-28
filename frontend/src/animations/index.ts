@@ -7,10 +7,12 @@
 
 // Presets réutilisables
 export { animateFadeIn, type FadeInOptions } from './presets/fade-in';
+export { animateFadeOut, type FadeOutOptions } from './presets/fade-out';
 export { animateSlideUp, type SlideUpOptions } from './presets/slide-up';
 export { animateSlideDown, type SlideDownOptions } from './presets/slide-down';
 export { animateStaggerFadeIn, type StaggerFadeInOptions } from './presets/stagger-fade-in';
 export { animateScaleHover, type ScaleHoverOptions } from './presets/scale-hover';
+export { animateScalePulse, type ScalePulseOptions } from './presets/scale-pulse';
 export { animateRevealUp, type RevealUpOptions } from './presets/reveal-up';
 export { animateFadeScale, type FadeScaleOptions } from './presets/fade-scale';
 
@@ -19,6 +21,9 @@ export { animateFadeScale, type FadeScaleOptions } from './presets/fade-scale';
 // export { animateBadgeAppear } from './components/ProductPage/badge-appear';
 
 // Utilitaires
-// export { useGSAP } from './utils/gsap-helpers';
+export { useAnimeJS, cleanupAnimation } from './utils/animejs-helpers';
 export { useScrollAnimation } from './utils/useScrollAnimation';
 export { animateTestSlide, type TestSlideOptions } from './presets/test-slide';
+
+// Context Provider (à utiliser dans main.tsx)
+export { AnimationProvider, useAnimation } from '../contexts/AnimationContext';

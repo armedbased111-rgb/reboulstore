@@ -213,7 +213,7 @@ class APIServiceGenerator:
         )
 
 class AnimationGenerator:
-    """Générer une animation GSAP"""
+    """Générer une animation AnimeJS"""
     
     def __init__(self):
         self.env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
@@ -225,27 +225,23 @@ class AnimationGenerator:
         # Convertir kebab-case en PascalCase
         animation_name_pascal = ''.join(word.capitalize() for word in animation_name.split('-'))
         
-        # Définir les propriétés selon le type
+        # Définir les propriétés selon le type (syntaxe AnimeJS : [from, to])
         animation_configs = {
             "fade-in": {
                 "description": "Fait apparaître un élément en fondu (opacity: 0 → 1)",
-                "from_props": "opacity: 0",
-                "to_props": "opacity: 1",
+                "from_props": "opacity: [0, 1]",
             },
             "slide-up": {
                 "description": "Fait glisser un élément vers le haut avec fondu",
-                "from_props": "opacity: 0, y: 50",
-                "to_props": "opacity: 1, y: 0",
+                "from_props": "opacity: [0, 1],\n    translateY: [50, 0]",
             },
             "slide-down": {
                 "description": "Fait glisser un élément vers le bas avec fondu",
-                "from_props": "opacity: 0, y: -50",
-                "to_props": "opacity: 1, y: 0",
+                "from_props": "opacity: [0, 1],\n    translateY: [-50, 0]",
             },
             "scale": {
                 "description": "Fait apparaître un élément avec un effet de zoom",
-                "from_props": "opacity: 0, scale: 0.8",
-                "to_props": "opacity: 1, scale: 1",
+                "from_props": "opacity: [0, 1],\n    scale: [0.8, 1]",
             },
         }
         
@@ -256,7 +252,6 @@ class AnimationGenerator:
             AnimationName=animation_name_pascal,
             description=config["description"],
             from_props=config["from_props"],
-            to_props=config["to_props"],
         )
 
 class PageGenerator:

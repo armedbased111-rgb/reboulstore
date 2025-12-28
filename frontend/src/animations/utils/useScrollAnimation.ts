@@ -11,16 +11,20 @@ export interface UseScrollAnimationOptions {
 }
 
 /**
- * Hook personnalisé pour déclencher des animations au scroll
+ * Hook personnalisé pour déclencher des animations au scroll (AnimeJS)
  * 
  * Utilise Intersection Observer pour détecter quand un élément entre dans le viewport
  * Retourne une ref à attacher à l'élément et appelle le callback avec l'élément quand il devient visible
+ * 
+ * Compatible avec toutes les bibliothèques d'animation (AnimeJS, GSAP, etc.)
  * 
  * @param callback - Fonction à appeler quand l'élément devient visible (reçoit l'élément en paramètre)
  * @param options - Options de l'Intersection Observer
  * @returns Ref à attacher à l'élément
  * 
  * @example
+ * import { animateRevealUp } from '../../animations';
+ * 
  * const elementRef = useScrollAnimation((element) => {
  *   animateRevealUp(element);
  * }, { threshold: 0.2 });

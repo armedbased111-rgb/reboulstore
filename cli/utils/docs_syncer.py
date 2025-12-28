@@ -48,7 +48,7 @@ def _extract_phases_from_roadmap(roadmap_path: Path) -> Dict[str, Dict]:
         ])
         is_frontend = any(keyword in phase_content.lower() for keyword in [
             'frontend', 'react', 'component', 'page', 'hook', 'ui', 'tailwind',
-            'figma', 'design', 'animation', 'gsap'
+            'figma', 'design', 'animation', 'animejs'
         ])
         
         phases[phase_num] = {

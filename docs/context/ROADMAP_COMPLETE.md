@@ -2111,6 +2111,227 @@
 
 ---
 
+## 🔧 Phase 23.5 : Améliorations & Finalisations Avant Collection Réelle
+
+**🎯 Objectif** : Finaliser les détails techniques, améliorer les workflows et compléter les fonctionnalités manquantes avant l'intégration de la collection réelle
+
+**📅 Timing** : Après Phase 23 (Production), avant Phase 24 (Collection Réelle)
+
+**⏱️ Durée estimée** : 1-2 semaines
+
+### 23.5.1 Migration GSAP → AnimeJS (Pédagogique)
+
+**Objectif** : Migrer de GSAP vers AnimeJS pour simplifier les animations et apprendre AnimeJS (approche pédagogique)
+
+- [x] **Analyse structure actuelle GSAP** ✅
+  - [x] Lister toutes les animations GSAP utilisées (presets, composants)
+  - [x] Documenter les fonctionnalités GSAP utilisées (timeline, stagger, scroll triggers, etc.)
+  - [x] Identifier les équivalents AnimeJS pour chaque fonctionnalité
+  - [x] Créer document d'analyse : `docs/animations/GSAP_TO_ANIMEJS_ANALYSIS.md`
+
+- [x] **Installation & Configuration AnimeJS** ✅
+  - [x] Installer AnimeJS (`npm install animejs`)
+  - [x] Installer types TypeScript (`npm install --save-dev @types/animejs`)
+  - [x] Créer structure animations AnimeJS (même structure que GSAP)
+
+- [x] **Création guide pédagogique AnimeJS** ✅
+  - [x] Créer `docs/animations/ANIMEJS_GUIDE.md` (guide complet AnimeJS)
+  - [x] Expliquer concepts AnimeJS (animations, timelines, easings, etc.)
+  - [x] Comparer GSAP vs AnimeJS (avantages/inconvénients)
+  - [x] Exemples pratiques avec code commenté
+  - [x] Bonnes pratiques AnimeJS
+
+- [x] **Migration animations presets** ✅
+  - [x] Migrer `fade-in.ts` (GSAP → AnimeJS)
+  - [x] Migrer `slide-up.ts` (GSAP → AnimeJS)
+  - [x] Migrer `slide-down.ts` (GSAP → AnimeJS)
+  - [x] Migrer `stagger-fade-in.ts` (GSAP → AnimeJS)
+  - [x] Migrer `scale-hover.ts` (GSAP → AnimeJS)
+  - [x] Migrer `reveal-up.ts` (GSAP → AnimeJS)
+  - [x] Migrer `fade-scale.ts` (GSAP → AnimeJS)
+  - [x] Adapter `constants.ts` pour AnimeJS (durées, easings, mapping GSAP→AnimeJS, helpers conversion)
+
+- [x] **Migration utils & helpers** ✅
+  - [x] Migrer `gsap-helpers.ts` → `animejs-helpers.ts`
+  - [x] Créer hook `useAnimeJS` (équivalent `useGSAP`)
+  - [x] Adapter `useScrollAnimation.ts` pour AnimeJS ✅ (Déjà compatible, exemples mis à jour)
+
+- [x] **Migration composants utilisant GSAP** ✅
+  - [x] Migrer `Header.tsx` (animations mega menu, badge panier, etc.)
+  - [x] Migrer `TopBarLoader.tsx` (timeline avec repeat/yoyo)
+  - [x] Migrer `PageLoader.tsx` (timeline complexe avec animation d'objet)
+  - [x] Migrer `Product.tsx` (timeline orchestrée)
+  - [x] Migrer `Catalog.tsx` (timeline orchestrée)
+  - [x] Créer presets supplémentaires (`fade-out.ts`, `scale-pulse.ts`)
+  - [x] Build réussi (TypeScript compile sans erreurs) ✅
+  - [ ] Tester toutes les animations après migration (guide créé : `docs/animations/TESTING_ANIMEJS.md`)
+
+- [x] **Mise à jour documentation & workflows** :
+  - [x] Mettre à jour `ANIMATIONS_GUIDE.md` (remplacer GSAP par AnimeJS)
+  - [x] Mettre à jour commande Cursor `/animation-workflow` (AnimeJS au lieu de GSAP)
+  - [x] Mettre à jour CLI Python (génération animations AnimeJS)
+  - [x] Mettre à jour `project-rules.mdc` (section animations AnimeJS)
+  - [x] Mettre à jour `FRONTEND.md` (stack technique AnimeJS)
+
+- [x] **Nettoyage GSAP** :
+  - [x] Désinstaller GSAP (`npm uninstall gsap`) ✅ Fait précédemment
+  - [x] Supprimer imports GSAP restants ✅ Aucun import actif restant
+  - [x] Vérifier qu'aucune référence GSAP ne reste ✅ Seulement dans commentaires/docs (mapping de référence)
+
+- [ ] **Tests & validation** :
+  - [ ] Tester toutes les animations sur desktop
+  - [ ] Tester toutes les animations sur mobile
+  - [ ] Vérifier performance (60fps)
+  - [ ] Vérifier accessibilité (prefers-reduced-motion)
+
+### 23.5.2 Navbar Mobile - Menu Hamburger
+
+**Objectif** : Implémenter le menu hamburger mobile complet inspiré de A-COLD-WALL*
+
+- [x] **Analyse menu hamburger A-COLD-WALL*** :
+  - [x] Analyser le menu mobile sur le site A-COLD-WALL* ✅ Document créé : `docs/design/MOBILE_MENU_ANALYSIS.md`
+  - [x] Documenter structure HTML/CSS ✅ Structure complète documentée
+  - [x] Documenter animations et interactions ✅ Animations AnimeJS documentées
+  - [x] Documenter navigation (liens, catégories, etc.) ✅ Navigation avec accordéons documentée
+
+- [x] **Implémentation menu hamburger** :
+  - [x] Créer état `isMobileMenuOpen` dans `Header.tsx` ✅
+  - [x] Implémenter toggle menu au clic sur bouton hamburger ✅
+  - [x] Créer section menu mobile dans `Header.tsx` ✅
+  - [x] Structure menu : Logo, Navigation (Catalogue, Brands, SALE, etc.), Compte, Panier ✅
+  - [x] Style minimaliste A-COLD-WALL* (fond blanc, texte noir, uppercase) ✅
+
+- [x] **Navigation mobile** :
+  - [x] Intégrer liens navigation (Catalogue, Brands, SALE, THE CORNER, C.P. COMPANY) ✅
+  - [x] Intégrer accordéons catégories et brands (expand/collapse) ✅
+  - [x] Intégrer lien compte/connexion ✅
+  - [x] Intégrer badge panier avec compteur ✅
+  - [ ] Intégrer recherche mobile (optionnel, peut être ajouté plus tard)
+
+- [x] **Animations menu mobile** :
+  - [x] Animation ouverture/fermeture menu (slide depuis droite) ✅
+  - [x] Animation overlay (fade + blur) ✅
+  - [x] Animation bouton hamburger → X (rotation) ✅
+  - [x] Animation accordéons (slide-down avec fade) ✅
+  - [ ] Animation items menu (stagger fade-in) - Optionnel pour amélioration future
+
+- [x] **Responsive & UX** :
+  - [x] Menu visible uniquement sur mobile (< md breakpoint) ✅
+  - [x] Fermeture menu au clic sur overlay ✅
+  - [x] Fermeture menu au clic sur lien ✅
+  - [x] Fermeture menu avec Escape ✅
+  - [x] Scroll lock quand menu ouvert (body scroll disabled) ✅
+
+- [ ] **Tests** :
+  - [ ] Tester sur différents devices (iPhone, Android, tablette)
+  - [ ] Tester toutes les interactions (ouverture, fermeture, navigation)
+  - [ ] Tester animations (fluidité, performance)
+  - [ ] Vérifier accessibilité (keyboard navigation, ARIA)
+
+### 23.5.3 Amélioration Scripts Build & Deploy
+
+**Objectif** : Améliorer les scripts de build et déploiement pour séparer vérification et déploiement
+
+- [ ] **Analyse scripts actuels** :
+  - [ ] Analyser `scripts/deploy-reboul.sh` (fonctionnalités actuelles)
+  - [ ] Identifier ce qui manque (vérification build, tests, etc.)
+  - [ ] Documenter workflow actuel
+
+- [ ] **Création script vérification build** :
+  - [ ] Créer `scripts/check-build.sh` :
+    - [ ] Vérifier que tous les fichiers nécessaires existent (.env.production, etc.)
+    - [ ] Lancer build frontend (`npm run build` dans frontend/)
+    - [ ] Lancer build backend (si nécessaire)
+    - [ ] Vérifier erreurs de build (TypeScript, ESLint, etc.)
+    - [ ] Vérifier taille bundle (avertir si trop gros)
+    - [ ] Vérifier dépendances (npm audit)
+    - [ ] Afficher rapport détaillé (succès/erreurs)
+
+- [ ] **Amélioration script déploiement** :
+  - [ ] Améliorer `scripts/deploy-reboul.sh` :
+    - [ ] Option `--check-only` (vérification sans déploiement)
+    - [ ] Option `--skip-check` (déploiement sans vérification)
+    - [ ] Intégrer `check-build.sh` avant déploiement (sauf si `--skip-check`)
+    - [ ] Améliorer messages (couleurs, emojis, détails)
+    - [ ] Améliorer gestion erreurs (rollback si échec)
+    - [ ] Ajouter confirmation avant déploiement prod
+
+- [ ] **Script déploiement serveur prod** :
+  - [ ] Créer `scripts/deploy-prod.sh` :
+    - [ ] Vérification build (appel `check-build.sh`)
+    - [ ] Upload fichiers sur serveur (rsync ou scp)
+    - [ ] Backup base de données avant déploiement
+    - [ ] Redémarrage services Docker sur serveur
+    - [ ] Vérification healthcheck après déploiement
+    - [ ] Rollback automatique si échec
+    - [ ] Notification (email, Slack, etc.) - optionnel
+
+- [ ] **Documentation** :
+  - [ ] Documenter `scripts/check-build.sh` (usage, options)
+  - [ ] Documenter `scripts/deploy-reboul.sh` (usage, options)
+  - [ ] Documenter `scripts/deploy-prod.sh` (usage, configuration serveur)
+  - [ ] Créer guide workflow déploiement (`docs/DEPLOYMENT_GUIDE.md`)
+  - [ ] Documenter variables d'environnement nécessaires
+  - [ ] Documenter configuration serveur (SSH, rsync, etc.)
+
+- [ ] **Intégration CI/CD (optionnel)** :
+  - [ ] Ajouter scripts dans GitHub Actions (ou autre CI)
+  - [ ] Automatiser vérification build sur chaque commit
+  - [ ] Automatiser déploiement sur push main/master
+
+### 23.5.4 Vérification & Documentation Git (Prod/Dev)
+
+**Objectif** : Vérifier configuration Git pour prod/dev et documenter guide complet
+
+- [ ] **Vérification configuration Git actuelle** :
+  - [ ] Vérifier `.gitignore` (racine, frontend, backend, admin-central)
+  - [ ] Vérifier branches Git (main, develop, etc.)
+  - [ ] Vérifier workflow Git (merge, rebase, etc.)
+  - [ ] Vérifier hooks Git (pre-commit, pre-push, etc.)
+  - [ ] Vérifier stratégie de versioning (tags, releases)
+
+- [ ] **Configuration branches** :
+  - [ ] Définir stratégie branches (main = prod, develop = dev, feature/*, etc.)
+  - [ ] Configurer protection branches (main, develop)
+  - [ ] Configurer règles merge (pull request requis, reviews, etc.)
+  - [ ] Documenter workflow branches
+
+- [ ] **Configuration .gitignore** :
+  - [ ] Vérifier que tous les fichiers sensibles sont ignorés (.env, node_modules, etc.)
+  - [ ] Vérifier que les builds ne sont pas commités (dist/, build/, etc.)
+  - [ ] Vérifier que les logs ne sont pas commités
+  - [ ] Ajouter fichiers manquants si nécessaire
+
+- [ ] **Hooks Git** :
+  - [ ] Créer hook pre-commit (lint, format, tests rapides)
+  - [ ] Créer hook pre-push (build check, tests complets)
+  - [ ] Documenter hooks Git
+
+- [ ] **Documentation Git** :
+  - [ ] Créer `docs/GIT_WORKFLOW.md` :
+    - [ ] Structure branches (main, develop, feature/*)
+    - [ ] Workflow développement (créer branche, commit, push, PR)
+    - [ ] Workflow déploiement (merge develop → main, tags, releases)
+    - [ ] Conventions commits (format, messages)
+    - [ ] Conventions branches (nommage)
+    - [ ] Guide résolution conflits
+    - [ ] Guide rollback
+
+- [ ] **CLI commandes Git** :
+  - [ ] Ajouter commandes Git dans CLI Python :
+    - [ ] `python cli/main.py git status` (statut branches, commits, etc.)
+    - [ ] `python cli/main.py git create-branch [nom]` (créer branche feature)
+    - [ ] `python cli/main.py git commit [message]` (commit avec conventions)
+    - [ ] `python cli/main.py git deploy [env]` (merge et déploiement)
+  - [ ] Documenter commandes CLI Git
+
+- [ ] **Documentation dans project-rules** :
+  - [ ] Ajouter section "Workflow Git" dans `project-rules.mdc`
+  - [ ] Ajouter section "Conventions Git" (commits, branches)
+  - [ ] Référencer `docs/GIT_WORKFLOW.md`
+
+---
+
 ## 📦 Phase 24 : Préparation Collection Réelle
 
 **🎯 Objectif** : Intégrer les données réelles du magasin dans le site (AS400, marques, images, stocks)

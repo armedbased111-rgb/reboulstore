@@ -269,7 +269,7 @@ def api_service(name):
 @click.argument('name')
 @click.option('--type', type=click.Choice(['fade-in', 'slide-up', 'slide-down', 'scale']), default='fade-in', help='Type d\'animation')
 def animation(name, type):
-    """Générer une animation GSAP"""
+    """Générer une animation AnimeJS"""
     from commands.code import generate_animation
     
     files = generate_animation.create(name, type)

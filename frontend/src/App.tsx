@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
-import { initAnalytics, trackPageView } from './utils/analytics'
 import { Home } from './pages/Home'
 import { Catalog } from './pages/Catalog'
 import { Product } from './pages/Product'
@@ -30,7 +28,7 @@ function App() {
 
     const timeout = setTimeout(() => {
       setShowInitialLoader(false)
-    }, 3500) // Loader d'ouverture légèrement plus long (~3,5s)
+    }, 2000) // Loader d'ouverture plus court (2s)
 
     return () => clearTimeout(timeout)
   }, [])
@@ -160,17 +158,8 @@ function App() {
 
         <Route path="/loader-playground" element={<LoaderPlayground />} />
       </Routes>
-    </>
-  )
-}
-
-// Wrapper avec BrowserRouter pour avoir accès à useLocation
-function AppWithRouter() {
-  return (
-    <BrowserRouter>
-      <App />
     </BrowserRouter>
   )
 }
 
-export default AppWithRouter
+export default App

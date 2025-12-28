@@ -22,15 +22,15 @@ alwaysApply: true
 
 ### Frontend / Interface utilisateur
 
-#### 🎬 Workflow Animations GSAP
+#### 🎬 Workflow Animations AnimeJS
 
-**Bibliothèque principale** : **GSAP (GreenSock Animation Platform)**
+**Bibliothèque principale** : **AnimeJS**
 
 ##### Philosophie des animations
 
 - **Réutilisabilité** : Chaque animation doit être dans un fichier dédié et réutilisable
 - **Cohérence** : Utiliser les constantes définies dans `animations/utils/constants.ts`
-- **Performance** : GSAP garantit 60fps, utiliser `gsap.context()` pour le nettoyage
+- **Performance** : AnimeJS garantit 60fps, utiliser `AnimationProvider` pour le nettoyage
 - **Documentation** : Chaque animation doit être documentée avec JSDoc
 
 ##### Structure des animations
@@ -46,7 +46,7 @@ frontend/src/animations/
 │   └── [ComponentName]/
 │       └── [animation].ts
 └── utils/
-    ├── gsap-helpers.ts      # Hook useGSAP
+    ├── animejs-helpers.ts  # Hook useAnimeJS
     └── constants.ts         # Durées, eases, délais standards
 ```
 
@@ -61,6 +61,7 @@ frontend/src/animations/
    - Exporter fonction nommée `animate[NomAnimation]`
    - Documenter avec JSDoc
    - Utiliser les constantes de `animations/utils/constants.ts`
+   - Utiliser `toMilliseconds()` et `convertEasing()` pour la compatibilité
 
 3. **Exporter** :
    - Ajouter l'export dans `animations/index.ts`
@@ -68,46 +69,52 @@ frontend/src/animations/
 4. **Utiliser** :
    - Importer depuis `animations/index.ts`
    - Utiliser `useRef` + `useEffect` dans le composant
-   - Préférer `useGSAP` hook pour le nettoyage automatique
+   - Préférer `useAnimation()` hook (via `AnimationProvider`) pour le nettoyage automatique
 
 ##### Exemple d'animation réutilisable
 
 ```typescript
 // animations/presets/fade-in.ts
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+import * as anime from 'animejs';
+import { toMilliseconds, convertEasing, ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
 
 export const animateFadeIn = (
-  element: gsap.TweenTarget,
+  element: HTMLElement | string | null,
   options: { duration?: number; delay?: number } = {}
-) => {
-  return gsap.fromTo(
-    element,
-    { opacity: 0 },
-    {
-      opacity: 1,
-      duration: options.duration || ANIMATION_DURATIONS.NORMAL,
-      delay: options.delay || 0,
-      ease: ANIMATION_EASES.DEFAULT,
-    }
-  );
+): ReturnType<typeof anime.animate> | null => {
+  if (!element) return null;
+
+  return anime.animate(element, {
+    opacity: [0, 1],
+    duration: toMilliseconds(options.duration || ANIMATION_DURATIONS.NORMAL),
+    delay: toMilliseconds(options.delay || 0),
+    easing: convertEasing(ANIMATION_EASES.DEFAULT),
+  });
 };
 ```
 
 ##### Utilisation dans un composant
 
+**Avec AnimationProvider (recommandé)** :
+
 ```typescript
 import { useRef, useEffect } from 'react';
+import { useAnimation } from '../../animations';
 import { animateFadeIn } from '../../animations';
 
 const MyComponent = () => {
+  const { prefersReducedMotion, cleanup } = useAnimation();
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (elementRef.current) {
-      animateFadeIn(elementRef.current, { duration: 0.6 });
-    }
-  }, []);
+    if (prefersReducedMotion || !elementRef.current) return;
+
+    const anim = animateFadeIn(elementRef.current, { duration: 0.6 });
+
+    return () => {
+      if (elementRef.current) cleanup(elementRef.current);
+    };
+  }, [prefersReducedMotion, cleanup]);
 
   return <div ref={elementRef}>Content</div>;
 };
@@ -117,15 +124,16 @@ const MyComponent = () => {
 
 - **Consulter ANIMATIONS_GUIDE.md** pour les concepts, exemples et bonnes pratiques
 - **Workflow complet** : Voir ANIMATIONS_GUIDE.md section "Workflow de création d'animation"
-- **Références GSAP** : https://greensock.com/docs/
+- **Références AnimeJS** : https://animejs.com/
 
 ##### Bonnes pratiques
 
 - ✅ Toujours créer des animations réutilisables dans `presets/`
-- ✅ Utiliser `useGSAP` hook ou `gsap.context()` pour le nettoyage
+- ✅ Utiliser `useAnimation()` hook (via `AnimationProvider`) pour le nettoyage
 - ✅ Respecter les constantes définies (`ANIMATION_DURATIONS`, `ANIMATION_EASES`)
+- ✅ Utiliser `toMilliseconds()` et `convertEasing()` pour la compatibilité
 - ✅ Documenter avec JSDoc
-- ✅ Respecter `prefers-reduced-motion` pour l'accessibilité
+- ✅ Respecter `prefers-reduced-motion` pour l'accessibilité (via `useAnimation()`)
 - ❌ Ne pas dupliquer le code d'animation dans plusieurs composants
 - ❌ Ne pas oublier de nettoyer les animations au démontage
 

@@ -5,13 +5,16 @@ import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { ToastProvider } from './contexts/ToastContext'
+import { AnimationProvider } from './contexts/AnimationContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <CartProvider>
         <ToastProvider>
+          <AnimationProvider>
           <App />
+          </AnimationProvider>
         </ToastProvider>
       </CartProvider>
     </AuthProvider>

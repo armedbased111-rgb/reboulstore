@@ -1,5 +1,5 @@
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+import * as anime from 'animejs';
+import { ANIMATION_DURATIONS, ANIMATION_EASES, toMilliseconds } from '../utils/constants';
 
 export interface ScaleHoverOptions {
   /** Échelle au hover (défaut: 1.05) */
@@ -7,11 +7,11 @@ export interface ScaleHoverOptions {
   /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.FAST) */
   duration?: number;
   /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
-  ease?: string;
+  easing?: string;
 }
 
 /**
- * Animation scale au hover réutilisable
+ * Animation scale au hover réutilisable (AnimeJS)
  * 
  * Ajoute un effet de zoom au survol d'un élément
  * Nettoie automatiquement les event listeners au démontage
@@ -27,7 +27,7 @@ export interface ScaleHoverOptions {
  * }, []);
  */
 export const animateScaleHover = (
-  element: gsap.TweenTarget | null,
+  element: HTMLElement | string | null,
   options: ScaleHoverOptions = {}
 ): (() => void) => {
   if (!element) {
@@ -37,22 +37,24 @@ export const animateScaleHover = (
   const {
     scale = 1.05,
     duration = ANIMATION_DURATIONS.FAST,
-    ease = ANIMATION_EASES.DEFAULT,
+    easing = ANIMATION_EASES.DEFAULT,
   } = options;
 
   const handleMouseEnter = () => {
-    gsap.to(element, {
+    anime.animate(element, {
+      
       scale,
-      duration,
-      ease,
+      duration: toMilliseconds(duration),
+      easing,
     });
   };
 
   const handleMouseLeave = () => {
-    gsap.to(element, {
+    anime.animate(element, {
+      
       scale: 1,
-      duration,
-      ease,
+      duration: toMilliseconds(duration),
+      easing,
     });
   };
 
@@ -68,8 +70,9 @@ export const animateScaleHover = (
       element.removeEventListener('mouseenter', handleMouseEnter);
       element.removeEventListener('mouseleave', handleMouseLeave);
       // Réinitialiser le scale
-      gsap.set(element, { scale: 1 });
+      if (element instanceof HTMLElement) {
+        element.style.transform = 'scale(1)';
+      }
     }
   };
 };
-

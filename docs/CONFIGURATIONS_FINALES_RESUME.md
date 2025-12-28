@@ -109,23 +109,22 @@ curl -I https://www.reboulstore.com | grep -i "cf-ray"
 
 ---
 
-## 🎯 Prochaine étape
+## ✅ Vérification finale
 
-**Attendre la propagation DNS Cloudflare** (5-30 minutes)
+**Propagation DNS Cloudflare** : ✅ **TERMINÉE** (vérifiée après 24h)
 
-**Vérifier la propagation** :
+**Vérification** :
 ```bash
 ./scripts/check-cloudflare-propagation.sh
+# ✅ Nameservers Cloudflare actifs
+# ✅ Headers Cloudflare présents (cf-ray, server: cloudflare)
 ```
 
-Ou manuellement :
-```bash
-dig NS reboulstore.com +short
-# Devrait afficher les nameservers Cloudflare
-
-curl -I https://www.reboulstore.com | grep -i cf-ray
-# Devrait afficher des headers Cloudflare
-```
+**Résultats** :
+- ✅ Nameservers : `marty.ns.cloudflare.com`, `monroe.ns.cloudflare.com`
+- ✅ Headers : `cf-ray`, `server: cloudflare` présents
+- ✅ HTTPS : Fonctionnel via Cloudflare
+- ✅ Redirection HTTP → HTTPS : Active
 
 ---
 

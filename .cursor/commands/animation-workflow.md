@@ -2,9 +2,9 @@
 
 **Commande** : `/animation-workflow`
 
-Workflow complet pour créer des animations GSAP dans Reboul Store.
+Workflow complet pour créer des animations AnimeJS dans Reboul Store.
 
-## 🎯 Workflow Animations GSAP
+## 🎯 Workflow Animations AnimeJS
 
 ### 1. Décider du type d'animation
 
@@ -27,14 +27,42 @@ Workflow complet pour créer des animations GSAP dans Reboul Store.
 Ajouter l'export dans `animations/index.ts` :
 
 ```typescript
-export { animateFadeIn } from './presets/fade-in';
+export { animateFadeIn, type FadeInOptions } from './presets/fade-in';
 ```
 
 ### 4. Utiliser dans un composant
 
+**Avec AnimationProvider (recommandé)** :
+
+```typescript
+import { useRef, useEffect } from 'react';
+import { useAnimation } from '../../animations';
+import { animateFadeIn } from '../../animations';
+
+const MyComponent = () => {
+  const { prefersReducedMotion, cleanup } = useAnimation();
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !elementRef.current) return;
+
+    const anim = animateFadeIn(elementRef.current, { duration: 0.6, delay: 0.2 });
+
+    return () => {
+      if (elementRef.current) cleanup(elementRef.current);
+    };
+  }, [prefersReducedMotion, cleanup]);
+
+  return <div ref={elementRef}>Content</div>;
+};
+```
+
+**Sans provider (simple)** :
+
 ```typescript
 import { useRef, useEffect } from 'react';
 import { animateFadeIn } from '../../animations';
+import * as anime from 'animejs';
 
 const MyComponent = () => {
   const elementRef = useRef<HTMLDivElement>(null);
@@ -43,6 +71,10 @@ const MyComponent = () => {
     if (elementRef.current) {
       animateFadeIn(elementRef.current, { duration: 0.6, delay: 0.2 });
     }
+
+    return () => {
+      if (elementRef.current) anime.remove(elementRef.current);
+    };
   }, []);
 
   return <div ref={elementRef}>Content</div>;
@@ -62,7 +94,7 @@ frontend/src/animations/
 │   └── [ComponentName]/
 │       └── [animation].ts
 └── utils/
-    ├── gsap-helpers.ts      # Hook useGSAP
+    ├── animejs-helpers.ts   # Hook useAnimeJS
     └── constants.ts         # Durées, eases, délais
 ```
 
@@ -70,12 +102,12 @@ frontend/src/animations/
 
 ```typescript
 // animations/presets/fade-in.ts
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+import * as anime from 'animejs';
+import { toMilliseconds, convertEasing, ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
 
 export interface FadeInOptions {
-  duration?: number;
-  delay?: number;
+  duration?: number;  // En secondes (sera converti en ms)
+  delay?: number;     // En secondes (sera converti en ms)
   ease?: string;
 }
 
@@ -84,28 +116,26 @@ export interface FadeInOptions {
  * 
  * @param element - Élément DOM, ref React, ou sélecteur CSS
  * @param options - Options d'animation
- * @returns Timeline GSAP
+ * @returns Instance d'animation AnimeJS
  */
 export const animateFadeIn = (
-  element: gsap.TweenTarget,
+  element: HTMLElement | string | null,
   options: FadeInOptions = {}
-): gsap.core.Tween => {
+): ReturnType<typeof anime.animate> | null => {
+  if (!element) return null;
+
   const {
     duration = ANIMATION_DURATIONS.NORMAL,
     delay = 0,
     ease = ANIMATION_EASES.DEFAULT,
   } = options;
 
-  return gsap.fromTo(
-    element,
-    { opacity: 0 },
-    {
-      opacity: 1,
-      duration,
-      delay,
-      ease,
-    }
-  );
+  return anime.animate(element, {
+    opacity: [0, 1],
+    duration: toMilliseconds(duration),
+    delay: toMilliseconds(delay),
+    easing: convertEasing(ease),
+  });
 };
 ```
 
@@ -115,41 +145,33 @@ export const animateFadeIn = (
 // animations/utils/constants.ts
 
 ANIMATION_DURATIONS = {
-  FAST: 0.2,
+  FAST: 0.2,      // En secondes
   NORMAL: 0.5,
   SLOW: 0.8,
 }
 
 ANIMATION_EASES = {
-  DEFAULT: "power2.out",
-  SMOOTH: "power1.out",
-  SNAPPY: "power3.out",
-  BOUNCE: "back.out",
-  ELASTIC: "elastic.out",
+  DEFAULT: "easeOutQuad",      // Équivalent "power2.out" GSAP
+  SMOOTH: "easeOutSine",       // Équivalent "power1.out" GSAP
+  SNAPPY: "easeOutCubic",      // Équivalent "power3.out" GSAP
+  BOUNCE: "easeOutBack",       // Équivalent "back.out" GSAP
+  ELASTIC: "easeOutElastic",   // Équivalent "elastic.out" GSAP
+  NONE: "linear",              // Équivalent "none" GSAP
 }
 
-ANIMATION_DELAYS = {
-  NONE: 0,
-  SHORT: 0.1,
-  MEDIUM: 0.2,
-  LONG: 0.4,
-}
-
-ANIMATION_STAGGER = {
-  TIGHT: 0.05,
-  NORMAL: 0.1,
-  LOOSE: 0.2,
-}
+// Helpers de conversion
+toMilliseconds(seconds: number): number  // Convertit secondes → ms
+convertEasing(gsapEasing: string): string  // Convertit easing GSAP → AnimeJS
 ```
 
-## 🔧 Hook useGSAP (recommandé)
+## 🔧 Hook useAnimeJS (recommandé)
 
 ```typescript
-import { useGSAP } from '../../animations';
+import { useAnimeJS } from '../../animations';
 
 const MyComponent = () => {
-  const scopeRef = useGSAP(() => {
-    gsap.from(".fade-in", { opacity: 0, duration: 0.5, stagger: 0.1 });
+  const scopeRef = useAnimeJS(() => {
+    anime.animate('.fade-in', { opacity: [0, 1], duration: 500 });
   }, [data]);
 
   return <div ref={scopeRef}>...</div>;
@@ -157,27 +179,46 @@ const MyComponent = () => {
 ```
 
 **Avantages :**
-- Nettoyage automatique avec `gsap.context()`
-- Pas besoin de gérer manuellement les refs
+- Nettoyage automatique
 - Plus sûr pour éviter les fuites mémoire
+
+## 🎯 AnimationProvider (recommandé)
+
+**Dans main.tsx** :
+```typescript
+import { AnimationProvider } from './contexts/AnimationContext';
+
+<AnimationProvider>
+  <App />
+</AnimationProvider>
+```
+
+**Dans un composant** :
+```typescript
+import { useAnimation } from '../../animations';
+
+const { prefersReducedMotion, cleanup, durations, eases } = useAnimation();
+```
 
 ## ✅ Bonnes pratiques
 
 - ✅ **Toujours créer des animations réutilisables** dans `presets/`
-- ✅ **Utiliser `useGSAP` hook** ou `gsap.context()` pour le nettoyage
+- ✅ **Utiliser `useAnimeJS` hook** ou `AnimationProvider` pour le nettoyage
 - ✅ **Respecter les constantes** définies (`ANIMATION_DURATIONS`, etc.)
 - ✅ **Documenter avec JSDoc** chaque animation
-- ✅ **Respecter `prefers-reduced-motion`** pour l'accessibilité
+- ✅ **Respecter `prefers-reduced-motion`** pour l'accessibilité (via `useAnimation()`)
+- ✅ **Utiliser `toMilliseconds()` et `convertEasing()`** pour la compatibilité
 - ❌ **Ne pas dupliquer** le code d'animation dans plusieurs composants
 - ❌ **Ne pas oublier de nettoyer** les animations au démontage
 
 ## 📚 Documentation complète
 
 Consulter **ANIMATIONS_GUIDE.md** pour :
-- Concepts de base GSAP
+- Concepts de base AnimeJS
 - Tous les exemples d'animations
 - Références et cheat sheet
 - Bonnes pratiques détaillées
+- Comparaison GSAP vs AnimeJS
 
 ## 🔗 Commandes associées
 
@@ -192,12 +233,16 @@ Consulter **ANIMATIONS_GUIDE.md** pour :
 animateFadeIn(element, { duration: 0.5 });
 
 // Slide-up
-gsap.from(element, { opacity: 0, y: 20, duration: 0.5 });
+anime.animate(element, { opacity: [0, 1], translateY: [20, 0], duration: 500 });
 
 // Scale hover
-gsap.to(element, { scale: 1.05, duration: 0.2 });
+anime.animate(element, { scale: [1, 1.05], duration: 200 });
 
 // Stagger
-gsap.to(".items", { opacity: 1, y: 0, stagger: 0.1 });
-```
+anime.animate('.items', { opacity: [0, 1], delay: anime.stagger(100), duration: 500 });
 
+// Timeline
+const tl = anime.createTimeline();
+tl.add(element1, { opacity: [0, 1], duration: 500 });
+tl.add(element2, { translateY: [20, 0], duration: 500 }, '-=200');
+```

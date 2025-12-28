@@ -13,8 +13,8 @@ import { StockNotificationModal } from '../components/product/StockNotificationM
 import { Breadcrumbs } from '../components/ui/breadcrumbs';
 import { useToast } from '../contexts/ToastContext';
 import type { Variant } from '../types';
-import { animateFadeIn, animateSlideUp } from '../animations';
-import gsap from 'gsap';
+import * as anime from 'animejs';
+import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
 
 /**
  * Page Product - Fiche produit style A-COLD-WALL*
@@ -42,48 +42,62 @@ export const Product = () => {
   // Animations orchestrées quand le produit est chargé
   useEffect(() => {
     if (product && pageRef.current) {
-      const tl = gsap.timeline();
+      const tl = anime.createTimeline();
 
       // 1. Fade-in de la page
-      tl.add(animateFadeIn(pageRef.current, { duration: 0.3 }));
+      tl.add(pageRef.current, {
+        opacity: [0, 1],
+        duration: toMilliseconds(0.3),
+        easing: ANIMATION_EASES.DEFAULT,
+      });
 
-      // 2. Slide-up breadcrumbs (délai court)
+      // 2. Slide-up breadcrumbs (commence 0.2s avant la fin de l'animation précédente)
       if (breadcrumbsRef.current) {
-        tl.add(animateSlideUp(breadcrumbsRef.current, {
-          duration: 0.5,
-          delay: 0,
-          distance: 20
-        }), "-=0.2"); // Commence 0.2s avant la fin de l'animation précédente
+        tl.add(breadcrumbsRef.current, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: toMilliseconds(0.5),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=200'); // -200ms = commence 0.2s avant la fin
       }
 
-      // 3. Slide-up galerie et infos produit en parallèle
+      // 3. Slide-up galerie (commence 0.3s avant la fin de l'animation précédente)
       if (galleryRef.current) {
-        tl.add(animateSlideUp(galleryRef.current, {
-          duration: 0.6,
-          distance: 30
-        }), "-=0.3");
+        tl.add(galleryRef.current, {
+          opacity: [0, 1],
+          translateY: [30, 0],
+          duration: toMilliseconds(0.6),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=300');
       }
 
+      // 3b. Slide-up infos produit en parallèle avec la galerie
       if (productInfoRef.current) {
-        tl.add(animateSlideUp(productInfoRef.current, {
-          duration: 0.6,
-          distance: 30
-        }), "-=0.6"); // En parallèle avec la galerie
+        tl.add(productInfoRef.current, {
+          opacity: [0, 1],
+          translateY: [30, 0],
+          duration: toMilliseconds(0.6),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=600'); // En parallèle avec la galerie
       }
 
-      // 4. Slide-up actions (variant selector + add to cart)
+      // 4. Slide-up actions (commence 0.4s avant la fin de l'animation précédente)
       if (actionsRef.current) {
-        tl.add(animateSlideUp(actionsRef.current, {
-          duration: 0.5,
-          distance: 20
-        }), "-=0.4");
+        tl.add(actionsRef.current, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: toMilliseconds(0.5),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=400');
       }
 
-      // 5. Fade-in onglets
+      // 5. Fade-in onglets (commence 0.3s avant la fin de l'animation précédente)
       if (tabsRef.current) {
-        tl.add(animateFadeIn(tabsRef.current, {
-          duration: 0.4
-        }), "-=0.3");
+        tl.add(tabsRef.current, {
+          opacity: [0, 1],
+          duration: toMilliseconds(0.4),
+          easing: ANIMATION_EASES.DEFAULT,
+        }, '-=300');
       }
     }
   }, [product]);

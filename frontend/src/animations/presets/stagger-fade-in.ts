@@ -1,5 +1,5 @@
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES, ANIMATION_STAGGER } from '../utils/constants';
+import * as anime from 'animejs';
+import { ANIMATION_DURATIONS, ANIMATION_EASES, ANIMATION_STAGGER, toMilliseconds } from '../utils/constants';
 
 export interface StaggerFadeInOptions {
   /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.NORMAL) */
@@ -7,7 +7,7 @@ export interface StaggerFadeInOptions {
   /** Délai initial avant le début de l'animation (défaut: 0) */
   delay?: number;
   /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
-  ease?: string;
+  easing?: string;
   /** Délai entre chaque élément (stagger) en secondes (défaut: ANIMATION_STAGGER.NORMAL) */
   stagger?: number;
   /** Distance en pixels pour le slide depuis le bas (défaut: 20) */
@@ -15,14 +15,14 @@ export interface StaggerFadeInOptions {
 }
 
 /**
- * Animation stagger fade-in avec slide-up réutilisable
+ * Animation stagger fade-in avec slide-up réutilisable (AnimeJS)
  * 
  * Anime plusieurs éléments en cascade avec un fondu et slide depuis le bas
  * Parfait pour animer des listes d'éléments (cards, items, etc.)
  * 
  * @param elements - Éléments DOM, refs React, ou sélecteur CSS (plusieurs éléments)
  * @param options - Options d'animation
- * @returns Timeline GSAP (pour chaînage si besoin)
+ * @returns Instance AnimeJS (pour contrôle si besoin)
  * 
  * @example
  * // Utilisation basique
@@ -37,28 +37,24 @@ export interface StaggerFadeInOptions {
  * });
  */
 export const animateStaggerFadeIn = (
-  elements: gsap.TweenTarget,
+  elements: NodeListOf<Element> | HTMLElement[] | string | null,
   options: StaggerFadeInOptions = {}
-): gsap.core.Tween => {
+): ReturnType<typeof anime.animate> | null => {
+  if (!elements) return null;
+
   const {
     duration = ANIMATION_DURATIONS.NORMAL,
     delay = 0,
-    ease = ANIMATION_EASES.DEFAULT,
+    easing = ANIMATION_EASES.DEFAULT,
     stagger = ANIMATION_STAGGER.NORMAL,
     distance = 20,
   } = options;
 
-  return gsap.fromTo(
-    elements,
-    { opacity: 0, y: distance },
-    {
-      opacity: 1,
-      y: 0,
-      duration,
-      delay,
-      stagger,
-      ease,
-    }
-  );
+  return anime.animate(elements, {
+    opacity: [0, 1],
+    translateY: [distance, 0],
+    duration: toMilliseconds(duration),
+    delay: anime.stagger(toMilliseconds(stagger), { start: toMilliseconds(delay) }),
+    easing,
+  });
 };
-

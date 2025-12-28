@@ -1,5 +1,5 @@
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+import * as anime from 'animejs';
+import { ANIMATION_DURATIONS, ANIMATION_EASES, toMilliseconds } from '../utils/constants';
 
 /**
  * Options pour l'animation test-slide
@@ -10,17 +10,17 @@ export interface TestSlideOptions {
   /** Délai avant le début de l'animation en secondes (défaut: 0) */
   delay?: number;
   /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
-  ease?: string;
+  easing?: string;
 }
 
 /**
- * Animation test-slide réutilisable
+ * Animation test-slide réutilisable (AnimeJS)
  * 
  * Fait glisser un élément vers le haut avec fondu
  * 
  * @param element - Élément DOM, ref React, ou sélecteur CSS
  * @param options - Options d'animation
- * @returns Timeline GSAP (pour chaînage si besoin)
+ * @returns Instance AnimeJS (pour contrôle si besoin)
  * 
  * @example
  * // Utilisation basique
@@ -31,27 +31,27 @@ export interface TestSlideOptions {
  * animateTestSlide(elementRef.current, {
  *   duration: 0.8,
  *   delay: 0.2,
- *   ease: ANIMATION_EASES.SMOOTH
+ *   easing: ANIMATION_EASES.SMOOTH
  * });
  */
 export const animateTestSlide = (
-  element: gsap.TweenTarget,
+  element: HTMLElement | string | null,
   options: TestSlideOptions = {}
-): gsap.core.Tween => {
+): ReturnType<typeof anime.animate> | null => {
+  if (!element) return null;
+
   const {
     duration = ANIMATION_DURATIONS.NORMAL,
     delay = 0,
-    ease = ANIMATION_EASES.DEFAULT,
+    easing = ANIMATION_EASES.DEFAULT,
   } = options;
 
-  return gsap.fromTo(
-    element,
-    { opacity: 0, y: 50 },
-    {
-      opacity: 1, y: 0,
-      duration,
-      delay,
-      ease,
-    }
-  );
+  return anime.animate(element, {
+    
+    opacity: [0, 1],
+    translateY: [50, 0],
+    duration: toMilliseconds(duration),
+    delay: toMilliseconds(delay),
+    easing,
+  });
 };

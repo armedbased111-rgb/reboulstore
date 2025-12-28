@@ -10,6 +10,7 @@ Application frontend construite avec **React** (TypeScript), **Vite** comme buil
 - **Framework** : React (TypeScript)
 - **Styling** : TailwindCSS v4
 - **Composants UI** : shadcn/ui (dans `/ui/shadcn`)
+- **Animations** : AnimeJS (via `AnimationProvider`)
 - **Typographie** : Geist
 - **Design** : Mobile-first
 - **Inspiration Design** : [A-COLD-WALL*](https://www.a-cold-wall.com/) - Style minimaliste premium/streetwear

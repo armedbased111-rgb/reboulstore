@@ -1,5 +1,5 @@
-import gsap from 'gsap';
-import { ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
+import * as anime from 'animejs';
+import { ANIMATION_DURATIONS, ANIMATION_EASES, toMilliseconds } from '../utils/constants';
 
 export interface FadeScaleOptions {
   /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.FAST) */
@@ -7,7 +7,7 @@ export interface FadeScaleOptions {
   /** Délai avant le début de l'animation en secondes (défaut: 0) */
   delay?: number;
   /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
-  ease?: string;
+  easing?: string;
   /** Échelle initiale (défaut: 0.9) */
   scaleFrom?: number;
   /** Échelle finale (défaut: 1) */
@@ -15,14 +15,14 @@ export interface FadeScaleOptions {
 }
 
 /**
- * Animation fade-scale réutilisable
+ * Animation fade-scale réutilisable (AnimeJS)
  * 
  * Combine opacity et scale pour un effet d'apparition zoomée
  * Parfait pour les boutons, badges, éléments qui apparaissent avec un effet zoom
  * 
  * @param element - Élément DOM, ref React, ou sélecteur CSS
  * @param options - Options d'animation
- * @returns Timeline GSAP (pour chaînage si besoin)
+ * @returns Instance AnimeJS (pour contrôle si besoin)
  * 
  * @example
  * // Utilisation basique
@@ -37,27 +37,25 @@ export interface FadeScaleOptions {
  * });
  */
 export const animateFadeScale = (
-  element: gsap.TweenTarget,
+  element: HTMLElement | string | null,
   options: FadeScaleOptions = {}
-): gsap.core.Tween => {
+): ReturnType<typeof anime.animate> | null => {
+  if (!element) return null;
+
   const {
     duration = ANIMATION_DURATIONS.FAST,
     delay = 0,
-    ease = ANIMATION_EASES.DEFAULT,
+    easing = ANIMATION_EASES.DEFAULT,
     scaleFrom = 0.9,
     scaleTo = 1,
   } = options;
 
-  return gsap.fromTo(
-    element,
-    { opacity: 0, scale: scaleFrom },
-    {
-      opacity: 1,
-      scale: scaleTo,
-      duration,
-      delay,
-      ease,
-    }
-  );
+  return anime.animate(element, {
+    
+    opacity: [0, 1],
+    scale: [scaleFrom, scaleTo],
+    duration: toMilliseconds(duration),
+    delay: toMilliseconds(delay),
+    easing,
+  });
 };
-

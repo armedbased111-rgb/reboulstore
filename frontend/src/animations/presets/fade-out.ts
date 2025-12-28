@@ -1,25 +1,22 @@
 import * as anime from 'animejs';
 import { ANIMATION_DURATIONS, ANIMATION_EASES, toMilliseconds } from '../utils/constants';
 
-export interface RevealUpOptions {
-  /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.NORMAL) */
+export interface FadeOutOptions {
+  /** Durée de l'animation en secondes (défaut: ANIMATION_DURATIONS.FAST) */
   duration?: number;
   /** Délai avant le début de l'animation en secondes (défaut: 0) */
   delay?: number;
   /** Type d'easing (défaut: ANIMATION_EASES.DEFAULT) */
   easing?: string;
-  /** Distance en pixels pour le reveal depuis le bas (défaut: 40) */
+  /** Distance en pixels pour le slide (défaut: -10) */
   distance?: number;
-  /** Opacité de départ (défaut: 0) */
-  opacity?: number;
 }
 
 /**
- * Animation reveal-up réutilisable (AnimeJS)
+ * Animation fade-out avec slide réutilisable (AnimeJS)
  * 
- * Fait apparaître un élément avec un effet de révélation depuis le bas
- * Combine opacity et translateY pour un effet fluide
- * Parfait pour les sections, hero, cards importantes
+ * Fait disparaître un élément avec un fondu et slide (opacity: 1 → 0, translateY: 0 → distance)
+ * Parfait pour fermer des menus, dropdowns, modals
  * 
  * @param element - Élément DOM, ref React, ou sélecteur CSS
  * @param options - Options d'animation
@@ -27,36 +24,35 @@ export interface RevealUpOptions {
  * 
  * @example
  * // Utilisation basique
- * animateRevealUp(sectionRef.current);
+ * animateFadeOut(menuRef.current);
  * 
  * @example
  * // Avec options personnalisées
- * animateRevealUp(heroRef.current, {
- *   duration: 0.8,
- *   delay: 0.2,
- *   distance: 60
+ * animateFadeOut(dropdownRef.current, {
+ *   duration: 0.2,
+ *   distance: -20
  * });
  */
-export const animateRevealUp = (
+export const animateFadeOut = (
   element: HTMLElement | string | null,
-  options: RevealUpOptions = {}
+  options: FadeOutOptions = {}
 ): ReturnType<typeof anime.animate> | null => {
   if (!element) return null;
 
   const {
-    duration = ANIMATION_DURATIONS.NORMAL,
+    duration = ANIMATION_DURATIONS.FAST,
     delay = 0,
     easing = ANIMATION_EASES.DEFAULT,
-    distance = 40,
-    opacity = 0,
+    distance = -10,
   } = options;
 
   return anime.animate(element, {
     
-    opacity: [opacity, 1],
-    translateY: [distance, 0],
+    opacity: [1, 0],
+    translateY: [0, distance],
     duration: toMilliseconds(duration),
     delay: toMilliseconds(delay),
     easing,
   });
 };
+

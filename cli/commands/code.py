@@ -327,11 +327,11 @@ class APIServiceGeneratorWrapper:
         return [str(file_path.relative_to(Path(__file__).parent.parent.parent))]
 
 class AnimationGeneratorWrapper:
-    """Générer une animation GSAP"""
+    """Générer une animation AnimeJS"""
     
     @staticmethod
     def create(name, animation_type="fade-in"):
-        """Créer une animation GSAP"""
+        """Créer une animation AnimeJS"""
         animations_dir = Path(__file__).parent.parent.parent / "frontend" / "src" / "animations" / "presets"
         animations_dir.mkdir(parents=True, exist_ok=True)
         

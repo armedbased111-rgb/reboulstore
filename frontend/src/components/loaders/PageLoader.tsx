@@ -1,6 +1,7 @@
 // frontend/src/components/loaders/PageLoader.tsx
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
+import * as anime from 'animejs'
+import { toMilliseconds, convertEasing } from '../../animations/utils/constants'
 
 type LoaderState = 'default' | 'loaded'
 
@@ -47,71 +48,68 @@ export const PageLoader = ({ state = 'default', steps }: PageLoaderProps) => {
       return
     }
 
-    // Timeline "premium" type Webflow/Apple :
-    // - Barre : remplissage progressif, petite pause, reset discret
-    // - Logo : léger breathing (opacity/scale subtil)
-    const tl = gsap.timeline({ repeat: -1 })
-    const progressObj = { value: 0 }
+    // Durée totale de l'animation : 2s (plus courte)
+    const totalDuration = toMilliseconds(2)
+    const startTime = Date.now()
+    let animationFrameId: number | null = null
+    let isCancelled = false
 
-    tl.fromTo(
-      centerBarRef.current,
-      { scaleX: 0, transformOrigin: '0% 50%' },
-      {
-        scaleX: 1,
-        duration: 1.1,
-        ease: 'power2.out',
-      },
-    )
-      // micro-pause en fin de barre pleine
-      .to(centerBarRef.current, {
-        scaleX: 1,
-        duration: 0.15,
-        ease: 'none',
-      })
-      // reset discret (retour à 0 sans flash)
-      .to(centerBarRef.current, {
-        scaleX: 0,
-        duration: 0.25,
-        ease: 'power1.inOut',
-      })
+    // Fonction pour mettre à jour le pourcentage
+    const updateProgress = () => {
+      if (isCancelled || !progressTextRef.current) return
 
-    // Texte de progression "CHARGEMENT : 0–100%"
-    tl.fromTo(
-      progressObj,
-      { value: 0 },
-      {
-        value: 100,
-        duration: 1.1,
-        ease: 'power2.out',
-        onUpdate: () => {
-          if (progressTextRef.current) {
-            const value = Math.round(progressObj.value)
-            progressTextRef.current.textContent = `CHARGEMENT : ${value}%`
-          }
-        },
-      },
-      0,
-    )
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100))
+      const value = Math.round(progress)
+      
+      if (progressTextRef.current) {
+        progressTextRef.current.textContent = `CHARGEMENT : ${value}%`
+      }
 
-    tl.fromTo(
-      logoRef.current,
-      { opacity: 0.85, scale: 0.98 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 1.1,
-        ease: 'power1.out',
-      },
-      0, // démarre en même temps que la barre
-    ).to(logoRef.current, {
-      opacity: 0.9,
-      scale: 0.985,
-      duration: 0.5,
-      ease: 'power1.inOut',
+      // Continuer la mise à jour si on n'a pas atteint 100%
+      if (progress < 100) {
+        animationFrameId = requestAnimationFrame(updateProgress)
+      } else {
+        // S'assurer qu'on affiche 100% à la fin
+        if (progressTextRef.current) {
+          progressTextRef.current.textContent = 'CHARGEMENT : 100%'
+        }
+      }
+    }
+
+    // Démarrer la mise à jour du pourcentage
+    animationFrameId = requestAnimationFrame(updateProgress)
+
+    // Timeline pour la barre et le logo
+    const tl = anime.createTimeline({
+      // Pas de loop : animation unique de 0% à 100%
     })
 
+    // Barre : remplissage progressif de 0% à 100%
+    // Durée totale : 3.5s (correspond au timeout dans App.tsx)
+    tl.add(centerBarRef.current, {
+      scaleX: [0, 1],
+      duration: totalDuration,
+      easing: convertEasing('power2.out'),
+    })
+
+    // Logo : breathing (démarre en même temps que la barre)
+    tl.add(logoRef.current, {
+      opacity: [0.85, 1],
+      scale: [0.98, 1],
+      duration: totalDuration,
+      easing: convertEasing('power1.out'),
+    }, 0) // Démarre en même temps que la barre
+
     return () => {
-      tl.kill()
+      // Annuler la mise à jour du pourcentage
+      isCancelled = true
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId)
+      }
+      // Nettoyer toutes les animations
+      if (centerBarRef.current) anime.remove(centerBarRef.current)
+      if (logoRef.current) anime.remove(logoRef.current)
     }
   }, [state])
 

@@ -1,6 +1,7 @@
 // frontend/src/components/loaders/TopBarLoader.tsx
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
+import * as anime from 'animejs'
+import { toMilliseconds, convertEasing } from '../../animations/utils/constants'
 
 /**
  * Loader barre fine en haut de page (design Figma type "progress bar")
@@ -22,16 +23,16 @@ export const TopBarLoader = () => {
       return
     }
 
-    const tl = gsap.timeline({ repeat: -1, yoyo: true })
-
-    tl.fromTo(
-      barRef.current,
-      { scaleX: 0, transformOrigin: '0% 50%' },
-      { scaleX: 1, duration: 0.8, ease: 'power2.out' },
-    )
+    anime.animate(barRef.current, {
+      scaleX: [0, 1],
+      duration: toMilliseconds(0.8),
+      easing: convertEasing('power2.out'),
+      loop: true,
+      direction: 'alternate', // Équivalent yoyo
+    })
 
     return () => {
-      tl.kill()
+      if (barRef.current) anime.remove(barRef.current)
     }
   }, [])
 
