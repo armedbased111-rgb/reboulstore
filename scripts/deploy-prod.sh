@@ -282,13 +282,71 @@ else
     info "✅ Upload (simulation)"
 fi
 
+# Création de .env.production sur le serveur (si nécessaire)
+section "📝 Configuration .env.production sur le serveur"
+
+if [ "$DRY_RUN" = false ]; then
+    info "Création de .env.production sur le serveur avec les variables d'environnement..."
+    
+    # Créer le contenu de .env.production depuis les variables d'environnement
+    ENV_CONTENT=$(cat <<EOF
+# Variables d'environnement PRODUCTION
+# Généré automatiquement par deploy-prod.sh
+
+# BASE DE DONNÉES PostgreSQL
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+DB_DATABASE=${DB_DATABASE}
+DB_HOST=${DB_HOST:-postgres}
+DB_PORT=${DB_PORT:-5432}
+
+# BACKEND - JWT & Authentification
+JWT_SECRET=${JWT_SECRET}
+
+# STRIPE - Paiements
+STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+
+# CLOUDINARY - Images
+CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+# FRONTEND - URLs
+FRONTEND_URL=${FRONTEND_URL:-https://www.reboulstore.com}
+VITE_API_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
+
+# ADMIN CENTRAL
+REBOUL_DB_USER=${DB_USERNAME}
+REBOUL_DB_PASSWORD=${DB_PASSWORD}
+REBOUL_DB_NAME=${DB_DATABASE}
+EOF
+)
+    
+    # Upload .env.production sur le serveur
+    SSH_CMD=$(build_ssh_cmd)
+    SSH_OPTS=$(get_ssh_opts)
+    CREATE_ENV_CMD="cat > $SERVER_PATH/.env.production <<'ENVEOF'
+$ENV_CONTENT
+ENVEOF
+"
+    
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CREATE_ENV_CMD\""; then
+        info "✅ .env.production créé sur le serveur"
+    else
+        warn "⚠️  Échec de la création de .env.production, continuation..."
+    fi
+else
+    info "✅ Création .env.production (simulation)"
+fi
+
 # Redémarrage des services Docker sur le serveur
 section "🔄 Redémarrage des services Docker"
 
 if [ "$DRY_RUN" = false ]; then
     info "Redémarrage des services sur le serveur..."
     
-    RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml up -d"
+    RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
     
     SSH_CMD=$(build_ssh_cmd)
     SSH_OPTS=$(get_ssh_opts)
