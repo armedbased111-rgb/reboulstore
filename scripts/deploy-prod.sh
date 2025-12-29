@@ -288,8 +288,9 @@ section "📝 Configuration .env.production sur le serveur"
 if [ "$DRY_RUN" = false ]; then
     info "Création de .env.production sur le serveur avec les variables d'environnement..."
     
-    # Créer le contenu de .env.production depuis les variables d'environnement
-    ENV_CONTENT=$(cat <<EOF
+    # Créer le fichier .env.production localement d'abord
+    ENV_FILE=$(mktemp)
+    cat > "$ENV_FILE" <<EOF
 # Variables d'environnement PRODUCTION
 # Généré automatiquement par deploy-prod.sh
 
@@ -321,21 +322,41 @@ REBOUL_DB_USER=${DB_USERNAME}
 REBOUL_DB_PASSWORD=${DB_PASSWORD}
 REBOUL_DB_NAME=${DB_DATABASE}
 EOF
-)
     
-    # Upload .env.production sur le serveur
+    # Upload .env.production sur le serveur avec scp
     SSH_CMD=$(build_ssh_cmd)
     SSH_OPTS=$(get_ssh_opts)
-    CREATE_ENV_CMD="cat > $SERVER_PATH/.env.production <<'ENVEOF'
-$ENV_CONTENT
-ENVEOF
-"
     
-    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CREATE_ENV_CMD\""; then
-        info "✅ .env.production créé sur le serveur"
+    # Utiliser scp pour uploader le fichier
+    if [ "$USE_SSH_AGENT" = "true" ]; then
+        # Dans GitHub Actions avec agent SSH, utiliser scp sans -i
+        if scp $SSH_OPTS "$ENV_FILE" "$SERVER_USER@$SERVER_HOST:$SERVER_PATH/.env.production"; then
+            info "✅ .env.production créé sur le serveur"
+        else
+            warn "⚠️  Échec de l'upload de .env.production, essai avec SSH..."
+            # Fallback : utiliser SSH avec cat
+            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"cat > $SERVER_PATH/.env.production\"" < "$ENV_FILE"; then
+                info "✅ .env.production créé sur le serveur (via SSH)"
+            else
+                warn "⚠️  Échec de la création de .env.production, continuation..."
+            fi
+        fi
     else
-        warn "⚠️  Échec de la création de .env.production, continuation..."
+        # En local, utiliser scp avec -i
+        if scp -i "$SSH_KEY" $SSH_OPTS "$ENV_FILE" "$SERVER_USER@$SERVER_HOST:$SERVER_PATH/.env.production"; then
+            info "✅ .env.production créé sur le serveur"
+        else
+            warn "⚠️  Échec de l'upload de .env.production, essai avec SSH..."
+            # Fallback : utiliser SSH avec cat
+            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"cat > $SERVER_PATH/.env.production\"" < "$ENV_FILE"; then
+                info "✅ .env.production créé sur le serveur (via SSH)"
+            else
+                warn "⚠️  Échec de la création de .env.production, continuation..."
+            fi
+        fi
     fi
+    
+    rm "$ENV_FILE"
 else
     info "✅ Création .env.production (simulation)"
 fi
