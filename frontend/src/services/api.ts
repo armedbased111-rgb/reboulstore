@@ -10,7 +10,9 @@ export type { ApiResponse, ApiError };
 // Configuration de l'instance Axios
 // Utiliser le proxy Vite quand disponible, sinon URL directe
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-  (typeof window !== 'undefined' && window.location.port === '9999' ? '/api' : 'http://localhost:3001');
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && window.location.port === '9999' ? '/api' : 
+   typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

@@ -316,6 +316,7 @@ CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
 # FRONTEND - URLs
 FRONTEND_URL=${FRONTEND_URL:-https://www.reboulstore.com}
 VITE_API_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
+VITE_API_BASE_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
 
 # ADMIN CENTRAL
 REBOUL_DB_USER=${DB_USERNAME}
