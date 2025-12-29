@@ -369,16 +369,16 @@ section "🔄 Redémarrage des services Docker"
 if [ "$DRY_RUN" = false ]; then
     info "Redémarrage des services sur le serveur..."
     
-    # Rebuild le frontend dans Docker pour utiliser les dernières modifications
-    info "Rebuild du frontend dans Docker..."
-    REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build frontend"
+    # Rebuild TOUT (frontend ET backend) dans Docker pour utiliser les dernières modifications
+    info "Rebuild des services dans Docker (frontend + backend)..."
+    REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
     
     SSH_CMD=$(build_ssh_cmd)
     SSH_OPTS=$(get_ssh_opts)
     if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBUILD_CMD\""; then
-        info "✅ Frontend rebuild réussi"
+        info "✅ Services rebuild réussis"
     else
-        warn "⚠️  Échec du rebuild frontend, continuation avec l'image existante"
+        warn "⚠️  Échec du rebuild, continuation avec les images existantes"
     fi
     
     RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
