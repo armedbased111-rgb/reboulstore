@@ -63,15 +63,18 @@ jobs:
       - name: 🔧 Make scripts executable
         run: chmod +x scripts/*.sh
 
-      - name: 🔐 Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: 🔐 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: 🚀 Deploy to production
         run: |
           DEPLOY_HOST=${{ secrets.DEPLOY_HOST }} \
           DEPLOY_PATH=${{ secrets.DEPLOY_PATH }} \
+          DEPLOY_SSH_KEY=~/.ssh/deploy_key \
           ./scripts/deploy-prod.sh --skip-check
         env:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
