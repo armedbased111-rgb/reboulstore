@@ -387,37 +387,45 @@ if [ "$DRY_RUN" = false ]; then
     info "Attente de 15 secondes..."
     sleep 15
     
-    # Vérifier le healthcheck
+    # Vérifier le healthcheck directement sur le serveur (plus fiable)
     info "Vérification du healthcheck..."
     
-    MAX_RETRIES=30
+    MAX_RETRIES=20  # Réduit de 30 à 20 (40 secondes max au lieu de 60)
     RETRY_COUNT=0
     BACKEND_READY=false
     
+    SSH_CMD=$(build_ssh_cmd)
+    SSH_OPTS=$(get_ssh_opts)
+    
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-        HEALTH_URL="http://$SERVER_HOST:3001/health"
-        if curl -f "$HEALTH_URL" > /dev/null 2>&1; then
+        # Vérifier directement depuis le serveur (plus fiable que depuis l'extérieur)
+        HEALTH_CHECK_CMD="curl -f http://localhost:3001/health > /dev/null 2>&1 || curl -f http://backend:3001/health > /dev/null 2>&1"
+        
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$HEALTH_CHECK_CMD\""; then
             info "✅ Backend est prêt"
             BACKEND_READY=true
             break
         fi
-        RETRY_COUNT=$((RETRY_COUNT + 1))
-        if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-            echo -n "."
-            sleep 2
+        
+        # Afficher le statut des containers pour debug
+        if [ $((RETRY_COUNT % 5)) -eq 0 ]; then
+            info "Tentative $((RETRY_COUNT+1))/$MAX_RETRIES - Vérification des containers..."
+            eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'" || true
         fi
+        
+        echo -n "."
+        sleep 2
+        RETRY_COUNT=$((RETRY_COUNT+1))
     done
     
     echo ""
     
     if [ "$BACKEND_READY" = false ]; then
-        warn "⚠️  Le backend ne répond pas après $MAX_RETRIES tentatives"
-        SSH_CMD=$(build_ssh_cmd)
-        if [ "$USE_SSH_AGENT" = "true" ]; then
-            warn "⚠️  Vérifiez manuellement: $SSH_CMD $SERVER_USER@$SERVER_HOST"
-        else
-            warn "⚠️  Vérifiez manuellement: $SSH_CMD $SERVER_USER@$SERVER_HOST"
-        fi
+        warn "⚠️  Le backend ne répond pas après $MAX_RETRIES tentatives."
+        warn "Vérification des logs backend..."
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml logs backend --tail=50'" || true
+        warn "Vérification du statut des containers..."
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'" || true
     fi
 else
     info "✅ Vérification healthcheck (simulation)"
