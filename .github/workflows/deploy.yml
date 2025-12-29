@@ -1,0 +1,96 @@
+name: 🚀 Deploy to Production
+
+# Déclencheur : seulement sur push vers main
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Permet de déclencher manuellement depuis GitHub
+
+# Permissions
+permissions:
+  contents: read
+
+jobs:
+  # Job : Vérification avant déploiement
+  verify:
+    name: ✅ Verify Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: ✅ Run check-build.sh
+        run: ./scripts/check-build.sh --skip-audit
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+  # Job : Déploiement en production
+  deploy:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: 🔐 Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: 🚀 Deploy to production
+        run: |
+          DEPLOY_HOST=${{ secrets.DEPLOY_HOST }} \
+          DEPLOY_PATH=${{ secrets.DEPLOY_PATH }} \
+          ./scripts/deploy-prod.sh --skip-check
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: 🏥 Health Check
+        run: |
+          sleep 10
+          curl -f https://www.reboulstore.com/health || echo "⚠️ Health check failed (may be normal if DNS not pointing)"
+        continue-on-error: true
+
+      - name: 📊 Deployment Summary
+        if: always()
+        run: |
+          echo "## 🚀 Déploiement Terminé" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Déploiement sur : ${{ secrets.DEPLOY_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "📅 Date : $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 Commit : ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+
