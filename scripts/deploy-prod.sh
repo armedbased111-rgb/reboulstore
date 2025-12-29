@@ -298,7 +298,12 @@ if [ "$DRY_RUN" = false ]; then
     
     if [ "$BACKEND_READY" = false ]; then
         warn "⚠️  Le backend ne répond pas après $MAX_RETRIES tentatives"
-        warn "⚠️  Vérifiez manuellement: ssh -i $SSH_KEY $SERVER_USER@$SERVER_HOST"
+        SSH_CMD=$(build_ssh_cmd)
+        if [ "$USE_SSH_AGENT" = "true" ]; then
+            warn "⚠️  Vérifiez manuellement: $SSH_CMD $SERVER_USER@$SERVER_HOST"
+        else
+            warn "⚠️  Vérifiez manuellement: $SSH_CMD $SERVER_USER@$SERVER_HOST"
+        fi
     fi
 else
     info "✅ Vérification healthcheck (simulation)"
@@ -308,8 +313,9 @@ fi
 section "✅ Déploiement terminé"
 
 info "🌐 Site accessible sur: http://$SERVER_HOST"
-info "🔍 Vérifier les logs: ssh -i $SSH_KEY $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml logs -f'"
-info "📊 Statut: ssh -i $SSH_KEY $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'"
+SSH_CMD=$(build_ssh_cmd)
+info "🔍 Vérifier les logs: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml logs -f'"
+info "📊 Statut: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'"
 
 if [ "$BACKEND_READY" = false ] && [ "$DRY_RUN" = false ]; then
     warn "⚠️  Attention: Le backend n'a pas répondu au healthcheck"
