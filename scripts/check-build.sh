@@ -69,7 +69,6 @@ fi
 section "📁 Vérification des fichiers nécessaires"
 
 REQUIRED_FILES=(
-    ".env.production"
     "docker-compose.prod.yml"
     "frontend/package.json"
     "backend/package.json"
@@ -82,6 +81,13 @@ for file in "${REQUIRED_FILES[@]}"; do
         error "❌ $file manquant"
     fi
 done
+
+# .env.production est optionnel si les variables d'environnement sont déjà définies
+if [ -f ".env.production" ]; then
+    info "✅ .env.production existe"
+else
+    warn "⚠️  .env.production non trouvé (normal dans CI/CD si variables d'env sont définies)"
+fi
 
 # 2. Vérifier les variables d'environnement critiques
 section "🔐 Vérification des variables d'environnement"
