@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { useCartContext } from '../../contexts/CartContext';
 import { useCategories } from '../../hooks/useCategories';
 import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
+import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
 import { Button } from "@/components/ui/button"
 import type { Brand } from '../../types';
 import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
@@ -15,9 +17,9 @@ export const Header = () => {
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { brands, loading: brandsLoading, error: brandsError } = useBrands();
   const { isAuthenticated, user } = useAuth();
+  const { open: openQuickSearch } = useQuickSearchContext();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
   
   // États pour le menu mobile
@@ -292,8 +294,8 @@ export const Header = () => {
     <header ref={headerRef} className="bg-white sticky top-0 z-[60] relative">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
-          {/* Section gauche : Menu hamburger mobile + Logo + Navigation */}
-          <div className="flex items-center gap-[50px]">
+          {/* Section gauche : Menu hamburger mobile (gauche) + Logo (centré mobile) + Navigation (desktop) */}
+          <div className="flex items-center gap-[50px] flex-1 md:flex-none">
             {/* Menu mobile hamburger - À gauche avant le logo */}
             <button 
               ref={hamburgerButtonRef}
@@ -334,8 +336,11 @@ export const Header = () => {
               </svg>
             </button>
 
-            {/* Logo */}
-          <Link to="/" className="flex items-center">
+            {/* Logo - Centré en mobile (position absolute), position normale en desktop */}
+          <Link 
+            to="/" 
+            className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center"
+          >
             <span className="text-xl font-bold text-black uppercase tracking-tight">
               REBOULSTORE 2.0*
             </span>
@@ -393,58 +398,18 @@ export const Header = () => {
               </button>
             </div>
 
-            {/* Liens SALE et THE CORNER | C.P. COMPANY */}
-            <Link 
-              to="/catalog?sale=true" 
-              className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
-            >
-              SALE
-            </Link>
-            <div className="flex items-center gap-2">
-              <Link 
-                to="/the-corner" 
-                className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
-              >
-                THE CORNER
-              </Link>
-              <span className="text-black text-[15px] font-light">|</span>
-              <Link 
-                to="/cp-company" 
-                className="text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
-              >
-                C.P. COMPANY
-              </Link>
-            </div>
           </nav>
           </div>
 
           {/* Utilitaires à droite - atteint le bord droit */}
           <div className="hidden md:flex items-center gap-6">
-          {isSearchOpen ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder='RECHERCHER'
-                autoFocus
-                className='bg-transparent border-0 border-b border-gray-900 outline-none uppercase text-sm font-medium text-black placeholder:text-gray-500 focus:border-gray-900 px-0 py-1 min-w-[200px]'
-                onBlur={() => setIsSearchOpen(false)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Escape') {
-                    setIsSearchOpen(false)
-                  }
-                }}
-              />
-              </div>
-          ) : (
-            // Bouton RECHERCHER
+            {/* Bouton RECHERCHER - Ouvre QuickSearch */}
             <button
-              onClick={() => setIsSearchOpen(true)}
+              onClick={() => openQuickSearch()}
               className='text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity'
-              >
+            >
               RECHERCHER
-              </button>
-          )  
-          }
+            </button>
           
             {/* Account / Login button */}
             <Link 
@@ -461,44 +426,13 @@ export const Header = () => {
             </Button>
           </div>
 
-          {/* Menu mobile hamburger */}
+          {/* Bouton recherche mobile - À droite */}
           <button 
-            ref={hamburgerButtonRef}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 ml-auto relative z-[100]"
-            aria-label="Menu mobile"
-            aria-expanded={isMobileMenuOpen}
+            onClick={() => openQuickSearch()}
+            className="md:hidden flex items-center justify-center w-10 h-10 relative z-[100]"
+            aria-label="Rechercher"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              strokeWidth={1.5} 
-              stroke="currentColor" 
-              className="w-6 h-6"
-            >
-              {/* Ligne 1 */}
-              <path 
-                id="hamburger-line-1"
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M3.75 6.75h16.5"
-              />
-              {/* Ligne 2 */}
-              <path 
-                id="hamburger-line-2"
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M3.75 12h16.5"
-              />
-              {/* Ligne 3 */}
-              <path 
-                id="hamburger-line-3"
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M3.75 17.25h16.5"
-              />
-            </svg>
+            <Search className="w-5 h-5 text-black" />
           </button>
         </div>
         
@@ -712,21 +646,21 @@ export const Header = () => {
           {/* Menu */}
           <div 
             ref={mobileMenuRef}
-            className="fixed top-0 left-0 w-[85vw] max-w-[400px] h-full bg-white z-[9999] md:hidden flex flex-col shadow-2xl"
+            className="fixed top-0 left-0 w-[85vw] max-w-[400px] h-full bg-white z-[9999] md:hidden flex flex-col shadow-lg border-r border-gray-200"
             style={{ transform: 'translateX(-100%)' }}
           >
           {/* Header du menu */}
-          <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center px-6 py-4 border-b">
             <Link 
               to="/" 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-xl font-bold uppercase tracking-wider"
+              className="text-lg font-semibold uppercase tracking-tight"
             >
               REBOULSTORE 2.0*
             </Link>
             <button 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="w-8 h-8 flex items-center justify-center text-black hover:opacity-70 transition-opacity"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors"
               aria-label="Fermer le menu"
             >
               <svg 
@@ -735,7 +669,7 @@ export const Header = () => {
                 viewBox="0 0 24 24" 
                 strokeWidth={2} 
                 stroke="currentColor" 
-                className="w-6 h-6"
+                className="w-4 h-4"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -743,15 +677,22 @@ export const Header = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-6 space-y-1">
+          <nav className="flex-1 overflow-y-auto px-4 py-2">
             {/* CATALOGUE avec accordéon */}
             <div>
               <button
                 onClick={() => setIsMobileCatalogueOpen(!isMobileCatalogueOpen)}
-                className="w-full flex justify-between items-center py-4 text-left uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+                className="w-full flex justify-between items-center py-3 px-2 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
               >
                 <span>CATALOGUE</span>
-                <span className="text-sm">{isMobileCatalogueOpen ? '▲' : '▼'}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isMobileCatalogueOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
               <ul 
                 ref={mobileCatalogueRef}
@@ -759,19 +700,19 @@ export const Header = () => {
                 style={{ height: 0, opacity: 0 }}
               >
                 {categoriesLoading ? (
-                  <li className="py-2 text-sm text-gray-500">Chargement...</li>
+                  <li className="py-2 px-4 text-sm text-gray-500">Chargement...</li>
                 ) : categoriesError ? (
-                  <li className="py-2 text-sm text-red-500">Erreur</li>
+                  <li className="py-2 px-4 text-sm text-red-500">Erreur</li>
                 ) : (
                   categories.map((category) => (
-                    <li key={category.id} className="py-2">
+                    <li key={category.id}>
                       <Link
                         to={`/catalog?category=${category.slug}`}
                         onClick={() => {
                           setIsMobileMenuOpen(false);
                           setIsMobileCatalogueOpen(false);
                         }}
-                        className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                        className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                       >
                         {category.name}
                       </Link>
@@ -785,10 +726,17 @@ export const Header = () => {
             <div>
               <button
                 onClick={() => setIsMobileBrandsOpen(!isMobileBrandsOpen)}
-                className="w-full flex justify-between items-center py-4 text-left uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
+                className="w-full flex justify-between items-center py-3 px-2 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
               >
                 <span>BRANDS</span>
-                <span className="text-sm">{isMobileBrandsOpen ? '▲' : '▼'}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isMobileBrandsOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
                 <ul 
                   ref={mobileBrandsRef}
@@ -796,33 +744,33 @@ export const Header = () => {
                   style={{ height: 0, opacity: 0, display: 'block' }}
                 >
                 {brandsLoading ? (
-                  <li className="py-2 text-sm text-gray-500">Chargement...</li>
+                  <li className="py-2 px-4 text-sm text-gray-500">Chargement...</li>
                 ) : brandsError ? (
-                  <li className="py-2 text-sm text-red-500">Erreur</li>
+                  <li className="py-2 px-4 text-sm text-red-500">Erreur</li>
                 ) : (
                   brands.map((brand) => (
-                    <li key={brand.id} className="py-2">
+                    <li key={brand.id}>
                       <Link
                         to={`/catalog?brand=${brand.slug}`}
                         onClick={() => {
                           setIsMobileMenuOpen(false);
                           setIsMobileBrandsOpen(false);
                         }}
-                        className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                        className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                       >
                         {brand.name}
                       </Link>
                     </li>
                   ))
                 )}
-                <li className="py-2">
+                <li>
                   <Link
                     to="/catalog"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       setIsMobileBrandsOpen(false);
                     }}
-                    className="block text-base uppercase tracking-wide text-black/80 hover:text-black hover:opacity-70 transition-opacity pl-4"
+                    className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                   >
                     Shop All Brands
                   </Link>
@@ -830,51 +778,26 @@ export const Header = () => {
               </ul>
             </div>
 
-            {/* Séparateur */}
-            <div className="border-t border-gray-200 my-4" />
-
-            {/* Liens secondaires */}
-            <Link
-              to="/catalog?sale=true"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
-            >
-              SALE
-            </Link>
-            <Link
-              to="/the-corner"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
-            >
-              THE CORNER
-            </Link>
-            <Link
-              to="/cp-company"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-4 uppercase text-lg tracking-wider text-black hover:opacity-70 transition-opacity"
-            >
-              C.P. COMPANY
-            </Link>
           </nav>
 
           {/* Footer du menu */}
-          <div className="border-t border-gray-200 p-6 space-y-4">
+          <div className="border-t px-4 py-4 space-y-2">
             {/* Compte */}
             {isAuthenticated ? (
               <Link
                 to="/profile"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+                className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
               >
-                MON COMPTE
+                Mon compte
               </Link>
             ) : (
               <Link
                 to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+                className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
               >
-                LOGIN
+                Connexion
               </Link>
             )}
 
@@ -882,9 +805,9 @@ export const Header = () => {
             <Link
               to="/cart"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block uppercase text-base tracking-wide text-black hover:opacity-70 transition-opacity"
+              className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             >
-              PANIER ({cartLoading ? '...' : cartItemsCount})
+              Panier ({cartLoading ? '...' : cartItemsCount})
             </Link>
           </div>
         </div>

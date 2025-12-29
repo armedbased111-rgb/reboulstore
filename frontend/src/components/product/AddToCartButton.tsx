@@ -95,22 +95,9 @@ export const AddToCartButton = ({
   const isOutOfStock = variant ? (variant.stock || 0) === 0 : false;
 
   return (
-    <button
-      type="button"
-      onClick={handleAddToCart}
-      disabled={!variant || isAdding || isOutOfStock || (variant && variant.stock < quantity)}
-      className="inline-flex items-center justify-between gap-4 py-[9px] md:py-[5px] px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 disabled:cursor-not-allowed text-t2 text-white bg-black cursor-pointer transition-opacity w-full md:w-auto h-full"
-    >
-      {/* Texte du bouton */}
-      <span className="whitespace-nowrap">
-        {isAdding ? 'AJOUT EN COURS...' : isOutOfStock ? 'RUPTURE DE STOCK' : 'AJOUTER AU PANIER'}
-      </span>
-
-      {/* Compteur quantité à droite (dans le bouton) */}
-      <div
-        onClick={(e) => e.stopPropagation()} // Empêcher le clic sur le compteur de déclencher le bouton
-        className="flex items-center"
-      >
+    <div className="inline-flex items-center gap-3 w-full md:w-auto h-full">
+      {/* Compteur quantité à gauche */}
+      <div className="flex items-center">
         <QuantitySelector
           quantity={quantity}
           onDecrease={handleDecrease}
@@ -120,6 +107,18 @@ export const AddToCartButton = ({
           disabled={!variant || isOutOfStock}
         />
       </div>
+
+      {/* Bouton principal */}
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={!variant || isAdding || isOutOfStock || (variant && variant.stock < quantity)}
+        className="flex-1 inline-flex items-center justify-center gap-4 py-[9px] md:py-[5px] px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 disabled:cursor-not-allowed text-t2 text-white bg-black cursor-pointer transition-opacity h-full"
+      >
+        <span className="whitespace-nowrap">
+          {isAdding ? 'AJOUT EN COURS...' : isOutOfStock ? 'RUPTURE DE STOCK' : 'AJOUTER AU PANIER'}
+        </span>
     </button>
+    </div>
   );
 };

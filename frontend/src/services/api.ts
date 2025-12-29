@@ -125,4 +125,5 @@ export const api = {
   },
 };
 
+export { apiClient };
 export default apiClient;
