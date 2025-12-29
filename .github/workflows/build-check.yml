@@ -76,7 +76,7 @@ jobs:
 
       - name: 🔍 TypeScript check
         working-directory: ./backend
-        run: npm run build -- --noEmit
+        run: npx tsc --noEmit
 
       - name: 🧹 Lint
         working-directory: ./backend
