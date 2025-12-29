@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
 
 // Types pour l'authentification
 interface RegisterData {

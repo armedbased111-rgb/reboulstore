@@ -7,7 +7,8 @@
  * Utilise la même logique que api.ts pour la cohérence
  */
 const getApiBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL || 
+  return import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL || 
     (typeof window !== 'undefined' && window.location.port === '9999' 
       ? '/api' 
       : 'http://localhost:3001');

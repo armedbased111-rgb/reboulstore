@@ -43,7 +43,9 @@ export const downloadInvoice = async (orderId: string): Promise<void> => {
     throw new Error('Vous devez être connecté pour télécharger la facture');
   }
   
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+    import.meta.env.VITE_API_URL ||
+    (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
   
   // Utiliser fetch directement pour télécharger le blob
   const response = await fetch(`${API_BASE_URL}/orders/${orderId}/invoice`, {
