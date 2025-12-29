@@ -24,7 +24,20 @@ else
 fi
 SERVER_PATH="${DEPLOY_PATH:-/var/www/reboulstore}"
 SSH_KEY="${DEPLOY_SSH_KEY:-~/.ssh/id_rsa}"
+# Dans GitHub Actions, la clé SSH est dans l'agent SSH, pas dans un fichier
+USE_SSH_AGENT="${GITHUB_ACTIONS:-false}"
 SKIP_CHECK=false
+
+# Fonction pour construire la commande SSH
+build_ssh_cmd() {
+    if [ "$USE_SSH_AGENT" = "true" ]; then
+        # Dans GitHub Actions, utiliser l'agent SSH (clé déjà chargée)
+        echo "ssh"
+    else
+        # En local, utiliser la clé SSH spécifiée
+        echo "ssh -i \"$SSH_KEY\""
+    fi
+}
 SKIP_BACKUP=false
 DRY_RUN=false
 
@@ -130,13 +143,23 @@ section "🔐 Vérification de la connexion SSH"
 
 if [ "$DRY_RUN" = false ]; then
     info "Test de connexion SSH..."
-    if ssh -i "$SSH_KEY" -o ConnectTimeout=5 "$SERVER_USER@$SERVER_HOST" "echo 'Connexion OK'" > /dev/null 2>&1; then
+    SSH_CMD=$(build_ssh_cmd)
+    if [ "$USE_SSH_AGENT" = "true" ]; then
+        info "Mode GitHub Actions : utilisation de l'agent SSH"
+    else
+        info "Mode local : utilisation de la clé SSH: $SSH_KEY"
+    fi
+    if eval "$SSH_CMD -o ConnectTimeout=5 $SERVER_USER@$SERVER_HOST 'echo \"Connexion OK\"'" > /dev/null 2>&1; then
         info "✅ Connexion SSH réussie"
     else
         error "❌ Impossible de se connecter au serveur. Vérifiez:"
-        error "   - La clé SSH: $SSH_KEY"
         error "   - L'adresse du serveur: $SERVER_HOST"
         error "   - L'utilisateur: $SERVER_USER"
+        if [ "$USE_SSH_AGENT" != "true" ]; then
+            error "   - La clé SSH: $SSH_KEY"
+        else
+            error "   - La clé SSH dans GitHub Secrets (DEPLOY_SSH_KEY)"
+        fi
     fi
 else
     info "✅ Connexion SSH (simulation)"
@@ -150,7 +173,8 @@ if [ "$SKIP_BACKUP" = false ]; then
         info "Création d'un backup sur le serveur..."
         BACKUP_CMD="cd $SERVER_PATH && ./scripts/backup-db.sh"
         
-        if ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "$BACKUP_CMD"; then
+        SSH_CMD=$(build_ssh_cmd)
+        if eval "$SSH_CMD $SERVER_USER@$SERVER_HOST \"$BACKUP_CMD\""; then
             info "✅ Backup créé"
         else
             warn "⚠️  Échec du backup, continuation du déploiement"
@@ -208,8 +232,9 @@ dist/
 EOF
     
     # Upload avec rsync
+    SSH_CMD=$(build_ssh_cmd)
     RSYNC_CMD="rsync -avz --delete --exclude-from=$EXCLUDE_FILE"
-    RSYNC_CMD="$RSYNC_CMD -e 'ssh -i $SSH_KEY'"
+    RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD\""
     RSYNC_CMD="$RSYNC_CMD ./ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/"
     
     if eval "$RSYNC_CMD"; then
@@ -231,7 +256,8 @@ if [ "$DRY_RUN" = false ]; then
     
     RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml up -d"
     
-    if ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "$RESTART_CMD"; then
+    SSH_CMD=$(build_ssh_cmd)
+    if eval "$SSH_CMD $SERVER_USER@$SERVER_HOST \"$RESTART_CMD\""; then
         info "✅ Services redémarrés"
     else
         error "❌ Échec du redémarrage des services"
