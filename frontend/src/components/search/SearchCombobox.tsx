@@ -12,7 +12,6 @@ interface SearchComboboxProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   width?: string;
-  disableOutsideClick?: boolean;
   renderWithoutPopover?: boolean;
 }
 
@@ -20,7 +19,6 @@ export const SearchCombobox = ({
   open,
   onOpenChange,
   width = 'w-72',
-  disableOutsideClick = false,
   renderWithoutPopover = false,
 }: SearchComboboxProps) => {
   const [searchQuery, setSearchQuery] = useState('');

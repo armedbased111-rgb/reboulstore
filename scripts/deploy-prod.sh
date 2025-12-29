@@ -2,6 +2,17 @@
 
 # Script de déploiement sur serveur de production
 # Usage: ./scripts/deploy-prod.sh [--skip-check] [--skip-backup] [--dry-run]
+#
+# RÈGLES DE BUILD :
+# - Supprime TOUJOURS les anciennes images Docker AVANT de builder (plus rapide)
+# - S'applique à Reboul Store ET Admin Central
+# - Supprime les volumes de build pour garantir un build propre
+# - Utilise --no-cache pour éviter les problèmes de cache
+#
+# ⚠️ RÈGLE CRITIQUE : Suppression UNIQUEMENT sur le serveur
+# - Les images Docker locales ne sont JAMAIS supprimées
+# - Toutes les commandes docker rmi sont exécutées via SSH sur le serveur distant
+# - Vos images locales restent intactes pour vos tests locaux
 
 set -e  # Arrêter en cas d'erreur
 
@@ -217,10 +228,14 @@ if [ "$SKIP_BACKUP" = false ]; then
     fi
 fi
 
-# Build local des fichiers de production
-section "📦 Build local"
+# Build local des fichiers de production (compilation TypeScript/React uniquement, PAS d'images Docker)
+section "📦 Build local (compilation uniquement, PAS d'images Docker)"
 
-info "Build frontend..."
+info "⚠️  IMPORTANT : Ce build local est uniquement pour vérifier que le code compile."
+info "⚠️  Les images Docker seront buildées sur le serveur, pas en local."
+info "⚠️  Vos images Docker locales ne seront PAS touchées."
+
+info "Build frontend (compilation TypeScript/React)..."
 if [ "$DRY_RUN" = false ]; then
     cd frontend
     if npm run build; then
@@ -233,7 +248,7 @@ else
     info "✅ Build frontend (simulation)"
 fi
 
-info "Build backend..."
+info "Build backend (compilation TypeScript/NestJS)..."
 if [ "$DRY_RUN" = false ]; then
     cd backend
     if npm run build; then
@@ -283,112 +298,130 @@ else
     info "✅ Upload (simulation)"
 fi
 
-# Création de .env.production sur le serveur (si nécessaire)
+# Vérification de .env.production sur le serveur
 section "📝 Configuration .env.production sur le serveur"
 
 if [ "$DRY_RUN" = false ]; then
-    info "Création de .env.production sur le serveur avec les variables d'environnement..."
-    
-    # Créer le fichier .env.production localement d'abord
-    ENV_FILE=$(mktemp)
-    cat > "$ENV_FILE" <<EOF
-# Variables d'environnement PRODUCTION
-# Généré automatiquement par deploy-prod.sh
-
-# BASE DE DONNÉES PostgreSQL
-DB_USERNAME=${DB_USERNAME}
-DB_PASSWORD=${DB_PASSWORD}
-DB_DATABASE=${DB_DATABASE}
-DB_HOST=${DB_HOST:-postgres}
-DB_PORT=${DB_PORT:-5432}
-
-# BACKEND - JWT & Authentification
-JWT_SECRET=${JWT_SECRET}
-
-# STRIPE - Paiements
-STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-
-# CLOUDINARY - Images
-CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
-
-# FRONTEND - URLs
-FRONTEND_URL=${FRONTEND_URL:-https://www.reboulstore.com}
-VITE_API_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
-VITE_API_BASE_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
-
-# ADMIN CENTRAL
-REBOUL_DB_USER=${DB_USERNAME}
-REBOUL_DB_PASSWORD=${DB_PASSWORD}
-REBOUL_DB_NAME=${DB_DATABASE}
-EOF
-    
-    # Upload .env.production sur le serveur avec scp
     SSH_CMD=$(build_ssh_cmd)
     SSH_OPTS=$(get_ssh_opts)
     
-    # Utiliser scp pour uploader le fichier
-    if [ "$USE_SSH_AGENT" = "true" ]; then
-        # Dans GitHub Actions avec agent SSH, utiliser scp sans -i
-        if scp $SSH_OPTS "$ENV_FILE" "$SERVER_USER@$SERVER_HOST:$SERVER_PATH/.env.production"; then
-            info "✅ .env.production créé sur le serveur"
-        else
-            warn "⚠️  Échec de l'upload de .env.production, essai avec SSH..."
-            # Fallback : utiliser SSH avec cat
-            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"cat > $SERVER_PATH/.env.production\"" < "$ENV_FILE"; then
-                info "✅ .env.production créé sur le serveur (via SSH)"
-            else
-                warn "⚠️  Échec de la création de .env.production, continuation..."
-            fi
-        fi
+    # Vérifier si .env.production existe déjà sur le serveur
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST '[ -f $SERVER_PATH/.env.production ]'"; then
+        info "✅ .env.production existe déjà sur le serveur, conservation du fichier existant"
+        info "⚠️  Pour modifier .env.production, éditez-le directement sur le serveur ou utilisez votre fichier local .env.production"
     else
-        # En local, utiliser scp avec -i
-        if scp -i "$SSH_KEY" $SSH_OPTS "$ENV_FILE" "$SERVER_USER@$SERVER_HOST:$SERVER_PATH/.env.production"; then
-            info "✅ .env.production créé sur le serveur"
-        else
-            warn "⚠️  Échec de l'upload de .env.production, essai avec SSH..."
-            # Fallback : utiliser SSH avec cat
-            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"cat > $SERVER_PATH/.env.production\"" < "$ENV_FILE"; then
-                info "✅ .env.production créé sur le serveur (via SSH)"
-            else
-                warn "⚠️  Échec de la création de .env.production, continuation..."
+        warn "⚠️  .env.production n'existe pas sur le serveur"
+        warn "⚠️  Veuillez créer ce fichier manuellement avec toutes les variables nécessaires"
+        warn "⚠️  Voir env.production.example pour un exemple"
             fi
-        fi
-    fi
-    
-    rm "$ENV_FILE"
 else
-    info "✅ Création .env.production (simulation)"
+    info "✅ Vérification .env.production (simulation)"
 fi
 
 # Redémarrage des services Docker sur le serveur
-section "🔄 Redémarrage des services Docker"
+section "🔄 Redémarrage des services Docker sur le serveur"
+
+info "⚠️  IMPORTANT : Les images Docker sont buildées UNIQUEMENT sur le serveur."
+info "⚠️  Vos images Docker locales ne sont PAS touchées."
 
 if [ "$DRY_RUN" = false ]; then
-    info "Redémarrage des services sur le serveur..."
-    
-    # Rebuild TOUT (frontend ET backend) dans Docker pour utiliser les dernières modifications
-    info "Rebuild des services dans Docker (frontend + backend)..."
-    REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
+    info "Arrêt des services et nettoyage sur le serveur..."
     
     SSH_CMD=$(build_ssh_cmd)
     SSH_OPTS=$(get_ssh_opts)
-    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBUILD_CMD\""; then
-        info "✅ Services rebuild réussis"
+    
+    # 1. Arrêter tous les services sur le serveur
+    DOWN_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down"
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$DOWN_CMD\""; then
+        info "✅ Services arrêtés"
     else
-        warn "⚠️  Échec du rebuild, continuation avec les images existantes"
+        warn "⚠️  Échec de l'arrêt des services (peut-être déjà arrêtés)"
     fi
     
-    RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
+    # 2. Supprimer les anciennes images Docker AVANT de builder (plus rapide et libère l'espace)
+    # RÈGLE CRITIQUE : On supprime TOUJOURS les anciennes images avant de builder pour :
+    # - Libérer l'espace disque immédiatement
+    # - Éviter les conflits de tags
+    # - Accélérer le processus de build
+    # ⚠️ IMPORTANT : Suppression UNIQUEMENT sur le serveur (via SSH), JAMAIS les images locales !
     
-    SSH_CMD=$(build_ssh_cmd)
-    SSH_OPTS=$(get_ssh_opts)
-    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$RESTART_CMD\""; then
-        info "✅ Services redémarrés"
+    info "Suppression des anciennes images Docker sur le serveur (AVANT build)..."
+    info "  ⚠️  UNIQUEMENT sur le serveur - Les images locales ne sont PAS touchées"
+    info "  → Reboul Store: reboulstore-frontend, reboulstore-backend"
+    info "  → Admin Central: admin-central-frontend, admin-central-backend"
+    
+    # Supprimer les images Reboul Store (COMMANDE EXÉCUTÉE SUR LE SERVEUR via SSH)
+    REBOUL_IMAGES="reboulstore-frontend:latest reboulstore-backend:latest"
+    # Supprimer les images Admin Central (si elles existent)
+    ADMIN_IMAGES="admin-central-frontend:latest admin-central-backend:latest"
+    
+    # Exécution sur le serveur uniquement (via SSH)
+    IMAGE_RM_CMD="docker rmi -f $REBOUL_IMAGES $ADMIN_IMAGES 2>/dev/null || true"
+    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$IMAGE_RM_CMD\"" || true
+    info "✅ Anciennes images supprimées sur le serveur (ou n'existaient pas)"
+    
+    # Nettoyage des images Docker orphelines (dangling images)
+    info "Nettoyage des images Docker orphelines sur le serveur..."
+    CLEANUP_CMD="docker image prune -f 2>/dev/null || true"
+    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CLEANUP_CMD\"" || true
+    
+    # 3. Supprimer les volumes de build pour garantir un build propre
+    info "Suppression des volumes de build (frontend_build) pour garantir un build frais..."
+    info "  → Reboul Store: reboulstore_frontend_build"
+    info "  → Admin Central: admin_central_frontend_build"
+    
+    VOLUME_RM_CMD="docker volume rm reboulstore_frontend_build admin_central_frontend_build 2>/dev/null || true"
+    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$VOLUME_RM_CMD\"" || true
+    info "✅ Volumes de build supprimés (ou n'existaient pas)"
+    
+    # Note : On ne supprime PAS postgres_data_prod pour préserver la base de données
+    
+    # 4. Rebuild TOUT (frontend ET backend) avec --no-cache pour garantir un build propre
+    info "Rebuild complet des services Reboul Store (frontend + backend) avec --no-cache..."
+    REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
+    
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBUILD_CMD\""; then
+        info "✅ Services Reboul Store rebuild réussis"
     else
-        error "❌ Échec du redémarrage des services"
+        error "❌ Échec du rebuild Reboul Store"
+    fi
+    
+    # 5. Rebuild Admin Central si le répertoire existe
+    info "Vérification et rebuild Admin Central (si configuré)..."
+    ADMIN_CHECK_CMD="test -d $SERVER_PATH/admin-central && test -f $SERVER_PATH/admin-central/docker-compose.prod.yml && echo 'exists' || echo 'not_found'"
+    ADMIN_EXISTS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_CHECK_CMD\"")
+    
+    if echo "$ADMIN_EXISTS" | grep -q "exists"; then
+        info "  → Admin Central trouvé, rebuild en cours..."
+        ADMIN_REBUILD_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_REBUILD_CMD\""; then
+            info "✅ Services Admin Central rebuild réussis"
+        else
+            warn "⚠️  Échec du rebuild Admin Central (peut-être pas encore configuré)"
+        fi
+    else
+        info "  → Admin Central non trouvé, ignoré"
+    fi
+    
+    # 6. Démarrer tous les services avec les nouvelles images
+    info "Démarrage des services Reboul Store avec les nouvelles images..."
+    UP_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
+    
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$UP_CMD\""; then
+        info "✅ Services Reboul Store redémarrés avec les nouvelles images"
+    else
+        error "❌ Échec du démarrage des services Reboul Store"
+    fi
+    
+    # 7. Démarrer Admin Central si configuré
+    if echo "$ADMIN_EXISTS" | grep -q "exists"; then
+        info "Démarrage des services Admin Central avec les nouvelles images..."
+        ADMIN_UP_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_UP_CMD\""; then
+            info "✅ Services Admin Central redémarrés avec les nouvelles images"
+    else
+            warn "⚠️  Échec du démarrage Admin Central"
+        fi
     fi
 else
     info "✅ Redémarrage (simulation)"
@@ -424,7 +457,7 @@ if [ "$DRY_RUN" = false ]; then
         # Afficher le statut des containers pour debug
         if [ $((RETRY_COUNT % 5)) -eq 0 ]; then
             info "Tentative $((RETRY_COUNT+1))/$MAX_RETRIES - Vérification des containers..."
-            eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'" || true
+            eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production ps'" || true
         fi
         
         echo -n "."
@@ -437,9 +470,9 @@ if [ "$DRY_RUN" = false ]; then
     if [ "$BACKEND_READY" = false ]; then
         warn "⚠️  Le backend ne répond pas après $MAX_RETRIES tentatives."
         warn "Vérification des logs backend..."
-        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml logs backend --tail=50'" || true
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production logs backend --tail=50'" || true
         warn "Vérification du statut des containers..."
-        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'" || true
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production ps'" || true
     fi
 else
     info "✅ Vérification healthcheck (simulation)"
@@ -450,8 +483,8 @@ section "✅ Déploiement terminé"
 
 info "🌐 Site accessible sur: http://$SERVER_HOST"
 SSH_CMD=$(build_ssh_cmd)
-info "🔍 Vérifier les logs: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml logs -f'"
-info "📊 Statut: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml ps'"
+info "🔍 Vérifier les logs: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production logs -f'"
+info "📊 Statut: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production ps'"
 
 if [ "$BACKEND_READY" = false ] && [ "$DRY_RUN" = false ]; then
     warn "⚠️  Attention: Le backend n'a pas répondu au healthcheck"

@@ -8,11 +8,11 @@ import type { ApiResponse, ApiError } from '../types/api';
 export type { ApiResponse, ApiError };
 
 // Configuration de l'instance Axios
-// Utiliser le proxy Vite quand disponible, sinon URL directe
+// En production, utiliser toujours '/api' (proxy nginx)
+// En développement, utiliser VITE_API_URL ou '/api' si disponible
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
   import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' && window.location.port === '9999' ? '/api' : 
-   typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
+  (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

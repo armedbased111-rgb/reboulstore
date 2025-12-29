@@ -95,7 +95,6 @@ section "🔐 Vérification des variables d'environnement"
 # Charger .env.production si disponible (optionnel dans CI/CD)
 if [ -f ".env.production" ]; then
     source .env.production 2>/dev/null || true
-fi
 
 REQUIRED_VARS=(
     "DB_HOST"

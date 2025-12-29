@@ -2,7 +2,7 @@
 
 **Version** : 4.1  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 20/12/2025 (Phase 17.11.5 Serveur OVH acheté et configuration initiale complétée)
+**Dernière mise à jour** : 29/12/2025 (Phase 17.11.3 Scripts Déploiement - Correction build production: utilisation /api au lieu de localhost:3001)
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -1438,8 +1438,16 @@
 - [x] Script `backup-db.sh` (backup PostgreSQL avec compression, garde 30 derniers)
 - [x] Script `rollback.sh` (retour version précédente avec backup auto)
 - [x] Script `deploy-admin.sh` (déploiement Admin Central)
+- [x] Script `deploy-prod.sh` (déploiement complet Reboul Store + Admin Central) ✅
 - [x] Documentation déploiement (`DEPLOY_PRODUCTION.md`)
 - [x] Scripts rendus exécutables (chmod +x)
+
+**⚠️ RÈGLE CRITIQUE DE BUILD DOCKER** :
+- ✅ **Suppression AVANT build** : Toujours supprimer les anciennes images Docker **AVANT** de builder (plus rapide, libère l'espace)
+- ✅ **UNIQUEMENT sur le serveur** : Toutes les commandes `docker rmi` sont exécutées via SSH sur le serveur distant
+- ❌ **JAMAIS en local** : Les images Docker locales ne sont **JAMAIS** supprimées (rester intactes pour tests locaux)
+- ✅ **S'applique à** : Reboul Store (`reboulstore-frontend`, `reboulstore-backend`) ET Admin Central (`admin-central-frontend`, `admin-central-backend`)
+- ✅ **Script automatique** : `deploy-prod.sh` applique automatiquement cette règle pour les deux projets
 
 ### 17.11.4 Monitoring & Logs ✅
 - [x] Configuration logs centralisés
@@ -1594,9 +1602,9 @@
   - [x] Repository cloné dans `/opt/reboulstore` ✅
   - [x] Clé SSH générée et ajoutée à GitHub ✅
 - [x] Générer les secrets (JWT_SECRET, DB_PASSWORD, etc.) ✅
-  - [x] JWT_SECRET Reboul Store : `vB7bs5kgqJI9HZkyGs2FZJnLZ91+MgxnKxgH6F+ybGM=` ✅
-  - [x] JWT_SECRET Admin Central : `/sYZaXhqg41LjU4TQjIhywytG9FH7CqvtE1k+JA8SfM=` ✅
-  - [x] DB_PASSWORD : `G/7gmqndFFm9qKEDaN3+Ldpf/ztt84Jx` ✅
+  - [x] JWT_SECRET Reboul Store : généré (stocké dans `.env.production`) ✅
+  - [x] JWT_SECRET Admin Central : généré (stocké dans `.env.production`) ✅
+  - [x] DB_PASSWORD : généré (stocké dans `.env.production`) ✅
 - [x] Créer les fichiers `.env.production` (Reboul + Admin) ✅
   - [x] `.env.production` créé pour Reboul Store ✅
   - [x] `.env.production` créé pour Admin Central ✅
@@ -2228,6 +2236,44 @@
   - [ ] Tester animations (fluidité, performance)
   - [ ] Vérifier accessibilité (keyboard navigation, ARIA)
 
+### 23.5.2 Connexion Base de Données Production en Développement ✅
+
+**Objectif** : Permettre de connecter l'environnement de développement local à la base de données de production via un tunnel SSH sécurisé.
+
+**✅ Complété** :
+- [x] Script `scripts/db-tunnel.sh` pour gérer le tunnel SSH (start, stop, status, restart)
+- [x] Script `scripts/db-proxy-server.sh` pour proxy socat sur serveur (expose PostgreSQL sur localhost)
+- [x] Fichier `.env.local.example` avec configuration de base
+- [x] Modification `docker-compose.yml` pour supporter connexion DB distante
+- [x] Support `host.docker.internal` pour accéder au tunnel depuis les containers
+- [x] Documentation complète (`docs/DEV_DATABASE_TUNNEL.md`)
+- [x] Scripts rendus exécutables et testés
+- [x] Proxy socat configuré et fonctionnel sur le serveur
+
+**Configuration** :
+- Tunnel SSH : Port local 5433 → Port distant 5432 sur le serveur VPS
+- Sécurité : Connexion chiffrée via SSH (pas d'exposition directe PostgreSQL)
+- Basculement : Facilement basculer entre DB locale et DB distante via `.env.local`
+
+**Usage** :
+```bash
+# 1. Démarrer le proxy PostgreSQL sur le serveur (une seule fois)
+./scripts/db-proxy-server.sh start
+
+# 2. Démarrer le tunnel SSH
+./scripts/db-tunnel.sh start
+
+# 3. Charger variables d'environnement et démarrer services
+set -a
+source .env.local
+set +a
+docker compose up backend frontend
+```
+
+**Documentation** : Voir `docs/DEV_DATABASE_TUNNEL.md` pour guide complet
+
+---
+
 ### 23.5.3 Amélioration Scripts Build & Deploy
 
 **Objectif** : Améliorer les scripts de build et déploiement pour séparer vérification et déploiement
@@ -2238,41 +2284,40 @@
   - [ ] Documenter workflow actuel
 
 - [ ] **Création script vérification build** :
-  - [ ] Créer `scripts/check-build.sh` :
-    - [ ] Vérifier que tous les fichiers nécessaires existent (.env.production, etc.)
-    - [ ] Lancer build frontend (`npm run build` dans frontend/)
-    - [ ] Lancer build backend (si nécessaire)
-    - [ ] Vérifier erreurs de build (TypeScript, ESLint, etc.)
-    - [ ] Vérifier taille bundle (avertir si trop gros)
-    - [ ] Vérifier dépendances (npm audit)
-    - [ ] Afficher rapport détaillé (succès/erreurs)
+  - [x] Créer `scripts/check-build.sh` :
+    - [x] Vérifier que tous les fichiers nécessaires existent (.env.production, etc.)
+    - [x] Lancer build frontend (`npm run build` dans frontend/)
+    - [x] Lancer build backend (si nécessaire)
+    - [x] Vérifier erreurs de build (TypeScript, ESLint, etc.)
+    - [x] Vérifier taille bundle (avertir si trop gros)
+    - [x] Vérifier dépendances (npm audit)
+    - [x] Afficher rapport détaillé (succès/erreurs)
+  - [x] **Correction build production (29/12/2024)** : Configuration variables d'environnement Vite pour utiliser `/api` au lieu de `localhost:3001`
+    - [x] Modifier `frontend/Dockerfile.prod` : Ajouter `ARG` et `ENV` pour `VITE_API_URL` et `VITE_API_BASE_URL`
+    - [x] Modifier `docker-compose.prod.yml` : Passer variables via `build.args` (pas `environment`)
+    - [x] Vérifier que tous les fichiers frontend utilisent les variables d'environnement correctement (`api.ts`, `orders.ts`, `auth.ts`, `imageUtils.ts`)
+    - [x] Rebuild complet et déploiement réussi (0 occurrence de `localhost:3001` dans le build)
+    - [x] Documenter dans `DEPLOY_PRODUCTION.md` (section Troubleshooting)
 
-- [ ] **Amélioration script déploiement** :
-  - [ ] Améliorer `scripts/deploy-reboul.sh` :
-    - [ ] Option `--check-only` (vérification sans déploiement)
-    - [ ] Option `--skip-check` (déploiement sans vérification)
-    - [ ] Intégrer `check-build.sh` avant déploiement (sauf si `--skip-check`)
-    - [ ] Améliorer messages (couleurs, emojis, détails)
-    - [ ] Améliorer gestion erreurs (rollback si échec)
-    - [ ] Ajouter confirmation avant déploiement prod
-
-- [ ] **Script déploiement serveur prod** :
-  - [ ] Créer `scripts/deploy-prod.sh` :
-    - [ ] Vérification build (appel `check-build.sh`)
-    - [ ] Upload fichiers sur serveur (rsync ou scp)
-    - [ ] Backup base de données avant déploiement
-    - [ ] Redémarrage services Docker sur serveur
-    - [ ] Vérification healthcheck après déploiement
-    - [ ] Rollback automatique si échec
+- [x] **Script déploiement serveur prod** :
+  - [x] Créer `scripts/deploy-prod.sh` ✅
+    - [x] Vérification build (appel `check-build.sh`) ✅
+    - [x] Upload fichiers sur serveur (rsync) ✅
+    - [x] Backup base de données avant déploiement ✅
+    - [x] Redémarrage services Docker sur serveur ✅
+    - [x] Vérification healthcheck après déploiement ✅
+    - [x] Option `--skip-check` (déploiement sans vérification) ✅
+    - [ ] Rollback automatique si échec (à prévoir si nécessaire)
     - [ ] Notification (email, Slack, etc.) - optionnel
+  - [x] Messages améliorés (couleurs, emojis, détails) ✅
+  - [x] Gestion erreurs améliorée ✅
 
-- [ ] **Documentation** :
-  - [ ] Documenter `scripts/check-build.sh` (usage, options)
-  - [ ] Documenter `scripts/deploy-reboul.sh` (usage, options)
-  - [ ] Documenter `scripts/deploy-prod.sh` (usage, configuration serveur)
-  - [ ] Créer guide workflow déploiement (`docs/DEPLOYMENT_GUIDE.md`)
-  - [ ] Documenter variables d'environnement nécessaires
-  - [ ] Documenter configuration serveur (SSH, rsync, etc.)
+- [x] **Documentation** :
+  - [x] Documenter `scripts/check-build.sh` (usage, options) ✅ (dans `deploy-prod.sh` et `DEPLOY_PRODUCTION.md`)
+  - [x] Documenter `scripts/deploy-prod.sh` (usage, configuration serveur) ✅ (`DEPLOY_PRODUCTION.md`)
+  - [x] Guide workflow déploiement (`DEPLOY_PRODUCTION.md`) ✅
+  - [x] Documenter variables d'environnement nécessaires ✅ (`DEPLOY_PRODUCTION.md`)
+  - [x] Documenter configuration serveur (SSH, rsync, etc.) ✅ (`DEPLOY_PRODUCTION.md`)
 
 - [ ] **Intégration CI/CD (optionnel)** :
   - [ ] Ajouter scripts dans GitHub Actions (ou autre CI)

@@ -60,10 +60,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+        # Passer les variables au moment du BUILD (pas au runtime)
+        VITE_API_URL: /api
+        VITE_API_BASE_URL: /api
     container_name: reboulstore-frontend-prod
-    environment:
-      - VITE_API_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
-      - VITE_API_BASE_URL=${VITE_API_URL:-https://www.reboulstore.com/api}
     volumes:
       - frontend_build:/usr/share/nginx/html
     depends_on:

@@ -48,7 +48,7 @@ export const getSearchSuggestions = async (query: string): Promise<SearchSuggest
         type: 'product',
         id: product.id,
         name: product.name,
-        slug: product.slug,
+        slug: undefined, // Product n'a pas de slug, on utilise l'ID pour la navigation
         imageUrl: product.images?.[0]?.url,
       });
     });
@@ -71,7 +71,7 @@ export const getSearchSuggestions = async (query: string): Promise<SearchSuggest
         id: brand.id,
         name: brand.name,
         slug: brand.slug,
-        imageUrl: brand.imageUrl,
+        imageUrl: brand.logoUrl, // Brand a logoUrl, pas imageUrl
       });
     });
 

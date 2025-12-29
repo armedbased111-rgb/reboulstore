@@ -1,7 +1,7 @@
 """
 Utilitaires pour gérer le serveur VPS via SSH
 """
-import paramiko
+import subprocess
 import os
 from typing import Dict, Optional, Tuple
 import json
@@ -10,14 +10,13 @@ import json
 SERVER_CONFIG = {
     'host': os.getenv('VPS_HOST', '152.228.218.35'),
     'user': os.getenv('VPS_USER', 'deploy'),
-    'ssh_key': os.getenv('VPS_SSH_KEY', os.path.expanduser('~/.ssh/id_rsa')),
-    'project_path': '/opt/reboulstore',
-    'admin_path': '/opt/reboulstore/admin-central',
+    'project_path': os.getenv('VPS_PROJECT_PATH', '/var/www/reboulstore'),
+    'admin_path': os.getenv('VPS_ADMIN_PATH', '/var/www/reboulstore/admin-central'),
 }
 
 def ssh_exec(command: str, cwd: Optional[str] = None, return_code: bool = False) -> Tuple[str, str, Optional[int]]:
     """
-    Exécute une commande sur le serveur via SSH
+    Exécute une commande sur le serveur via SSH (utilise la commande ssh du système)
     
     Args:
         command: Commande à exécuter
@@ -28,45 +27,43 @@ def ssh_exec(command: str, cwd: Optional[str] = None, return_code: bool = False)
         (stdout, stderr, exit_code) si return_code=True
         (stdout, stderr) sinon
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
     try:
-        # Utiliser clé SSH si disponible, sinon mot de passe
-        key_file = SERVER_CONFIG['ssh_key']
-        key = None
-        if os.path.exists(key_file):
-            try:
-                key = paramiko.RSAKey.from_private_key_file(key_file)
-            except:
-                pass
-        
-        ssh.connect(
-            SERVER_CONFIG['host'],
-            username=SERVER_CONFIG['user'],
-            pkey=key,
-            timeout=10
-        )
-        
         if cwd:
             command = f"cd {cwd} && {command}"
         
-        stdin, stdout, stderr = ssh.exec_command(command)
-        exit_code = stdout.channel.recv_exit_status()
+        # Construire la commande SSH
+        ssh_cmd = [
+            'ssh',
+            '-o', 'ConnectTimeout=10',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'UserKnownHostsFile=/dev/null',
+            '-o', 'LogLevel=ERROR',
+            f"{SERVER_CONFIG['user']}@{SERVER_CONFIG['host']}",
+            command
+        ]
         
-        stdout_text = stdout.read().decode('utf-8', errors='ignore')
-        stderr_text = stderr.read().decode('utf-8', errors='ignore')
-        
-        ssh.close()
+        # Exécuter via subprocess (utilise la config SSH standard de l'utilisateur)
+        result = subprocess.run(
+            ssh_cmd,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
         
         if return_code:
-            return stdout_text, stderr_text, exit_code
-        return stdout_text, stderr_text
+            return result.stdout, result.stderr, result.returncode
+        return result.stdout, result.stderr
         
+    except subprocess.TimeoutExpired:
+        error_msg = "Timeout lors de l'exécution de la commande SSH"
+        if return_code:
+            return "", error_msg, 1
+        return "", error_msg
     except Exception as e:
+        error_msg = str(e)
         if return_code:
-            return "", str(e), 1
-        return "", str(e)
+            return "", error_msg, 1
+        return "", error_msg
 
 
 def docker_compose_exec(command: str, compose_file: str = 'docker-compose.prod.yml', 

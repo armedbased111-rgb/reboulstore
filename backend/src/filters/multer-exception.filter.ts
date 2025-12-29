@@ -3,6 +3,8 @@ import {
   Catch,
   ArgumentsHost,
   BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -11,6 +13,14 @@ export class MulterExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+
+    // Si c'est une HttpException de NestJS (NotFoundException, BadRequestException, etc.), la renvoyer telle quelle
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+      response.status(status).json(exceptionResponse);
+      return;
+    }
 
     // Gérer les erreurs multer (fichier non-image, taille trop grande, etc.)
     if (exception.message && exception.message.includes('Only image files are allowed')) {
@@ -31,16 +41,9 @@ export class MulterExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    // Si c'est déjà une BadRequestException, la renvoyer telle quelle
-    if (exception instanceof BadRequestException) {
-      const exceptionResponse = exception.getResponse();
-      response.status(400).json(exceptionResponse);
-      return;
-    }
-
     // Pour les autres erreurs, renvoyer une erreur 500 générique
-    response.status(500).json({
-      statusCode: 500,
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Internal server error',
     });
   }

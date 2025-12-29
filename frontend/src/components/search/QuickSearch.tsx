@@ -3,7 +3,6 @@ import { X } from 'lucide-react';
 import { SearchCombobox } from './SearchCombobox';
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../../animations/utils/constants';
-import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
 
 interface QuickSearchProps {
   /** Contrôle si le QuickSearch est ouvert */
@@ -139,7 +138,6 @@ export const QuickSearch = ({ open, onOpenChange }: QuickSearchProps) => {
                 // Le QuickSearch reste toujours ouvert
               }}
               width="w-full"
-              disableOutsideClick={true}
               renderWithoutPopover={true}
             />
           </div>

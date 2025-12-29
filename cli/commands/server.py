@@ -31,50 +31,133 @@ server = server_group
 @server.command('status')
 @click.option('--service', type=str, help='Service spécifique à vérifier')
 @click.option('--admin', is_flag=True, help='Vérifier Admin Central au lieu de Reboul Store')
-def status(service: Optional[str], admin: bool):
+@click.option('--all', is_flag=True, help='Afficher tous les containers (Reboul Store + Admin Central)')
+@click.option('--watch', '-w', is_flag=True, help='Mode watch : met à jour en temps réel (toutes les 2 secondes)')
+@click.option('--interval', '-i', type=int, default=2, help='Intervalle de mise à jour en secondes (défaut: 2)')
+def status(service: Optional[str], admin: bool, all: bool, watch: bool, interval: int):
     """Affiche l'état de tous les containers"""
-    project_dir = SERVER_CONFIG['admin_path'] if admin else SERVER_CONFIG['project_path']
+    import time
+    
+    # Si --all est spécifié, on affiche les deux projets
+    if all:
+        projects = [
+            ('Reboul Store', SERVER_CONFIG['project_path']),
+            ('Admin Central', SERVER_CONFIG['admin_path'])
+        ]
+    elif admin:
+        projects = [('Admin Central', SERVER_CONFIG['admin_path'])]
+    else:
+        projects = [('Reboul Store', SERVER_CONFIG['project_path'])]
+    
     compose_file = 'docker-compose.prod.yml'
     
-    # Récupérer le statut des containers
+    def get_status():
+        """Récupère et affiche le statut des containers"""
+        from utils.server_helper import ssh_exec
+        
+        # Afficher un tableau pour chaque projet
+        for project_name, project_dir in projects:
+            # Vérifier si le répertoire existe
+            stdout_check, stderr_check = ssh_exec(f'test -d {project_dir} && echo "exists"', return_code=False)
+            if not stdout_check.strip() or 'exists' not in stdout_check:
+                console.print(f"[yellow]⚠️  {project_name}: Répertoire {project_dir} n'existe pas encore[/yellow]\n")
+                continue
+            
+            # Vérifier si docker-compose.prod.yml existe
+            stdout_check, stderr_check = ssh_exec(f'test -f {project_dir}/{compose_file} && echo "exists"', return_code=False)
+            if not stdout_check.strip() or 'exists' not in stdout_check:
+                console.print(f"[yellow]⚠️  {project_name}: {compose_file} n'existe pas encore[/yellow]\n")
+                continue
+            
+            # Récupérer le statut des containers (sans format personnalisé pour plus de compatibilité)
     stdout, stderr = docker_compose_exec(
-        'ps --format "table {{.Name}}\\t{{.Status}}\\t{{.Ports}}"',
+                'ps',
         compose_file=compose_file,
         cwd=project_dir
     )
     
-    if stderr and 'warning' not in stderr.lower():
-        console.print(f"[red]Erreur: {stderr}[/red]")
-        return
+            if stderr and 'warning' not in stderr.lower() and 'invalid key' not in stderr.lower():
+                # Ignorer les erreurs de .env.production manquant si le répertoire existe mais n'est pas configuré
+                if '.env.production' in stderr.lower() or 'env file' in stderr.lower():
+                    console.print(f"[yellow]⚠️  {project_name}: Pas encore configuré (.env.production manquant)[/yellow]\n")
+                    continue
+                console.print(f"[red]Erreur pour {project_name}: {stderr}[/red]\n")
+                continue
     
     # Créer un tableau formaté
-    table = Table(title=f"État des containers ({'Admin Central' if admin else 'Reboul Store'})", box=box.ROUNDED)
+            table = Table(
+                title=f"État des containers ({project_name}) - {__import__('datetime').datetime.now().strftime('%H:%M:%S')}", 
+                box=box.ROUNDED
+            )
     table.add_column("Container", style="cyan")
     table.add_column("Status", style="green")
     table.add_column("Ports", style="yellow")
     
-    # Parser la sortie
-    lines = stdout.strip().split('\n')
-    if len(lines) > 1:
-        for line in lines[1:]:  # Skip header
-            if line.strip():
-                parts = line.split('\t')
-                if len(parts) >= 2:
-                    name = parts[0].strip()
-                    status_text = parts[1].strip()
-                    ports = parts[2].strip() if len(parts) > 2 else ""
+            # Parser la sortie - docker compose ps retourne un tableau avec colonnes séparées par espaces
+            if not stdout or not stdout.strip():
+                console.print(f"[yellow]⚠️  {project_name}: Aucun container en cours d'exécution[/yellow]\n")
+                continue
+            
+            lines = [l.strip() for l in stdout.strip().split('\n') if l.strip()]
+            
+            if len(lines) <= 1:
+                console.print(f"[yellow]⚠️  {project_name}: Aucun container trouvé[/yellow]\n")
+                continue
+            
+            # Format docker compose ps: NAME | IMAGE | COMMAND | SERVICE | CREATED | STATUS | PORTS
+            # Les colonnes sont séparées par des espaces multiples
+            
+            # Parser les lignes de données (ignorer la première ligne = header)
+            import re
+            for line in lines[1:]:
+                if not line.strip() or '──' in line or 'NAME' in line:
+                    continue
+                
+                # Split par espaces multiples (format tableau de docker compose)
+                parts = [p.strip() for p in re.split(r'\s{2,}', line) if p.strip()]
+                
+                # Format: NAME | IMAGE | COMMAND | SERVICE | CREATED | STATUS | PORTS
+                # INDEX:    0       1        2         3         4         5       6
+                if len(parts) >= 6:
+                    name = parts[0]
+                    status_text = parts[5]  # STATUS est la 6ème colonne (index 5)
+                    ports = parts[6] if len(parts) > 6 else ""
                     
                     # Colorier le status
-                    if 'healthy' in status_text.lower() or 'up' in status_text.lower():
+                    if 'healthy' in status_text.lower() or ('up' in status_text.lower() and 'unhealthy' not in status_text.lower()):
                         status_style = "green"
-                    elif 'unhealthy' in status_text.lower() or 'down' in status_text.lower():
+                    elif 'unhealthy' in status_text.lower() or 'down' in status_text.lower() or 'exited' in status_text.lower():
                         status_style = "red"
                     else:
                         status_style = "yellow"
                     
                     table.add_row(name, f"[{status_style}]{status_text}[/{status_style}]", ports)
     
+            # Afficher le tableau pour ce projet
+            if watch and project_name == projects[0][0]:
+                # Effacer l'écran seulement pour le premier projet en mode watch
+                import os
+                os.system('clear' if os.name != 'nt' else 'cls')
+            
     console.print(table)
+            if len(projects) > 1 and project_name != projects[-1][0]:
+                console.print()  # Ligne vide entre les projets
+        
+        if watch:
+            console.print(f"\n[yellow]⏱️  Mise à jour toutes les {interval}s (Ctrl+C pour quitter)[/yellow]")
+        return True
+    
+    if watch:
+        console.print("[bold yellow]🔄 Mode watch activé[/bold yellow]")
+        console.print("[yellow]Le statut sera mis à jour toutes les {} secondes...[/yellow]\n".format(interval))
+        try:
+            while True:
+                get_status()
+                time.sleep(interval)
+        except KeyboardInterrupt:
+            console.print("\n[bold yellow]✅ Arrêt du mode watch[/bold yellow]")
+    else:
+        get_status()
 
 
 @server_group.command('logs')

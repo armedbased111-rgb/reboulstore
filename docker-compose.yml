@@ -33,17 +33,23 @@ services:
       - backend_node_modules:/app/node_modules
     environment:
       - NODE_ENV=development
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USERNAME=reboulstore
-      - DB_PASSWORD=reboulstore_password
-      - DB_DATABASE=reboulstore_db
+      # Configuration DB : utilise .env.local si disponible, sinon valeurs par défaut (DB locale)
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USERNAME=${DB_USERNAME:-reboulstore}
+      - DB_PASSWORD=${DB_PASSWORD:-reboulstore_password}
+      - DB_DATABASE=${DB_DATABASE:-reboulstore_db}
       - PORT=3001
     depends_on:
+      # Note: La dépendance postgres est toujours définie mais peut être ignorée si DB distante
+      # Pour utiliser DB distante: définir USE_LOCAL_DB=false dans .env.local
       postgres:
         condition: service_healthy
     networks:
       - reboulstore-network
+    # Permettre l'accès à host.docker.internal pour le tunnel SSH (DB distante)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # Installation automatique des dépendances puis démarrage
     command: >
       sh -c "

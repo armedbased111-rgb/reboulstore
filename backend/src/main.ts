@@ -30,8 +30,27 @@ async function bootstrap() {
   app.useGlobalFilters(new MulterExceptionFilter());
 
   // Configuration CORS pour le frontend
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const allowedOrigins = [
+    frontendUrl,
+    'https://reboulstore.com',
+    'https://www.reboulstore.com',
+    'http://localhost:3000', // Dev local
+  ];
+  
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Autoriser les requêtes sans origin (ex: mobile apps, Postman)
+      if (!origin) return callback(null, true);
+      
+      // Autoriser si l'origine est dans la liste
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      // En production, accepter seulement les origines autorisées
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   });
 
