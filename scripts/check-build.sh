@@ -92,27 +92,29 @@ fi
 # 2. Vérifier les variables d'environnement critiques
 section "🔐 Vérification des variables d'environnement"
 
+# Charger .env.production si disponible (optionnel dans CI/CD)
 if [ -f ".env.production" ]; then
     source .env.production 2>/dev/null || true
-    
-    REQUIRED_VARS=(
-        "DB_HOST"
-        "DB_PORT"
-        "DB_USERNAME"
-        "DB_PASSWORD"
-        "DB_DATABASE"
-        "JWT_SECRET"
-    )
-    
-    for var in "${REQUIRED_VARS[@]}"; do
-        if [ -z "${!var}" ]; then
-            warn "⚠️  Variable $var non définie dans .env.production"
-        else
-            if [ "$VERBOSE" = true ]; then
-                info "✅ $var est définie"
-            fi
+fi
+
+REQUIRED_VARS=(
+    "DB_HOST"
+    "DB_PORT"
+    "DB_USERNAME"
+    "DB_PASSWORD"
+    "DB_DATABASE"
+    "JWT_SECRET"
+)
+
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!var}" ]; then
+        warn "⚠️  Variable $var non définie (peut être normal dans CI/CD si définie ailleurs)"
+    else
+        if [ "$VERBOSE" = true ]; then
+            info "✅ $var est définie"
         fi
-    done
+    fi
+done
 else
     warn "⚠️  .env.production non trouvé, certaines vérifications seront ignorées"
 fi
