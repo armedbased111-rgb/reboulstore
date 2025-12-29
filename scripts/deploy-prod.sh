@@ -262,6 +262,7 @@ node_modules/
 *.log
 .DS_Store
 dist/
+nginx/ssl/*.pem
 EOF
     
     # Upload avec rsync
