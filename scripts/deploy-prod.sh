@@ -24,8 +24,16 @@ else
 fi
 SERVER_PATH="${DEPLOY_PATH:-/var/www/reboulstore}"
 SSH_KEY="${DEPLOY_SSH_KEY:-~/.ssh/id_rsa}"
-# Dans GitHub Actions, la clé SSH est dans l'agent SSH, pas dans un fichier
-USE_SSH_AGENT="${GITHUB_ACTIONS:-false}"
+# Dans GitHub Actions, on peut utiliser un fichier SSH ou l'agent SSH
+# Si DEPLOY_SSH_KEY est défini et pointe vers un fichier, on l'utilise
+# Sinon, on utilise l'agent SSH si GITHUB_ACTIONS est défini
+if [ -n "$DEPLOY_SSH_KEY" ] && [ -f "$DEPLOY_SSH_KEY" ]; then
+    USE_SSH_AGENT="false"  # On a un fichier, on l'utilise
+elif [ -n "${GITHUB_ACTIONS:-}" ]; then
+    USE_SSH_AGENT="true"   # GitHub Actions sans fichier = agent SSH
+else
+    USE_SSH_AGENT="false"  # Local = fichier SSH
+fi
 SKIP_CHECK=false
 
 # Fonction pour construire la commande SSH
