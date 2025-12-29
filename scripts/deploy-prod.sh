@@ -38,6 +38,11 @@ build_ssh_cmd() {
         echo "ssh -i \"$SSH_KEY\""
     fi
 }
+
+# Options SSH communes (pour éviter host key verification)
+get_ssh_opts() {
+    echo "-o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
+}
 SKIP_BACKUP=false
 DRY_RUN=false
 
@@ -149,17 +154,37 @@ if [ "$DRY_RUN" = false ]; then
     else
         info "Mode local : utilisation de la clé SSH: $SSH_KEY"
     fi
-    if eval "$SSH_CMD -o ConnectTimeout=5 $SERVER_USER@$SERVER_HOST 'echo \"Connexion OK\"'" > /dev/null 2>&1; then
+    
+    # Options SSH pour éviter les problèmes de host key verification
+    SSH_OPTS="-o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
+    
+    # Test de connexion avec debug
+    info "Tentative de connexion à $SERVER_USER@$SERVER_HOST..."
+    SSH_OUTPUT=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST 'echo \"Connexion OK\"'" 2>&1)
+    SSH_EXIT_CODE=$?
+    
+    if [ $SSH_EXIT_CODE -eq 0 ]; then
         info "✅ Connexion SSH réussie"
     else
-        error "❌ Impossible de se connecter au serveur. Vérifiez:"
+        error "❌ Impossible de se connecter au serveur (code: $SSH_EXIT_CODE)"
+        if [ "$VERBOSE" = true ] || [ "$USE_SSH_AGENT" = "true" ]; then
+            error "Détails de l'erreur SSH:"
+            echo "$SSH_OUTPUT" | while IFS= read -r line; do
+                error "   $line"
+            done
+        fi
+        error ""
+        error "Vérifiez:"
         error "   - L'adresse du serveur: $SERVER_HOST"
         error "   - L'utilisateur: $SERVER_USER"
         if [ "$USE_SSH_AGENT" != "true" ]; then
             error "   - La clé SSH: $SSH_KEY"
+            error "   - La clé SSH est autorisée sur le serveur: ssh-copy-id $SERVER_USER@$SERVER_HOST"
         else
-            error "   - La clé SSH dans GitHub Secrets (DEPLOY_SSH_KEY)"
+            error "   - La clé SSH dans GitHub Secrets (DEPLOY_SSH_KEY) est correcte"
+            error "   - La clé SSH publique correspondante est dans ~/.ssh/authorized_keys sur le serveur"
         fi
+        exit 1
     fi
 else
     info "✅ Connexion SSH (simulation)"
@@ -233,8 +258,9 @@ EOF
     
     # Upload avec rsync
     SSH_CMD=$(build_ssh_cmd)
+    SSH_OPTS=$(get_ssh_opts)
     RSYNC_CMD="rsync -avz --delete --exclude-from=$EXCLUDE_FILE"
-    RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD\""
+    RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD $SSH_OPTS\""
     RSYNC_CMD="$RSYNC_CMD ./ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/"
     
     if eval "$RSYNC_CMD"; then
@@ -257,7 +283,8 @@ if [ "$DRY_RUN" = false ]; then
     RESTART_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml up -d"
     
     SSH_CMD=$(build_ssh_cmd)
-    if eval "$SSH_CMD $SERVER_USER@$SERVER_HOST \"$RESTART_CMD\""; then
+    SSH_OPTS=$(get_ssh_opts)
+    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$RESTART_CMD\""; then
         info "✅ Services redémarrés"
     else
         error "❌ Échec du redémarrage des services"
