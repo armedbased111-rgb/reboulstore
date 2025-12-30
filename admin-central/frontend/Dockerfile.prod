@@ -28,7 +28,7 @@ RUN echo '#!/bin/sh' > /docker-entrypoint-init.sh && \
     echo 'echo "📦 Copie des fichiers build vers /usr/share/nginx/html..."' >> /docker-entrypoint-init.sh && \
     echo 'cp -r /app/build/* /usr/share/nginx/html/' >> /docker-entrypoint-init.sh && \
     echo 'echo "✅ Fichiers copiés"' >> /docker-entrypoint-init.sh && \
-    echo 'exec docker-entrypoint.sh nginx -g "daemon off;"' >> /docker-entrypoint-init.sh && \
+    echo 'exec /docker-entrypoint.sh nginx -g "daemon off;"' >> /docker-entrypoint-init.sh && \
     chmod +x /docker-entrypoint-init.sh
 
 ENTRYPOINT ["/docker-entrypoint-init.sh"]
