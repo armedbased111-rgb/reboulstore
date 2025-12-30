@@ -144,12 +144,6 @@ def status(service: Optional[str], admin: bool, all: bool, watch: bool, interval
                     
                     table.add_row(name, f"[{status_style}]{status_text}[/{status_style}]", ports)
     
-            # Afficher le tableau pour ce projet
-            if watch and project_name == projects[0][0]:
-                # Effacer l'écran seulement pour le premier projet en mode watch
-                import os
-                os.system('clear' if os.name != 'nt' else 'cls')
-            
             console.print(table)
             if len(projects) > 1 and project_name != projects[-1][0]:
                 console.print()  # Ligne vide entre les projets
@@ -159,10 +153,17 @@ def status(service: Optional[str], admin: bool, all: bool, watch: bool, interval
         return True
     
     if watch:
-        console.print("[bold yellow]🔄 Mode watch activé[/bold yellow]")
-        console.print("[yellow]Le statut sera mis à jour toutes les {} secondes...[/yellow]\n".format(interval))
+        console.print("[bold yellow]🔄 Mode watch activé - Surveillance en temps réel[/bold yellow]")
+        console.print("[yellow]Le statut sera mis à jour toutes les {} secondes...[/yellow]".format(interval))
+        console.print("[dim]Appuyez sur Ctrl+C pour quitter[/dim]\n")
         try:
+            import os
             while True:
+                # Effacer l'écran avant chaque mise à jour
+                os.system('clear' if os.name != 'nt' else 'cls')
+                # Afficher l'en-tête
+                from datetime import datetime
+                console.print(f"[bold cyan]📊 État des containers - {datetime.now().strftime('%H:%M:%S')}[/bold cyan]\n")
                 get_status()
                 time.sleep(interval)
         except KeyboardInterrupt:
