@@ -391,22 +391,40 @@ if [ "$DRY_RUN" = false ]; then
     # - Le volume soit créé vide au démarrage
     # - Le script d'init du Dockerfile copie les fichiers depuis l'image vers le volume
     # - On évite que l'ancien volume écrase les nouveaux fichiers
+    # ⚠️⚠️⚠️ PROTECTION BASES DE DONNÉES : On ne supprime JAMAIS les volumes de base de données
     info "Suppression des volumes de build (frontend_build) pour garantir un build frais..."
     info "  → Reboul Store: reboulstore_frontend_build"
     info "  → Admin Central: admin_central_frontend_build"
     info "  ⚠️  IMPORTANT : Les volumes seront recréés vides au démarrage, et les fichiers seront copiés depuis l'image"
+    info "  🔒 PROTECTION : Les volumes de base de données (postgres_data_prod) sont TOUJOURS préservés"
     
-    # Forcer l'arrêt des containers qui utilisent les volumes
-    info "  → Arrêt forcé des containers utilisant les volumes..."
-    FORCE_DOWN_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down -v 2>/dev/null || true"
-    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$FORCE_DOWN_CMD\"" || true
+    # Arrêter les services SANS supprimer les volumes (pour préserver les bases de données)
+    info "  → Arrêt des services (sans supprimer les volumes de base de données)..."
+    DOWN_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down"
+    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$DOWN_CMD\"" || true
     
-    # Supprimer explicitement les volumes
+    # Supprimer UNIQUEMENT les volumes de build frontend (PAS les bases de données)
+    # Liste des volumes à NE JAMAIS SUPPRIMER :
+    # - reboulstore_postgres_prod (base de données Reboul Store)
+    # - postgres_data_prod (si nommé différemment)
+    # - Tous les volumes contenant "postgres" ou "db" ou "database"
+    info "  → Suppression UNIQUEMENT des volumes de build frontend..."
     VOLUME_RM_CMD="docker volume rm reboulstore_frontend_build admin_central_frontend_build 2>/dev/null || true"
     eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$VOLUME_RM_CMD\"" || true
     info "✅ Volumes de build supprimés (ou n'existaient pas)"
     
-    # Note : On ne supprime PAS postgres_data_prod pour préserver la base de données
+    # Vérification que les volumes de base de données sont toujours présents
+    info "Vérification que les volumes de base de données sont préservés..."
+    DB_VOLUMES_CHECK="docker volume ls | grep -E '(postgres|db|database)' || echo 'Aucun volume de base de données trouvé (normal si première installation)'"
+    DB_VOLUMES=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$DB_VOLUMES_CHECK\"")
+    if echo "$DB_VOLUMES" | grep -q "postgres\|db\|database"; then
+        info "✅ Volumes de base de données préservés :"
+        echo "$DB_VOLUMES" | while read line; do
+            info "    → $line"
+        done
+    else
+        info "ℹ️  Aucun volume de base de données existant (première installation ou nom différent)"
+    fi
     
     # 4. Rebuild TOUT (frontend ET backend) avec --no-cache pour garantir un build propre
     info "Rebuild complet des services Reboul Store (frontend + backend) avec --no-cache..."
