@@ -36,7 +36,7 @@ export default function ProductImagesUpload({
   maxImages = 7,
   className,
 }: ProductImagesUploadProps) {
-  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [uploadingIndex] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

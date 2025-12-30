@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../../../components/Layout/AdminLayout';
 import { reboulCollectionsService, Collection } from '../../../../services/reboul-collections.service';
-import { Plus, CheckCircle2, XCircle, Package, Edit, Trash2 } from 'lucide-react';
+import { Plus, CheckCircle2, XCircle, Package, Trash2 } from 'lucide-react';
 import { cn } from '../../../../utils/cn';
 
 /**
