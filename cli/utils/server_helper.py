@@ -10,8 +10,8 @@ import json
 SERVER_CONFIG = {
     'host': os.getenv('VPS_HOST', '152.228.218.35'),
     'user': os.getenv('VPS_USER', 'deploy'),
-    'project_path': os.getenv('VPS_PROJECT_PATH', '/var/www/reboulstore'),
-    'admin_path': os.getenv('VPS_ADMIN_PATH', '/var/www/reboulstore/admin-central'),
+    'project_path': os.getenv('VPS_PROJECT_PATH', '/opt/reboulstore'),
+    'admin_path': os.getenv('VPS_ADMIN_PATH', '/opt/reboulstore/admin-central'),
 }
 
 def ssh_exec(command: str, cwd: Optional[str] = None, return_code: bool = False) -> Tuple[str, str, Optional[int]]:
