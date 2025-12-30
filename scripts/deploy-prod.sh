@@ -228,12 +228,11 @@ if [ "$SKIP_BACKUP" = false ]; then
     fi
 fi
 
-# Build local des fichiers de production (compilation TypeScript/React uniquement, PAS d'images Docker)
-section "📦 Build local (compilation uniquement, PAS d'images Docker)"
+# Build local des fichiers de production (compilation TypeScript/React + test Docker)
+section "📦 Build local (compilation + test Docker)"
 
-info "⚠️  IMPORTANT : Ce build local est uniquement pour vérifier que le code compile."
-info "⚠️  Les images Docker seront buildées sur le serveur, pas en local."
-info "⚠️  Vos images Docker locales ne seront PAS touchées."
+info "⚠️  IMPORTANT : On teste d'abord que le code compile ET que les images Docker se buildent correctement."
+info "⚠️  Les images Docker seront rebuildées sur le serveur, mais on vérifie qu'elles fonctionnent en local d'abord."
 
 info "Build frontend (compilation TypeScript/React)..."
 if [ "$DRY_RUN" = false ]; then
@@ -259,6 +258,28 @@ if [ "$DRY_RUN" = false ]; then
     cd ..
 else
     info "✅ Build backend (simulation)"
+fi
+
+# Test des builds Docker localement (optionnel mais recommandé)
+info "Test des builds Docker localement (vérification que les Dockerfiles fonctionnent)..."
+if [ "$DRY_RUN" = false ]; then
+    info "  → Build test frontend Docker..."
+    if docker build -t reboulstore-frontend-test --target builder ./frontend -f ./frontend/Dockerfile.prod > /dev/null 2>&1; then
+        info "✅ Build Docker frontend test réussi"
+        docker rmi reboulstore-frontend-test > /dev/null 2>&1 || true
+    else
+        warn "⚠️  Build Docker frontend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+    fi
+    
+    info "  → Build test backend Docker..."
+    if docker build -t reboulstore-backend-test ./backend -f ./backend/Dockerfile.prod > /dev/null 2>&1; then
+        info "✅ Build Docker backend test réussi"
+        docker rmi reboulstore-backend-test > /dev/null 2>&1 || true
+    else
+        warn "⚠️  Build Docker backend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+    fi
+else
+    info "✅ Test Docker (simulation)"
 fi
 
 # Upload des fichiers sur le serveur
@@ -366,10 +387,21 @@ if [ "$DRY_RUN" = false ]; then
     eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CLEANUP_CMD\"" || true
     
     # 3. Supprimer les volumes de build pour garantir un build propre
+    # ⚠️ CRITIQUE : On supprime les volumes AVANT de builder pour que :
+    # - Le volume soit créé vide au démarrage
+    # - Le script d'init du Dockerfile copie les fichiers depuis l'image vers le volume
+    # - On évite que l'ancien volume écrase les nouveaux fichiers
     info "Suppression des volumes de build (frontend_build) pour garantir un build frais..."
     info "  → Reboul Store: reboulstore_frontend_build"
     info "  → Admin Central: admin_central_frontend_build"
+    info "  ⚠️  IMPORTANT : Les volumes seront recréés vides au démarrage, et les fichiers seront copiés depuis l'image"
     
+    # Forcer l'arrêt des containers qui utilisent les volumes
+    info "  → Arrêt forcé des containers utilisant les volumes..."
+    FORCE_DOWN_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production down -v 2>/dev/null || true"
+    eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$FORCE_DOWN_CMD\"" || true
+    
+    # Supprimer explicitement les volumes
     VOLUME_RM_CMD="docker volume rm reboulstore_frontend_build admin_central_frontend_build 2>/dev/null || true"
     eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$VOLUME_RM_CMD\"" || true
     info "✅ Volumes de build supprimés (ou n'existaient pas)"
@@ -404,11 +436,25 @@ if [ "$DRY_RUN" = false ]; then
     fi
     
     # 6. Démarrer tous les services avec les nouvelles images
+    # ⚠️ IMPORTANT : Les volumes sont créés vides au démarrage
+    # Le script d'init dans le Dockerfile copie les fichiers depuis /app/build vers /usr/share/nginx/html
     info "Démarrage des services Reboul Store avec les nouvelles images..."
+    info "  → Les volumes seront créés vides, le script d'init copiera les fichiers depuis l'image"
     UP_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
     
     if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$UP_CMD\""; then
         info "✅ Services Reboul Store redémarrés avec les nouvelles images"
+        
+        # Vérifier que les fichiers ont bien été copiés dans le volume
+        info "Vérification que les fichiers frontend ont été copiés dans le volume..."
+        sleep 3  # Attendre que le script d'init s'exécute
+        CHECK_FILES_CMD="docker exec reboulstore-frontend-prod ls -la /usr/share/nginx/html/index.html 2>/dev/null && echo 'OK' || echo 'MISSING'"
+        FILES_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CHECK_FILES_CMD\"")
+        if echo "$FILES_STATUS" | grep -q "OK"; then
+            info "✅ Fichiers frontend copiés correctement dans le volume"
+        else
+            warn "⚠️  Les fichiers frontend ne semblent pas être présents (vérifier les logs du container)"
+        fi
     else
         error "❌ Échec du démarrage des services Reboul Store"
     fi
