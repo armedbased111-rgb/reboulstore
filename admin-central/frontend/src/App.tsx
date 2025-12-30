@@ -19,6 +19,7 @@ import EditCategoryPage from './pages/admin/reboul/categories/EditCategoryPage';
 import BrandsPage from './pages/admin/reboul/brands/BrandsPage';
 import CreateBrandPage from './pages/admin/reboul/brands/CreateBrandPage';
 import EditBrandPage from './pages/admin/reboul/brands/EditBrandPage';
+import CollectionsPage from './pages/admin/reboul/collections/CollectionsPage';
 import SettingsPage from './pages/admin/reboul/settings/SettingsPage';
 
 /**
@@ -151,6 +152,14 @@ function AppRouter() {
           element={
             <ProtectedRoute>
               <EditBrandPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reboul/collections"
+          element={
+            <ProtectedRoute>
+              <CollectionsPage />
             </ProtectedRoute>
           }
         />

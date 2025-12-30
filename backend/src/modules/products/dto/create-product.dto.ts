@@ -33,6 +33,10 @@ export class CreateProductDto {
   @IsOptional()
   brandId?: string;
 
+  @IsUUID()
+  @IsOptional()
+  collectionId?: string; // Si non fourni, sera assigné à la collection active
+
   // Informations spécifiques au produit
   @IsString()
   @IsOptional()

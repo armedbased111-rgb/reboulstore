@@ -12,6 +12,12 @@ let MulterExceptionFilter = class MulterExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
+        if (exception instanceof common_1.HttpException) {
+            const status = exception.getStatus();
+            const exceptionResponse = exception.getResponse();
+            response.status(status).json(exceptionResponse);
+            return;
+        }
         if (exception.message && exception.message.includes('Only image files are allowed')) {
             response.status(400).json({
                 statusCode: 400,
@@ -28,13 +34,8 @@ let MulterExceptionFilter = class MulterExceptionFilter {
             });
             return;
         }
-        if (exception instanceof common_1.BadRequestException) {
-            const exceptionResponse = exception.getResponse();
-            response.status(400).json(exceptionResponse);
-            return;
-        }
-        response.status(500).json({
-            statusCode: 500,
+        response.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({
+            statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
             message: 'Internal server error',
         });
     }

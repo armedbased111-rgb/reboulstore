@@ -21,8 +21,22 @@ async function bootstrap() {
             transform: true,
         }));
         app.useGlobalFilters(new multer_exception_filter_1.MulterExceptionFilter());
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const allowedOrigins = [
+            frontendUrl,
+            'https://reboulstore.com',
+            'https://www.reboulstore.com',
+            'http://localhost:3000',
+        ];
         app.enableCors({
-            origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+            origin: (origin, callback) => {
+                if (!origin)
+                    return callback(null, true);
+                if (allowedOrigins.includes(origin)) {
+                    return callback(null, true);
+                }
+                callback(new Error('Not allowed by CORS'));
+            },
             credentials: true,
         });
         app.useStaticAssets((0, path_1.join)(__dirname, '..', 'uploads'), {

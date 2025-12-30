@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const product_entity_1 = require("../../entities/product.entity");
 const category_entity_1 = require("../../entities/category.entity");
+const collection_entity_1 = require("../../entities/collection.entity");
 const variant_entity_1 = require("../../entities/variant.entity");
 const image_entity_1 = require("../../entities/image.entity");
 const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
@@ -26,17 +27,33 @@ let ProductsService = class ProductsService {
     categoryRepository;
     variantRepository;
     imageRepository;
+    collectionRepository;
     cloudinaryService;
-    constructor(productRepository, categoryRepository, variantRepository, imageRepository, cloudinaryService) {
+    constructor(productRepository, categoryRepository, variantRepository, imageRepository, collectionRepository, cloudinaryService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
         this.imageRepository = imageRepository;
+        this.collectionRepository = collectionRepository;
         this.cloudinaryService = cloudinaryService;
     }
     async findAll(query) {
         const { category, brand, minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
-        const where = {};
+        const activeCollection = await this.collectionRepository.findOne({
+            where: { isActive: true },
+        });
+        if (!activeCollection) {
+            return {
+                products: [],
+                total: 0,
+                page,
+                limit,
+                totalPages: 0,
+            };
+        }
+        const where = {
+            collectionId: activeCollection.id,
+        };
         if (category) {
             where.categoryId = category;
         }
@@ -51,7 +68,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'shop', 'brand', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,
@@ -67,7 +84,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         const product = await this.productRepository.findOne({
             where: { id },
-            relations: ['category', 'shop', 'brand', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
         });
         if (!product) {
             throw new common_1.NotFoundException(`Product with ID ${id} not found`);
@@ -76,8 +93,21 @@ let ProductsService = class ProductsService {
     }
     async findByCategory(categoryId, query) {
         const { minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
+        const activeCollection = await this.collectionRepository.findOne({
+            where: { isActive: true },
+        });
+        if (!activeCollection) {
+            return {
+                products: [],
+                total: 0,
+                page,
+                limit,
+                totalPages: 0,
+            };
+        }
         const where = {
             categoryId,
+            collectionId: activeCollection.id,
         };
         if (minPrice !== undefined || maxPrice !== undefined) {
             where.price = (0, typeorm_2.Between)(minPrice ?? 0, maxPrice ?? Number.MAX_SAFE_INTEGER);
@@ -87,7 +117,7 @@ let ProductsService = class ProductsService {
         }
         const [products, total] = await this.productRepository.findAndCount({
             where,
-            relations: ['category', 'shop', 'brand', 'images', 'variants'],
+            relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
             order: { [sortBy]: sortOrder },
             skip: (page - 1) * limit,
             take: limit,
@@ -107,7 +137,30 @@ let ProductsService = class ProductsService {
         if (!category) {
             throw new common_1.NotFoundException(`Category with ID ${createProductDto.categoryId} not found`);
         }
-        const product = this.productRepository.create(createProductDto);
+        let collectionId = createProductDto.collectionId;
+        if (!collectionId) {
+            const activeCollection = await this.collectionRepository.findOne({
+                where: { isActive: true },
+            });
+            if (activeCollection) {
+                collectionId = activeCollection.id;
+            }
+            else {
+                throw new common_1.BadRequestException('No active collection found. Please activate a collection first.');
+            }
+        }
+        else {
+            const collection = await this.collectionRepository.findOne({
+                where: { id: collectionId },
+            });
+            if (!collection) {
+                throw new common_1.NotFoundException(`Collection with ID ${collectionId} not found`);
+            }
+        }
+        const product = this.productRepository.create({
+            ...createProductDto,
+            collectionId,
+        });
         return this.productRepository.save(product);
     }
     async update(id, updateProductDto) {
@@ -118,6 +171,14 @@ let ProductsService = class ProductsService {
             });
             if (!category) {
                 throw new common_1.NotFoundException(`Category with ID ${updateProductDto.categoryId} not found`);
+            }
+        }
+        if (updateProductDto.collectionId) {
+            const collection = await this.collectionRepository.findOne({
+                where: { id: updateProductDto.collectionId },
+            });
+            if (!collection) {
+                throw new common_1.NotFoundException(`Collection with ID ${updateProductDto.collectionId} not found`);
             }
         }
         Object.assign(product, updateProductDto);
@@ -293,7 +354,9 @@ exports.ProductsService = ProductsService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __param(2, (0, typeorm_1.InjectRepository)(variant_entity_1.Variant)),
     __param(3, (0, typeorm_1.InjectRepository)(image_entity_1.Image)),
+    __param(4, (0, typeorm_1.InjectRepository)(collection_entity_1.Collection)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

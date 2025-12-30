@@ -10,6 +10,17 @@
         "exclude": "**/*.ts",
         "watchAssets": true
       }
-    ]
+    ],
+    "webpack": false,
+    "tsConfigPath": "tsconfig.json"
+  },
+  "projects": {
+    "backend": {
+      "root": ".",
+      "sourceRoot": "src",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    }
   }
 }

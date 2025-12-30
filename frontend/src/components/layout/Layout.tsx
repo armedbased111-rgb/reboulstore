@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { PromoBanner } from './PromoBanner';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { BrandMarquee } from './BrandMarquee';
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,8 +20,11 @@ export const Layout = ({ children }: LayoutProps) => {
       {/* Bannière promotionnelle en haut */}
       <PromoBanner />
       
-      {/* Header fixe en haut */}
+      {/* Header fixe en haut avec barre publicitaire attachée */}
+      <div className="sticky top-0 z-[60]">
       <Header />
+        <BrandMarquee />
+      </div>
       
       {/* Contenu principal - prend tout l'espace disponible */}
       <main className="flex-1">

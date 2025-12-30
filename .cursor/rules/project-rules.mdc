@@ -259,6 +259,102 @@ const MyComponent = () => {
   - À utiliser uniquement si je te le demande explicitement
   - **Cas d'usage** : Pages complexes, composants avec logique métier, intégration API
 
+### Git / Version Control
+
+#### 📦 Workflow Git
+
+**Référence complète** : `docs/GIT_WORKFLOW.md` ⭐
+
+##### Principes de base
+
+- **Commits fréquents** : Commiter régulièrement avec des messages clairs
+- **Branches fonctionnelles** : Une branche par fonctionnalité/bugfix
+- **Pull requests** : Toujours créer une PR pour revue avant merge
+- **Conventions** : Respecter les conventions de nommage des branches et des commits
+
+##### Workflow standard
+
+1. **Créer une branche** depuis `main` (ou `develop` si applicable)
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b feature/nom-fonctionnalite
+   ```
+
+2. **Développer et commiter**
+   ```bash
+   git add .
+   git commit -m "feat: description de la fonctionnalité"
+   ```
+
+3. **Pousser et créer une Pull Request**
+   ```bash
+   git push origin feature/nom-fonctionnalite
+   ```
+
+4. **Après review** : Merge dans `main` et supprimer la branche
+
+##### Conventions Git
+
+**Branches** :
+- `feature/nom-fonctionnalite` : Nouvelle fonctionnalité
+- `fix/nom-bug` : Correction de bug
+- `hotfix/nom-urgent` : Correction urgente
+- `refactor/nom-refactor` : Refactoring
+- `docs/nom-doc` : Documentation
+
+**Commits** :
+- Format : `type: description courte`
+- Types : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- Exemples :
+  ```bash
+  git commit -m "feat: ajout page checkout"
+  git commit -m "fix: correction bug panier vide"
+  git commit -m "docs: mise à jour README"
+  git commit -m "refactor: optimisation service produits"
+  ```
+
+**Messages de commit** :
+- ✅ Première ligne : 50 caractères max, description claire
+- ✅ Corps (optionnel) : Expliquer le "pourquoi" si nécessaire
+- ✅ Référencer les issues/PR si applicable : `Closes #123`
+
+**Exemple complet** :
+```bash
+feat: ajout système de paiement Stripe
+
+- Intégration API Stripe
+- Page de confirmation
+- Gestion des erreurs de paiement
+
+Closes #45
+```
+
+##### Bonnes pratiques
+
+✅ **À FAIRE** :
+- Commiter souvent avec des messages clairs
+- Créer des branches descriptives
+- Tester avant de push
+- Faire des PR pour revue
+- Synchroniser régulièrement avec `main`
+
+❌ **À ÉVITER** :
+- Commits "WIP" ou "fix" vagues
+- Branches trop longues (> 2-3 semaines)
+- Merge direct dans `main` sans PR
+- Force push sur `main`
+- Oublier de pull avant de commencer
+
+##### Documentation complète
+
+Voir `docs/GIT_WORKFLOW.md` pour :
+- Workflow détaillé par type de développement
+- Résolution de conflits
+- Git hooks et automatisations
+- Workflow de release
+- Gestion des versions
+
 ### Phase Design / Webdesign (Figma - Outil principal)
 
 **Outil principal** : **Figma** (20€/mois - compte complet)
@@ -355,13 +451,13 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 3. **Après CHAQUE tâche complétée** :
    - ✅ **OBLIGATOIRE** : Mettre à jour ROADMAP_COMPLETE.md (cocher `[x]`)
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`python cli/main.py roadmap update --task "..."`)
+     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli roadmap update --task "..."`)
      - Alternative manuelle : Éditer directement le fichier
    - ✅ Mettre à jour CONTEXT.md (état actuel) si fin de phase
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`python cli/main.py docs sync`) - synchronise automatiquement ROADMAP ↔ BACKEND.md ↔ FRONTEND.md
+     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli docs sync`) - synchronise automatiquement ROADMAP ↔ BACKEND.md ↔ FRONTEND.md
      - Alternative manuelle : Éditer directement le fichier
    - ✅ Mettre à jour FRONTEND.md ou BACKEND.md si nécessaire
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`python cli/main.py docs sync`) - synchronise automatiquement
+     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli docs sync`) - synchronise automatiquement
 
 #### Importance critique
 
@@ -397,16 +493,37 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 3. **Après chaque étape** : 
    - ✅ **Mettre à jour ROADMAP_COMPLETE.md** (obligatoire, cocher les tâches)
-     - **⭐ UTILISER LE CLI** : `python cli/main.py roadmap update --task "..."` (gain de 97%)
+     - **⭐ UTILISER LE CLI** : `./rcli roadmap update --task "..."` (gain de 97%)
    - ✅ Mettre à jour CONTEXT.md si fin de phase
-     - **⭐ UTILISER LE CLI** : `python cli/main.py docs sync` (synchronise automatiquement)
+     - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
    - ✅ Mettre à jour FRONTEND.md ou BACKEND.md
-     - **⭐ UTILISER LE CLI** : `python cli/main.py docs sync` (synchronise automatiquement)
+     - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
    
 4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
    - **Note** : Le CLI respecte automatiquement le format existant
 
-## 🚀 CLI Python - Automatisation (PRÊT POUR PRODUCTION)
+## 🚀 CLI Python - Automatisation & Gestion Serveur (PRÊT POUR PRODUCTION)
+
+Le projet dispose d'un **CLI Python complet** pour automatiser toutes les tâches répétitives ET gérer le serveur VPS :
+
+### Installation
+
+```bash
+cd cli
+./setup.sh
+source venv/bin/activate
+```
+
+### ⚡ Wrapper Script (Recommandé)
+
+Utiliser `./rcli` à la racine du projet (wrapper automatique) :
+
+```bash
+# Au lieu de : python cli/main.py ...
+./rcli server status
+./rcli logs errors
+./rcli db backup --server
+```
 
 Le projet dispose d'un **CLI Python complet** pour automatiser toutes les tâches répétitives :
 
@@ -423,111 +540,120 @@ source venv/bin/activate
 #### Avant de commencer une session
 ```bash
 # Générer le contexte à jour pour Cursor
-python cli/main.py context generate
+./rcli context generate
 
 # Vérifier l'état de la roadmap
-python cli/main.py roadmap check
+./rcli roadmap check
+
+# Vérifier l'état du serveur
+./rcli server status
+./rcli server monitor --once
 ```
 
 #### Génération de code Backend
 ```bash
 # Module complet (Entity + DTOs + Service + Controller + Module)
-python cli/main.py code generate module FeatureName --full
+./rcli code generate module FeatureName --full
 
 # Composants individuels
-python cli/main.py code generate entity Category
-python cli/main.py code generate dto Product create
-python cli/main.py code generate service Product
-python cli/main.py code generate controller Product
+./rcli code generate entity Category
+./rcli code generate dto Product create
+./rcli code generate service Product
+./rcli code generate controller Product
 ```
 
 #### Génération de code Frontend
 ```bash
 # Composants React
-python cli/main.py code component ProductCard --domain Product
-python cli/main.py code component Button --shadcn --use card button
+./rcli code component ProductCard --domain Product
+./rcli code component Button --shadcn --use card button
 
 # Pages complètes
-python cli/main.py code page Checkout --entity Order
+./rcli code page Checkout --entity Order
 
 # Hooks et services
-python cli/main.py code hook useProducts
-python cli/main.py code api-service products
+./rcli code hook useProducts
+./rcli code api-service products
 
-# Animations GSAP
-python cli/main.py code animation fadeIn --type fade
+# Animations AnimeJS
+./rcli code animation fadeIn --type fade
 ```
 
 #### Tests
 ```bash
-python cli/main.py test generate e2e products
-python cli/main.py test generate unit ProductsService
-python cli/main.py test generate functional upload-images
+./rcli test generate e2e products
+./rcli test generate unit ProductsService
+./rcli test generate functional upload-images
 ```
 
 #### Base de données
 ```bash
-python cli/main.py db generate migration AddUserTable
-python cli/main.py db generate seed initial-data --entities Category Product
-python cli/main.py db analyze schema
+./rcli db generate migration AddUserTable
+./rcli db generate seed initial-data --entities Category Product
+./rcli db analyze schema
+
+# Backups DB (serveur)
+./rcli db backup --server
+./rcli db backup-list
+./rcli db backup-restore <backup_file> --yes
 ```
 
 #### Documentation
 ```bash
 # Générer documentation API et composants
-python cli/main.py docs generate api
-python cli/main.py docs generate components
+./rcli docs generate api
+./rcli docs generate components
 
 # Synchroniser ROADMAP ↔ BACKEND.md ↔ FRONTEND.md
-python cli/main.py docs sync
+./rcli docs sync
 
 # Générer changelog
-python cli/main.py docs changelog
+./rcli docs changelog
 
 # Valider la documentation
-python cli/main.py docs validate
+./rcli docs validate
 ```
 
 #### Analyse et suggestions
 ```bash
 # Analyser patterns et code dupliqué
-python cli/main.py analyze patterns
+./rcli analyze patterns
 
 # Valider la cohérence du code
-python cli/main.py analyze code
+./rcli analyze code
 
 # Analyser le code mort
-python cli/main.py analyze dead-code
+./rcli analyze dead-code
 
 # Suggérer des phases
-python cli/main.py suggest phase
-python cli/main.py suggest phase auth
+./rcli suggest phase
+./rcli suggest phase auth
 
 # Optimiser le contexte
-python cli/main.py context optimize
+./rcli context optimize
 ```
 
 #### Gestion shadcn/ui et Figma
 ```bash
 # Lister/installer composants shadcn/ui
-python cli/main.py shadcn list
-python cli/main.py shadcn install button card
+./rcli shadcn list
+./rcli shadcn install button card
 
 # Analyser et suggérer depuis Figma
-python cli/main.py figma analyze [url]
-python cli/main.py figma suggest [url]
+./rcli figma analyze [url]
+./rcli figma suggest [url]
 ```
 
 #### Après chaque tâche complétée
 ```bash
 # Cocher la tâche dans la roadmap
-python cli/main.py roadmap update --task "15.1 Configuration Cloudinary"
+./rcli roadmap update --task "15.1 Configuration Cloudinary"
 
 # Si phase complète
-python cli/main.py roadmap update --phase 15 --complete
+./rcli roadmap update --phase 15 --complete
 
 # Synchroniser la documentation
-python cli/main.py docs sync
+./rcli docs sync
 ```
 
 ### 📊 Impact et gains
@@ -646,20 +772,20 @@ python cli/main.py docs sync
 **⭐ RECOMMANDÉ : Utiliser le CLI Python pour la génération de code**
 
 - **`/component-create [nom] [domaine?]`** : Créer un composant React
-  - **⭐ OU** : `python cli/main.py code component [nom] --domain [domaine]`
+  - **⭐ OU** : `./rcli code component [nom] --domain [domaine]`
   - Template de base avec props typées
   - Bonnes pratiques, documentation
   - Exemples par domaine (UI, Product, etc.)
-  - **Avec shadcn/ui** : `python cli/main.py code component [nom] --shadcn --use button card`
+  - **Avec shadcn/ui** : `./rcli code component [nom] --shadcn --use button card`
 
 - **`/page-create [nom]`** : Créer une page React
-  - **⭐ OU** : `python cli/main.py code page [nom] --entity [entity]`
+  - **⭐ OU** : `./rcli code page [nom] --entity [entity]`
   - Template de base avec structure standard
   - Gestion loading/error states
   - Intégration routes, services
 
 - **`/module-create [nom]`** : Créer un module NestJS complet
-  - **⭐ OU** : `python cli/main.py code generate module [nom] --full`
+  - **⭐ OU** : `./rcli code generate module [nom] --full`
   - Module, Service, Controller
   - DTOs, Entités
   - Enregistrement automatique dans app.module
@@ -667,7 +793,7 @@ python cli/main.py docs sync
 ### Commandes utilitaires
 
 - **`/update-roadmap`** : Mettre à jour ROADMAP_COMPLETE.md
-  - **⭐ RECOMMANDÉ** : Utiliser le CLI (`python cli/main.py roadmap update --task "..."`)
+  - **⭐ RECOMMANDÉ** : Utiliser le CLI (`./rcli roadmap update --task "..."`)
   - Quand et comment cocher les tâches
   - Format de mise à jour
   - Processus systématique
@@ -718,6 +844,13 @@ python cli/main.py docs sync
 - ✅ Quand l'utilisateur veut créer un nouveau composant/page/module
 - ✅ Pour fournir les templates et structures standard
 - ✅ Pour rappeler les conventions de nommage et structure
+
+#### Quand utiliser automatiquement `/cli-server-workflow`
+- ✅ Quand l'utilisateur demande des informations sur le serveur
+- ✅ Quand l'utilisateur veut gérer des backups, logs, monitoring
+- ✅ Quand l'utilisateur demande comment vérifier la sécurité
+- ✅ Pour rappeler les workflows de gestion serveur (avant/après déploiement)
+- ✅ Pour fournir les commandes CLI serveur appropriées
 
 #### Quand utiliser automatiquement `/update-roadmap` ou `/documentation-workflow`
 - ✅ Après chaque tâche complétée

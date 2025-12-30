@@ -3,6 +3,7 @@ import { Image } from './image.entity';
 import { Variant } from './variant.entity';
 import { Shop } from './shop.entity';
 import { Brand } from './brand.entity';
+import { Collection } from './collection.entity';
 export declare class Product {
     id: string;
     name: string;
@@ -14,6 +15,8 @@ export declare class Product {
     shop: Shop | null;
     brandId: string | null;
     brand: Brand | null;
+    collectionId: string | null;
+    collection: Collection | null;
     images: Image[];
     variants: Variant[];
     materials: string | null;

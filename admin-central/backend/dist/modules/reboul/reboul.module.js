@@ -16,6 +16,7 @@ const variant_entity_1 = require("./entities/variant.entity");
 const category_entity_1 = require("./entities/category.entity");
 const image_entity_1 = require("./entities/image.entity");
 const brand_entity_1 = require("./entities/brand.entity");
+const collection_entity_1 = require("./entities/collection.entity");
 const shop_entity_1 = require("./entities/shop.entity");
 const address_entity_1 = require("./entities/address.entity");
 const cart_entity_1 = require("./entities/cart.entity");
@@ -32,6 +33,8 @@ const reboul_categories_service_1 = require("./reboul-categories.service");
 const reboul_categories_controller_1 = require("./reboul-categories.controller");
 const reboul_brands_service_1 = require("./reboul-brands.service");
 const reboul_brands_controller_1 = require("./reboul-brands.controller");
+const reboul_collections_service_1 = require("./reboul-collections.service");
+const reboul_collections_controller_1 = require("./reboul-collections.controller");
 const reboul_settings_service_1 = require("./reboul-settings.service");
 const reboul_settings_controller_1 = require("./reboul-settings.controller");
 let ReboulModule = class ReboulModule {
@@ -48,6 +51,7 @@ exports.ReboulModule = ReboulModule = __decorate([
                 category_entity_1.Category,
                 image_entity_1.Image,
                 brand_entity_1.Brand,
+                collection_entity_1.Collection,
                 shop_entity_1.Shop,
                 address_entity_1.Address,
                 cart_entity_1.Cart,
@@ -61,6 +65,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_stocks_service_1.ReboulStocksService,
             reboul_categories_service_1.ReboulCategoriesService,
             reboul_brands_service_1.ReboulBrandsService,
+            reboul_collections_service_1.ReboulCollectionsService,
             reboul_settings_service_1.ReboulSettingsService,
         ],
         controllers: [
@@ -70,6 +75,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_stocks_controller_1.ReboulStocksController,
             reboul_categories_controller_1.ReboulCategoriesController,
             reboul_brands_controller_1.ReboulBrandsController,
+            reboul_collections_controller_1.ReboulCollectionsController,
             reboul_settings_controller_1.ReboulSettingsController,
         ],
         exports: [],

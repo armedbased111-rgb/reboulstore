@@ -23,6 +23,39 @@ def roadmap():
     """Commandes pour gérer la roadmap"""
     pass
 
+@cli.group()
+def git():
+    """Commandes Git"""
+    pass
+
+@git.command()
+def status():
+    """Affiche le statut Git"""
+    from commands.git_commands import status as git_status
+    git_status()
+
+@git.command()
+@click.argument('branch_name')
+def create_branch(branch_name):
+    """Crée une nouvelle branche (format: feature/nom, fix/nom, etc.)"""
+    from commands.git_commands import create_branch as git_create_branch
+    git_create_branch(branch_name)
+
+@git.command()
+@click.argument('message')
+@click.option('--scope', help='Scope du commit (frontend, backend, etc.)')
+def commit(message, scope):
+    """Crée un commit avec convention (type(scope): message)"""
+    from commands.git_commands import commit as git_commit
+    git_commit(message, scope)
+
+@git.command()
+@click.option('--env', default='production', help='Environnement de déploiement')
+def deploy(env):
+    """Déploie sur l'environnement spécifié"""
+    from commands.git_commands import deploy as git_deploy
+    git_deploy(env)
+
 @roadmap.command()
 @click.option('--phase', type=int, help='Numéro de phase')
 @click.option('--task', type=str, help='Tâche à cocher (ex: "15.1 Configuration Cloudinary")')
@@ -1004,6 +1037,168 @@ def analyze_db(type):
                 else:
                     console.print(f"  [blue]ℹ️  {message}[/blue]")
 
+@db.command('backup')
+@click.option('--local', is_flag=True, help='Backup de la base de données locale (docker-compose.yml)')
+@click.option('--server', is_flag=True, help='Backup sur le serveur distant (VPS)')
+@click.option('--container', type=str, help='Nom du container PostgreSQL (par défaut: auto-détecté)')
+@click.option('--db-name', type=str, help='Nom de la base de données (par défaut: reboulstore_db)')
+@click.option('--db-user', type=str, help='Utilisateur PostgreSQL (par défaut: reboulstore)')
+@click.option('--backup-dir', type=str, default='./backups', help='Répertoire de sauvegarde (défaut: ./backups)')
+@click.option('--keep', type=int, default=30, help='Nombre de backups à conserver (défaut: 30)')
+def backup_db(local, server, container, db_name, db_user, backup_dir, keep):
+    """💾 Créer un backup de la base de données"""
+    from utils.backup_helper import create_backup, get_container_name
+    
+    if server:
+        # Backup sur serveur distant
+        from utils.server_helper import ssh_exec, SERVER_CONFIG
+        import subprocess
+        
+        container_name = container or get_container_name(local=False)
+        db_name = db_name or 'reboulstore_db'
+        db_user = db_user or 'reboulstore'
+        project_dir = SERVER_CONFIG['project_path']
+        server_backup_dir = f"{project_dir}/backups"
+        
+        console.print(f"[cyan]💾 Création du backup sur le serveur distant...[/cyan]")
+        console.print(f"[blue]Container: {container_name}[/blue]")
+        console.print(f"[blue]Base de données: {db_name}[/blue]\n")
+        
+        # Exécuter le backup sur le serveur
+        backup_cmd = (
+            f"cd {project_dir} && "
+            f"mkdir -p {server_backup_dir} && "
+            f"TIMESTAMP=$(date +'%Y%m%d_%H%M%S') && "
+            f"BACKUP_FILE='{server_backup_dir}/reboulstore_db_$TIMESTAMP.sql' && "
+            f"docker exec {container_name} pg_dump -U {db_user} -d {db_name} > \"$BACKUP_FILE\" && "
+            f"gzip \"$BACKUP_FILE\" && "
+            f"echo 'Backup créé: $BACKUP_FILE.gz' && "
+            f"ls -lh \"$BACKUP_FILE.gz\" | awk '{{print $5}}'"
+        )
+        
+        stdout, stderr = ssh_exec(backup_cmd)
+        
+        if stdout and 'Backup créé:' in stdout:
+            console.print(f"[green]✅ Backup créé sur le serveur: {server_backup_dir}[/green]")
+            console.print(stdout)
+        else:
+            console.print(f"[red]❌ Erreur lors du backup: {stderr or stdout}[/red]")
+    else:
+        # Backup local
+        container_name = container or get_container_name(local)
+        db_name = db_name or 'reboulstore_db'
+        db_user = db_user or 'reboulstore'
+        
+        console.print(f"[cyan]💾 Création du backup de la base de données...[/cyan]")
+        console.print(f"[blue]Container: {container_name}[/blue]")
+        console.print(f"[blue]Base de données: {db_name}[/blue]\n")
+        
+        success, message, backup_file = create_backup(
+            backup_dir=backup_dir,
+            container_name=container_name,
+            db_name=db_name,
+            db_user=db_user,
+            local=local,
+            keep_count=keep
+        )
+        
+        if success:
+            console.print(f"[green]✅ {message}[/green]")
+        else:
+            console.print(f"[red]❌ {message}[/red]")
+
+@db.command('backup-list')
+@click.option('--backup-dir', type=str, default='./backups', help='Répertoire de sauvegarde (défaut: ./backups)')
+def list_backups_cmd(backup_dir):
+    """📋 Lister tous les backups disponibles"""
+    from utils.backup_helper import list_backups
+    from rich.table import Table
+    
+    console.print(f"[cyan]📋 Liste des backups disponibles...[/cyan]\n")
+    
+    backups = list_backups(backup_dir)
+    
+    if not backups:
+        console.print(f"[yellow]⚠️  Aucun backup trouvé dans {backup_dir}[/yellow]")
+        return
+    
+    table = Table(title=f"Backups disponibles ({len(backups)})")
+    table.add_column("Date", style="cyan")
+    table.add_column("Fichier", style="green")
+    table.add_column("Taille", style="yellow", justify="right")
+    
+    for backup in backups:
+        table.add_row(
+            backup['date_str'],
+            backup['name'],
+            f"{backup['size_mb']:.2f} MB"
+        )
+    
+    console.print(table)
+
+@db.command('backup-restore')
+@click.argument('backup_file', type=str)
+@click.option('--local', is_flag=True, help='Restaurer sur la base de données locale')
+@click.option('--container', type=str, help='Nom du container PostgreSQL')
+@click.option('--db-name', type=str, help='Nom de la base de données')
+@click.option('--db-user', type=str, help='Utilisateur PostgreSQL')
+@click.option('--yes', '-y', is_flag=True, help='Confirmer automatiquement (danger!)')
+def restore_backup_cmd(backup_file, local, container, db_name, db_user, yes):
+    """🔄 Restaurer un backup de la base de données"""
+    from utils.backup_helper import restore_backup, get_container_name
+    
+    container_name = container or get_container_name(local)
+    db_name = db_name or 'reboulstore_db'
+    db_user = db_user or 'reboulstore'
+    
+    console.print(f"[bold red]⚠️  ATTENTION: Cette opération va écraser la base de données actuelle ![/bold red]")
+    console.print(f"[yellow]Container: {container_name}[/yellow]")
+    console.print(f"[yellow]Base de données: {db_name}[/yellow]")
+    console.print(f"[yellow]Fichier: {backup_file}[/yellow]\n")
+    
+    if not yes:
+        confirm = click.confirm("Êtes-vous sûr de vouloir continuer ?")
+        if not confirm:
+            console.print("[yellow]Restauration annulée[/yellow]")
+            return
+    
+    console.print(f"[cyan]🔄 Restauration en cours...[/cyan]\n")
+    
+    success, message = restore_backup(
+        backup_file=backup_file,
+        container_name=container_name,
+        db_name=db_name,
+        db_user=db_user,
+        local=local
+    )
+    
+    if success:
+        console.print(f"[green]✅ {message}[/green]")
+    else:
+        console.print(f"[red]❌ {message}[/red]")
+
+@db.command('backup-delete')
+@click.argument('backup_file', type=str)
+@click.option('--yes', '-y', is_flag=True, help='Confirmer automatiquement')
+def delete_backup_cmd(backup_file, yes):
+    """🗑️  Supprimer un backup"""
+    from utils.backup_helper import delete_backup
+    
+    if not yes:
+        confirm = click.confirm(f"Supprimer le backup {backup_file} ?")
+        if not confirm:
+            console.print("[yellow]Suppression annulée[/yellow]")
+            return
+    
+    console.print(f"[cyan]🗑️  Suppression du backup...[/cyan]\n")
+    
+    success, message = delete_backup(backup_file)
+    
+    if success:
+        console.print(f"[green]✅ {message}[/green]")
+    else:
+        console.print(f"[red]❌ {message}[/red]")
+
 @cli.group()
 def test():
     """Commandes pour générer des tests"""
@@ -1214,4 +1409,5 @@ except ImportError as e:
 
 if __name__ == '__main__':
     cli()
+
 

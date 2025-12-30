@@ -1,8 +1,8 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 4.1  
+**Version** : 4.2  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 29/12/2025 (Phase 17.11.3 Scripts Déploiement - Correction build production: utilisation /api au lieu de localhost:3001)
+**Dernière mise à jour** : 29/12/2025 (Phase 24.2 - BrandCarousel + BrandMarquee déployés en production)
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -2319,61 +2319,61 @@ docker compose up backend frontend
   - [x] Documenter variables d'environnement nécessaires ✅ (`DEPLOY_PRODUCTION.md`)
   - [x] Documenter configuration serveur (SSH, rsync, etc.) ✅ (`DEPLOY_PRODUCTION.md`)
 
-- [ ] **Intégration CI/CD (optionnel)** :
-  - [ ] Ajouter scripts dans GitHub Actions (ou autre CI)
-  - [ ] Automatiser vérification build sur chaque commit
-  - [ ] Automatiser déploiement sur push main/master
+- [x] **Intégration CI/CD (optionnel)** :
+  - [x] Ajouter scripts dans GitHub Actions ✅ (workflows existants)
+  - [x] Automatiser vérification build sur chaque commit ✅ (`.github/workflows/build-check.yml`)
+  - [x] Automatiser déploiement sur push main/master ✅ (`.github/workflows/deploy.yml`)
 
 ### 23.5.4 Vérification & Documentation Git (Prod/Dev)
 
 **Objectif** : Vérifier configuration Git pour prod/dev et documenter guide complet
 
-- [ ] **Vérification configuration Git actuelle** :
-  - [ ] Vérifier `.gitignore` (racine, frontend, backend, admin-central)
-  - [ ] Vérifier branches Git (main, develop, etc.)
-  - [ ] Vérifier workflow Git (merge, rebase, etc.)
-  - [ ] Vérifier hooks Git (pre-commit, pre-push, etc.)
-  - [ ] Vérifier stratégie de versioning (tags, releases)
+- [x] **Vérification configuration Git actuelle** :
+  - [x] Vérifier `.gitignore` (racine, frontend, backend, admin-central) ✅
+  - [x] Vérifier branches Git (main, develop, etc.) ✅ (main, feature/*, test/*)
+  - [x] Vérifier workflow Git (merge, rebase, etc.) ✅ (workflow actuel fonctionnel)
+  - [x] Vérifier hooks Git (pre-commit, pre-push, etc.) ✅ (exemples créés)
+  - [x] Vérifier stratégie de versioning (tags, releases) ✅ (documenté dans GIT_WORKFLOW.md - Semantic Versioning)
 
-- [ ] **Configuration branches** :
-  - [ ] Définir stratégie branches (main = prod, develop = dev, feature/*, etc.)
-  - [ ] Configurer protection branches (main, develop)
-  - [ ] Configurer règles merge (pull request requis, reviews, etc.)
-  - [ ] Documenter workflow branches
+- [x] **Configuration branches** :
+  - [x] Définir stratégie branches (main = prod, develop = dev, feature/*, etc.) ✅ (documenté dans GIT_WORKFLOW.md)
+  - [ ] Configurer protection branches (main, develop) (à faire sur GitHub Settings)
+  - [x] Configurer règles merge (pull request requis, reviews, etc.) ✅ (documenté dans GIT_WORKFLOW.md)
+  - [x] Documenter workflow branches ✅ (dans GIT_WORKFLOW.md)
 
-- [ ] **Configuration .gitignore** :
-  - [ ] Vérifier que tous les fichiers sensibles sont ignorés (.env, node_modules, etc.)
-  - [ ] Vérifier que les builds ne sont pas commités (dist/, build/, etc.)
-  - [ ] Vérifier que les logs ne sont pas commités
-  - [ ] Ajouter fichiers manquants si nécessaire
+- [x] **Configuration .gitignore** :
+  - [x] Vérifier que tous les fichiers sensibles sont ignorés (.env, node_modules, etc.) ✅
+  - [x] Vérifier que les builds ne sont pas commités (dist/, build/, etc.) ✅ (backend/.gitignore: dist)
+  - [x] Vérifier que les logs ne sont pas commités ✅ (*.log dans tous les .gitignore)
+  - [x] Ajouter fichiers manquants si nécessaire ✅ (docs/GITHUB_SECRETS_VALUES.md ajouté)
 
-- [ ] **Hooks Git** :
-  - [ ] Créer hook pre-commit (lint, format, tests rapides)
-  - [ ] Créer hook pre-push (build check, tests complets)
-  - [ ] Documenter hooks Git
+- [x] **Hooks Git** :
+  - [x] Créer hook pre-commit (exemple créé: `.git/hooks/pre-commit.sample`) ✅
+  - [x] Créer hook pre-push (exemple créé: `.git/hooks/pre-push.sample`) ✅
+  - [x] Documenter hooks Git ✅ (exemples avec instructions d'activation)
 
-- [ ] **Documentation Git** :
-  - [ ] Créer `docs/GIT_WORKFLOW.md` :
-    - [ ] Structure branches (main, develop, feature/*)
-    - [ ] Workflow développement (créer branche, commit, push, PR)
-    - [ ] Workflow déploiement (merge develop → main, tags, releases)
-    - [ ] Conventions commits (format, messages)
-    - [ ] Conventions branches (nommage)
-    - [ ] Guide résolution conflits
-    - [ ] Guide rollback
+- [x] **Documentation Git** :
+  - [x] Créer `docs/GIT_WORKFLOW.md` ✅
+    - [x] Structure branches (main, develop, feature/*) ✅
+    - [x] Workflow développement (créer branche, commit, push, PR) ✅
+    - [x] Workflow déploiement (merge develop → main, tags, releases) ✅
+    - [x] Conventions commits (format, messages) ✅
+    - [x] Conventions branches (nommage) ✅
+    - [x] Guide résolution conflits ✅
+    - [x] Guide rollback ✅
 
-- [ ] **CLI commandes Git** :
-  - [ ] Ajouter commandes Git dans CLI Python :
-    - [ ] `python cli/main.py git status` (statut branches, commits, etc.)
-    - [ ] `python cli/main.py git create-branch [nom]` (créer branche feature)
-    - [ ] `python cli/main.py git commit [message]` (commit avec conventions)
-    - [ ] `python cli/main.py git deploy [env]` (merge et déploiement)
-  - [ ] Documenter commandes CLI Git
+- [x] **CLI commandes Git** :
+  - [x] Ajouter commandes Git dans CLI Python ✅
+    - [x] `python cli/main.py git status` (statut branches, commits, etc.) ✅
+    - [x] `python cli/main.py git create-branch [nom]` (créer branche feature) ✅
+    - [x] `python cli/main.py git commit [message]` (commit avec conventions) ✅
+    - [x] `python cli/main.py git deploy [env]` (merge et déploiement) ✅
+  - [x] Documenter commandes CLI Git ✅ (dans `docs/GIT_WORKFLOW.md`)
 
-- [ ] **Documentation dans project-rules** :
-  - [ ] Ajouter section "Workflow Git" dans `project-rules.mdc`
-  - [ ] Ajouter section "Conventions Git" (commits, branches)
-  - [ ] Référencer `docs/GIT_WORKFLOW.md`
+- [x] **Documentation dans project-rules** :
+  - [x] Ajouter section "Workflow Git" dans `project-rules.mdc`
+  - [x] Ajouter section "Conventions Git" (commits, branches)
+  - [x] Référencer `docs/GIT_WORKFLOW.md`
 
 ---
 
@@ -2384,6 +2384,44 @@ docker compose up backend frontend
 **📅 Timing** : Après déploiement sur serveur (Phase 23), avant lancement réel
 
 **⏱️ Durée estimée** : 2-3 semaines (selon volume données et automatisation)
+
+**📅 Date cible** : Février 2025 (sortie officielle)
+
+**📋 Statut** : 🟡 En préparation (brainstorming complété - voir `docs/PHASE_24_SYNTHESE.md`)
+
+### 📋 Ordre Logique des Sous-Phases
+
+**Ordre d'exécution recommandé** :
+1. **24.1** Documentation & Contexte (préparer toute la doc)
+2. **24.2** Insertion Marques avec Logos (peut être fait tôt, indépendant)
+3. **24.3** Politique Livraison Finale (réunion magasin, peut être fait tôt)
+4. **24.4** Système Rotation Collections ⚠️ **AVANT import AS400** (pour assigner collection aux produits)
+5. **24.5** Intégration AS400 - Transformation Données (import initial avec collection assignée)
+6. **24.6** Amélioration Processus Stocks (après import, sync quotidienne)
+7. **24.7** Workflow Images Produits (peut être fait en parallèle)
+8. **24.8** Workflow Ajout Continu Produits (après import initial)
+9. **24.9** Checklist Finale - Validation Collection (en dernier)
+
+**Dépendances clés** :
+- 24.4 (Rotation Collections) → **AVANT** 24.5 (Import AS400)
+- 24.5 (Import AS400) → **AVANT** 24.6 (Stocks) et 24.8 (Ajout Continu)
+- 24.1-24.3 peuvent être faits en parallèle
+- 24.7 (Images) peut être fait en parallèle
+
+### ⚠️ Points Critiques Identifiés
+
+- **Ajout continu** : Nouveaux produits ajoutés chaque semaine → workflow d'ajout continu nécessaire
+- **Rotation collections** : Système actif/archivée → nouvelle collection remplace l'ancienne
+- **Variants complexes** : Chaussures avec couleurs multiples, plusieurs types de tailles (pantalon italien, etc.), marques qui taillent différemment
+- **Synchronisation stocks** : Quotidienne après réassorts manuels + alertes réassort (0-5 unités)
+
+### 📊 Décisions Prises
+
+- **Marques** : 36 marques (enfants + adultes), logos depuis ancien git de reboul
+- **Images** : Shooting à Aubagne, retouche Photoshop, stockage Cloudinary, 3-5 images/produit
+- **Stocks** : Réassorts quotidiens (matin/soir), sync quotidienne, rupture = stock = 0
+- **Priorités** : Sneakers → Reboul adulte → Reboul enfant
+- **AS400** : Export CSV disponible, journée en magasin prévue pour analyser structure complète
 
 ### 24.1 Documentation & Contexte
 
@@ -2401,12 +2439,14 @@ docker compose up backend frontend
   - [ ] Transformation des données (mapping champs)
   - [ ] Validation et nettoyage données
 
-- [ ] **Documentation Images** : `docs/IMAGES_WORKFLOW.md`
-  - [ ] Workflow création images produits (comment tu les fais)
-  - [ ] Standards qualité (résolution, formats, nommage)
-  - [ ] Organisation fichiers (structure dossiers)
-  - [ ] Processus upload (manuel vs automatisé)
-  - [ ] Optimisation images (compression, formats WebP)
+- [x] **Documentation Images** : `docs/IMAGES_WORKFLOW.md` ✅
+  - [x] Workflow création images produits (comment tu les fais) ✅
+  - [x] Standards qualité (résolution, formats, nommage) ✅
+  - [x] Organisation fichiers (structure dossiers) ✅
+  - [x] Processus upload (manuel vs automatisé) ✅
+  - [x] Optimisation images (compression, formats WebP) ✅
+  - [x] Documentation cron job optimisation (`docs/IMAGES_OPTIMIZATION_CRON.md`) ✅
+  - [x] Documentation compatibilité WebP (`docs/IMAGES_WEBP_COMPATIBILITY.md`) ✅
 
 - [ ] **Nouvelles commandes Cursor** :
   - [ ] `/collection-workflow` : Guide workflow collection réelle
@@ -2422,33 +2462,56 @@ docker compose up backend frontend
 
 **Objectif** : Ajouter toutes les marques de la collection réelle avec leurs logos
 
+**📊 Informations** : 36 marques (enfants + adultes), logos depuis ancien git de reboul (récupération manuelle)
+
 - [ ] **Backend** :
-  - [ ] Identifier toutes les marques de la collection réelle
-  - [ ] Préparer logos (formats, tailles, optimisation)
-  - [ ] Créer script seed ou import CSV pour marques
-  - [ ] Upload logos sur Cloudinary (ou storage)
-  - [ ] Insérer marques en base via Admin ou script
+  - [x] Identifier toutes les marques de la collection réelle (57 marques trouvées) ✅
+  - [x] Récupérer dossier logos depuis ancien git de reboul ✅
+  - [x] Vérifier formats et optimiser si nécessaire ✅
+  - [x] Préparer logos (formats, tailles, optimisation) ✅
+  - [x] Créer script seed ou import CSV pour marques ✅
+  - [x] Upload logos sur Cloudinary (56 logos uploadés) ✅
+  - [x] Insérer marques en base via script (57 marques créées) ✅
 
-- [ ] **Admin** :
-  - [ ] Vérifier interface Brands fonctionne bien
-  - [ ] Tester upload logo via Admin
-  - [ ] Vérifier affichage logos dans navigation frontend
+- [x] **Admin** :
+  - [x] Vérifier interface Brands fonctionne bien ✅
+  - [x] Améliorer affichage logos (afficher images au lieu d'icônes) ✅
+  - [x] Interface complète : liste, recherche, pagination, CRUD ✅
+  - [ ] Tester upload logo via Admin (à tester manuellement)
+  - [ ] Vérifier affichage logos dans navigation frontend (si applicable)
 
-- [ ] **Validation** :
-  - [ ] Vérifier toutes marques présentes
-  - [ ] Vérifier logos affichés correctement (frontend)
-  - [ ] Vérifier filtres par marque fonctionnent
+- [x] **Frontend** :
+  - [x] Composant BrandCarousel créé pour homepage ✅
+  - [x] Intégré dans Home.tsx avec animation scroll ✅
+  - [x] Style aligné avec autres titres homepage (text-2xl md:text-3xl lg:text-4xl) ✅
+  - [x] Composant BrandMarquee créé (barre publicitaire avec logos blancs défilants) ✅
+  - [x] BrandMarquee intégré dans Layout.tsx (attaché au Header, sticky) ✅
+  - [x] Logos blancs (_w) utilisés dans BrandMarquee (fond noir) ✅
+  - [x] Uniformisation taille logos BrandMarquee (maxHeight: 24px, maxWidth: 80px) ✅
+  - [x] Défilement automatique continu (animation CSS marquee) ✅
+
+- [x] **Validation** :
+  - [x] Vérifier toutes marques présentes (57 marques en base) ✅
+  - [x] Vérifier logos affichés correctement (Admin) ✅
+  - [x] Vérifier endpoints backend fonctionnent ✅
+  - [x] Composant BrandCarousel créé et intégré dans Homepage ✅
+  - [x] Logos noirs (_b) utilisés pour fond blanc (BrandCarousel) ✅
+  - [x] BrandMarquee fonctionnel avec défilement automatique ✅
+  - [ ] Vérifier filtres par marque fonctionnent (frontend - si applicable)
+  - [ ] Tester BrandCarousel manuellement (affichage, navigation, liens)
+  - [ ] Tester BrandMarquee manuellement (défilement, logos blancs, sticky)
 
 ### 24.3 Politique Livraison Finale
 
 **Objectif** : Définir et configurer les politiques de livraison finales avec l'équipe Reboul
 
-- [ ] **Réunion avec équipe Reboul** :
+- [ ] **Réunion avec équipe Reboul** (en magasin) :
   - [ ] Définir frais livraison (standard, express)
   - [ ] Définir seuil livraison gratuite
   - [ ] Définir délais livraison
   - [ ] Définir zones de livraison (si applicable)
   - [ ] Définir politique retour (délai, frais, conditions)
+  - [ ] Noter toutes les réponses dans `docs/PHASE_24_FAQ_MAGASIN.md`
 
 - [ ] **Configuration Backend** :
   - [ ] Mettre à jour Shop entity avec politiques finales
@@ -2464,30 +2527,95 @@ docker compose up backend frontend
   - [ ] Vérifier messages livraison gratuite
   - [ ] Vérifier page politique retour affichée correctement
 
-### 24.4 Intégration AS400 - Transformation Données
+### 24.4 Système Rotation Collections ✅
+
+**Objectif** : Gérer le passage d'une collection à l'autre (actif/archivée)
+
+**📊 Informations** : Première sortie = nouvelle collection uniquement. Quand nouvelle collection arrive, ancienne → archivée, nouvelle → active
+
+**⚠️ IMPORTANT** : À faire AVANT l'import AS400 (24.5) pour assigner une collection aux produits importés
+
+**✅ STATUT : TERMINÉ ET TESTÉ**
+
+- [x] **Backend** :
+  - [x] Créer entité Collection (name, displayName, isActive, description)
+  - [x] Ajouter champ collectionId sur entité Product (relation ManyToOne)
+  - [x] Créer migration TypeORM (table collections + colonne collectionId dans products)
+  - [x] Créer module Collections (service, controller, DTOs)
+  - [x] Endpoints REST complets : GET, POST, PATCH, DELETE, activate, archive
+  - [x] Modifier ProductsService pour filtrer automatiquement par collection active
+  - [x] Assignation automatique à la collection active lors de création produit
+  - [x] Migration données existantes (assigner collection initiale "current")
+  - [x] **Tests validés** ✅ :
+    - [x] Création collections
+    - [x] Rotation collections (activer/désactiver)
+    - [x] Filtrage produits par collection active
+    - [x] Assignation automatique nouveau produit
+    - [x] Gestion erreurs (archiver/supprimer collection active)
+
+- [x] **Admin** :
+  - [x] Créer entité Collection dans admin backend
+  - [x] Ajouter champ collectionId dans entité Product (admin backend)
+  - [x] Créer service reboul-collections.service.ts (admin backend)
+  - [x] Créer controller reboul-collections.controller.ts (admin backend)
+  - [x] Ajouter Collection dans reboul.module.ts
+  - [x] Créer service reboul-collections.service.ts (admin frontend)
+  - [x] Créer page CollectionsPage.tsx (liste, activer, archiver, supprimer)
+  - [x] Ajouter route dans App.tsx
+  - [x] Ajouter onglet "Collections" dans AdminNavigation.tsx
+  - [x] **Tests validés** ✅ :
+    - [x] Admin backend démarre correctement
+    - [x] Endpoints Collections enregistrés (GET, POST, PATCH, DELETE, activate, archive)
+    - [x] Admin frontend accessible
+  - [ ] Voir produits par collection (optionnel, à faire si besoin)
+  - [ ] Filtrer produits par collection dans Admin (optionnel, à faire si besoin)
+
+- [x] **Frontend** :
+  - [x] Filtrage automatique par collection active (côté backend, pas besoin de modification frontend)
+  - [x] Composant BrandCarousel créé pour homepage ✅
+  - [x] Intégré dans Home.tsx avec animation scroll ✅
+  - [ ] Optionnel : Page "Archives" pour voir anciennes collections
+
+- [x] **Validation** :
+  - [x] Tester rotation collections (activer/archiver) ✅
+  - [x] Vérifier produits archivés masqués (0 produits retournés si collection inactive) ✅
+  - [x] Vérifier produits actifs visibles (produits retournés si collection active) ✅
+
+### 24.5 Intégration AS400 - Transformation Données
 
 **Objectif** : Récupérer données magasin AS400, transformer et intégrer dans notre base
 
-#### 24.4.1 Analyse & Mapping AS400
+#### 24.5.1 Analyse & Mapping AS400
+
+**📊 Informations** : Export CSV disponible, réassorts quotidiens (matin/soir), journée en magasin prévue
+
+- [ ] **Journée en magasin** (prévue) :
+  - [ ] Analyser tables AS400 disponibles (produits, stocks, marques, catégories)
+  - [ ] Documenter schéma AS400 (champs, types, relations)
+  - [ ] Identifier méthode extraction (export CSV, connexion directe, dump SQL, API)
+  - [ ] Identifier accès AS400 (VPN, accès distant, personne responsable)
 
 - [ ] **Compréhension structure AS400** :
   - [ ] Analyser tables AS400 disponibles (produits, stocks, marques, catégories)
   - [ ] Documenter schéma AS400 (champs, types, relations)
-  - [ ] Identifier méthode extraction (export CSV, connexion directe, dump)
+  - [ ] Identifier méthode extraction (export CSV priorité, évaluer autres options)
 
 - [ ] **Mapping données** :
   - [ ] Table produits AS400 → notre entité Product
+    - [ ] Champs AS400 probablement : nom, taille, couleur, stock, prix
+    - [ ] Champs à compléter manuellement : descriptions, matériaux, instructions d'entretien, pays de fabrication
   - [ ] Table stocks AS400 → notre entité Variant (stock)
   - [ ] Table marques AS400 → notre entité Brand
   - [ ] Table catégories AS400 → notre entité Category
   - [ ] Identifier transformations nécessaires (formats, valeurs, normalisations)
+  - [ ] Gérer variants complexes (couleurs multiples, tailles différentes selon marques)
 
 - [ ] **Documenter mapping** :
   - [ ] Créer tableau de correspondance AS400 → notre DB
   - [ ] Documenter règles de transformation
   - [ ] Documenter valeurs par défaut si données manquantes
 
-#### 24.4.2 Processus Transformation
+#### 24.5.2 Processus Transformation
 
 - [ ] **Script transformation** :
   - [ ] Créer script Node.js/Python pour lire données AS400
@@ -2500,11 +2628,12 @@ docker compose up backend frontend
   - [ ] Permettre review manuelle avant import
   - [ ] Prévisualiser données transformées
 
-#### 24.4.3 Import Données
+#### 24.5.3 Import Données
 
 - [ ] **Script import** :
   - [ ] Créer script import données transformées
   - [ ] Gérer création produits (avec vérification doublons)
+  - [ ] **Assigner collection active** aux produits importés (dépend de 24.4)
   - [ ] Gérer création variants avec stocks
   - [ ] Gérer création/association marques et catégories
   - [ ] Gérer images (association après upload)
@@ -2514,7 +2643,7 @@ docker compose up backend frontend
   - [ ] Rapport post-import (statistiques)
   - [ ] Vérification données importées (échantillonnage)
 
-### 24.5 Amélioration Processus Stocks - Automatisation
+### 24.6 Amélioration Processus Stocks - Automatisation
 
 **Objectif** : Améliorer et accélérer la mise à jour des stocks depuis AS400
 
@@ -2530,9 +2659,11 @@ docker compose up backend frontend
   - [ ] Implémenter automatisation si valeur ajoutée
 
 - [ ] **Scripts synchronisation stocks** :
-  - [ ] Créer script sync stocks AS400 → notre DB
+  - [ ] Créer script sync stocks AS400 → notre DB (quotidien, après réassorts manuels)
   - [ ] Gérer différences (AS400 vs DB)
   - [ ] Gérer cas spéciaux (produits supprimés, nouveaux, variants)
+  - [ ] **Système d'alerte réassort** : Notifications pour produits avec stock entre 0 et 5 unités (dans l'admin)
+  - [ ] Rupture = stock = 0 (approche simplifiée, pas de vérification multi-magasins)
   - [ ] Logs et alertes si écarts importants
 
 - [ ] **Workflow Admin** :
@@ -2545,50 +2676,99 @@ docker compose up backend frontend
   - [ ] Guide utilisation Admin
   - [ ] Troubleshooting guide
 
-### 24.6 Workflow Images Produits
+### 24.7 Workflow Images Produits
 
 **Objectif** : Documenter et optimiser le processus de création/upload images produits
 
-#### 24.6.1 Documentation Workflow Images
+#### 24.7.1 Documentation Workflow Images
 
-- [ ] **Entretien avec toi** :
-  - [ ] Comprendre comment tu fais les images produits actuellement
-  - [ ] Identifier étapes du processus
+**📊 Informations** : Shooting à Aubagne au stock, récupération matériel chez le patron, setup complet ensemble, retouche Photoshop, stockage Cloudinary, 3-5 images/produit
+
+- [x] **Entretien avec toi** :
+  - [x] Comprendre comment tu fais les images produits actuellement (shooting à Aubagne, retouche Photoshop)
+  - [x] Identifier étapes du processus (récupération matériel → setup → shooting → retouche → nommage → upload)
   - [ ] Identifier points d'amélioration/automatisation
   - [ ] Définir standards qualité
 
-- [ ] **Documenter workflow** :
-  - [ ] Créer guide complet dans `docs/IMAGES_WORKFLOW.md`
-  - [ ] Étapes détaillées (shooting, retouche, nommage, upload)
-  - [ ] Standards qualité (résolution, formats, couleurs)
-  - [ ] Convention nommage fichiers
-  - [ ] Structure dossiers/organisation
+- [x] **Documenter workflow** :
+  - [x] Créer guide complet dans `docs/IMAGES_WORKFLOW.md` ✅
+  - [x] Étapes détaillées (shooting à Aubagne, retouche Photoshop, nommage, upload Cloudinary) ✅
+  - [x] Standards qualité (résolution: 2048px, poids: 200-300KB, formats: JPG/PNG) ✅
+  - [x] **Convention nommage fichiers** : `[SKU]_[numero]_[type].jpg` ✅
+  - [x] Structure dossiers/organisation : `products/[collection]/[sku]/` ✅
+  - [x] Quantité : 3-5 images par produit ✅
 
-#### 24.6.2 Optimisation & Automatisation
+#### 24.7.2 Optimisation & Automatisation
 
-- [ ] **Optimisation images** :
-  - [ ] Script compression automatique (WebP, optimisation taille)
-  - [ ] Batch processing (traiter plusieurs images)
-  - [ ] Génération thumbnails automatique
-  - [ ] Watermarking (si nécessaire)
+- [x] **Optimisation images** :
+  - [x] Script compression automatique (WebP, optimisation taille) ✅
+  - [x] Batch processing (traiter plusieurs images) ✅
+  - [x] Génération thumbnails automatique (via Cloudinary) ✅
+  - [ ] Watermarking (si nécessaire) - **Optionnel**
 
-- [ ] **Automatisation upload** :
-  - [ ] Script batch upload (dossier → Cloudinary)
-  - [ ] Association automatique images → produits (par nommage)
-  - [ ] Vérification qualité avant upload (résolution min, poids max)
+- [x] **Automatisation upload** :
+  - [x] Script batch upload (dossier → Cloudinary) ✅
+  - [x] Association automatique images → produits (par nommage SKU) ✅
+  - [x] Vérification qualité avant upload (résolution min, poids max) ✅
+  - [x] Documentation scripts (`backend/scripts/README_IMAGES.md`) ✅
 
-- [ ] **Interface Admin améliorée** :
-  - [ ] Upload multiple images
-  - [ ] Drag & drop
-  - [ ] Prévisualisation avant upload
-  - [ ] Ordre images (drag & drop pour réordonner)
+- [x] **Interface Admin améliorée** :
+  - [x] Upload multiple images ✅
+  - [x] Drag & drop ✅
+  - [x] Prévisualisation avant upload ✅
+  - [x] Ordre images (flèches haut/bas pour réordonner) ✅
+
+- [x] **Cron Job Optimisation Automatique** :
+  - [x] Module ImagesOptimization créé ✅
+  - [x] Service d'optimisation (JPG/PNG → WebP via Cloudinary) ✅
+  - [x] Cron job quotidien (3h) : nouvelles images 24h ✅
+  - [x] Cron job hebdomadaire (dimanche 4h) : toutes les images ✅
+  - [x] Endpoints manuels pour déclencher l'optimisation ✅
+  - [x] Documentation (`docs/IMAGES_OPTIMIZATION_CRON.md`) ✅
+  - [x] Module ajouté dans AppModule ✅
+  - [x] @nestjs/schedule installé ✅
+  - [x] **Tests validés** ✅ :
+    - [x] Backend démarre correctement
+    - [x] Endpoints fonctionnels (optimize-all, optimize-new)
+    - [x] Compatibilité WebP vérifiée (frontend + API)
+  - [x] Documentation compatibilité WebP (`docs/IMAGES_WEBP_COMPATIBILITY.md`) ✅
+  - [x] **Note** : Script `optimize-images.ts` nécessite `sharp` (optionnel, pour optimisation locale avant upload) - Déplacé dans `/scripts/` ✅
 
 - [ ] **Validation** :
   - [ ] Vérifier workflow fonctionne end-to-end
   - [ ] Vérifier qualité images sur site
   - [ ] Vérifier performance chargement
+  - [ ] Tester cron job optimisation
 
-### 24.7 Checklist Finale - Validation Collection
+### 24.8 Workflow Ajout Continu Produits
+
+**Objectif** : Permettre l'ajout de nouveaux produits chaque semaine tout au long de la saison
+
+**📊 Informations** : ⚠️ **IMPORTANT** - Nouveaux produits ajoutés chaque semaine, pas seulement import initial
+
+- [ ] **Processus d'ajout manuel** :
+  - [ ] Interface Admin pour ajouter nouveaux produits manuellement
+  - [ ] Workflow validation avant publication :
+    - [ ] Vérifier données complètes
+    - [ ] Vérifier images présentes
+    - [ ] Validation manuelle si nécessaire
+
+- [ ] **Script import incrémental** :
+  - [ ] Script d'import incrémental depuis AS400 (nouveaux produits uniquement)
+  - [ ] Détection nouveaux produits (comparaison AS400 vs DB)
+  - [ ] Import automatique ou manuel selon préférence
+
+- [ ] **Documentation** :
+  - [ ] Documenter workflow ajout continu
+  - [ ] Guide utilisation Admin pour ajout manuel
+  - [ ] Guide utilisation script import incrémental
+
+- [ ] **Validation** :
+  - [ ] Tester ajout manuel nouveau produit
+  - [ ] Tester import incrémental
+  - [ ] Vérifier workflow validation
+
+### 24.9 Checklist Finale - Validation Collection
 
 - [ ] **Données** :
   - [ ] Tous produits importés et validés
@@ -2609,6 +2789,10 @@ docker compose up backend frontend
   - [ ] Parcours complet achat testé avec données réelles
   - [ ] Vérification stocks cohérents
   - [ ] Vérification calculs (totaux, livraison, taxes)
+  - [ ] Vérification rotation collections
+  - [ ] Vérification ajout continu produits
+  - [ ] Vérification alertes réassort (stocks 0-5 unités)
+  - [ ] Vérification variants complexes (couleurs multiples, tailles différentes)
 
 ---
 
@@ -2664,12 +2848,16 @@ docker compose up backend frontend
 
 ### 📝 Notes :
 - **Page Home** : Améliorations progressives au fil du temps
-- **Données réelles** : **🆕 Phase 24 - Préparation Collection Réelle** (après déploiement, avant lancement réel)
-  - Intégration AS400 (transformation données magasin)
-  - Workflow images produits (documentation, optimisation)
-  - Insertion marques avec logos
-  - Politiques livraison finales
-  - Amélioration processus stocks (automatisation)
+- **Données réelles** : **🆕 Phase 24 - Préparation Collection Réelle** (après déploiement, avant lancement réel) 🟡 **EN PRÉPARATION**
+  - Intégration AS400 (transformation données magasin, journée en magasin prévue)
+  - Workflow images produits (shooting à Aubagne, retouche Photoshop, Cloudinary, 3-5 images/produit)
+  - Insertion marques avec logos (36 marques depuis ancien git)
+  - Politiques livraison finales (à définir avec équipe Reboul)
+  - Amélioration processus stocks (sync quotidienne + alertes réassort 0-5 unités)
+  - **Système rotation collections** (actif/archivée) ⚠️ **NOUVEAU**
+  - **Workflow ajout continu produits** (nouveaux produits chaque semaine) ⚠️ **NOUVEAU**
+  - **Variants complexes** (couleurs multiples, tailles différentes selon marques) ⚠️ **NOUVEAU**
+  - **Voir** : `docs/PHASE_24_SYNTHESE.md` (synthèse complète) et `docs/PHASE_24_FAQ_MAGASIN.md` (questions magasin)
 
 ### 🟢 Priorité 3 (Expansion Multi-Sites) - Après Reboul
 - **CP Company** : Créer Frontend + Backend + Database (même structure que Reboul)
@@ -2735,13 +2923,17 @@ docker compose up backend frontend
 
 ### 🚀 Post-Février 2025 :
 
-**📦 Phase 24 - Préparation Collection Réelle (2-3 semaines après déploiement)** :
+**📦 Phase 24 - Préparation Collection Réelle (2-3 semaines après déploiement)** 🟡 **EN PRÉPARATION** :
 - **📝 Documentation** : Créer docs (COLLECTION_REAL.md, AS400_INTEGRATION.md, IMAGES_WORKFLOW.md)
-- **🏷️ Marques** : Insertion toutes marques avec logos
-- **🚚 Politiques** : Finaliser politiques livraison avec équipe Reboul
-- **🔗 AS400** : Intégration données magasin (transformation, import, sync stocks)
-- **📸 Images** : Workflow images produits (documentation, optimisation, automatisation)
+- **🏷️ Marques** : Insertion 36 marques avec logos (depuis ancien git)
+- **🚚 Politiques** : Finaliser politiques livraison avec équipe Reboul (réunion en magasin)
+- **🔗 AS400** : Intégration données magasin (journée en magasin pour analyser structure, transformation, import, sync stocks quotidienne)
+- **📸 Images** : Workflow images produits (shooting à Aubagne, retouche Photoshop, Cloudinary, 3-5 images/produit, convention nommage à définir)
+- **🔄 Rotation Collections** : Système actif/archivée (nouvelle collection remplace ancienne) ⚠️ **NOUVEAU**
+- **➕ Ajout Continu** : Workflow nouveaux produits chaque semaine ⚠️ **NOUVEAU**
+- **📊 Stocks** : Sync quotidienne + alertes réassort (0-5 unités) ⚠️ **NOUVEAU**
 - **✅ Validation** : Checklist complète collection réelle
+- **📋 Voir** : `docs/PHASE_24_SYNTHESE.md` (synthèse) et `docs/PHASE_24_FAQ_MAGASIN.md` (FAQ magasin)
 
 - **🎨 Amélioration Home** : Progressivement selon idées
 - **📧 Redesign Templates Email** : Designer tous les templates d'email dans Figma et réimporter (basse priorité)

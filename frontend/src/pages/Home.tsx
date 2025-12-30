@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { HeroSectionImage } from '../components/home/HeroSectionImage';
 import { FeaturedProducts } from '../components/home/FeaturedProducts';
 import { CategorySection } from '../components/home/CategorySection';
+import { BrandCarousel } from '../components/home/BrandCarousel';
 import { useProducts } from '../hooks/useProducts';
 import { HeroSectionVideo } from '@/components/home/HeroSectionVideo';
 import { PromoCard } from '@/components/home/PromoCard';
@@ -41,6 +42,13 @@ export const Home = () => {
   }, { threshold: 0.1, rootMargin: '150px' });
 
   const categorySectionRef = useScrollAnimation((element) => {
+    animateRevealUp(element, {
+      duration: 1.4,
+      distance: 40
+    });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const brandCarouselRef = useScrollAnimation((element) => {
     animateRevealUp(element, {
       duration: 1.4,
       distance: 40
@@ -109,6 +117,11 @@ export const Home = () => {
       {/* Category Section - Shop by category */}
       <div ref={categorySectionRef}>
         <CategorySection />
+      </div>
+
+      {/* Brand Carousel - Nos Marques */}
+      <div ref={brandCarouselRef}>
+        <BrandCarousel title="Nos Marques" />
       </div>
 
       

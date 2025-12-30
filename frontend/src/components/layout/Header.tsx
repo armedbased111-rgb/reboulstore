@@ -291,7 +291,7 @@ export const Header = () => {
 
   return (
     <>
-    <header ref={headerRef} className="bg-white sticky top-0 z-[60] relative">
+    <header ref={headerRef} className="bg-white relative">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Menu hamburger mobile (gauche) + Logo (centré mobile) + Navigation (desktop) */}

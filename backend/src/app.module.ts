@@ -16,12 +16,17 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { CollectionsModule } from './modules/collections/collections.module';
+import { ImagesOptimizationModule } from './modules/images-optimization/images-optimization.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: getDatabaseConfig,
@@ -42,6 +47,8 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
     UsersModule,
     CheckoutModule,
     CloudinaryModule,
+    CollectionsModule,
+    ImagesOptimizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

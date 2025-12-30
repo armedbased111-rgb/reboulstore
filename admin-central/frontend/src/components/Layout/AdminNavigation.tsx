@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Package, ShoppingCart, Users, Menu, X, Folder, Tag, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, Menu, X, Folder, Tag, Settings, Archive } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 /**
@@ -18,6 +18,7 @@ export default function AdminNavigation() {
     if (location.pathname.includes('/products')) return 'products';
     if (location.pathname.includes('/categories')) return 'categories';
     if (location.pathname.includes('/brands')) return 'brands';
+    if (location.pathname.includes('/collections')) return 'collections';
     if (location.pathname.includes('/orders')) return 'orders';
     if (location.pathname.includes('/users')) return 'users';
     if (location.pathname.includes('/settings')) return 'settings';
@@ -58,6 +59,15 @@ export default function AdminNavigation() {
       icon: Tag,
       onClick: () => {
         navigate('/admin/reboul/brands');
+        setIsMobileMenuOpen(false);
+      },
+    },
+    {
+      title: 'Collections',
+      value: 'collections',
+      icon: Archive,
+      onClick: () => {
+        navigate('/admin/reboul/collections');
         setIsMobileMenuOpen(false);
       },
     },

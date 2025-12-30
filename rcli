@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Wrapper pour le CLI Python - Reboul Store
+# Utilisation: ./rcli [commandes...]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLI_DIR="$SCRIPT_DIR/cli"
+
+# Vérifier que le CLI existe
+if [ ! -f "$CLI_DIR/main.py" ]; then
+    echo "❌ CLI non trouvé dans $CLI_DIR"
+    exit 1
+fi
+
+# Activer l'environnement virtuel si disponible
+if [ -d "$CLI_DIR/venv" ]; then
+    source "$CLI_DIR/venv/bin/activate"
+fi
+
+# Exécuter le CLI avec python3
+python3 "$CLI_DIR/main.py" "$@"
+

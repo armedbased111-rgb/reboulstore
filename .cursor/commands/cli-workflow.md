@@ -35,62 +35,94 @@ source venv/bin/activate
 
 ---
 
+## ⚡ Wrapper Script (Recommandé)
+
+Utiliser `./rcli` à la racine du projet au lieu de `python cli/main.py` :
+
+```bash
+# Au lieu de : python cli/main.py ...
+./rcli roadmap update --task "15.1 Configuration Cloudinary"
+./rcli server status
+./rcli logs errors
+```
+
+---
+
 ## 🎯 Commandes principales
+
+### 🖥️ Gestion Serveur (Nouveau ⭐)
+
+Voir `.cursor/commands/cli-server-workflow.md` pour toutes les commandes serveur.
+
+**Commandes principales** :
+```bash
+./rcli server status              # État des containers
+./rcli server monitor --once      # Ressources serveur
+./rcli server backup --full       # Backup complet
+./rcli server rollback --list     # Liste des backups
+./rcli server cron --list         # Liste des cron jobs
+./rcli server security --audit    # Audit de sécurité
+./rcli server ssl --check         # Vérifier certificats SSL
+./rcli server dns --propagate     # Vérifier propagation DNS
+./rcli logs api-errors            # Erreurs API
+./rcli logs slow-requests         # Requêtes lentes
+```
 
 ### Roadmap Management
 
 ```bash
 # Cocher une tâche
-python cli/main.py roadmap update --task "15.1 Configuration Cloudinary"
+./rcli roadmap update --task "15.1 Configuration Cloudinary"
 
 # Marquer une phase complète
-python cli/main.py roadmap update --phase 15 --complete
+./rcli roadmap update --phase 15 --complete
 
 # Vérifier la cohérence
-python cli/main.py roadmap check
+./rcli roadmap check
 
 # Afficher les détails d'une phase
-python cli/main.py roadmap phase 15
+./rcli roadmap phase 15
 ```
 
 ### Context Generation
 
 ```bash
 # Générer un résumé de contexte pour Cursor
-python cli/main.py context generate
+./rcli context generate
 
 # Synchroniser tous les fichiers de contexte
-python cli/main.py context sync
+./rcli context sync
 ```
 
 ### Code Generation
 
 ```bash
 # Générer un composant React
-python cli/main.py code generate component ProductCard --domain UI
+./rcli code component ProductCard --domain UI
 
 # Générer un module NestJS
-python cli/main.py code generate module Reviews
+./rcli code generate module Reviews --full
 
 # Générer une page React
-python cli/main.py code generate page Orders
+./rcli code page Orders
 ```
 
 ### Test Generation
 
 ```bash
 # Générer un script de test
-python cli/main.py test generate endpoint products
+./rcli test generate e2e products
+./rcli test generate unit ProductsService
 ```
 
 ### Documentation
 
 ```bash
 # Valider la documentation
-python cli/main.py docs validate
+./rcli docs validate
 
 # Synchroniser la documentation
-python cli/main.py docs sync
+./rcli docs sync
 ```
 
 ---
@@ -101,48 +133,52 @@ python cli/main.py docs sync
 
 ```bash
 # 1. Cocher la tâche dans la roadmap
-python cli/main.py roadmap update --task "15.1 Configuration Cloudinary"
+./rcli roadmap update --task "15.1 Configuration Cloudinary"
 
 # 2. Vérifier la cohérence
-python cli/main.py roadmap check
+./rcli roadmap check
 
 # 3. Si la phase est complète, la marquer
-python cli/main.py roadmap update --phase 15 --complete
+./rcli roadmap update --phase 15 --complete
 
 # 4. Synchroniser le contexte
-python cli/main.py context sync
+./rcli context sync
 
 # 5. Générer un nouveau résumé pour Cursor
-python cli/main.py context generate
+./rcli context generate
 ```
 
 ### Avant de commencer une nouvelle phase
 
 ```bash
 # 1. Vérifier l'état de la roadmap
-python cli/main.py roadmap check
+./rcli roadmap check
 
 # 2. Obtenir les détails de la phase précédente
-python cli/main.py roadmap phase 14
+./rcli roadmap phase 14
 
 # 3. Générer un résumé de contexte à jour
-python cli/main.py context generate
+./rcli context generate
+
+# 4. Vérifier l'état du serveur (avant de commencer)
+./rcli server status
+./rcli server monitor --once
 ```
 
 ### Créer un nouveau module backend
 
 ```bash
 # 1. Générer le module complet
-python cli/main.py code generate module Reviews
+./rcli code generate module Reviews --full
 
 # 2. (Futur) Générer l'entité
-# python cli/main.py code generate entity Review
+# ./rcli code generate entity Review
 
 # 3. (Futur) Générer les DTOs
-# python cli/main.py code generate dto Review create update query response
+# ./rcli code generate dto Review create update query response
 
 # 4. Cocher dans la roadmap
-python cli/main.py roadmap update --task "X.1 Créer module Reviews"
+./rcli roadmap update --task "X.1 Créer module Reviews"
 ```
 
 ---

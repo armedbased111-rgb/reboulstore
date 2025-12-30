@@ -1,0 +1,404 @@
+{
+  "brands": [
+    {
+      "name": "After Label",
+      "slug": "after-label",
+      "description": null,
+      "logoFile": "after_b.png",
+      "logoPath": "brands/AFTER LABEL/after_b.png"
+    },
+    {
+      "name": "APC",
+      "slug": "apc",
+      "description": null,
+      "logoFile": "APC_b.png",
+      "logoPath": "brands/APC/APC_b.png"
+    },
+    {
+      "name": "Arte",
+      "slug": "arte",
+      "description": null,
+      "logoFile": "ARTE_b.png",
+      "logoPath": "brands/ARTE/ARTE_b.png"
+    },
+    {
+      "name": "Asics",
+      "slug": "asics",
+      "description": null,
+      "logoFile": "AS_b.png",
+      "logoPath": "brands/ASICS/AS_b.png"
+    },
+    {
+      "name": "Aspesi",
+      "slug": "aspesi",
+      "description": null,
+      "logoFile": "aspesi_b.png",
+      "logoPath": "brands/ASPESI/aspesi_b.png"
+    },
+    {
+      "name": "Atelier Denimès",
+      "slug": "atelier-denimes",
+      "description": null,
+      "logoFile": "nimes_logo_b.png",
+      "logoPath": "brands/ATELIERDENIMES/nimes_logo_b.png"
+    },
+    {
+      "name": "Autry",
+      "slug": "autry",
+      "description": null,
+      "logoFile": "AUTRY_b.png",
+      "logoPath": "brands/AUTRY/AUTRY_b.png"
+    },
+    {
+      "name": "Axel Arigato",
+      "slug": "axel-arigato",
+      "description": null,
+      "logoFile": "axel_b.png",
+      "logoPath": "brands/AXELARIGATO/axel_b.png"
+    },
+    {
+      "name": "Bisous Skateboards",
+      "slug": "bisous-skateboards",
+      "description": null,
+      "logoFile": "bisous_b.png",
+      "logoPath": "brands/BISOUSSKATEBOARDS/bisous_b.png"
+    },
+    {
+      "name": "Carhartt",
+      "slug": "carhartt",
+      "description": null,
+      "logoFile": "carhartt_logo_b.png",
+      "logoPath": "brands/CARHARTT/carhartt_logo_b.png"
+    },
+    {
+      "name": "Chloé",
+      "slug": "chloe",
+      "description": null,
+      "logoFile": "CHLOE_b.png",
+      "logoPath": "brands/CHLOE/CHLOE_b.png"
+    },
+    {
+      "name": "CP Company",
+      "slug": "cp-company",
+      "description": null,
+      "logoFile": "CP_1_b.png",
+      "logoPath": "brands/CPCOMPANY/CP_1_b.png"
+    },
+    {
+      "name": "Dolce & Gabbana",
+      "slug": "dolce-gabbana",
+      "description": null,
+      "logoFile": "D&G_b.png",
+      "logoPath": "brands/DOLCEGABBANA/D&G_b.png"
+    },
+    {
+      "name": "Doucals",
+      "slug": "doucals",
+      "description": null,
+      "logoFile": "doucals_b.png",
+      "logoPath": "brands/DOUCALS/doucals_b.png"
+    },
+    {
+      "name": "Dsquared2",
+      "slug": "dsquared2",
+      "description": null,
+      "logoFile": "DSQ_1_b.png",
+      "logoPath": "brands/DSQUARED/DSQ_1_b.png"
+    },
+    {
+      "name": "Finamore",
+      "slug": "finamore",
+      "description": null,
+      "logoFile": "TYPO.png",
+      "logoPath": "brands/FINAMORE/TYPO.png"
+    },
+    {
+      "name": "GCDS",
+      "slug": "gcds",
+      "description": null,
+      "logoFile": "GCDS_b.png",
+      "logoPath": "brands/GCDS/GCDS_b.png"
+    },
+    {
+      "name": "Givenchy",
+      "slug": "givenchy",
+      "description": null,
+      "logoFile": "GIVENCHY_b.png",
+      "logoPath": "brands/GIVENCHY/GIVENCHY_b.png"
+    },
+    {
+      "name": "Golden Goose",
+      "slug": "golden-goose",
+      "description": null,
+      "logoFile": "GOLDEN_b.png",
+      "logoPath": "brands/GOLDENGOOSE/GOLDEN_b.png"
+    },
+    {
+      "name": "Herno",
+      "slug": "herno",
+      "description": null,
+      "logoFile": "HERNO_b.png",
+      "logoPath": "brands/HERNO/HERNO_b.png"
+    },
+    {
+      "name": "Hologram",
+      "slug": "hologram",
+      "description": null,
+      "logoFile": "hologram_typo_b.png",
+      "logoPath": "brands/HOLOGRAM/hologram_typo_b.png"
+    },
+    {
+      "name": "Jacob Cohen",
+      "slug": "jacob-cohen",
+      "description": null,
+      "logoFile": "jacob_b.png",
+      "logoPath": "brands/JACOBCOHEN/jacob_b.png"
+    },
+    {
+      "name": "Jonsen",
+      "slug": "jonsen",
+      "description": null,
+      "logoFile": "JONSEN_b.png",
+      "logoPath": "brands/JONSEN/JONSEN_b.png"
+    },
+    {
+      "name": "K-Way",
+      "slug": "k-way",
+      "description": null,
+      "logoFile": "KWAY_b.png",
+      "logoPath": "brands/K-WAY/KWAY_b.png"
+    },
+    {
+      "name": "Lanvin",
+      "slug": "lanvin",
+      "description": null,
+      "logoFile": "LANVIN_b.png",
+      "logoPath": "brands/LANVIN/LANVIN_b.png"
+    },
+    {
+      "name": "Les Deux",
+      "slug": "les-deux",
+      "description": null,
+      "logoFile": "lesdeux_b.png",
+      "logoPath": "brands/LESDEUX/lesdeux_b.png"
+    },
+    {
+      "name": "Maison La Biche",
+      "slug": "maison-la-biche",
+      "description": null,
+      "logoFile": "MLB_b.png",
+      "logoPath": "brands/MAISONLABICHE/MLB_b.png"
+    },
+    {
+      "name": "Manuel Ritz",
+      "slug": "manuel-ritz",
+      "description": null,
+      "logoFile": "manuel_b.png",
+      "logoPath": "brands/MANUELRITZ/manuel_b.png"
+    },
+    {
+      "name": "Maison Margiela",
+      "slug": "maison-margiela",
+      "description": null,
+      "logoFile": "MARGIELA_b.png",
+      "logoPath": "brands/MARGIELA/MARGIELA_b.png"
+    },
+    {
+      "name": "Marni",
+      "slug": "marni",
+      "description": null,
+      "logoFile": "MARNI_b.png",
+      "logoPath": "brands/MARNI/MARNI_b.png"
+    },
+    {
+      "name": "MC2",
+      "slug": "mc2",
+      "description": null,
+      "logoFile": "MC2_b.png",
+      "logoPath": "brands/MC2/MC2_b.png"
+    },
+    {
+      "name": "Mercer",
+      "slug": "mercer",
+      "description": null,
+      "logoFile": "mercer_b.png",
+      "logoPath": "brands/MERCER/mercer_b.png"
+    },
+    {
+      "name": "Mizuno",
+      "slug": "mizuno",
+      "description": null,
+      "logoFile": "mizuno_b.png",
+      "logoPath": "brands/MIZUNO/mizuno_b.png"
+    },
+    {
+      "name": "Moncler",
+      "slug": "moncler",
+      "description": null,
+      "logoFile": "MONCLER_b.png",
+      "logoPath": "brands/MONCLER/MONCLER_b.png"
+    },
+    {
+      "name": "New Balance",
+      "slug": "new-balance",
+      "description": null,
+      "logoFile": "NEWBALANCE_b.png",
+      "logoPath": "brands/NEWBALANCE/NEWBALANCE_b.png"
+    },
+    {
+      "name": "Nike",
+      "slug": "nike",
+      "description": null,
+      "logoFile": "LOGO.png",
+      "logoPath": "brands/NIKE/LOGO.png"
+    },
+    {
+      "name": "Nomad Society",
+      "slug": "nomad-society",
+      "description": null,
+      "logoFile": "Capture d'écran 2024-08-21 à 13.08.17.png",
+      "logoPath": "brands/NOMAD_SOCIETY/Capture d'écran 2024-08-21 à 13.08.17.png"
+    },
+    {
+      "name": "Norse Projects",
+      "slug": "norse-projects",
+      "description": null,
+      "logoFile": "NORSE_b.png",
+      "logoPath": "brands/NORSEPROJECTS/NORSE_b.png"
+    },
+    {
+      "name": "Numero 21",
+      "slug": "numero-21",
+      "description": null,
+      "logoFile": "N21_b.png",
+      "logoPath": "brands/NUMERO21/N21_b.png"
+    },
+    {
+      "name": "Off-White",
+      "slug": "off-white",
+      "description": null,
+      "logoFile": "OFF-WHITE_b.png",
+      "logoPath": "brands/OFF-WHITE/OFF-WHITE_b.png"
+    },
+    {
+      "name": "Palm Angels",
+      "slug": "palm-angels",
+      "description": null,
+      "logoFile": "PALMANGELS_b.png",
+      "logoPath": "brands/PALMANGELS/PALMANGELS_b.png"
+    },
+    {
+      "name": "Parajumpers",
+      "slug": "parajumpers",
+      "description": null,
+      "logoFile": "parajumpers_b.png",
+      "logoPath": "brands/PARAJUMPERS/parajumpers_b.png"
+    },
+    {
+      "name": "Patagonia",
+      "slug": "patagonia",
+      "description": null,
+      "logoFile": "patagonia_b.png",
+      "logoPath": "brands/PATAGONIA/patagonia_b.png"
+    },
+    {
+      "name": "Philip Karto",
+      "slug": "philip-karto",
+      "description": null,
+      "logoFile": "KARTO_b.png",
+      "logoPath": "brands/PHILIPKARTO/KARTO_b.png"
+    },
+    {
+      "name": "Philippe Model",
+      "slug": "philippe-model",
+      "description": null,
+      "logoFile": "PHILLIPMODEL_b.png",
+      "logoPath": "brands/PHILIPPEMODEL/PHILLIPMODEL_b.png"
+    },
+    {
+      "name": "Premiata",
+      "slug": "premiata",
+      "description": null,
+      "logoFile": "PREMIATA_b.png",
+      "logoPath": "brands/PREMIATA/PREMIATA_b.png"
+    },
+    {
+      "name": "Pyrenex",
+      "slug": "pyrenex",
+      "description": null,
+      "logoFile": "PYRENEX_b.png",
+      "logoPath": "brands/PYRENEX/PYRENEX_b.png"
+    },
+    {
+      "name": "Rains",
+      "slug": "rains",
+      "description": null,
+      "logoFile": "rains_b.png",
+      "logoPath": "brands/RAINS/rains_b.png"
+    },
+    {
+      "name": "RRD",
+      "slug": "rrd",
+      "description": null,
+      "logoFile": "rrd_b.png",
+      "logoPath": "brands/RRD/rrd_b.png"
+    },
+    {
+      "name": "Salomon",
+      "slug": "salomon",
+      "description": null,
+      "logoFile": "SALOMON_1_b.png",
+      "logoPath": "brands/SALOMON/SALOMON_1_b.png"
+    },
+    {
+      "name": "Seraphin",
+      "slug": "seraphin",
+      "description": null,
+      "logoFile": "seraphin_b.png",
+      "logoPath": "brands/SERAPHIN/seraphin_b.png"
+    },
+    {
+      "name": "Stone Island",
+      "slug": "stone-island",
+      "description": null,
+      "logoFile": "STONE_ISLAND_1_b.png",
+      "logoPath": "brands/STONEISLAND/STONE_ISLAND_1_b.png"
+    },
+    {
+      "name": "Topologie",
+      "slug": "topologie",
+      "description": null,
+      "logoFile": "topo_b.png",
+      "logoPath": "brands/TOPOLOGIE/topo_b.png"
+    },
+    {
+      "name": "Veja",
+      "slug": "veja",
+      "description": null,
+      "logoFile": "VEJA_b.png",
+      "logoPath": "brands/VEJA/VEJA_b.png"
+    },
+    {
+      "name": "Vilebrequin",
+      "slug": "vilebrequin",
+      "description": null,
+      "logoFile": "VILBREQUIN_b.png",
+      "logoPath": "brands/VILBREQUIN/VILBREQUIN_b.png"
+    },
+    {
+      "name": "White Sand",
+      "slug": "white-sand",
+      "description": null,
+      "logoFile": "WHITESAND_b.png",
+      "logoPath": "brands/WHITESAND/WHITESAND_b.png"
+    },
+    {
+      "name": "Zadig & Voltaire",
+      "slug": "zadig-voltaire",
+      "description": null,
+      "logoFile": "ZADIG_b.png",
+      "logoPath": "brands/ZADIGVOLTAIRE/ZADIG_b.png"
+    }
+  ]
+}
+

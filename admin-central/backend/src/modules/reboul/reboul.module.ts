@@ -7,6 +7,7 @@ import { Variant } from './entities/variant.entity';
 import { Category } from './entities/category.entity';
 import { Image } from './entities/image.entity';
 import { Brand } from './entities/brand.entity';
+import { Collection } from './entities/collection.entity';
 import { Shop } from './entities/shop.entity';
 import { Address } from './entities/address.entity';
 import { Cart } from './entities/cart.entity';
@@ -23,6 +24,8 @@ import { ReboulCategoriesService } from './reboul-categories.service';
 import { ReboulCategoriesController } from './reboul-categories.controller';
 import { ReboulBrandsService } from './reboul-brands.service';
 import { ReboulBrandsController } from './reboul-brands.controller';
+import { ReboulCollectionsService } from './reboul-collections.service';
+import { ReboulCollectionsController } from './reboul-collections.controller';
 import { ReboulSettingsService } from './reboul-settings.service';
 import { ReboulSettingsController } from './reboul-settings.controller';
 
@@ -48,6 +51,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
         Category,
         Image,
         Brand,
+        Collection,
         Shop,
         Address,
         Cart,
@@ -63,6 +67,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
     ReboulStocksService, // ✅ Phase 16 - Service stocks créé
     ReboulCategoriesService, // ✅ Phase 17.7 - Service catégories créé
     ReboulBrandsService, // ✅ Phase 17.7 - Service marques créé
+    ReboulCollectionsService, // ✅ Phase 24.4 - Service collections créé
     ReboulSettingsService, // ✅ Phase 17.8 - Service settings créé
   ],
   controllers: [
@@ -72,6 +77,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
     ReboulStocksController, // ✅ Phase 16 - Controller stocks créé
     ReboulCategoriesController, // ✅ Phase 17.7 - Controller catégories créé
     ReboulBrandsController, // ✅ Phase 17.7 - Controller marques créé
+    ReboulCollectionsController, // ✅ Phase 24.4 - Controller collections créé
     ReboulSettingsController, // ✅ Phase 17.8 - Controller settings créé
   ],
   exports: [

@@ -206,7 +206,17 @@ export default function BrandsPage() {
                         </td>
                         <td className="px-4 lg:px-6 py-4">
                           {brand.logoUrl ? (
-                            <ImageIcon className="w-4 h-4 text-gray-500" />
+                            <div className="flex items-center">
+                              <img
+                                src={brand.logoUrl}
+                                alt={brand.name}
+                                className="w-10 h-10 object-contain bg-gray-50 rounded"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                              <ImageIcon className="w-4 h-4 text-gray-500 ml-2 hidden" />
+                            </div>
                           ) : (
                             <span className="text-xs text-gray-400">—</span>
                           )}
@@ -288,15 +298,19 @@ export default function BrandsPage() {
                         <p className="font-medium text-gray-900">{brand.productsCount || 0}</p>
                       </div>
                       <div>
-                        <span className="text-gray-500">Média</span>
-                        <div className="flex items-center space-x-1 mt-1">
-                          {brand.logoUrl && <ImageIcon className="w-4 h-4 text-gray-500" />}
-                          {(brand.megaMenuVideo1 || brand.megaMenuVideo2) && (
-                            <Video className="w-4 h-4 text-blue-500" />
-                          )}
-                          {(brand.megaMenuImage1 || brand.megaMenuImage2) && 
-                           !brand.megaMenuVideo1 && !brand.megaMenuVideo2 && (
-                            <ImageIcon className="w-4 h-4 text-gray-500" />
+                        <span className="text-gray-500">Logo</span>
+                        <div className="mt-1">
+                          {brand.logoUrl ? (
+                            <img
+                              src={brand.logoUrl}
+                              alt={brand.name}
+                              className="w-8 h-8 object-contain bg-gray-50 rounded"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-400">—</span>
                           )}
                         </div>
                       </div>

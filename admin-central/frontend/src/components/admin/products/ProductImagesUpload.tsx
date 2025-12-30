@@ -40,38 +40,70 @@ export default function ProductImagesUpload({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
 
-    // Vérifier la limite
-    if (images.length >= maxImages) {
+    const filesArray = Array.from(files);
+    const remainingSlots = maxImages - images.length;
+    const filesToUpload = filesArray.slice(0, remainingSlots);
+
+    if (filesToUpload.length === 0) {
       setUploadError(`Maximum ${maxImages} images autorisées`);
       return;
     }
 
-    setUploadingIndex(images.length);
+    if (filesArray.length > remainingSlots) {
+      setUploadError(
+        `Seulement ${remainingSlots} image(s) peuvent être ajoutée(s) (maximum ${maxImages})`,
+      );
+    }
+
     setUploadError(null);
 
+    // Upload toutes les images
+    const uploadPromises = filesToUpload.map(async (file, index) => {
     try {
       const result = await uploadService.uploadImage(file);
-      const newImage: ProductImage = {
+        return {
         url: result.url,
         publicId: result.publicId || null,
         alt: null,
-        order: images.length,
-      };
-      onChange([...images, newImage]);
+          order: images.length + index,
+        } as ProductImage;
+      } catch (err) {
+        throw new Error(
+          `Erreur upload ${file.name}: ${err instanceof Error ? err.message : 'Erreur inconnue'}`,
+        );
+      }
+    });
+
+    try {
+      const newImages = await Promise.all(uploadPromises);
+      onChange([...images, ...newImages]);
     } catch (err) {
       setUploadError(
         err instanceof Error ? err.message : 'Erreur lors de l\'upload',
       );
     } finally {
-      setUploadingIndex(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileSelect(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleFileSelect(e.dataTransfer.files);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleRemove = (index: number) => {
@@ -198,6 +230,8 @@ export default function ProductImagesUpload({
       {canAddMore && (
         <div
           onClick={() => fileInputRef.current?.click()}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
           className={cn(
             'relative border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors',
             uploadingIndex !== null
@@ -209,7 +243,8 @@ export default function ProductImagesUpload({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleFileSelect}
+            multiple
+            onChange={handleFileInputChange}
             className="hidden"
             disabled={uploadingIndex !== null}
           />
@@ -222,10 +257,10 @@ export default function ProductImagesUpload({
             <div className="flex flex-col items-center">
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <p className="text-sm font-medium text-gray-700">
-                Ajouter une image
+                Ajouter des images
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Cliquez ou glissez-déposez une image
+                Cliquez ou glissez-déposez une ou plusieurs images
               </p>
             </div>
           )}

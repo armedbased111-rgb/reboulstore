@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere, ILike, Between } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
+import { Collection } from '../../entities/collection.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
@@ -37,6 +38,8 @@ export class ProductsService {
     private variantRepository: Repository<Variant>,
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+    @InjectRepository(Collection)
+    private collectionRepository: Repository<Collection>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
@@ -53,7 +56,25 @@ export class ProductsService {
       sortOrder = 'DESC',
     } = query;
 
-    const where: FindOptionsWhere<Product> = {};
+    // Trouver la collection active
+    const activeCollection = await this.collectionRepository.findOne({
+      where: { isActive: true },
+    });
+
+    // Si aucune collection active, retourner un résultat vide (sécurité)
+    if (!activeCollection) {
+      return {
+        products: [],
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      };
+    }
+
+    const where: FindOptionsWhere<Product> = {
+      collectionId: activeCollection.id,
+    };
 
     // Filtre par catégorie
     if (category) {
@@ -77,7 +98,7 @@ export class ProductsService {
 
     const [products, total] = await this.productRepository.findAndCount({
       where,
-      relations: ['category', 'shop', 'brand', 'images', 'variants'],
+      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
       order: { [sortBy]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
@@ -95,7 +116,7 @@ export class ProductsService {
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['category', 'shop', 'brand', 'images', 'variants'],
+      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
     });
 
     if (!product) {
@@ -116,8 +137,25 @@ export class ProductsService {
       sortOrder = 'DESC',
     } = query;
 
+    // Trouver la collection active
+    const activeCollection = await this.collectionRepository.findOne({
+      where: { isActive: true },
+    });
+
+    // Si aucune collection active, retourner un résultat vide (sécurité)
+    if (!activeCollection) {
+      return {
+        products: [],
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      };
+    }
+
     const where: FindOptionsWhere<Product> = {
       categoryId,
+      collectionId: activeCollection.id,
     };
 
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -130,7 +168,7 @@ export class ProductsService {
 
     const [products, total] = await this.productRepository.findAndCount({
       where,
-      relations: ['category', 'shop', 'brand', 'images', 'variants'],
+      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
       order: { [sortBy]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
@@ -157,7 +195,35 @@ export class ProductsService {
       );
     }
 
-    const product = this.productRepository.create(createProductDto);
+    // Si collectionId n'est pas fourni, assigner à la collection active
+    let collectionId = createProductDto.collectionId;
+    if (!collectionId) {
+      const activeCollection = await this.collectionRepository.findOne({
+        where: { isActive: true },
+      });
+      if (activeCollection) {
+        collectionId = activeCollection.id;
+      } else {
+        throw new BadRequestException(
+          'No active collection found. Please activate a collection first.',
+        );
+      }
+    } else {
+      // Vérifier que la collection existe
+      const collection = await this.collectionRepository.findOne({
+        where: { id: collectionId },
+      });
+      if (!collection) {
+        throw new NotFoundException(
+          `Collection with ID ${collectionId} not found`,
+        );
+      }
+    }
+
+    const product = this.productRepository.create({
+      ...createProductDto,
+      collectionId,
+    });
     return this.productRepository.save(product);
   }
 
@@ -176,6 +242,19 @@ export class ProductsService {
       if (!category) {
         throw new NotFoundException(
           `Category with ID ${updateProductDto.categoryId} not found`,
+        );
+      }
+    }
+
+    // Si collectionId est fourni, vérifier qu'elle existe
+    if (updateProductDto.collectionId) {
+      const collection = await this.collectionRepository.findOne({
+        where: { id: updateProductDto.collectionId },
+      });
+
+      if (!collection) {
+        throw new NotFoundException(
+          `Collection with ID ${updateProductDto.collectionId} not found`,
         );
       }
     }

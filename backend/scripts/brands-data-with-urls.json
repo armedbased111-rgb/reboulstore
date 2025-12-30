@@ -1,0 +1,517 @@
+{
+  "brands": [
+    {
+      "name": "After Label",
+      "slug": "after-label",
+      "description": null,
+      "logoFile": "after_b.png",
+      "logoPath": "brands/AFTER LABEL/after_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028708/brands/logos/brands/logos/after-label.png",
+      "publicId": "brands/logos/brands/logos/after-label"
+    },
+    {
+      "name": "APC",
+      "slug": "apc",
+      "description": null,
+      "logoFile": "APC_b.png",
+      "logoPath": "brands/APC/APC_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028710/brands/logos/brands/logos/apc.png",
+      "publicId": "brands/logos/brands/logos/apc"
+    },
+    {
+      "name": "Arte",
+      "slug": "arte",
+      "description": null,
+      "logoFile": "ARTE_b.png",
+      "logoPath": "brands/ARTE/ARTE_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028711/brands/logos/brands/logos/arte.png",
+      "publicId": "brands/logos/brands/logos/arte"
+    },
+    {
+      "name": "Asics",
+      "slug": "asics",
+      "description": null,
+      "logoFile": "AS_b.png",
+      "logoPath": "brands/ASICS/AS_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028712/brands/logos/brands/logos/asics.png",
+      "publicId": "brands/logos/brands/logos/asics"
+    },
+    {
+      "name": "Aspesi",
+      "slug": "aspesi",
+      "description": null,
+      "logoFile": "aspesi_b.png",
+      "logoPath": "brands/ASPESI/aspesi_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028713/brands/logos/brands/logos/aspesi.png",
+      "publicId": "brands/logos/brands/logos/aspesi"
+    },
+    {
+      "name": "Atelier Denimès",
+      "slug": "atelier-denimes",
+      "description": null,
+      "logoFile": "nimes_logo_b.png",
+      "logoPath": "brands/ATELIERDENIMES/nimes_logo_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028715/brands/logos/brands/logos/atelier-denimes.png",
+      "publicId": "brands/logos/brands/logos/atelier-denimes"
+    },
+    {
+      "name": "Autry",
+      "slug": "autry",
+      "description": null,
+      "logoFile": "AUTRY_b.png",
+      "logoPath": "brands/AUTRY/AUTRY_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028717/brands/logos/brands/logos/autry.png",
+      "publicId": "brands/logos/brands/logos/autry"
+    },
+    {
+      "name": "Axel Arigato",
+      "slug": "axel-arigato",
+      "description": null,
+      "logoFile": "axel_b.png",
+      "logoPath": "brands/AXELARIGATO/axel_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028718/brands/logos/brands/logos/axel-arigato.png",
+      "publicId": "brands/logos/brands/logos/axel-arigato"
+    },
+    {
+      "name": "Bisous Skateboards",
+      "slug": "bisous-skateboards",
+      "description": null,
+      "logoFile": "bisous_b.png",
+      "logoPath": "brands/BISOUSSKATEBOARDS/bisous_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028720/brands/logos/brands/logos/bisous-skateboards.png",
+      "publicId": "brands/logos/brands/logos/bisous-skateboards"
+    },
+    {
+      "name": "Carhartt",
+      "slug": "carhartt",
+      "description": null,
+      "logoFile": "carhartt_logo_b.png",
+      "logoPath": "brands/CARHARTT/carhartt_logo_b.png",
+      "logoUrl": null,
+      "publicId": null
+    },
+    {
+      "name": "Chloé",
+      "slug": "chloe",
+      "description": null,
+      "logoFile": "CHLOE_b.png",
+      "logoPath": "brands/CHLOE/CHLOE_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028721/brands/logos/brands/logos/chloe.png",
+      "publicId": "brands/logos/brands/logos/chloe"
+    },
+    {
+      "name": "CP Company",
+      "slug": "cp-company",
+      "description": null,
+      "logoFile": "CP_1_b.png",
+      "logoPath": "brands/CPCOMPANY/CP_1_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028723/brands/logos/brands/logos/cp-company.png",
+      "publicId": "brands/logos/brands/logos/cp-company"
+    },
+    {
+      "name": "Dolce & Gabbana",
+      "slug": "dolce-gabbana",
+      "description": null,
+      "logoFile": "D&G_b.png",
+      "logoPath": "brands/DOLCEGABBANA/D&G_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028724/brands/logos/brands/logos/dolce-gabbana.png",
+      "publicId": "brands/logos/brands/logos/dolce-gabbana"
+    },
+    {
+      "name": "Doucals",
+      "slug": "doucals",
+      "description": null,
+      "logoFile": "doucals_b.png",
+      "logoPath": "brands/DOUCALS/doucals_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028726/brands/logos/brands/logos/doucals.png",
+      "publicId": "brands/logos/brands/logos/doucals"
+    },
+    {
+      "name": "Dsquared2",
+      "slug": "dsquared2",
+      "description": null,
+      "logoFile": "DSQ_1_b.png",
+      "logoPath": "brands/DSQUARED/DSQ_1_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028728/brands/logos/brands/logos/dsquared2.png",
+      "publicId": "brands/logos/brands/logos/dsquared2"
+    },
+    {
+      "name": "Finamore",
+      "slug": "finamore",
+      "description": null,
+      "logoFile": "TYPO.png",
+      "logoPath": "brands/FINAMORE/TYPO.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028064/brands/logos/brands/logos/finamore.png",
+      "publicId": "brands/logos/brands/logos/finamore"
+    },
+    {
+      "name": "GCDS",
+      "slug": "gcds",
+      "description": null,
+      "logoFile": "GCDS_b.png",
+      "logoPath": "brands/GCDS/GCDS_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028730/brands/logos/brands/logos/gcds.png",
+      "publicId": "brands/logos/brands/logos/gcds"
+    },
+    {
+      "name": "Givenchy",
+      "slug": "givenchy",
+      "description": null,
+      "logoFile": "GIVENCHY_b.png",
+      "logoPath": "brands/GIVENCHY/GIVENCHY_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028731/brands/logos/brands/logos/givenchy.png",
+      "publicId": "brands/logos/brands/logos/givenchy"
+    },
+    {
+      "name": "Golden Goose",
+      "slug": "golden-goose",
+      "description": null,
+      "logoFile": "GOLDEN_b.png",
+      "logoPath": "brands/GOLDENGOOSE/GOLDEN_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028733/brands/logos/brands/logos/golden-goose.png",
+      "publicId": "brands/logos/brands/logos/golden-goose"
+    },
+    {
+      "name": "Herno",
+      "slug": "herno",
+      "description": null,
+      "logoFile": "HERNO_b.png",
+      "logoPath": "brands/HERNO/HERNO_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028734/brands/logos/brands/logos/herno.png",
+      "publicId": "brands/logos/brands/logos/herno"
+    },
+    {
+      "name": "Hologram",
+      "slug": "hologram",
+      "description": null,
+      "logoFile": "hologram_typo_b.png",
+      "logoPath": "brands/HOLOGRAM/hologram_typo_b.png",
+      "logoUrl": null,
+      "publicId": null
+    },
+    {
+      "name": "Jacob Cohen",
+      "slug": "jacob-cohen",
+      "description": null,
+      "logoFile": "jacob_b.png",
+      "logoPath": "brands/JACOBCOHEN/jacob_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028735/brands/logos/brands/logos/jacob-cohen.png",
+      "publicId": "brands/logos/brands/logos/jacob-cohen"
+    },
+    {
+      "name": "Jonsen",
+      "slug": "jonsen",
+      "description": null,
+      "logoFile": "JONSEN_b.png",
+      "logoPath": "brands/JONSEN/JONSEN_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028736/brands/logos/brands/logos/jonsen.png",
+      "publicId": "brands/logos/brands/logos/jonsen"
+    },
+    {
+      "name": "K-Way",
+      "slug": "k-way",
+      "description": null,
+      "logoFile": "KWAY_b.png",
+      "logoPath": "brands/K-WAY/KWAY_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028738/brands/logos/brands/logos/k-way.png",
+      "publicId": "brands/logos/brands/logos/k-way"
+    },
+    {
+      "name": "Lanvin",
+      "slug": "lanvin",
+      "description": null,
+      "logoFile": "LANVIN_b.png",
+      "logoPath": "brands/LANVIN/LANVIN_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028740/brands/logos/brands/logos/lanvin.png",
+      "publicId": "brands/logos/brands/logos/lanvin"
+    },
+    {
+      "name": "Les Deux",
+      "slug": "les-deux",
+      "description": null,
+      "logoFile": "lesdeux_b.png",
+      "logoPath": "brands/LESDEUX/lesdeux_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028742/brands/logos/brands/logos/les-deux.png",
+      "publicId": "brands/logos/brands/logos/les-deux"
+    },
+    {
+      "name": "Maison La Biche",
+      "slug": "maison-la-biche",
+      "description": null,
+      "logoFile": "MLB_b.png",
+      "logoPath": "brands/MAISONLABICHE/MLB_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028743/brands/logos/brands/logos/maison-la-biche.png",
+      "publicId": "brands/logos/brands/logos/maison-la-biche"
+    },
+    {
+      "name": "Manuel Ritz",
+      "slug": "manuel-ritz",
+      "description": null,
+      "logoFile": "manuel_b.png",
+      "logoPath": "brands/MANUELRITZ/manuel_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028745/brands/logos/brands/logos/manuel-ritz.png",
+      "publicId": "brands/logos/brands/logos/manuel-ritz"
+    },
+    {
+      "name": "Maison Margiela",
+      "slug": "maison-margiela",
+      "description": null,
+      "logoFile": "MARGIELA_b.png",
+      "logoPath": "brands/MARGIELA/MARGIELA_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028746/brands/logos/brands/logos/maison-margiela.png",
+      "publicId": "brands/logos/brands/logos/maison-margiela"
+    },
+    {
+      "name": "Marni",
+      "slug": "marni",
+      "description": null,
+      "logoFile": "MARNI_b.png",
+      "logoPath": "brands/MARNI/MARNI_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028747/brands/logos/brands/logos/marni.png",
+      "publicId": "brands/logos/brands/logos/marni"
+    },
+    {
+      "name": "MC2",
+      "slug": "mc2",
+      "description": null,
+      "logoFile": "MC2_b.png",
+      "logoPath": "brands/MC2/MC2_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028748/brands/logos/brands/logos/mc2.png",
+      "publicId": "brands/logos/brands/logos/mc2"
+    },
+    {
+      "name": "Mercer",
+      "slug": "mercer",
+      "description": null,
+      "logoFile": "mercer_b.png",
+      "logoPath": "brands/MERCER/mercer_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028749/brands/logos/brands/logos/mercer.png",
+      "publicId": "brands/logos/brands/logos/mercer"
+    },
+    {
+      "name": "Mizuno",
+      "slug": "mizuno",
+      "description": null,
+      "logoFile": "mizuno_b.png",
+      "logoPath": "brands/MIZUNO/mizuno_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028751/brands/logos/brands/logos/mizuno.png",
+      "publicId": "brands/logos/brands/logos/mizuno"
+    },
+    {
+      "name": "Moncler",
+      "slug": "moncler",
+      "description": null,
+      "logoFile": "MONCLER_b.png",
+      "logoPath": "brands/MONCLER/MONCLER_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028753/brands/logos/brands/logos/moncler.png",
+      "publicId": "brands/logos/brands/logos/moncler"
+    },
+    {
+      "name": "New Balance",
+      "slug": "new-balance",
+      "description": null,
+      "logoFile": "NEWBALANCE_b.png",
+      "logoPath": "brands/NEWBALANCE/NEWBALANCE_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028754/brands/logos/brands/logos/new-balance.png",
+      "publicId": "brands/logos/brands/logos/new-balance"
+    },
+    {
+      "name": "Nike",
+      "slug": "nike",
+      "description": null,
+      "logoFile": "LOGO.png",
+      "logoPath": "brands/NIKE/LOGO.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028127/brands/logos/brands/logos/nike.png",
+      "publicId": "brands/logos/brands/logos/nike"
+    },
+    {
+      "name": "Nomad Society",
+      "slug": "nomad-society",
+      "description": null,
+      "logoFile": "Capture d'écran 2024-08-21 à 13.08.17.png",
+      "logoPath": "brands/NOMAD_SOCIETY/Capture d'écran 2024-08-21 à 13.08.17.png",
+      "logoUrl": null,
+      "publicId": null
+    },
+    {
+      "name": "Norse Projects",
+      "slug": "norse-projects",
+      "description": null,
+      "logoFile": "NORSE_b.png",
+      "logoPath": "brands/NORSEPROJECTS/NORSE_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028757/brands/logos/brands/logos/norse-projects.png",
+      "publicId": "brands/logos/brands/logos/norse-projects"
+    },
+    {
+      "name": "Numero 21",
+      "slug": "numero-21",
+      "description": null,
+      "logoFile": "N21_b.png",
+      "logoPath": "brands/NUMERO21/N21_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028758/brands/logos/brands/logos/numero-21.png",
+      "publicId": "brands/logos/brands/logos/numero-21"
+    },
+    {
+      "name": "Off-White",
+      "slug": "off-white",
+      "description": null,
+      "logoFile": "OFF-WHITE_b.png",
+      "logoPath": "brands/OFF-WHITE/OFF-WHITE_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028759/brands/logos/brands/logos/off-white.png",
+      "publicId": "brands/logos/brands/logos/off-white"
+    },
+    {
+      "name": "Palm Angels",
+      "slug": "palm-angels",
+      "description": null,
+      "logoFile": "PALMANGELS_b.png",
+      "logoPath": "brands/PALMANGELS/PALMANGELS_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028760/brands/logos/brands/logos/palm-angels.png",
+      "publicId": "brands/logos/brands/logos/palm-angels"
+    },
+    {
+      "name": "Parajumpers",
+      "slug": "parajumpers",
+      "description": null,
+      "logoFile": "parajumpers_b.png",
+      "logoPath": "brands/PARAJUMPERS/parajumpers_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028761/brands/logos/brands/logos/parajumpers.png",
+      "publicId": "brands/logos/brands/logos/parajumpers"
+    },
+    {
+      "name": "Patagonia",
+      "slug": "patagonia",
+      "description": null,
+      "logoFile": "patagonia_b.png",
+      "logoPath": "brands/PATAGONIA/patagonia_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028762/brands/logos/brands/logos/patagonia.png",
+      "publicId": "brands/logos/brands/logos/patagonia"
+    },
+    {
+      "name": "Philip Karto",
+      "slug": "philip-karto",
+      "description": null,
+      "logoFile": "KARTO_b.png",
+      "logoPath": "brands/PHILIPKARTO/KARTO_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028763/brands/logos/brands/logos/philip-karto.png",
+      "publicId": "brands/logos/brands/logos/philip-karto"
+    },
+    {
+      "name": "Philippe Model",
+      "slug": "philippe-model",
+      "description": null,
+      "logoFile": "PHILLIPMODEL_b.png",
+      "logoPath": "brands/PHILIPPEMODEL/PHILLIPMODEL_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028765/brands/logos/brands/logos/philippe-model.png",
+      "publicId": "brands/logos/brands/logos/philippe-model"
+    },
+    {
+      "name": "Premiata",
+      "slug": "premiata",
+      "description": null,
+      "logoFile": "PREMIATA_b.png",
+      "logoPath": "brands/PREMIATA/PREMIATA_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028766/brands/logos/brands/logos/premiata.png",
+      "publicId": "brands/logos/brands/logos/premiata"
+    },
+    {
+      "name": "Pyrenex",
+      "slug": "pyrenex",
+      "description": null,
+      "logoFile": "PYRENEX_b.png",
+      "logoPath": "brands/PYRENEX/PYRENEX_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028768/brands/logos/brands/logos/pyrenex.png",
+      "publicId": "brands/logos/brands/logos/pyrenex"
+    },
+    {
+      "name": "Rains",
+      "slug": "rains",
+      "description": null,
+      "logoFile": "rains_b.png",
+      "logoPath": "brands/RAINS/rains_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028769/brands/logos/brands/logos/rains.png",
+      "publicId": "brands/logos/brands/logos/rains"
+    },
+    {
+      "name": "RRD",
+      "slug": "rrd",
+      "description": null,
+      "logoFile": "rrd_b.png",
+      "logoPath": "brands/RRD/rrd_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028770/brands/logos/brands/logos/rrd.png",
+      "publicId": "brands/logos/brands/logos/rrd"
+    },
+    {
+      "name": "Salomon",
+      "slug": "salomon",
+      "description": null,
+      "logoFile": "SALOMON_1_b.png",
+      "logoPath": "brands/SALOMON/SALOMON_1_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028772/brands/logos/brands/logos/salomon.png",
+      "publicId": "brands/logos/brands/logos/salomon"
+    },
+    {
+      "name": "Seraphin",
+      "slug": "seraphin",
+      "description": null,
+      "logoFile": "seraphin_b.png",
+      "logoPath": "brands/SERAPHIN/seraphin_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028773/brands/logos/brands/logos/seraphin.png",
+      "publicId": "brands/logos/brands/logos/seraphin"
+    },
+    {
+      "name": "Stone Island",
+      "slug": "stone-island",
+      "description": null,
+      "logoFile": "STONE_ISLAND_1_b.png",
+      "logoPath": "brands/STONEISLAND/STONE_ISLAND_1_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028774/brands/logos/brands/logos/stone-island.png",
+      "publicId": "brands/logos/brands/logos/stone-island"
+    },
+    {
+      "name": "Topologie",
+      "slug": "topologie",
+      "description": null,
+      "logoFile": "topo_b.png",
+      "logoPath": "brands/TOPOLOGIE/topo_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028775/brands/logos/brands/logos/topologie.png",
+      "publicId": "brands/logos/brands/logos/topologie"
+    },
+    {
+      "name": "Veja",
+      "slug": "veja",
+      "description": null,
+      "logoFile": "VEJA_b.png",
+      "logoPath": "brands/VEJA/VEJA_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028776/brands/logos/brands/logos/veja.png",
+      "publicId": "brands/logos/brands/logos/veja"
+    },
+    {
+      "name": "Vilebrequin",
+      "slug": "vilebrequin",
+      "description": null,
+      "logoFile": "VILBREQUIN_b.png",
+      "logoPath": "brands/VILBREQUIN/VILBREQUIN_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028778/brands/logos/brands/logos/vilebrequin.png",
+      "publicId": "brands/logos/brands/logos/vilebrequin"
+    },
+    {
+      "name": "White Sand",
+      "slug": "white-sand",
+      "description": null,
+      "logoFile": "WHITESAND_b.png",
+      "logoPath": "brands/WHITESAND/WHITESAND_b.png",
+      "logoUrl": null,
+      "publicId": null
+    },
+    {
+      "name": "Zadig & Voltaire",
+      "slug": "zadig-voltaire",
+      "description": null,
+      "logoFile": "ZADIG_b.png",
+      "logoPath": "brands/ZADIGVOLTAIRE/ZADIG_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028779/brands/logos/brands/logos/zadig-voltaire.png",
+      "publicId": "brands/logos/brands/logos/zadig-voltaire"
+    }
+  ]
+}
