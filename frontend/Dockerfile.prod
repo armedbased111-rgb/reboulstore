@@ -28,11 +28,15 @@ RUN npm run build
 # Stage de production avec Nginx
 FROM nginx:alpine
 
-# Copier les fichiers build depuis le stage builder
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copier les fichiers build depuis le stage builder dans un répertoire temporaire
+COPY --from=builder /app/dist /app/build
 
-# Copier la configuration Nginx personnalisée (optionnel, sera monté via volume)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Script d'init pour copier les fichiers dans le volume au démarrage
+RUN echo '#!/bin/sh' > /docker-entrypoint-init.sh && \
+    echo 'echo "📦 Copie des fichiers build vers /usr/share/nginx/html..."' >> /docker-entrypoint-init.sh && \
+    echo 'cp -r /app/build/* /usr/share/nginx/html/' >> /docker-entrypoint-init.sh && \
+    echo 'echo "✅ Fichiers copiés"' >> /docker-entrypoint-init.sh && \
+    echo 'exec /docker-entrypoint.sh nginx -g "daemon off;"' >> /docker-entrypoint-init.sh && \
+    chmod +x /docker-entrypoint-init.sh
 
-# Les fichiers build sont dans /usr/share/nginx/html
-# Le volume sera monté via docker-compose pour partager avec nginx
+ENTRYPOINT ["/docker-entrypoint-init.sh"]
