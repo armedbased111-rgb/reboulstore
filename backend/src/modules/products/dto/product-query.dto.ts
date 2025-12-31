@@ -14,8 +14,8 @@ export class ProductQueryDto {
   category?: string;
 
   @IsOptional()
-  @IsUUID()
-  brand?: string;
+  @IsString()
+  brand?: string; // Accepte UUID ou slug
 
   @IsOptional()
   @Type(() => Number)

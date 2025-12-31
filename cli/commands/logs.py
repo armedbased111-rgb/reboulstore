@@ -138,17 +138,24 @@ def logs_group(ctx, service: Optional[str], tail: int, follow: bool, admin: bool
         if service:
             full_cmd += f" {service}"
         
+        # Filtrer les warnings Docker Compose sur les variables d'environnement
+        # Ces warnings apparaissent car Docker Compose lit le fichier avant de charger .env.production
+        # Utiliser plusieurs filtres pour capturer toutes les variantes
+        filter_warnings = " | grep -vE '(level=warning msg=|variable is not set|Defaulting to a blank string)'"
+        
         try:
             if follow:
                 # Pour le mode follow, on doit utiliser subprocess en mode interactif
                 import subprocess
+                # Ajouter le filtre directement dans la commande SSH
+                full_cmd_with_filter = f"{full_cmd}{filter_warnings}"
                 ssh_cmd = [
                     'ssh',
                     '-o', 'ConnectTimeout=10',
                     '-o', 'StrictHostKeyChecking=no',
                     '-o', 'LogLevel=ERROR',
                     f"{SERVER_CONFIG['user']}@{SERVER_CONFIG['host']}",
-                    full_cmd
+                    full_cmd_with_filter
                 ]
                 # Exécuter en mode interactif pour le follow
                 subprocess.run(ssh_cmd)
@@ -157,9 +164,27 @@ def logs_group(ctx, service: Optional[str], tail: int, follow: bool, admin: bool
                 stdout, stderr = ssh_exec(full_cmd)
                 
                 if stdout:
-                    console.print(stdout)
+                    # Filtrer les warnings Docker Compose sur les variables d'environnement
+                    filtered_stdout = '\n'.join([
+                        line for line in stdout.split('\n')
+                        if not any(warning in line.lower() for warning in [
+                            'level=warning msg="the',
+                            'variable is not set. defaulting to a blank string'
+                        ])
+                    ])
+                    if filtered_stdout.strip():
+                        console.print(filtered_stdout)
                 elif stderr and 'warning' not in stderr.lower():
-                    console.print(f"[yellow]{stderr}[/yellow]")
+                    # Filtrer aussi les warnings dans stderr
+                    filtered_stderr = '\n'.join([
+                        line for line in stderr.split('\n')
+                        if not any(warning in line.lower() for warning in [
+                            'level=warning msg="the',
+                            'variable is not set. defaulting to a blank string'
+                        ])
+                    ])
+                    if filtered_stderr.strip():
+                        console.print(f"[yellow]{filtered_stderr}[/yellow]")
         except KeyboardInterrupt:
             console.print("\n[yellow]✅ Arrêt de la consultation des logs[/yellow]")
         except Exception as e:

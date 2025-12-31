@@ -7,10 +7,12 @@ import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
 import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
 import { Button } from "@/components/ui/button"
-import type { Brand } from '../../types';
+import type { Brand, Product } from '../../types';
 import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
 import * as anime from 'animejs';
 import { toMilliseconds, convertEasing } from '../../animations/utils/constants';
+import { getProducts } from '../../services/products';
+import { getImageUrl } from '../../utils/imageUtils';
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
@@ -21,6 +23,20 @@ export const Header = () => {
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
+  const [randomProductImage, setRandomProductImage] = useState<string | null>(null);
+  const [loadingProductImage, setLoadingProductImage] = useState(false);
+  
+  // État pour le slider des brands (afficher 10 à la fois)
+  const [brandsPage, setBrandsPage] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const BRANDS_PER_PAGE = 10;
+  
+  // Refs pour le slider touch
+  const brandsSliderRef = useRef<HTMLDivElement>(null);
+  const brandsSliderContainerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const isDragging = useRef(false);
   
   // États pour le menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -277,6 +293,165 @@ export const Header = () => {
     }
   }, [isMobileBrandsOpen]);
 
+  // Récupérer une image aléatoire d'un produit de la marque au hover
+  useEffect(() => {
+    const fetchRandomProductImage = async () => {
+      if (!hoveredBrand) {
+        setRandomProductImage(null);
+        return;
+      }
+
+      // Si la marque a déjà des images megaMenu, on les utilise
+      if (hoveredBrand.megaMenuImage1 || hoveredBrand.megaMenuVideo1) {
+        setRandomProductImage(null);
+        return;
+      }
+
+      try {
+        setLoadingProductImage(true);
+        // Récupérer les produits de cette marque
+        const response = await getProducts({
+          brand: hoveredBrand.slug,
+          limit: 50, // Récupérer jusqu'à 50 produits pour avoir plus de choix
+        });
+
+        // Filtrer les produits qui ont des images
+        const productsWithImages = response.products.filter(
+          (product: Product) => product.images && product.images.length > 0
+        );
+
+        if (productsWithImages.length > 0) {
+          // Sélectionner un produit aléatoire
+          const randomProduct = productsWithImages[
+            Math.floor(Math.random() * productsWithImages.length)
+          ];
+          
+          // Prendre la première image du produit (ou une aléatoire)
+          const randomImageIndex = Math.floor(
+            Math.random() * randomProduct.images!.length
+          );
+          const selectedImage = randomProduct.images![randomImageIndex];
+          
+          // Construire l'URL complète de l'image avec getImageUrl
+          const imageUrl = getImageUrl(selectedImage.url);
+          
+          if (imageUrl) {
+            setRandomProductImage(imageUrl);
+          } else {
+            setRandomProductImage(null);
+          }
+        } else {
+          setRandomProductImage(null);
+        }
+      } catch (error) {
+        console.error('Error fetching random product image:', error);
+        setRandomProductImage(null);
+      } finally {
+        setLoadingProductImage(false);
+      }
+    };
+
+    fetchRandomProductImage();
+  }, [hoveredBrand]);
+
+  // Animation du slider des brands au changement de page
+  useEffect(() => {
+    if (brandsSliderRef.current && brands.length > 0) {
+      setIsTransitioning(true);
+      // Animation fade pour lisser la transition
+      anime.animate(brandsSliderRef.current, {
+        opacity: [0.7, 1],
+        duration: toMilliseconds(0.3),
+        easing: convertEasing('power2.out'),
+        complete: () => {
+          setIsTransitioning(false);
+        },
+      });
+    }
+  }, [brandsPage, brands.length]);
+
+  // Fonction pour changer de page avec animation
+  const changeBrandsPage = (newPage: number, maxPage: number) => {
+    if (isTransitioning) return;
+    const clampedPage = Math.max(0, Math.min(maxPage - 1, newPage));
+    if (clampedPage !== brandsPage) {
+      setBrandsPage(clampedPage);
+    }
+  };
+
+  // Gestion du touch/swipe VERTICAL pour le slider
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Ne pas bloquer si on clique directement sur un lien
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A' || target.closest('a')) return;
+    
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isDragging.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    
+    const touchCurrentX = e.touches[0].clientX;
+    const touchCurrentY = e.touches[0].clientY;
+    const diffX = Math.abs(touchStartX.current - touchCurrentX);
+    const diffY = Math.abs(touchStartY.current - touchCurrentY);
+
+    // Si le mouvement vertical est plus important que l'horizontal, c'est un swipe vertical
+    if (diffY > diffX && diffY > 5) {
+      isDragging.current = true;
+      e.preventDefault(); // Empêcher le scroll par défaut
+      e.stopPropagation();
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) {
+      isDragging.current = false;
+      return;
+    }
+
+    // Ne pas bloquer si on clique directement sur un lien
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'A' || target.closest('a')) {
+      // Si on a swipé, ne pas suivre le lien
+      if (isDragging.current) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      touchStartX.current = null;
+      touchStartY.current = null;
+      isDragging.current = false;
+      return;
+    }
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX.current - touchEndX;
+    const diffY = touchStartY.current - touchEndY;
+
+    // Seuil minimum pour déclencher un swipe (30px pour être plus sensible)
+    const minSwipeDistance = 30;
+
+    // Si le mouvement vertical est plus important que l'horizontal
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > minSwipeDistance) {
+      const maxPage = Math.ceil(brands.length / BRANDS_PER_PAGE);
+      
+      if (diffY > 0) {
+        // Swipe vers le haut = page suivante
+        changeBrandsPage(brandsPage + 1, maxPage);
+      } else {
+        // Swipe vers le bas = page précédente
+        changeBrandsPage(brandsPage - 1, maxPage);
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    isDragging.current = false;
+  };
+
   // Fermeture du menu mobile avec Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -291,7 +466,7 @@ export const Header = () => {
 
   return (
     <>
-    <header ref={headerRef} className="bg-white relative">
+    <header ref={headerRef} className="bg-white relative z-[60]">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Menu hamburger mobile (gauche) + Logo (centré mobile) + Navigation (desktop) */}
@@ -379,10 +554,16 @@ export const Header = () => {
                 onClick={() => {
                   setIsBrandsMenuOpen(!isBrandsMenuOpen);
                   setIsShopMenuOpen(false);
+                  if (!isBrandsMenuOpen) {
+                    setBrandsPage(0); // Reset à la première page quand on ouvre le menu
+                    setIsTransitioning(false); // Reset l'état de transition
+                  }
                 }}
                 onMouseEnter={() => {
                   setIsBrandsMenuOpen(true);
                   setIsShopMenuOpen(false);
+                  setBrandsPage(0); // Reset à la première page quand on ouvre le menu
+                  setIsTransitioning(false); // Reset l'état de transition
                 }}
                 className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
@@ -441,14 +622,14 @@ export const Header = () => {
           <>
             {/* Overlay avec blur/shadow sur le contenu - Commence après PromoBanner + Navbar */}
             <div 
-              className="fixed top-[92px] left-0 right-0 bottom-0 bg-black/10 backdrop-blur-sm z-[45]"
+              className="fixed top-[92px] left-0 right-0 bottom-0 bg-black/10 backdrop-blur-sm z-[70]"
               onClick={() => setIsShopMenuOpen(false)}
             />
             
             {/* Menu */}
             <div 
               ref={shopMenuRef}
-              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[55]"
+              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[80]"
               onMouseLeave={() => setIsShopMenuOpen(false)}
             >
               <div className="flex">
@@ -524,64 +705,152 @@ export const Header = () => {
           <>
             {/* Overlay avec blur/shadow sur le contenu */}
             <div 
-              className="fixed top-[92px] left-0 right-0 bottom-0 bg-black/10 backdrop-blur-sm z-[45]"
+              className="fixed top-[92px] left-0 right-0 bottom-0 bg-black/10 backdrop-blur-sm z-[70]"
               onClick={() => setIsBrandsMenuOpen(false)}
             />
             
             {/* Menu */}
             <div 
               ref={brandsMenuRef}
-              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[55]"
+              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[80]"
               onMouseLeave={() => {
                 setIsBrandsMenuOpen(false);
                 setHoveredBrand(null);
               }}
             >
               <div className="flex">
-                {/* Colonne gauche : Marques - Large espace */}
-                <div className="w-[500px] px-[4px] py-[1px] flex-shrink-0">
-                  <ul>
+                {/* Colonne gauche : Marques - Large espace avec slider vertical */}
+                <div 
+                  className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
+                >
+                  {/* Container slider VERTICAL avec overflow hidden */}
+                  <div 
+                    ref={brandsSliderContainerRef}
+                    className="relative overflow-hidden"
+                    style={{ 
+                      minHeight: `${BRANDS_PER_PAGE * 32}px`, 
+                      height: `${BRANDS_PER_PAGE * 32}px`,
+                    }}
+                  >
                     {brandsLoading ? (
-                      <li className="text-base text-gray-500">Chargement...</li>
+                      <div className="text-base text-gray-500">Chargement...</div>
                     ) : brandsError ? (
-                      <li className="text-base text-red-500">Erreur de chargement</li>
+                      <div className="text-base text-red-500">Erreur de chargement</div>
                     ) : brands.length === 0 ? (
-                      <li className="text-base text-gray-500">Aucune marque</li>
+                      <div className="text-base text-gray-500">Aucune marque</div>
                     ) : (
-                      brands.map((brand) => (
-                        <li 
-                          key={brand.id}
-                          onMouseEnter={() => setHoveredBrand(brand)}
-                          onMouseLeave={() => setHoveredBrand(null)}
-                        >
-                          <Link
-                            to={`/catalog?brand=${brand.slug}`}
-                            className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
-                            onClick={() => setIsBrandsMenuOpen(false)}
-                          >
-                            {brand.name}
-                          </Link>
-                        </li>
-                      ))
-                    )}
-                    <li>
-                      <Link
-                        to="/catalog"
-                        className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
-                        onClick={() => setIsBrandsMenuOpen(false)}
+                      <div
+                        ref={brandsSliderRef}
+                        className="flex flex-col transition-transform ease-out"
+                        style={{
+                          transform: `translateY(-${brandsPage * (100 / Math.ceil(brands.length / BRANDS_PER_PAGE))}%)`,
+                          height: `${Math.ceil(brands.length / BRANDS_PER_PAGE) * 100}%`,
+                          transitionDuration: '400ms',
+                        }}
                       >
-                        Shop All Brands
-                      </Link>
-                    </li>
-                  </ul>
+                        {/* Créer une page pour chaque groupe de 10 brands */}
+                        {Array.from({ length: Math.ceil(brands.length / BRANDS_PER_PAGE) }).map((_, pageIndex) => {
+                          const totalPages = Math.ceil(brands.length / BRANDS_PER_PAGE);
+                          return (
+                            <div 
+                              key={pageIndex}
+                              className="flex-shrink-0"
+                              style={{ height: `${100 / totalPages}%` }}
+                            >
+                              <ul>
+                                {brands
+                                  .slice(pageIndex * BRANDS_PER_PAGE, (pageIndex + 1) * BRANDS_PER_PAGE)
+                                  .map((brand) => (
+                                    <li 
+                                      key={brand.id}
+                                      className="mb-1"
+                                    >
+                                      <Link
+                                        to={`/catalog?brand=${brand.slug}`}
+                                        className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
+                                        onClick={() => setIsBrandsMenuOpen(false)}
+                                        onMouseEnter={() => setHoveredBrand(brand)}
+                                        onMouseLeave={() => setHoveredBrand(null)}
+                                      >
+                                        {brand.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                {/* Lien "Shop All Brands" sur la dernière page seulement */}
+                                {pageIndex === totalPages - 1 && (
+                                  <li className="mt-4">
+                                    <Link
+                                      to="/catalog"
+                                      className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
+                                      onClick={() => setIsBrandsMenuOpen(false)}
+                                    >
+                                      Shop All Brands
+                                    </Link>
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Boutons navigation slider HORIZONTAL (gauche/droite) en dessous de la liste */}
+                  {!brandsLoading && !brandsError && brands.length > BRANDS_PER_PAGE && (
+                    <div className="flex items-center justify-center gap-3 mt-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const maxPage = Math.ceil(brands.length / BRANDS_PER_PAGE);
+                          changeBrandsPage(brandsPage - 1, maxPage);
+                        }}
+                        disabled={brandsPage === 0 || isTransitioning}
+                        className="flex items-center justify-center w-8 h-8 text-black hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                        aria-label="Page précédente"
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <span className="text-xs text-gray-500 uppercase">
+                        {brandsPage + 1} / {Math.ceil(brands.length / BRANDS_PER_PAGE)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const maxPage = Math.ceil(brands.length / BRANDS_PER_PAGE);
+                          changeBrandsPage(brandsPage + 1, maxPage);
+                        }}
+                        disabled={brandsPage >= Math.ceil(brands.length / BRANDS_PER_PAGE) - 1 || isTransitioning}
+                        className="flex items-center justify-center w-8 h-8 text-black hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                        aria-label="Page suivante"
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Section droite : Images/Vidéos qui changent au hover */}
                 <div className="flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end">
-                  {/* Image/Vidéo 1 */}
-                  <div className="max-w-[320px]">
+                  {/* Image 1 : Image aléatoire d'un produit de la marque OU megaMenuImage1 */}
+                  <div className="max-w-[320px]" key={`image1-${hoveredBrand?.id || 'default'}`}>
                     {hoveredBrand?.megaMenuVideo1 ? (
                       <video 
+                        key={`video1-${hoveredBrand.id}`}
                         src={hoveredBrand.megaMenuVideo1}
                         autoPlay
                         loop
@@ -589,23 +858,49 @@ export const Header = () => {
                         playsInline
                         className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                       />
-                    ) : (
+                    ) : hoveredBrand?.megaMenuImage1 ? (
                       <img 
-                        src={hoveredBrand?.megaMenuImage1 || '/webdesign/AW25_LB_4_5_03_2.png'}
+                        key={`img1-${hoveredBrand.id}`}
+                        src={hoveredBrand.megaMenuImage1}
+                        alt={hoveredBrand.name || 'Brand Collection'}
+                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                        loading="lazy"
+                        onError={(e) => {
+                          // Fallback vers placeholder si erreur
+                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                        }}
+                      />
+                    ) : loadingProductImage ? (
+                      <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                        <div className="text-xs text-gray-400">Chargement...</div>
+                      </div>
+                    ) : randomProductImage ? (
+                      <img 
+                        key={`img1-random-${hoveredBrand?.id || 'default'}`}
+                        src={randomProductImage}
                         alt={hoveredBrand?.name || 'Brand Collection'}
                         className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          // Fallback vers placeholder si erreur
+                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                        }}
                       />
+                    ) : (
+                      <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                        <div className="text-xs text-gray-400">Aucune image</div>
+                      </div>
                     )}
                     <p className="text-xs text-black uppercase">
                       {hoveredBrand?.name || 'OUR BRANDS'}
                     </p>
                   </div>
 
-                  {/* Image/Vidéo 2 */}
-                  <div className="max-w-[320px]">
+                  {/* Image 2 : Logo de la marque en noir OU megaMenuImage2 */}
+                  <div className="max-w-[320px]" key={`image2-${hoveredBrand?.id || 'default'}`}>
                     {hoveredBrand?.megaMenuVideo2 ? (
                       <video 
+                        key={`video2-${hoveredBrand?.id || 'default'}`}
                         src={hoveredBrand.megaMenuVideo2}
                         autoPlay
                         loop
@@ -613,13 +908,36 @@ export const Header = () => {
                         playsInline
                         className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                       />
-                    ) : (
+                    ) : hoveredBrand?.megaMenuImage2 ? (
                       <img 
-                        src={hoveredBrand?.megaMenuImage2 || '/webdesign/publicity2.png'}
+                        key={`img2-${hoveredBrand?.id || 'default'}`}
+                        src={hoveredBrand.megaMenuImage2}
                         alt={hoveredBrand?.name || 'Brand Collection'}
                         className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          // Fallback vers placeholder si erreur
+                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                        }}
                       />
+                    ) : hoveredBrand?.logoUrl ? (
+                      <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3 p-8">
+                        <img 
+                          key={`logo-${hoveredBrand?.id || 'default'}`}
+                          src={getImageUrl(hoveredBrand?.logoUrl || '') || ''}
+                          alt={hoveredBrand?.name || 'Brand Logo'}
+                          className="max-w-full max-h-full object-contain filter brightness-0"
+                          loading="lazy"
+                          onError={(e) => {
+                            // Fallback vers placeholder si erreur
+                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23FFFFFF" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3ELogo%3C/text%3E%3C/svg%3E';
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3">
+                        <div className="text-xs text-gray-400">Aucun logo</div>
+                      </div>
                     )}
                     <p className="text-xs text-black uppercase">
                       {hoveredBrand ? `${hoveredBrand.name} COLLECTION` : 'PREMIUM BRANDS'}

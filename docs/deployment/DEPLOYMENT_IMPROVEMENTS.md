@@ -331,6 +331,16 @@ Toutes les améliorations ont été implémentées et testées :
 - Purge complète ou sélective (fichiers spécifiques)
 - Documentation complète dans `docs/CLOUDFLARE_PURGE_SETUP.md`
 
+### 8. Protection fichiers .env.production ✅ **NOUVEAU**
+- Script `protect-env-files.sh` pour sauvegarder/restaurer les fichiers `.env.production`
+- **Sauvegarde automatique** avant chaque déploiement (dans `/opt/reboulstore/.env-backups/`)
+- **Vérification obligatoire** que les fichiers existent avant déploiement
+- **Création automatique** d'Admin Central `.env.production` si manquant
+- **Blocage du déploiement** si fichiers manquants (avec messages d'erreur clairs)
+- **Restauration depuis backup** en cas de problème
+- Protection dans `deploy-prod.sh` et `deploy-admin.sh`
+- **Plus jamais de problème de fichiers .env.production manquants !** ⭐
+
 ---
 
 ## 📚 Références

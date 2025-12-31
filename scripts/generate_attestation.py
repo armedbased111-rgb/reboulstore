@@ -21,16 +21,15 @@ def generate_attestation(
     prenom_nom_pere: str,
     prenom_nom_mere: str,
     ville: str,
-    date_jour: str = None
+    date_jour: str = None,
+    titre: str = "ATTESTATION SUR L'HONNEUR DE NON-CONDAMNATION",
+    output_file: str = "attestation_non_condamnation.pdf"
 ):
     """
     Génère un PDF d'attestation sur l'honneur de non-condamnation
     """
     if date_jour is None:
         date_jour = datetime.now().strftime("%d/%m/%Y")
-    
-    # Nom du fichier de sortie
-    output_file = "attestation_non_condamnation.pdf"
     
     # Créer le document PDF
     doc = SimpleDocTemplate(
@@ -68,7 +67,7 @@ def generate_attestation(
     story = []
     
     # Titre
-    story.append(Paragraph("ATTESTATION SUR L'HONNEUR DE NON-CONDAMNATION", title_style))
+    story.append(Paragraph(titre, title_style))
     story.append(Spacer(1, 0.5*cm))
     
     # Corps de l'attestation
@@ -94,34 +93,88 @@ def generate_attestation(
     # Générer le PDF
     doc.build(story)
     
-    print(f"✅ PDF généré avec succès : {output_file}")
-    print(f"📄 Vous pouvez maintenant l'imprimer, le signer et le scanner pour l'uploader.")
-    
     return output_file
 
+def generate_all_versions(
+    prenom_nom: str,
+    date_naissance: str,
+    lieu_naissance: str,
+    adresse: str,
+    prenom_nom_pere: str,
+    prenom_nom_mere: str,
+    ville: str,
+    date_jour: str = None
+):
+    """
+    Génère les 3 versions de l'attestation pour le Guichet Unique
+    """
+    if date_jour is None:
+        date_jour = datetime.now().strftime("%d/%m/%Y")
+    
+    # Version 1 : Attestation avec filiation
+    file1 = generate_attestation(
+        prenom_nom=prenom_nom,
+        date_naissance=date_naissance,
+        lieu_naissance=lieu_naissance,
+        adresse=adresse,
+        prenom_nom_pere=prenom_nom_pere,
+        prenom_nom_mere=prenom_nom_mere,
+        ville=ville,
+        date_jour=date_jour,
+        titre="ATTESTATION SUR L'HONNEUR DE NON-CONDAMNATION\nFAISANT APPARAÎTRE LA FILIATION",
+        output_file="attestation_non_condamnation_filiation.pdf"
+    )
+    
+    # Version 2 : Déclaration signée
+    file2 = generate_attestation(
+        prenom_nom=prenom_nom,
+        date_naissance=date_naissance,
+        lieu_naissance=lieu_naissance,
+        adresse=adresse,
+        prenom_nom_pere=prenom_nom_pere,
+        prenom_nom_mere=prenom_nom_mere,
+        ville=ville,
+        date_jour=date_jour,
+        titre="DÉCLARATION SUR L'HONNEUR DE NON-CONDAMNATION\nDATÉE ET SIGNÉE EN ORIGINAL",
+        output_file="declaration_non_condamnation_signee.pdf"
+    )
+    
+    # Version 3 : Attestation de filiation
+    file3 = generate_attestation(
+        prenom_nom=prenom_nom,
+        date_naissance=date_naissance,
+        lieu_naissance=lieu_naissance,
+        adresse=adresse,
+        prenom_nom_pere=prenom_nom_pere,
+        prenom_nom_mere=prenom_nom_mere,
+        ville=ville,
+        date_jour=date_jour,
+        titre="ATTESTATION DE FILIATION\n(NOM ET PRÉNOMS DES PARENTS)",
+        output_file="attestation_filiation.pdf"
+    )
+    
+    print(f"\n✅ 3 versions générées avec succès :")
+    print(f"   1. {file1} - Pour 'Attestation... faisant apparaître la filiation'")
+    print(f"   2. {file2} - Pour 'Déclaration... datée et signée'")
+    print(f"   3. {file3} - Pour 'Attestation de filiation'")
+    print(f"\n📄 Vous pouvez maintenant :")
+    print(f"   1. Imprimer les 3 documents")
+    print(f"   2. Les signer à la main")
+    print(f"   3. Les scanner avec iPhone")
+    print(f"   4. Uploader chaque version dans la section correspondante")
+    
+    return [file1, file2, file3]
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        # Utilisation avec arguments en ligne de commande
-        generate_attestation(
-            prenom_nom=sys.argv[1],
-            date_naissance=sys.argv[2],
-            lieu_naissance=sys.argv[3],
-            adresse=sys.argv[4],
-            prenom_nom_pere=sys.argv[5],
-            prenom_nom_mere=sys.argv[6],
-            ville=sys.argv[7],
-            date_jour=sys.argv[8] if len(sys.argv) > 8 else None
-        )
-    else:
-        # Génération directe avec les informations de Yoann Marrale
-        generate_attestation(
-            prenom_nom="Yoann Marrale",
-            date_naissance="27/01/2001",
-            lieu_naissance="Martigues",
-            adresse="Traverse Louise Michel, Bâtiment C6, Appartement 1, 13500 Martigues",
-            prenom_nom_pere="Bruno Marrale",
-            prenom_nom_mere="Christelle Rohaut",
-            ville="Martigues",
-            date_jour=None  # Sera mis automatiquement à aujourd'hui
-        )
+    # Génération directe avec les informations de Yoann Marrale - 3 versions
+    generate_all_versions(
+        prenom_nom="Yoann Marrale",
+        date_naissance="27/01/2001",
+        lieu_naissance="Martigues",
+        adresse="Traverse Louise Michel, Bâtiment C6, Appartement 1, 13500 Martigues",
+        prenom_nom_pere="Bruno Marrale",
+        prenom_nom_mere="Christelle Rohaut",
+        ville="Martigues",
+        date_jour=None  # Sera mis automatiquement à aujourd'hui
+    )
 

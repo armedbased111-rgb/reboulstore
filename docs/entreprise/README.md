@@ -6,11 +6,18 @@ Dossier pour ranger tous les documents liés à la création de votre micro-entr
 
 ### ✅ Documents générés/préparés
 
-1. **Attestation sur l'honneur de non-condamnation**
-   - Fichier : `attestation_non_condamnation.pdf`
-   - Statut : ⏳ À imprimer, signer et scanner
+1. **Attestations sur l'honneur de non-condamnation** (3 versions distinctes)
+   - **Version 1** : `attestation_non_condamnation_filiation.pdf`
+     - Pour : "Attestation... faisant apparaître la filiation"
+     - Statut : ⏳ À imprimer, signer et scanner
+   - **Version 2** : `declaration_non_condamnation_signee.pdf`
+     - Pour : "Déclaration... datée et signée en original"
+     - Statut : ⏳ À imprimer, signer et scanner
+   - **Version 3** : `attestation_filiation.pdf`
+     - Pour : "Attestation de filiation (nom et prénoms des parents)"
+     - Statut : ⏳ À imprimer, signer et scanner
    - Date de génération : 31/12/2025
-   - Informations :
+   - Informations communes :
      - Nom : Yoann Marrale
      - Date de naissance : 27/01/2001
      - Lieu de naissance : Martigues
@@ -31,11 +38,14 @@ Dossier pour ranger tous les documents liés à la création de votre micro-entr
 
 ## 📝 Checklist avant upload
 
-- [ ] Attestation imprimée et signée
-- [ ] Attestation scannée (PDF)
-- [x] Justificatif de domicile (PDF) ✅ **PRÊT**
+- [ ] **3 attestations imprimées et signées** :
+  - [ ] `attestation_non_condamnation_filiation.pdf`
+  - [ ] `declaration_non_condamnation_signee.pdf`
+  - [ ] `attestation_filiation.pdf`
+- [ ] **3 attestations scannées** (PDF) avec signatures visibles
+- [x] **Justificatif de domicile** (PDF) ✅ **PRÊT** : `BouyguesTelecom_Facture_20251128_11730710441125.pdf`
 - [ ] Vérification que tous les PDFs sont lisibles
-- [ ] Vérification que les signatures sont visibles
+- [ ] Vérification que les signatures sont visibles sur les 3 attestations
 
 ## 🔗 Liens utiles
 
@@ -53,12 +63,18 @@ Dossier pour ranger tous les documents liés à la création de votre micro-entr
 ## 🎯 Prochaines étapes
 
 1. ✅ **Facture Bouygues** : Déjà prête dans le dossier
-2. ⏳ **Imprimer l'attestation** : `attestation_non_condamnation.pdf`
-3. ⏳ **Signer l'attestation** : Signature manuscrite obligatoire
-4. ⏳ **Scanner l'attestation signée** : Avec iPhone (app Notes → Scanner)
-5. ⏳ **Uploader les deux PDFs** sur le Guichet Unique :
-   - Attestation signée (scannée)
-   - Facture Bouygues (déjà prête)
+2. ⏳ **Imprimer les 3 attestations** :
+   - `attestation_non_condamnation_filiation.pdf`
+   - `declaration_non_condamnation_signee.pdf`
+   - `attestation_filiation.pdf`
+3. ⏳ **Signer les 3 attestations** : Signature manuscrite obligatoire sur chaque document
+4. ⏳ **Scanner les 3 attestations signées** : Avec iPhone (app Notes → Scanner)
+   - Garder les mêmes noms de fichiers pour faciliter l'upload
+5. ⏳ **Uploader sur le Guichet Unique** :
+   - Section "Attestation... faisant apparaître la filiation" → `attestation_non_condamnation_filiation.pdf` (scannée)
+   - Section "Déclaration... datée et signée" → `declaration_non_condamnation_signee.pdf` (scannée)
+   - Section "Attestation de filiation" → `attestation_filiation.pdf` (scannée)
+   - Section "Justificatif de jouissance des locaux" → `BouyguesTelecom_Facture_20251128_11730710441125.pdf`
 6. ⏳ **Valider l'étape "Pièces jointes"**
 7. ⏳ **Passer à l'étape suivante** : "Observations et correspondance"
 

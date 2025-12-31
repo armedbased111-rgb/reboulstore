@@ -35,7 +35,7 @@ export const BrandMarquee = () => {
   };
 
   return (
-    <div className="w-full bg-black py-1 md:py-1.5 overflow-hidden relative">
+    <div className="w-full bg-black py-1 md:py-1.5 overflow-hidden relative z-[50]">
       {/* Container pour le défilement infini */}
       <div className="flex animate-marquee whitespace-nowrap">
         {/* Première série de logos */}

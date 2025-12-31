@@ -21,3 +21,4 @@ docs/GITHUB_SECRETS_VALUES.md
 # GA4 API Credentials
 cli/credentials/*.json
 cli/.env.ga4
+docs/stripe/STRIPE_LIVE_KEY.md

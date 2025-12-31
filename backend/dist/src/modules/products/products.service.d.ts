@@ -2,6 +2,7 @@ import { Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
 import { Collection } from '../../entities/collection.entity';
+import { Brand } from '../../entities/brand.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
@@ -24,8 +25,9 @@ export declare class ProductsService {
     private variantRepository;
     private imageRepository;
     private collectionRepository;
+    private brandRepository;
     private readonly cloudinaryService;
-    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, collectionRepository: Repository<Collection>, cloudinaryService: CloudinaryService);
+    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, collectionRepository: Repository<Collection>, brandRepository: Repository<Brand>, cloudinaryService: CloudinaryService);
     findAll(query: ProductQueryDto): Promise<{
         products: Product[];
         total: number;

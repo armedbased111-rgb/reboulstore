@@ -188,10 +188,15 @@ def logs(service: Optional[str], tail: int, follow: bool, errors: bool, admin: b
     if follow:
         cmd_parts.append('--follow')
     
+    # Filtrer les warnings Docker Compose sur les variables d'environnement
+    # Utiliser plusieurs filtres pour capturer toutes les variantes
+    filter_warnings = " | grep -vE '(level=warning msg=|variable is not set|Defaulting to a blank string)'"
+    
     if errors:
         cmd_parts.append('| grep -i "error\\|exception\\|failed\\|warning"')
-    
-    cmd = ' '.join(cmd_parts)
+        cmd = ' '.join(cmd_parts) + filter_warnings
+    else:
+        cmd = ' '.join(cmd_parts) + filter_warnings
     
     if service:
         stdout, stderr = docker_compose_exec(cmd, compose_file=compose_file, service=service, cwd=project_dir)
@@ -199,9 +204,27 @@ def logs(service: Optional[str], tail: int, follow: bool, errors: bool, admin: b
         stdout, stderr = docker_compose_exec(cmd, compose_file=compose_file, cwd=project_dir)
     
     if stdout:
-        console.print(stdout)
+        # Filtrer les warnings Docker Compose sur les variables d'environnement
+        filtered_stdout = '\n'.join([
+            line for line in stdout.split('\n')
+            if not any(warning in line.lower() for warning in [
+                'level=warning msg="the',
+                'variable is not set. defaulting to a blank string'
+            ])
+        ])
+        if filtered_stdout.strip():
+            console.print(filtered_stdout)
     if stderr and 'warning' not in stderr.lower():
-        console.print(f"[yellow]{stderr}[/yellow]")
+        # Filtrer aussi les warnings dans stderr
+        filtered_stderr = '\n'.join([
+            line for line in stderr.split('\n')
+            if not any(warning in line.lower() for warning in [
+                'level=warning msg="the',
+                'variable is not set. defaulting to a blank string'
+            ])
+        ])
+        if filtered_stderr.strip():
+            console.print(f"[yellow]{filtered_stderr}[/yellow]")
 
 
 @server.command('restart')
@@ -273,15 +296,48 @@ def resources():
 @server_group.command('cleanup')
 @click.option('--volumes', is_flag=True, help='Supprimer volumes non utilisés')
 @click.option('--images', is_flag=True, help='Supprimer images non utilisées')
-@click.option('--all', is_flag=True, help='Tout nettoyer (volumes + images + containers arrêtés)')
+@click.option('--logs', is_flag=True, help='Nettoyer les logs des conteneurs')
+@click.option('--all', is_flag=True, help='Tout nettoyer (volumes + images + containers arrêtés + logs)')
 @click.option('--yes', '-y', is_flag=True, help='Confirmer automatiquement')
-def cleanup(volumes: bool, images: bool, all: bool, yes: bool):
+@click.option('--admin', is_flag=True, help='Nettoyer Admin Central au lieu de Reboul Store')
+def cleanup(volumes: bool, images: bool, logs: bool, all: bool, yes: bool, admin: bool):
     """Nettoie les ressources Docker inutilisées"""
-    if not (volumes or images or all):
-        console.print("[yellow]Spécifiez --volumes, --images ou --all[/yellow]")
+    if not (volumes or images or logs or all):
+        console.print("[yellow]Spécifiez --volumes, --images, --logs ou --all[/yellow]")
         return
     
+    project_dir = SERVER_CONFIG['admin_path'] if admin else SERVER_CONFIG['project_path']
+    project_name = 'Admin Central' if admin else 'Reboul Store'
+    compose_file = 'docker-compose.prod.yml'
+    
     commands = []
+    
+    if all or logs:
+        if not yes:
+            confirm = click.confirm(f"Nettoyer les logs des conteneurs {project_name} ?")
+            if not confirm:
+                return
+        
+        # Récupérer la liste des conteneurs
+        stdout, _ = docker_compose_exec('ps -q', compose_file=compose_file, cwd=project_dir)
+        if stdout:
+            container_ids = [line.strip() for line in stdout.strip().split('\n') if line.strip()]
+            if container_ids:
+                console.print(f"[yellow]🧹 Nettoyage des logs de {len(container_ids)} conteneur(s)...[/yellow]")
+                for container_id in container_ids:
+                    # Récupérer le chemin du fichier de log JSON
+                    log_path_cmd = f"docker inspect {container_id} --format='{{{{.LogPath}}}}'"
+                    log_path_stdout, _ = ssh_exec(log_path_cmd, cwd=project_dir)
+                    if log_path_stdout and log_path_stdout.strip():
+                        log_path = log_path_stdout.strip()
+                        # Tronquer le fichier de log JSON directement
+                        truncate_cmd = f"sudo truncate -s 0 {log_path}"
+                        ssh_exec(truncate_cmd, cwd=project_dir)
+                console.print(f"[green]✅ Logs nettoyés pour {project_name}[/green]")
+            else:
+                console.print(f"[yellow]⚠️  Aucun conteneur trouvé pour {project_name}[/yellow]")
+        else:
+            console.print(f"[yellow]⚠️  Aucun conteneur trouvé pour {project_name}[/yellow]")
     
     if all or volumes:
         if not yes:

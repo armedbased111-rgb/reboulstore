@@ -19,6 +19,7 @@ const typeorm_2 = require("typeorm");
 const product_entity_1 = require("../../entities/product.entity");
 const category_entity_1 = require("../../entities/category.entity");
 const collection_entity_1 = require("../../entities/collection.entity");
+const brand_entity_1 = require("../../entities/brand.entity");
 const variant_entity_1 = require("../../entities/variant.entity");
 const image_entity_1 = require("../../entities/image.entity");
 const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
@@ -28,13 +29,15 @@ let ProductsService = class ProductsService {
     variantRepository;
     imageRepository;
     collectionRepository;
+    brandRepository;
     cloudinaryService;
-    constructor(productRepository, categoryRepository, variantRepository, imageRepository, collectionRepository, cloudinaryService) {
+    constructor(productRepository, categoryRepository, variantRepository, imageRepository, collectionRepository, brandRepository, cloudinaryService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
         this.imageRepository = imageRepository;
         this.collectionRepository = collectionRepository;
+        this.brandRepository = brandRepository;
         this.cloudinaryService = cloudinaryService;
     }
     async findAll(query) {
@@ -58,7 +61,27 @@ let ProductsService = class ProductsService {
             where.categoryId = category;
         }
         if (brand) {
-            where.brandId = brand;
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand);
+            if (isUUID) {
+                where.brandId = brand;
+            }
+            else {
+                const brandEntity = await this.brandRepository.findOne({
+                    where: { slug: brand },
+                });
+                if (brandEntity) {
+                    where.brandId = brandEntity.id;
+                }
+                else {
+                    return {
+                        products: [],
+                        total: 0,
+                        page,
+                        limit,
+                        totalPages: 0,
+                    };
+                }
+            }
         }
         if (minPrice !== undefined || maxPrice !== undefined) {
             where.price = (0, typeorm_2.Between)(minPrice ?? 0, maxPrice ?? Number.MAX_SAFE_INTEGER);
@@ -355,7 +378,9 @@ exports.ProductsService = ProductsService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(variant_entity_1.Variant)),
     __param(3, (0, typeorm_1.InjectRepository)(image_entity_1.Image)),
     __param(4, (0, typeorm_1.InjectRepository)(collection_entity_1.Collection)),
+    __param(5, (0, typeorm_1.InjectRepository)(brand_entity_1.Brand)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

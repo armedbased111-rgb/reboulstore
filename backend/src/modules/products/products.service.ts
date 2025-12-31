@@ -8,6 +8,7 @@ import { Repository, FindOptionsWhere, ILike, Between } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
 import { Collection } from '../../entities/collection.entity';
+import { Brand } from '../../entities/brand.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
@@ -40,6 +41,8 @@ export class ProductsService {
     private imageRepository: Repository<Image>,
     @InjectRepository(Collection)
     private collectionRepository: Repository<Collection>,
+    @InjectRepository(Brand)
+    private brandRepository: Repository<Brand>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
@@ -81,9 +84,33 @@ export class ProductsService {
       where.categoryId = category;
     }
 
-    // Filtre par marque
+    // Filtre par marque (accepte UUID ou slug)
     if (brand) {
-      where.brandId = brand;
+      // Vérifier si c'est un UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand);
+      
+      if (isUUID) {
+        // C'est un UUID, utiliser directement
+        where.brandId = brand;
+      } else {
+        // C'est un slug, chercher la marque par slug
+        const brandEntity = await this.brandRepository.findOne({
+          where: { slug: brand },
+        });
+        
+        if (brandEntity) {
+          where.brandId = brandEntity.id;
+        } else {
+          // Marque non trouvée, retourner un résultat vide
+          return {
+            products: [],
+            total: 0,
+            page,
+            limit,
+            totalPages: 0,
+          };
+        }
+      }
     }
 
     // Filtre par prix

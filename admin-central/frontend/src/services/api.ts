@@ -4,12 +4,29 @@ import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'ax
  * Instance Axios configurée pour l'API Admin
  * 
  * Configuration :
- * - Base URL : http://localhost:4001 (backend admin)
+ * - Base URL : Utilise VITE_API_URL en production, sinon /api (proxifié par nginx)
+ * - En développement : http://localhost:4001
+ * - En production : /api (proxifié vers backend:4001 par nginx)
  * - Headers : Content-Type application/json
  * - Intercepteur : Ajoute le token JWT dans le header Authorization
  */
+const getBaseURL = (): string => {
+  // Si VITE_API_URL est défini, l'utiliser
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // En développement, utiliser localhost
+  if (import.meta.env.DEV) {
+    return 'http://localhost:4001';
+  }
+  
+  // En production, utiliser le chemin relatif /api (proxifié par nginx)
+  return '/api';
+};
+
 const api: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:4001',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },

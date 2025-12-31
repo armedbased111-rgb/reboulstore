@@ -3,8 +3,12 @@ import { Category } from '../entities/category.entity';
 import { Product } from '../entities/product.entity';
 import { Image } from '../entities/image.entity';
 import { Variant } from '../entities/variant.entity';
+import { Brand } from '../entities/brand.entity';
+import { Shop } from '../entities/shop.entity';
+import { Collection } from '../entities/collection.entity';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * Script de seed pour créer des données de test
@@ -19,36 +23,56 @@ import * as path from 'path';
  * ts-node src/scripts/seed.ts
  */
 
-// Charger les variables d'environnement
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+// IMPORTANT: Ne PAS charger de fichier .env ici
+// Le script utilise UNIQUEMENT les variables d'environnement déjà chargées
+// par docker-compose depuis .env.production à la racine du projet
+// Les variables sont disponibles via process.env
+
+// Afficher la configuration utilisée (sans le mot de passe)
+console.log('📋 Configuration base de données (depuis .env.production):');
+console.log(`   DB_HOST: ${process.env.DB_HOST || 'NON DÉFINI'}`);
+console.log(`   DB_PORT: ${process.env.DB_PORT || 'NON DÉFINI'}`);
+console.log(`   DB_DATABASE: ${process.env.DB_DATABASE || 'NON DÉFINI'}`);
+console.log(`   DB_USERNAME: ${process.env.DB_USERNAME || 'NON DÉFINI'}`);
+if (!process.env.DB_HOST || process.env.DB_HOST === 'postgres' || process.env.DB_HOST === 'localhost') {
+  console.error('   ⚠️  ATTENTION: DB_HOST pointe vers localhost/postgres au lieu du VPS!');
+  console.error('   ⚠️  Vérifiez votre fichier .env.production - il doit contenir l\'adresse du VPS');
+}
 
 async function seed() {
-  // Détecter si on est dans Docker ou en local
-  // Si DB_HOST est 'postgres' et qu'on n'est pas dans Docker, utiliser 'localhost'
-  let dbHost = process.env.DB_HOST || 'localhost';
-  if (dbHost === 'postgres' && !process.env.DOCKER_ENV) {
-    dbHost = 'localhost';
-    console.log(
-      '⚠️  Détection: exécution en local, utilisation de localhost au lieu de postgres',
-    );
+  // UTILISER UNIQUEMENT LES VARIABLES D'ENVIRONNEMENT DU .env (VPS)
+  // Ne jamais utiliser localhost ou détection automatique
+  const dbHost = process.env.DB_HOST;
+  const dbPort = process.env.DB_PORT || '5432';
+  const dbUsername = process.env.DB_USERNAME;
+  const dbPassword = process.env.DB_PASSWORD;
+  const dbDatabase = process.env.DB_DATABASE;
+
+  // Vérifier que toutes les variables sont définies
+  if (!dbHost || !dbUsername || !dbPassword || !dbDatabase) {
+    console.error('❌ Variables d\'environnement manquantes pour la connexion à la base de données');
+    console.error('   Variables requises: DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE');
+    console.error('   Vérifiez votre fichier .env');
+    process.exit(1);
   }
 
   // Configuration de la connexion à la base de données (compatible TypeORM)
   const dataSource = new DataSource({
     type: 'postgres',
-    host: dbHost,
-    port: parseInt(process.env.DB_PORT || '5432', 10),
-    username: process.env.DB_USERNAME || 'reboulstore',
-    password: process.env.DB_PASSWORD || 'reboulstore_password',
-    database: process.env.DB_DATABASE || 'reboulstore_db',
-    entities: [Category, Product, Image, Variant],
+    host: dbHost, // Utilise directement DB_HOST du .env (VPS)
+    port: parseInt(dbPort, 10),
+    username: dbUsername,
+    password: dbPassword,
+    database: dbDatabase,
+    entities: [Category, Product, Image, Variant, Brand, Shop, Collection],
     synchronize: false, // Ne pas synchroniser automatiquement dans le seed
     logging: process.env.NODE_ENV === 'development',
   });
 
   console.log(
-    `🔌 Connexion à PostgreSQL: ${dbHost}:${process.env.DB_PORT || '5432'}/${process.env.DB_DATABASE || 'reboulstore_db'}`,
+    `🔌 Connexion à PostgreSQL: ${dbHost}:${dbPort}/${dbDatabase}`,
   );
+  console.log(`   📍 Utilisation de la base de données du serveur VPS (pas de localhost)`);
 
   try {
     await dataSource.initialize();
@@ -58,6 +82,8 @@ async function seed() {
     const productRepository = dataSource.getRepository(Product);
     const imageRepository = dataSource.getRepository(Image);
     const variantRepository = dataSource.getRepository(Variant);
+    const brandRepository = dataSource.getRepository(Brand);
+    const collectionRepository = dataSource.getRepository(Collection);
 
     // 1. Créer ou récupérer les catégories
     console.log('📦 Création des catégories...');
@@ -87,7 +113,27 @@ async function seed() {
       categories.push(category);
     }
 
-    // 2. Créer des produits de test
+    // 2. Trouver ou créer une collection active
+    console.log('\n📚 Vérification de la collection active...');
+    let activeCollection = await collectionRepository.findOne({
+      where: { isActive: true },
+    });
+
+    if (!activeCollection) {
+      // Créer une collection active par défaut
+      activeCollection = collectionRepository.create({
+        name: 'current',
+        displayName: 'Collection Actuelle',
+        isActive: true,
+        description: 'Collection active par défaut',
+      });
+      activeCollection = await collectionRepository.save(activeCollection);
+      console.log(`  ✓ Collection active créée: ${activeCollection.name}`);
+    } else {
+      console.log(`  → Collection active existante: ${activeCollection.name}`);
+    }
+
+    // 3. Créer des produits de test
     console.log('\n🛍️  Création des produits...');
 
     const productsData = [
@@ -340,6 +386,131 @@ async function seed() {
       console.log(
         `    → ${productData.variants.length} variante(s) ajoutée(s)`,
       );
+    }
+
+    // 3. Créer 1 produit pour CHAQUE marque avec la même image
+    console.log('\n🏷️  Création d\'un produit pour chaque marque (même image)...');
+    
+    const brands = await brandRepository.find({
+      order: { name: 'ASC' },
+    });
+
+    if (brands.length === 0) {
+      console.log('  ⚠️  Aucune marque trouvée. Créez d\'abord des marques.');
+    } else {
+      // Récupérer la première catégorie (Adult par défaut)
+      const defaultCategory = categories.find(c => c.slug === 'adult') || categories[0];
+      
+      if (!defaultCategory) {
+        console.log('  ⚠️  Aucune catégorie trouvée. Créez d\'abord des catégories.');
+      } else {
+        // Lire l'URL de l'image depuis le fichier seed-image-url.txt ou utiliser une variable d'environnement
+        let productImageUrl: string | null = null;
+        
+        // Essayer de lire depuis le fichier (plusieurs chemins possibles)
+        const possiblePaths = [
+          path.join(__dirname, '..', '..', 'scripts', 'seed-image-url.txt'), // Depuis src/scripts vers backend/scripts
+          path.join(__dirname, '..', 'scripts', 'seed-image-url.txt'), // Depuis src/scripts vers backend/src/scripts
+          path.join(process.cwd(), 'scripts', 'seed-image-url.txt'), // Depuis la racine backend
+        ];
+        
+        for (const imageUrlPath of possiblePaths) {
+          if (fs.existsSync(imageUrlPath)) {
+            productImageUrl = fs.readFileSync(imageUrlPath, 'utf-8').trim();
+            console.log(`  📷 Image trouvée: ${productImageUrl}`);
+            break;
+          }
+        }
+        
+        // Si pas trouvé dans les fichiers, essayer depuis la variable d'environnement
+        if (!productImageUrl) {
+          productImageUrl = process.env.SEED_PRODUCT_IMAGE_URL || null;
+          if (productImageUrl) {
+            console.log(`  📷 Image depuis variable d'environnement: ${productImageUrl}`);
+          } else {
+            console.log('  ⚠️  Aucune image trouvée. Utilisez npm run upload-seed-image pour uploader une image.');
+            console.log('  ⚠️  Ou définissez SEED_PRODUCT_IMAGE_URL dans .env');
+          }
+        }
+
+        // Type de produit par défaut - MÊME NOM POUR TOUTES LES MARQUES
+        const defaultProductType = {
+          name: 'HOODIE',
+          basePrice: 89.99,
+          color: 'Black',
+        };
+
+        const productName = `${defaultProductType.name} ${defaultProductType.color}`; // Même nom pour toutes les marques
+
+        // Supprimer tous les anciens produits "HOODIE Black" pour toutes les marques
+        console.log('  🗑️  Suppression des anciens produits "HOODIE Black"...');
+        const oldProducts = await productRepository.find({
+          where: { name: productName },
+          relations: ['images', 'variants'],
+        });
+        
+        for (const oldProduct of oldProducts) {
+          // Supprimer les images
+          await imageRepository.delete({ productId: oldProduct.id });
+          // Supprimer les variantes
+          await variantRepository.delete({ productId: oldProduct.id });
+          // Supprimer le produit
+          await productRepository.remove(oldProduct);
+        }
+        console.log(`    → ${oldProducts.length} ancien(s) produit(s) supprimé(s)`);
+
+        for (const brand of brands) {
+          console.log(`\n  📦 Marque: ${brand.name}`);
+          
+          // Créer le produit pour cette marque (on a déjà supprimé les anciens)
+          const product = productRepository.create({
+            name: productName, // Même nom pour toutes les marques
+            description: `${defaultProductType.name} premium, qualité supérieure, style streetwear`,
+            price: defaultProductType.basePrice,
+            categoryId: defaultCategory.id,
+            brandId: brand.id, // Associé à cette marque
+            collectionId: activeCollection.id, // IMPORTANT: Assigner à la collection active
+          });
+
+          const savedProduct = await productRepository.save(product);
+          console.log(`    ✓ Produit créé: ${savedProduct.name}`);
+
+          // Créer l'image du produit (MÊME IMAGE pour toutes les marques)
+          if (productImageUrl) {
+            const image = imageRepository.create({
+              productId: savedProduct.id,
+              url: productImageUrl, // Même URL d'image pour tous
+              alt: `${productName} - Vue avant`,
+              order: 0,
+            });
+            await imageRepository.save(image);
+            console.log(`      → 1 image ajoutée`);
+          } else {
+            console.log(`      ⚠️  Aucune image ajoutée (image non trouvée)`);
+          }
+
+          // Créer des variantes (3 tailles)
+          const sizes = ['S', 'M', 'L'];
+          for (const size of sizes) {
+            // Générer un SKU unique avec le slug de la marque
+            const brandSlugPrefix = brand.slug.substring(0, 5).toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const productTypePrefix = defaultProductType.name.substring(0, 3).toUpperCase();
+            const colorPrefix = defaultProductType.color.substring(0, 3).toUpperCase();
+            const productIdShort = savedProduct.id.substring(0, 8).toUpperCase();
+            const sku = `${productTypePrefix}-${colorPrefix}-${size}-${brandSlugPrefix}-${productIdShort}`;
+            
+            const variant = variantRepository.create({
+              productId: savedProduct.id,
+              color: defaultProductType.color,
+              size: size,
+              stock: 10,
+              sku: sku,
+            });
+            await variantRepository.save(variant);
+          }
+          console.log(`      → 3 variante(s) ajoutée(s)`);
+        }
+      }
     }
 
     console.log('\n✅ Seed terminé avec succès!');

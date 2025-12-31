@@ -20,6 +20,95 @@ alwaysApply: true
   4. Tu vérifies mon code une fois terminé
   5. On corrige ensemble jusqu'à réussir
 
+### 🗄️ Configuration Base de Données - RÈGLE CRITIQUE
+
+**RÈGLE FONDAMENTALE** : **La base de données Reboul Store est TOUJOURS sur le VPS**, que ce soit en développement local ou en production.
+
+#### Principe unique
+
+- ✅ **Développement local** : Connexion au VPS via tunnel SSH (`host.docker.internal:5433`)
+- ✅ **Production** : Connexion directe au VPS
+- ❌ **JAMAIS** de base de données locale Docker pour Reboul Store
+- ❌ **JAMAIS** utiliser `DB_HOST=postgres` ou `DB_HOST=localhost` pour Reboul Store
+
+#### Configuration développement local
+
+**Fichier `.env` à la racine** (chargé automatiquement par docker-compose) :
+```bash
+# Configuration pour connexion à la base de données VPS via tunnel SSH
+DB_HOST=host.docker.internal
+DB_PORT=5433
+DB_USERNAME=reboulstore
+DB_PASSWORD=reboulstore_password
+DB_DATABASE=reboulstore_db
+```
+
+**Tunnel SSH requis** :
+- Le tunnel SSH expose PostgreSQL du VPS sur `localhost:5433` de la machine locale
+- Commande tunnel : `ssh -L 5433:localhost:5432 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N`
+- Le container Docker utilise `host.docker.internal:5433` pour accéder au tunnel
+
+#### Configuration production
+
+**Fichier `.env.production`** :
+- Contient les credentials de connexion directe au VPS
+- Utilisé par les containers Docker en production
+- **NE JAMAIS modifier** ce fichier sans autorisation explicite
+
+#### Scripts et outils
+
+**Tous les scripts** (seed, migrations, etc.) :
+- ✅ Utilisent **UNIQUEMENT** les variables d'environnement chargées
+- ✅ Se connectent **TOUJOURS** au VPS (via tunnel en dev, direct en prod)
+- ✅ **JAMAIS** de détection automatique localhost/Docker
+- ✅ **JAMAIS** de connexion à `postgres:5432` (container local)
+
+**Exemple seed script** :
+```typescript
+// ✅ CORRECT : Utilise les variables d'environnement (VPS)
+const dbHost = process.env.DB_HOST; // host.docker.internal (dev) ou VPS (prod)
+const dbPort = process.env.DB_PORT; // 5433 (dev) ou 5432 (prod)
+
+// ❌ INCORRECT : Détection automatique ou valeurs par défaut locales
+// const dbHost = process.env.DB_HOST || 'postgres'; // ❌
+// const dbHost = isDocker ? 'postgres' : 'localhost'; // ❌
+```
+
+#### Règles d'application
+
+✅ **À FAIRE** :
+- Toujours utiliser les variables d'environnement pour la connexion DB
+- Vérifier que le tunnel SSH est actif en développement local
+- Utiliser `host.docker.internal:5433` en développement (via tunnel)
+- Utiliser les credentials VPS en production
+- Documenter toute modification de configuration DB
+
+❌ **À ÉVITER** :
+- Utiliser une base de données locale Docker pour Reboul Store
+- Hardcoder `DB_HOST=postgres` ou `DB_HOST=localhost`
+- Détecter automatiquement l'environnement pour choisir la DB
+- Créer une base de données locale pour le développement
+- Modifier `.env.production` sans autorisation
+
+#### Vérification
+
+**Pour vérifier la connexion** :
+```bash
+# Vérifier les variables d'environnement du container
+docker exec reboulstore-backend printenv | grep DB_
+
+# Devrait afficher (en dev local) :
+# DB_HOST=host.docker.internal
+# DB_PORT=5433
+# DB_USERNAME=reboulstore
+# DB_DATABASE=reboulstore_db
+```
+
+**Si le tunnel SSH n'est pas actif en dev** :
+- La connexion échouera avec `ECONNREFUSED`
+- Activer le tunnel SSH avant de démarrer les containers
+- Vérifier que le tunnel est bien sur le port 5433
+
 ### Frontend / Interface utilisateur
 
 #### 🎬 Workflow Animations AnimeJS
@@ -122,8 +211,8 @@ const MyComponent = () => {
 
 ##### Documentation
 
-- **Consulter ANIMATIONS_GUIDE.md** pour les concepts, exemples et bonnes pratiques
-- **Workflow complet** : Voir ANIMATIONS_GUIDE.md section "Workflow de création d'animation"
+- **Consulter ANIMATIONS_GUIDE.md** : `docs/animations/ANIMATIONS_GUIDE.md` pour les concepts, exemples et bonnes pratiques
+- **Workflow complet** : Voir `docs/animations/ANIMATIONS_GUIDE.md` section "Workflow de création d'animation"
 - **Références AnimeJS** : https://animejs.com/
 
 ##### Bonnes pratiques
@@ -213,8 +302,8 @@ const MyComponent = () => {
 **📝 Phase 4 : Documentation**
 
 9. **Après implémentation** :
-   - Mettre à jour ROADMAP_COMPLETE.md (cocher tâche)
-   - Mettre à jour FRONTEND.md (ajouter page/composant)
+   - Mettre à jour ROADMAP_COMPLETE.md : `docs/context/ROADMAP_COMPLETE.md` (cocher tâche)
+   - Mettre à jour FRONTEND.md : `frontend/FRONTEND.md` (ajouter page/composant)
    - Capturer screenshot si nécessaire
 
 ##### Plugins Figma recommandés
@@ -365,7 +454,7 @@ Voir `docs/GIT_WORKFLOW.md` pour :
   1. **Répondre à tes questions** : Technique Figma, workflow, bonnes pratiques design
   2. **Te donner des astuces** : Raccourcis Figma, plugins utiles, Auto Layout, composants
   3. **Te fournir des ressources** : Tutoriels Figma, exemples, templates Figma pertinents
-  4. **Te situer** : Où tu en es dans ROADMAP_COMPLETE.md, quelle page designer maintenant
+  4. **Te situer** : Où tu en es dans `docs/context/ROADMAP_COMPLETE.md`, quelle page designer maintenant
   5. **Réfléchir avec toi** : Décisions design (UX/UI, couleurs, typo, layouts)
   6. **Valider tes avancées** : Feedback sur tes designs, suggestions d'amélioration
   7. **Conseils techniques** : Comment structurer pour faciliter le code (Auto Layout, naming)
@@ -405,17 +494,17 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 ### Fichiers de contexte à maintenir
 
-- **ARCHITECTURE_ADMIN_CENTRAL.md** : Architecture complète Admin Centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
-- **CONTEXT.md** : Contexte général du projet, architecture globale, état actuel
-- **ROADMAP_COMPLETE.md** : Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
-- **BRAINSTORMING_ROADMAP.md** : Brainstorming & décisions prises
-- **CLARIFICATIONS_BRAINSTORMING.md** : Clarifications et décisions validées
-- **API_CONFIG.md** : Configuration API centralisée (ports, endpoints, variables d'environnement, conventions)
-- **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
-- **frontend/AUTH_USAGE.md** : Documentation système authentification frontend (useAuth, AuthContext)
-- **backend/BACKEND.md** : Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
-- **POLICIES_TODO.md** : Note pour finaliser politiques livraison/retour
-- **ANIMATIONS_GUIDE.md** : Guide complet des animations GSAP (workflow, exemples, bonnes pratiques) ⭐ **RÉFÉRENCE ANIMATIONS**
+- **ARCHITECTURE_ADMIN_CENTRAL.md** : `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` - Architecture complète Admin Centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
+- **CONTEXT.md** : `docs/context/CONTEXT.md` - Contexte général du projet, architecture globale, état actuel
+- **ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` - Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
+- **BRAINSTORMING_ROADMAP.md** : `docs/context/BRAINSTORMING_ROADMAP.md` - Brainstorming & décisions prises
+- **CLARIFICATIONS_BRAINSTORMING.md** : `docs/context/CLARIFICATIONS_BRAINSTORMING.md` - Clarifications et décisions validées
+- **API_CONFIG.md** : `docs/context/API_CONFIG.md` - Configuration API centralisée (ports, endpoints, variables d'environnement, conventions)
+- **frontend/FRONTEND.md** : `frontend/FRONTEND.md` - Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
+- **frontend/AUTH_USAGE.md** : `frontend/AUTH_USAGE.md` - Documentation système authentification frontend (useAuth, AuthContext)
+- **backend/BACKEND.md** : `backend/BACKEND.md` - Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
+- **POLICIES_TODO.md** : `docs/context/POLICIES_TODO.md` - Note pour finaliser politiques livraison/retour
+- **ANIMATIONS_GUIDE.md** : `docs/animations/ANIMATIONS_GUIDE.md` - Guide complet des animations AnimeJS (workflow, exemples, bonnes pratiques) ⭐ **RÉFÉRENCE ANIMATIONS**
 
 ### 🎯 Règle ROADMAP_COMPLETE.md - OBLIGATOIRE
 
@@ -483,24 +572,101 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 ### Processus de documentation
 
 1. **Avant de commencer** : 
-   - ✅ **Consulter ROADMAP_COMPLETE.md** (obligatoire)
-   - ✅ **Consulter ARCHITECTURE_ADMIN_CENTRAL.md** si travail sur admin ou architecture
-   - ✅ Consulter CONTEXT.md pour l'état actuel
-   - ✅ Consulter FRONTEND.md ou BACKEND.md selon le contexte
+   - ✅ **Consulter ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` (obligatoire)
+   - ✅ **Consulter ARCHITECTURE_ADMIN_CENTRAL.md** : `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` si travail sur admin ou architecture
+   - ✅ Consulter CONTEXT.md : `docs/context/CONTEXT.md` pour l'état actuel
+   - ✅ Consulter FRONTEND.md : `frontend/FRONTEND.md` ou BACKEND.md : `backend/BACKEND.md` selon le contexte
 
 2. **Pendant le développement** : 
    - Noter les changements et nouvelles fonctionnalités
 
 3. **Après chaque étape** : 
-   - ✅ **Mettre à jour ROADMAP_COMPLETE.md** (obligatoire, cocher les tâches)
+   - ✅ **Mettre à jour ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` (obligatoire, cocher les tâches)
      - **⭐ UTILISER LE CLI** : `./rcli roadmap update --task "..."` (gain de 97%)
-   - ✅ Mettre à jour CONTEXT.md si fin de phase
+   - ✅ Mettre à jour CONTEXT.md : `docs/context/CONTEXT.md` si fin de phase
      - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
-   - ✅ Mettre à jour FRONTEND.md ou BACKEND.md
+   - ✅ Mettre à jour FRONTEND.md : `frontend/FRONTEND.md` ou BACKEND.md : `backend/BACKEND.md`
      - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
    
 4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
    - **Note** : Le CLI respecte automatiquement le format existant
+
+### 🔒 Règle : Gestion des fichiers MD temporaires
+
+**PROBLÈME** : Des fichiers MD temporaires (diagnostics, solutions, vérifications ponctuelles) sont créés et laissés dans la documentation, devenant obsolètes.
+
+**RÈGLE OBLIGATOIRE** :
+
+#### ❌ Ne PAS créer de fichiers MD temporaires dans `docs/`
+
+**Types de fichiers à éviter** :
+- `DIAGNOSTIC_*.md` - Diagnostics de problèmes
+- `SOLUTION_*.md` - Solutions de problèmes résolus
+- `VERIFICATION_*.md` - Vérifications ponctuelles
+- `CONTEXTE_IA_*.md` - Confirmations ponctuelles
+- `FILES_TO_REVIEW.md` - Analyses ponctuelles
+- `*_PLAN.md` - Plans temporaires (sauf dans `docs/phases/` pour phases actives)
+- `*_RESUME.md` - Résumés temporaires (sauf dans `docs/phases/` pour phases actives)
+
+#### ✅ Alternatives recommandées
+
+**Pour les diagnostics/solutions** :
+1. **Documenter dans le chat** : Expliquer le problème et la solution directement
+2. **Mettre à jour la documentation existante** : Si le problème est récurrent, ajouter une section dans la doc pertinente (ex: `docs/server/` pour problèmes serveur)
+3. **Si vraiment nécessaire** : Créer dans `docs/archive/` avec date et supprimer après résolution
+
+**Pour les vérifications ponctuelles** :
+- Faire la vérification dans le chat
+- Mettre à jour directement les fichiers concernés si nécessaire
+- Ne pas créer de fichier dédié
+
+**Pour les plans/résumés de phases** :
+- ✅ **Autorisé** : `docs/phases/PHASE_X_PLAN.md` et `docs/phases/PHASE_X_RESUME.md` pour phases **actives**
+- ❌ **Interdit** : Créer ces fichiers pour phases terminées
+- ✅ **Action** : Archiver dans `docs/archive/` une fois la phase terminée
+
+#### 📦 Archivage des fichiers obsolètes
+
+**Quand archiver** :
+- Problème résolu (diagnostic/solution)
+- Vérification terminée
+- Phase terminée (plan/résumé)
+
+**Comment archiver** :
+```bash
+# Déplacer dans docs/archive/
+mv docs/DIAGNOSTIC_*.md docs/archive/
+mv docs/SOLUTION_*.md docs/archive/
+mv docs/phases/PHASE_X_*.md docs/archive/  # Si phase terminée
+```
+
+**Documentation de l'archive** :
+- Mettre à jour `docs/archive/README.md` avec la raison de l'archivage
+- Ajouter la date d'archivage
+
+#### ✅ Fichiers MD permanents autorisés
+
+**Dans `docs/`** :
+- Guides et workflows (`GIT_WORKFLOW.md`, `ANIMATIONS_GUIDE.md`, etc.)
+- Documentation architecture (`ARCHITECTURE_*.md`)
+- Documentation serveur (`PRODUCTION_SECURITY.md`, `BACKUP_AND_LOGS.md`, etc.)
+- Documentation intégrations (`STRIPE_*.md`, `GA4_*.md`, `CLOUDFLARE_*.md`, etc.)
+- Index et README (`README.md`, `CONTEXT_INDEX.md`, etc.)
+
+**Dans `docs/phases/`** :
+- Récapitulatifs de phases (`PHASE_X_RECAP.md`) - **À garder** (historique utile)
+- Checklists de completion (`PHASE_X_COMPLETION.md`) - **À garder** (référence)
+- Synthèses et FAQ pour phases actives (`PHASE_X_SYNTHESE.md`, `PHASE_X_FAQ_*.md`) - **À garder**
+
+**Dans `docs/context/`** :
+- Fichiers de contexte permanents (`CONTEXT.md`, `ROADMAP_COMPLETE.md`, `API_CONFIG.md`, etc.)
+
+#### 🎯 Règle d'or
+
+**Si le fichier MD sert à résoudre un problème ponctuel ou documenter une vérification temporaire** :
+- ❌ **NE PAS le créer dans `docs/`**
+- ✅ **Documenter dans le chat ou mettre à jour la doc existante**
+- ✅ **Si vraiment nécessaire, créer dans `docs/archive/` et supprimer après résolution**
 
 ## 🚀 CLI Python - Automatisation & Gestion Serveur (PRÊT POUR PRODUCTION)
 
@@ -724,6 +890,290 @@ source venv/bin/activate
 - **Préférer le CLI** à la modification manuelle des fichiers
 - **Documenter** les nouvelles fonctionnalités CLI dans `cli/ROADMAP.md`
 
+### 🖥️ CLI - Gestion Serveur VPS (PRODUCTION)
+
+Le CLI dispose d'un **arsenal complet de commandes** pour gérer et surveiller le serveur VPS de production.
+
+#### 📋 Commandes Serveur (`server`)
+
+**Statut et monitoring** :
+```bash
+# État des containers (Reboul Store + Admin Central)
+./rcli server status
+./rcli server status --all
+./rcli server status --admin  # Admin Central uniquement
+./rcli server status --watch  # Mode watch (temps réel)
+
+# Ressources système (CPU, RAM, disque, réseau)
+./rcli server resources
+
+# Monitoring continu avec seuils
+./rcli server monitor
+./rcli server monitor --once
+./rcli server monitor --cpu-threshold 70 --ram-threshold 85
+```
+
+**Logs** :
+```bash
+# Logs de tous les services
+./rcli server logs
+./rcli server logs backend
+./rcli server logs --follow  # Suivre en temps réel
+./rcli server logs --errors  # Filtrer uniquement les erreurs
+./rcli server logs --tail 200
+./rcli server logs --admin  # Admin Central
+
+# Recherche avancée dans les logs
+./rcli logs errors --last 1h
+./rcli logs search "ERROR" --last 1h
+./rcli logs api-errors --last 1h  # Erreurs API (4xx, 5xx)
+./rcli logs slow-requests --threshold 2.0  # Requêtes lentes
+./rcli logs user-activity --last 1h --top 20  # Activité utilisateurs
+```
+
+**Gestion des services** :
+```bash
+# Redémarrer un service
+./rcli server restart
+./rcli server restart backend
+./rcli server restart --admin
+
+# Liste détaillée des containers
+./rcli server ps
+./rcli server ps --admin
+
+# Nettoyer Docker
+./rcli server cleanup --volumes
+./rcli server cleanup --images
+./rcli server cleanup --all --yes
+```
+
+**Variables d'environnement** :
+```bash
+# Vérifier les fichiers .env
+./rcli server env --check
+
+# Backup des fichiers .env
+./rcli server env --backup
+```
+
+#### 🔐 Sécurité et Certificats
+
+```bash
+# Vérifier l'expiration des certificats SSL
+./rcli server ssl --check
+./rcli server ssl --check --domain reboulstore.com
+./rcli server ssl --check --admin
+
+# Audit de sécurité complet
+./rcli server security --audit
+```
+
+**Vérifications de sécurité** :
+- Ports ouverts
+- Permissions des fichiers sensibles (.env, clés SSL)
+- Certificats SSL (expiration)
+- Mises à jour de sécurité disponibles
+- Configuration firewall (UFW/iptables)
+- Conteneurs Docker actifs
+
+#### ⏰ Gestion des Cron Jobs
+
+```bash
+# Lister tous les cron jobs
+./rcli server cron --list
+
+# Activer le backup automatique de la DB (quotidien à 2h)
+./rcli server cron --enable-backup
+
+# Désactiver le backup automatique
+./rcli server cron --disable-backup
+
+# Ajouter un cron job personnalisé
+./rcli server cron --add "0 3 * * * /path/to/script.sh" --description "Mon script quotidien"
+
+# Supprimer un cron job
+./rcli server cron --remove 1
+```
+
+#### 📁 Gestion des fichiers (upload/download)
+
+```bash
+# Uploader un fichier
+./rcli server file --upload ./image.jpg /var/www/reboulstore/uploads/image.jpg
+
+# Télécharger un fichier
+./rcli server file --download /var/log/nginx/error.log ./logs/error.log
+
+# Lister les fichiers d'un répertoire
+./rcli server file --list /var/www/reboulstore/backups
+
+# Backup d'un répertoire (ex: uploads)
+./rcli server file --backup uploads
+
+# Backup complet (uploads + configs)
+./rcli server file --backup-all
+```
+
+#### 🖥️ Exécuter des commandes SSH
+
+```bash
+# Exécuter une commande simple
+./rcli server exec "df -h"
+
+# Exécuter une commande dans un répertoire spécifique
+./rcli server exec "ls -la" --cwd /var/www/reboulstore
+
+# Voir les containers Docker
+./rcli server exec "docker ps"
+```
+
+#### 🌐 Vérification DNS/Propagation
+
+```bash
+# Vérifier les enregistrements DNS d'un domaine
+./rcli server dns --check reboulstore.com
+
+# Vérifier la propagation DNS pour tous les domaines
+./rcli server dns --propagate
+```
+
+#### 💾 Backup et Rollback
+
+```bash
+# Backup complet du système (DB + fichiers + configs)
+./rcli server backup --full
+
+# Lister les backups disponibles
+./rcli server rollback --list
+
+# Rollback vers un backup spécifique
+./rcli server rollback --to 20250129_120000
+
+# Rollback vers le dernier backup
+./rcli server rollback --latest
+./rcli server rollback --latest --db-only  # DB uniquement
+./rcli server rollback --latest --yes  # Sans confirmation
+```
+
+#### 🏥 Health Check
+
+```bash
+# Vérifier la santé de tous les services
+./rcli health check
+./rcli health check --service reboul
+./rcli health check --service admin
+
+# État des containers Docker
+./rcli health containers
+```
+
+#### 🚀 Déploiement
+
+```bash
+# Vérifier que le déploiement fonctionne
+./rcli deploy check
+./rcli deploy check --service reboul
+./rcli deploy check --service admin
+
+# Déployer les services
+./rcli deploy deploy
+./rcli deploy deploy --service reboul
+./rcli deploy deploy --service admin
+./rcli deploy deploy --build  # Rebuild les images
+./rcli deploy deploy --pull  # Pull git avant déploiement
+
+# Mettre à jour le code depuis git et redémarrer
+./rcli deploy update
+./rcli deploy update --pull
+./rcli deploy update --rebuild
+```
+
+#### 🎯 Workflows Recommandés
+
+**Avant un déploiement** :
+```bash
+# 1. Vérifier l'état des ressources
+./rcli server monitor --once
+
+# 2. Faire un backup complet
+./rcli server backup --full
+
+# 3. Vérifier les logs d'erreurs
+./rcli logs errors --last 1h
+
+# 4. Vérifier la sécurité
+./rcli server security --audit
+```
+
+**Après un déploiement** :
+```bash
+# 1. Vérifier que tout fonctionne
+./rcli server status
+./rcli logs api-errors --last 5m
+
+# 2. Monitorer les ressources
+./rcli server monitor --interval 30
+
+# 3. Si problème, rollback rapide
+./rcli server rollback --list
+./rcli server rollback --latest
+```
+
+**Maintenance quotidienne** :
+```bash
+# Vérifier les certificats SSL (1x par semaine)
+./rcli server ssl --check
+
+# Vérifier les cron jobs
+./rcli server cron --list
+
+# Audit de sécurité (1x par mois)
+./rcli server security --audit
+
+# Vérifier l'espace disque
+./rcli server exec "df -h"
+```
+
+**Maintenance hebdomadaire** :
+```bash
+# Vérifier les ressources
+./rcli server monitor --once
+
+# Vérifier les backups
+./rcli db backup-list
+./rcli server rollback --list
+
+# Analyser l'activité
+./rcli logs user-activity --last 7d
+
+# Vérifier les requêtes lentes
+./rcli logs slow-requests --last 7d
+```
+
+#### 📚 Documentation CLI Serveur
+
+- **CLI_SERVER_COMMANDS.md** : `cli/CLI_SERVER_COMMANDS.md` - Toutes les commandes serveur ⭐
+- **CLI_SERVER_USAGE.md** : `docs/cli/CLI_SERVER_USAGE.md` - Guide d'utilisation complet
+- **CLI_VPS_COMMANDS.md** : `docs/cli/CLI_VPS_COMMANDS.md` - Commandes VPS détaillées
+- **RECAPITULATIF.md** : `cli/RECAPITULATIF.md` - Récapitulatif complet du CLI
+
+#### ⚙️ Configuration Requise
+
+Les commandes nécessitent :
+- Configuration SSH vers le serveur (définie dans `SERVER_CONFIG`)
+- Accès au serveur VPS
+- Docker et Docker Compose installés sur le serveur
+
+**Variables d'environnement** (optionnelles) :
+```bash
+export VPS_HOST=152.228.218.35
+export VPS_USER=deploy
+export VPS_SSH_KEY=~/.ssh/id_rsa
+```
+
+Voir `cli/utils/server_helper.py` pour la configuration.
+
 ---
 
 ## 🔧 Project Commands Cursor
@@ -755,11 +1205,11 @@ source venv/bin/activate
   - Plugins Figma recommandés
   - Conversion Figma → TailwindCSS
 
-- **`/animation-workflow`** : Workflow animations GSAP
+- **`/animation-workflow`** : Workflow animations AnimeJS
   - Création d'animations réutilisables
   - Structure animations/, presets/, components/
   - Utilisation hooks, constantes
-  - Bonnes pratiques GSAP
+  - Bonnes pratiques AnimeJS
 
 - **`/documentation-workflow`** : Workflow documentation
   - Quand et comment mettre à jour les docs
@@ -792,7 +1242,7 @@ source venv/bin/activate
 
 ### Commandes utilitaires
 
-- **`/update-roadmap`** : Mettre à jour ROADMAP_COMPLETE.md
+- **`/update-roadmap`** : Mettre à jour ROADMAP_COMPLETE.md (`docs/context/ROADMAP_COMPLETE.md`)
   - **⭐ RECOMMANDÉ** : Utiliser le CLI (`./rcli roadmap update --task "..."`)
   - Quand et comment cocher les tâches
   - Format de mise à jour
@@ -836,7 +1286,7 @@ source venv/bin/activate
 - ✅ Pour rappeler le processus design → code
 
 #### Quand utiliser automatiquement `/animation-workflow`
-- ✅ Quand l'utilisateur veut créer une animation GSAP
+- ✅ Quand l'utilisateur veut créer une animation AnimeJS
 - ✅ Quand l'utilisateur demande comment animer un élément
 - ✅ Pour rappeler la structure animations/ et les bonnes pratiques
 
@@ -880,3 +1330,305 @@ source venv/bin/activate
 - Corriger ensemble, pas seul
 - Expliquer les erreurs et leurs solutions
 - S'assurer que le code fonctionne avant de passer à la suite
+
+## 🔒 Règles de Build et Déploiement - OBLIGATOIRES
+
+### Protection fichiers .env.production
+
+**RÈGLE CRITIQUE** : Les fichiers `.env.production` sont **OBLIGATOIRES** pour tous les builds et déploiements.
+
+#### Vérifications obligatoires avant build
+
+1. **Existence du fichier** :
+   - ✅ Vérifier que `.env.production` existe AVANT chaque build
+   - ✅ Vérifier pour Reboul Store ET Admin Central (si configuré)
+   - ❌ **INTERDICTION** de builder sans `.env.production`
+   - ❌ **INTERDICTION** de builder avec un fichier vide
+
+2. **Sauvegarde automatique** :
+   - ✅ Sauvegarder automatiquement `.env.production` avant chaque déploiement
+   - ✅ Sauvegardes stockées dans `/opt/reboulstore/.env-backups/`
+   - ✅ Garder les 10 derniers backups
+
+3. **Cohérence architecture** :
+   - ✅ **TOUJOURS** appliquer les mêmes protections à Reboul Store ET Admin Central
+   - ✅ Si une protection est ajoutée pour un projet, l'ajouter pour l'autre
+   - ✅ Architecture globale = même niveau de protection partout
+
+#### Processus obligatoire
+
+**AVANT chaque build** :
+1. Sauvegarder les fichiers `.env.production` existants
+2. Vérifier que Reboul Store `.env.production` existe et n'est pas vide
+3. Vérifier que Admin Central `.env.production` existe et n'est pas vide (si configuré)
+4. Si Admin Central manquant → tentative de création automatique
+5. Si toujours manquant → **BLOQUER le build** avec message d'erreur clair
+
+**PENDANT le build** :
+- Utiliser `--env-file .env.production` pour charger les variables
+- Vérifier que le build réussit
+- Si échec → vérifier les logs et les variables d'environnement
+
+**APRÈS le build** :
+- Vérifier que les containers démarrent correctement
+- Vérifier les health checks
+- Vérifier les logs pour détecter les erreurs
+
+#### Scripts de protection
+
+- `./scripts/protect-env-files.sh --backup` : Sauvegarder les fichiers
+- `./scripts/protect-env-files.sh --check` : Vérifier l'existence
+- `./scripts/protect-env-files.sh --restore` : Restaurer depuis backup
+- `./scripts/protect-env-files.sh --auto-create-admin` : Créer Admin Central si manquant
+
+#### Règles d'application
+
+✅ **À FAIRE** :
+- Vérifier `.env.production` pour Reboul Store ET Admin Central
+- Sauvegarder avant chaque déploiement
+- Bloquer le build si fichiers manquants
+- Créer automatiquement Admin Central si possible
+- Appliquer les mêmes protections partout (cohérence architecture)
+
+❌ **À ÉVITER** :
+- Builder sans vérifier `.env.production`
+- Builder avec un fichier vide
+- Appliquer des protections seulement à un projet
+- Ignorer les erreurs de build
+- Continuer le déploiement si `.env.production` manque
+
+### Vérification et réparation des erreurs de build
+
+**RÈGLE OBLIGATOIRE** : Toutes les erreurs de build doivent être vérifiées et réparées.
+
+#### Processus obligatoire
+
+1. **Détection d'erreur** :
+   - ✅ Analyser les logs de build pour identifier l'erreur
+   - ✅ Vérifier les variables d'environnement manquantes
+   - ✅ Vérifier les fichiers manquants (`.env.production`, etc.)
+
+2. **Réparation automatique** :
+   - ✅ Si `.env.production` manquant → restaurer depuis backup
+   - ✅ Si Admin Central manquant → créer automatiquement
+   - ✅ Si variables manquantes → informer l'utilisateur
+
+3. **Blocage si nécessaire** :
+   - ✅ Bloquer le build si `.env.production` manquant
+   - ✅ Bloquer le build si erreur critique non réparable
+   - ✅ Afficher des messages d'erreur clairs avec solutions
+
+4. **Documentation** :
+   - ✅ Documenter les erreurs rencontrées
+   - ✅ Documenter les solutions appliquées
+   - ✅ Mettre à jour les scripts pour éviter les erreurs futures
+
+#### Cohérence architecture
+
+**RÈGLE CRITIQUE** : Toutes les protections et vérifications doivent être appliquées de manière cohérente à tous les projets.
+
+- ✅ Si une protection est ajoutée pour Admin Central → l'ajouter pour Reboul Store
+- ✅ Si une vérification est ajoutée pour Reboul Store → l'ajouter pour Admin Central
+- ✅ Même niveau de protection partout
+- ✅ Même processus de vérification partout
+- ✅ Même gestion d'erreurs partout
+
+**Exemples** :
+- Vérification `.env.production` → Reboul Store ET Admin Central
+- Sauvegarde automatique → Reboul Store ET Admin Central
+- Vérification fichiers vides → Reboul Store ET Admin Central
+- Messages d'erreur → même format pour les deux projets
+
+### 💾 Sauvegarde Automatique Base de Données - OBLIGATOIRE
+
+**RÈGLE CRITIQUE** : La base de données DOIT être sauvegardée automatiquement avant toute modification risquée.
+
+#### Objectif : Ne jamais perdre de données
+
+**Principe fondamental** : Toute modification de la base de données (migration, modification de schéma, suppression, etc.) peut potentiellement causer une perte de données. Une sauvegarde automatique AVANT chaque opération risquée est OBLIGATOIRE.
+
+#### Quand l'IA sauvegarde automatiquement
+
+**L'IA DOIT sauvegarder automatiquement la base de données dans ces cas** :
+
+1. **Avant chaque migration** :
+   - ✅ **OBLIGATOIRE** : Sauvegarder avant d'exécuter une migration
+   - ✅ Utiliser : `./rcli db backup --server`
+   - ✅ Vérifier que le backup a réussi avant de continuer
+   - ✅ Si le backup échoue → **NE PAS exécuter la migration**
+
+2. **Avant toute modification de schéma** :
+   - ✅ Avant `ALTER TABLE` (ajout/suppression de colonnes)
+   - ✅ Avant `DROP TABLE` ou `DROP COLUMN`
+   - ✅ Avant `TRUNCATE TABLE`
+   - ✅ Avant modification de contraintes (foreign keys, unique, etc.)
+
+3. **Avant opérations de nettoyage massif** :
+   - ✅ Avant `DELETE FROM table WHERE ...` (suppressions en masse)
+   - ✅ Avant scripts de nettoyage de données
+   - ✅ Avant migrations de données (transformation de données)
+
+4. **Avant restauration d'une ancienne base** :
+   - ✅ Si l'utilisateur mentionne restaurer une ancienne base
+   - ✅ Sauvegarder l'état actuel AVANT de restaurer
+   - ✅ Permettre de revenir en arrière si nécessaire
+
+5. **Avant corrections de bugs critiques** :
+   - ✅ Si correction d'un bug qui modifie la structure de la DB
+   - ✅ Si correction qui peut affecter les données existantes
+
+6. **Sur demande explicite de l'utilisateur** :
+   - ✅ Si l'utilisateur demande explicitement une sauvegarde
+   - ✅ Avant toute opération qu'il juge risquée
+
+#### Processus de sauvegarde automatique
+
+**Étape 1 : Détection de l'opération risquée**
+- L'IA détecte qu'une opération va modifier la base de données
+- Exemples : migration, `ALTER TABLE`, `DROP`, `DELETE` massif, etc.
+
+**Étape 2 : Sauvegarde automatique (OBLIGATOIRE)**
+```bash
+# Sauvegarde automatique avant opération risquée
+./rcli db backup --server
+```
+
+**Étape 3 : Vérification du succès**
+- ✅ Vérifier que le backup a réussi (code de retour, fichier créé)
+- ✅ Si échec → **BLOQUER l'opération** et informer l'utilisateur
+- ✅ Afficher le nom du fichier de backup créé
+
+**Étape 4 : Exécution de l'opération**
+- ✅ Seulement si le backup a réussi
+- ✅ Exécuter l'opération demandée
+- ✅ Vérifier le résultat
+
+**Étape 5 : Confirmation**
+- ✅ Informer l'utilisateur que le backup a été créé
+- ✅ Donner le nom du fichier de backup
+- ✅ Rappeler comment restaurer si nécessaire
+
+#### Exemples concrets
+
+**Exemple 1 : Migration Collections**
+```bash
+# 1. Détection : Migration va créer/modifier des tables
+# 2. Sauvegarde automatique
+./rcli db backup --server
+# ✅ Backup créé : reboulstore_db_20251231_085357.sql.gz
+
+# 3. Vérification succès
+# ✅ Backup réussi
+
+# 4. Exécution migration
+# ... exécution migration ...
+
+# 5. Confirmation
+# ✅ Migration exécutée. Backup disponible : reboulstore_db_20251231_085357.sql.gz
+```
+
+**Exemple 2 : Modification de schéma**
+```bash
+# 1. Détection : ALTER TABLE va modifier la structure
+# 2. Sauvegarde automatique
+./rcli db backup --server
+# ✅ Backup créé avant modification
+
+# 3. Exécution ALTER TABLE
+# ... modification ...
+```
+
+**Exemple 3 : Suppression de données**
+```bash
+# 1. Détection : DELETE FROM va supprimer des données
+# 2. Sauvegarde automatique
+./rcli db backup --server
+# ✅ Backup créé avant suppression
+
+# 3. Exécution DELETE
+# ... suppression ...
+```
+
+#### Sauvegardes automatiques programmées
+
+**En plus des sauvegardes avant opérations risquées** :
+
+1. **Backup automatique quotidien** (cron job) :
+   - ✅ Configuré via : `./rcli server cron --enable-backup`
+   - ✅ Exécution : Tous les jours à 2h du matin
+   - ✅ Conservation : 30 derniers backups automatiquement
+
+2. **Backup avant déploiement** :
+   - ✅ Workflow recommandé : `./rcli server backup --full`
+   - ✅ Sauvegarde DB + fichiers + configs
+   - ✅ Avant chaque déploiement en production
+
+#### Règles d'application
+
+✅ **À FAIRE** :
+- Sauvegarder automatiquement AVANT chaque migration
+- Sauvegarder automatiquement AVANT chaque modification de schéma
+- Sauvegarder automatiquement AVANT chaque suppression de données
+- Vérifier que le backup a réussi avant de continuer
+- Informer l'utilisateur du nom du fichier de backup
+- Bloquer l'opération si le backup échoue
+- Utiliser `./rcli db backup --server` pour les sauvegardes
+
+❌ **À ÉVITER** :
+- Exécuter une migration sans sauvegarde préalable
+- Modifier le schéma sans sauvegarde
+- Supprimer des données sans sauvegarde
+- Ignorer un échec de backup
+- Continuer une opération si le backup a échoué
+
+#### Gestion des backups
+
+**Emplacement** : `/opt/reboulstore/backups/` (serveur)
+
+**Nommage** : `reboulstore_db_YYYYMMDD_HHMMSS.sql.gz`
+
+**Conservation** :
+- ✅ 30 derniers backups automatiques (cron quotidien)
+- ✅ Backups manuels : conservés jusqu'à suppression manuelle
+- ✅ Backups avant migrations : conservés (important pour rollback)
+
+**Restoration** :
+```bash
+# Lister les backups disponibles
+./rcli db backup-list
+
+# Restaurer un backup
+./rcli db backup-restore reboulstore_db_20251231_085357.sql.gz --yes
+```
+
+#### Communication avec l'utilisateur
+
+**Quand l'IA sauvegarde automatiquement** :
+- ✅ Informer : "💾 Sauvegarde automatique de la base de données avant [opération]..."
+- ✅ Confirmer : "✅ Backup créé : `reboulstore_db_YYYYMMDD_HHMMSS.sql.gz`"
+- ✅ Si échec : "❌ Échec du backup. Opération annulée pour sécurité."
+
+**Message type** :
+```
+💾 Sauvegarde automatique de la base de données avant migration...
+✅ Backup créé : reboulstore_db_20251231_085357.sql.gz
+🚀 Exécution de la migration...
+```
+
+#### Cohérence architecture
+
+**RÈGLE CRITIQUE** : Les sauvegardes automatiques s'appliquent à TOUTES les bases de données du projet.
+
+- ✅ Reboul Store : Sauvegarde avant modifications
+- ✅ Admin Central : Sauvegarde avant modifications (si base séparée)
+- ✅ Toutes les bases : Même niveau de protection
+
+#### Exceptions (sauvegarde non nécessaire)
+
+**Cas où la sauvegarde automatique n'est PAS nécessaire** :
+- ❌ Requêtes SELECT (lecture seule)
+- ❌ Requêtes INSERT simples (ajout de nouvelles données)
+- ❌ Requêtes UPDATE simples (modification de valeurs sans changement de structure)
+- ❌ Opérations de lecture (GET, LIST, etc.)
+
+**Règle d'or** : Si l'opération peut causer une perte de données ou modifier la structure → **SAUVEGARDE OBLIGATOIRE**

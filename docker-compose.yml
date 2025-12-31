@@ -33,7 +33,7 @@ services:
       - backend_node_modules:/app/node_modules
     environment:
       - NODE_ENV=development
-      # Configuration DB : utilise .env.local si disponible, sinon valeurs par défaut (DB locale)
+      # Configuration DB : utilise .env.production (VPS) ou valeurs par défaut
       - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=${DB_PORT:-5432}
       - DB_USERNAME=${DB_USERNAME:-reboulstore}

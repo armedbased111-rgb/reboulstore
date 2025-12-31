@@ -31,7 +31,7 @@ __decorate([
 ], ProductQueryDto.prototype, "category", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductQueryDto.prototype, "brand", void 0);
 __decorate([

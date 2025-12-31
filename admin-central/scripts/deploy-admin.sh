@@ -58,9 +58,22 @@ fi
 
 # Vérifier que .env.production existe (dans le répertoire admin-central)
 if [ ! -f "$ADMIN_DIR/.env.production" ]; then
-    warn "⚠️  Le fichier .env.production n'existe pas dans $ADMIN_DIR"
-    warn "   Le déploiement peut échouer si les variables d'environnement ne sont pas définies"
-    warn "   Créez-le à partir de env.production.example si nécessaire"
+    error "❌ ERREUR CRITIQUE: Le fichier .env.production n'existe pas dans $ADMIN_DIR"
+    error "❌ Le déploiement ne peut pas continuer sans ce fichier"
+    error ""
+    error "💡 Solutions:"
+    error "   1. Créer le fichier: ./scripts/setup-admin-env.sh"
+    error "   2. Restaurer depuis backup: ./scripts/protect-env-files.sh --restore"
+    error "   3. Copier depuis example: cp $ADMIN_DIR/env.production.example $ADMIN_DIR/.env.production"
+    error "      (puis remplir les valeurs manuellement)"
+    exit 1
+fi
+
+# Vérifier que le fichier n'est pas vide
+if [ ! -s "$ADMIN_DIR/.env.production" ]; then
+    error "❌ ERREUR: Le fichier .env.production est vide"
+    error "❌ Utilisez: ./scripts/setup-admin-env.sh pour le remplir"
+    exit 1
 fi
 
 # Vérifier que le réseau Docker existe (créé par reboulstore)

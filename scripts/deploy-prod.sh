@@ -209,6 +209,82 @@ else
     info "✅ Connexion SSH (simulation)"
 fi
 
+# Protection des fichiers .env.production (AVANT tout) - OBLIGATOIRE
+section "🔒 Protection des fichiers .env.production (OBLIGATOIRE)"
+
+if [ "$DRY_RUN" = false ]; then
+    # 1. Sauvegarder les fichiers existants
+    info "Sauvegarde des fichiers .env.production avant déploiement..."
+    if ./scripts/protect-env-files.sh --backup; then
+        info "✅ Fichiers .env.production sauvegardés"
+    else
+        warn "⚠️  Échec de la sauvegarde des fichiers .env.production"
+    fi
+    
+    # 2. Vérifier OBLIGATOIREMENT que les fichiers existent
+    info "Vérification OBLIGATOIRE des fichiers .env.production..."
+    
+    # Vérifier Reboul Store (OBLIGATOIRE)
+    REBOUL_ENV_CHECK="test -f $SERVER_PATH/.env.production && echo 'exists' || echo 'missing'"
+    REBOUL_ENV_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBOUL_ENV_CHECK\"")
+    
+    if echo "$REBOUL_ENV_STATUS" | grep -q "missing"; then
+        error "❌ ERREUR CRITIQUE: Reboul Store .env.production MANQUANT"
+        error "❌ Le build est INTERDIT sans ce fichier"
+        error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+        error "❌ OU créez le fichier manuellement sur le serveur"
+        exit 1
+    fi
+    
+    # Vérifier que le fichier Reboul Store n'est pas vide
+    REBOUL_ENV_SIZE=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"wc -c < $SERVER_PATH/.env.production\"")
+    if [ "$REBOUL_ENV_SIZE" -eq 0 ]; then
+        error "❌ ERREUR CRITIQUE: Reboul Store .env.production est VIDE"
+        error "❌ Le build est INTERDIT avec un fichier vide"
+        error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+        exit 1
+    fi
+    
+    info "✅ Reboul Store .env.production présent et valide"
+    
+    # Vérifier Admin Central (si configuré)
+    ADMIN_CHECK_CMD="test -d $SERVER_PATH/admin-central && test -f $SERVER_PATH/admin-central/docker-compose.prod.yml && echo 'exists' || echo 'not_found'"
+    ADMIN_EXISTS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_CHECK_CMD\"")
+    
+    if echo "$ADMIN_EXISTS" | grep -q "exists"; then
+        ADMIN_ENV_CHECK="test -f $SERVER_PATH/admin-central/.env.production && echo 'exists' || echo 'missing'"
+        ADMIN_ENV_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_ENV_CHECK\"")
+        
+        if echo "$ADMIN_ENV_STATUS" | grep -q "missing"; then
+            warn "⚠️  Admin Central .env.production manquant, tentative de création automatique..."
+            if ./scripts/protect-env-files.sh --auto-create-admin; then
+                info "✅ Admin Central .env.production créé automatiquement"
+            else
+                error "❌ ERREUR CRITIQUE: Impossible de créer Admin Central .env.production"
+                error "❌ Le build est INTERDIT sans ce fichier"
+                error "❌ Utilisez: ./scripts/setup-admin-env.sh"
+                exit 1
+            fi
+        else
+            # Vérifier que le fichier Admin Central n'est pas vide
+            ADMIN_ENV_SIZE=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"wc -c < $SERVER_PATH/admin-central/.env.production\"")
+            if [ "$ADMIN_ENV_SIZE" -eq 0 ]; then
+                error "❌ ERREUR CRITIQUE: Admin Central .env.production est VIDE"
+                error "❌ Le build est INTERDIT avec un fichier vide"
+                error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+                exit 1
+            fi
+            info "✅ Admin Central .env.production présent et valide"
+        fi
+    else
+        info "ℹ️  Admin Central non configuré, ignoré"
+    fi
+    
+    info "✅ Tous les fichiers .env.production requis sont présents et valides"
+else
+    info "✅ Protection .env.production (simulation)"
+fi
+
 # Backup de la base de données (sauf si --skip-backup)
 if [ "$SKIP_BACKUP" = false ]; then
     section "💾 Backup de la base de données"
@@ -454,6 +530,28 @@ if [ "$DRY_RUN" = false ]; then
     fi
     
     # 4. Rebuild TOUT (frontend ET backend) avec --no-cache pour garantir un build propre
+    # ⚠️ OBLIGATOIRE: Vérifier que .env.production existe AVANT de builder
+    info "Vérification finale que .env.production existe avant build Reboul Store..."
+    REBOUL_ENV_FINAL_CHECK="test -f $SERVER_PATH/.env.production && echo 'exists' || echo 'missing'"
+    REBOUL_ENV_FINAL_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBOUL_ENV_FINAL_CHECK\"")
+    
+    if echo "$REBOUL_ENV_FINAL_STATUS" | grep -q "missing"; then
+        error "❌ ERREUR CRITIQUE: Reboul Store .env.production MANQUANT avant build"
+        error "❌ Le build est INTERDIT sans ce fichier"
+        error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+        error "❌ OU créez le fichier manuellement sur le serveur"
+        exit 1
+    fi
+    
+    # Vérifier que le fichier n'est pas vide
+    REBOUL_ENV_SIZE=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"wc -c < $SERVER_PATH/.env.production\"")
+    if [ "$REBOUL_ENV_SIZE" -eq 0 ]; then
+        error "❌ ERREUR CRITIQUE: Reboul Store .env.production est VIDE"
+        error "❌ Le build est INTERDIT avec un fichier vide"
+        error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+        exit 1
+    fi
+    
     info "Rebuild complet des services Reboul Store (frontend + backend) avec --no-cache..."
     REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
     
@@ -461,6 +559,9 @@ if [ "$DRY_RUN" = false ]; then
         info "✅ Services Reboul Store rebuild réussis"
     else
         error "❌ Échec du rebuild Reboul Store"
+        error "❌ Vérifiez les logs pour identifier l'erreur"
+        error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
+        exit 1
     fi
     
     # 5. Rebuild Admin Central si le répertoire existe
@@ -469,12 +570,36 @@ if [ "$DRY_RUN" = false ]; then
     ADMIN_EXISTS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_CHECK_CMD\"")
     
     if echo "$ADMIN_EXISTS" | grep -q "exists"; then
-        info "  → Admin Central trouvé, rebuild en cours..."
+        # Vérifier que .env.production existe AVANT de builder
+        ADMIN_ENV_CHECK="test -f $SERVER_PATH/admin-central/.env.production && echo 'exists' || echo 'missing'"
+        ADMIN_ENV_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_ENV_CHECK\"")
+        
+        if echo "$ADMIN_ENV_STATUS" | grep -q "missing"; then
+            error "❌ ERREUR CRITIQUE: Admin Central .env.production MANQUANT avant build"
+            error "❌ Le build est INTERDIT sans ce fichier"
+            error "❌ Utilisez: ./scripts/setup-admin-env.sh"
+            error "❌ OU restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+            exit 1
+        fi
+        
+        # Vérifier que le fichier n'est pas vide
+        ADMIN_ENV_SIZE=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"wc -c < $SERVER_PATH/admin-central/.env.production\"")
+        if [ "$ADMIN_ENV_SIZE" -eq 0 ]; then
+            error "❌ ERREUR CRITIQUE: Admin Central .env.production est VIDE avant build"
+            error "❌ Le build est INTERDIT avec un fichier vide"
+            error "❌ Restaurez depuis backup: ./scripts/protect-env-files.sh --restore"
+            exit 1
+        fi
+        
+        info "  → Admin Central trouvé, .env.production présent et valide, rebuild en cours..."
         ADMIN_REBUILD_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
         if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_REBUILD_CMD\""; then
             info "✅ Services Admin Central rebuild réussis"
         else
-            warn "⚠️  Échec du rebuild Admin Central (peut-être pas encore configuré)"
+            error "❌ Échec du rebuild Admin Central"
+            error "❌ Vérifiez les logs pour identifier l'erreur"
+            error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
+            exit 1
         fi
     else
         info "  → Admin Central non trouvé, ignoré"
