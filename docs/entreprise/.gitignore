@@ -1,0 +1,7 @@
+# Ignorer les documents sensibles (cartes d'identité, factures, etc.)
+*.pdf
+!README.md
+
+# Garder seulement le README dans le repo
+# Les PDFs doivent rester locaux pour des raisons de confidentialité
+

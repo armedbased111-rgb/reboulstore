@@ -582,3 +582,26 @@ if [ "$BACKEND_READY" = false ] && [ "$DRY_RUN" = false ]; then
     warn "⚠️  Vérifiez manuellement que tout fonctionne correctement"
 fi
 
+# Purge cache Cloudflare (si configuré)
+if [ "$DRY_RUN" = false ] && [ -n "$CLOUDFLARE_ZONE_ID" ] && [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+    section "🌐 Purge Cache Cloudflare"
+    
+    info "Purging du cache Cloudflare..."
+    
+    if ./scripts/cloudflare-purge.sh; then
+        info "✅ Cache Cloudflare purgé"
+    else
+        warn "⚠️  Échec de la purge Cloudflare (le site fonctionne toujours)"
+    fi
+elif [ "$DRY_RUN" = false ] && [ -z "$CLOUDFLARE_ZONE_ID" ]; then
+    info "ℹ️  Purge Cloudflare ignorée (CLOUDFLARE_ZONE_ID non défini)"
+fi
+
+# Afficher les liens d'accès
+info ""
+info "🌐 Liens d'accès:"
+info "   - Reboul Store: https://www.reboulstore.com"
+info "   - Admin Central: https://admin.reboulstore.com"
+info ""
+info "💡 Pour purger le cache navigateur: Cmd+Shift+R (Mac) ou Ctrl+Shift+R (Windows/Linux)"
+

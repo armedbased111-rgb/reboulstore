@@ -162,23 +162,34 @@ BODY_RESPONSE=$(echo "$RESPONSE" | sed '$d')
 
 # Vérifier le résultat
 if [ "$HTTP_CODE" = "200" ]; then
-    # Vérifier que la réponse JSON indique le succès
-    if echo "$BODY_RESPONSE" | grep -q '"success":true'; then
+    # Vérifier que la réponse JSON indique le succès (avec ou sans espaces)
+    if echo "$BODY_RESPONSE" | grep -qE '"success"\s*:\s*true'; then
         info "✅ Cache Cloudflare purgé avec succès"
         
         # Afficher les détails si disponibles
         if echo "$BODY_RESPONSE" | grep -q '"id"'; then
-            PURGE_ID=$(echo "$BODY_RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
-            info "  ID de purge: $PURGE_ID"
+            # Chercher l'ID dans result.id
+            PURGE_ID=$(echo "$BODY_RESPONSE" | grep -o '"result"[^}]*"id":"[^"]*"' | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+            if [ -n "$PURGE_ID" ]; then
+                info "  ID de purge: $PURGE_ID"
+            fi
         fi
     else
         # Extraire le message d'erreur
         ERROR_MSG=$(echo "$BODY_RESPONSE" | grep -o '"message":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "Erreur inconnue")
+        if [ -z "$ERROR_MSG" ] || [ "$ERROR_MSG" = "Erreur inconnue" ]; then
+            # Essayer d'extraire depuis errors array
+            ERROR_MSG=$(echo "$BODY_RESPONSE" | grep -o '"errors":\[[^\]]*\]' | grep -o '"message":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "Réponse inattendue")
+        fi
         error "❌ Échec de la purge: $ERROR_MSG"
     fi
 else
     # Extraire le message d'erreur
     ERROR_MSG=$(echo "$BODY_RESPONSE" | grep -o '"message":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "Erreur HTTP $HTTP_CODE")
+    if [ -z "$ERROR_MSG" ] || [ "$ERROR_MSG" = "Erreur HTTP $HTTP_CODE" ]; then
+        # Essayer d'extraire depuis errors array
+        ERROR_MSG=$(echo "$BODY_RESPONSE" | grep -o '"errors":\[[^\]]*\]' | grep -o '"message":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "Erreur HTTP $HTTP_CODE")
+    fi
     error "❌ Échec de la purge (HTTP $HTTP_CODE): $ERROR_MSG"
 fi
 
