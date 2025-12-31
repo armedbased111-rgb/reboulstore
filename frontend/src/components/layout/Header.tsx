@@ -761,34 +761,34 @@ export const Header = () => {
                                 {brands
                                   .slice(pageIndex * BRANDS_PER_PAGE, (pageIndex + 1) * BRANDS_PER_PAGE)
                                   .map((brand) => (
-                                    <li 
-                                      key={brand.id}
+                        <li 
+                          key={brand.id}
                                       className="mb-1"
-                                    >
-                                      <Link
-                                        to={`/catalog?brand=${brand.slug}`}
-                                        className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
-                                        onClick={() => setIsBrandsMenuOpen(false)}
+                        >
+                          <Link
+                            to={`/catalog?brand=${brand.slug}`}
+                            className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
+                            onClick={() => setIsBrandsMenuOpen(false)}
                                         onMouseEnter={() => setHoveredBrand(brand)}
                                         onMouseLeave={() => setHoveredBrand(null)}
-                                      >
-                                        {brand.name}
-                                      </Link>
-                                    </li>
+                          >
+                            {brand.name}
+                          </Link>
+                        </li>
                                   ))}
                                 {/* Lien "Shop All Brands" sur la dernière page seulement */}
                                 {pageIndex === totalPages - 1 && (
                                   <li className="mt-4">
-                                    <Link
-                                      to="/catalog"
-                                      className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
-                                      onClick={() => setIsBrandsMenuOpen(false)}
-                                    >
-                                      Shop All Brands
-                                    </Link>
-                                  </li>
+                      <Link
+                        to="/catalog"
+                        className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
+                        onClick={() => setIsBrandsMenuOpen(false)}
+                      >
+                        Shop All Brands
+                      </Link>
+                    </li>
                                 )}
-                              </ul>
+                  </ul>
                             </div>
                           );
                         })}

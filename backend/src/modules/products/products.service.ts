@@ -91,7 +91,7 @@ export class ProductsService {
       
       if (isUUID) {
         // C'est un UUID, utiliser directement
-        where.brandId = brand;
+      where.brandId = brand;
       } else {
         // C'est un slug, chercher la marque par slug
         const brandEntity = await this.brandRepository.findOne({
