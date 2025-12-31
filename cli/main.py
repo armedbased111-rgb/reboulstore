@@ -959,6 +959,20 @@ def generate_db(type, name, entity, entities, cloudinary):
         console.print(f"[green]✅ Script de seed créé: {file}[/green]")
         console.print(f"[yellow]💡 Exécuter avec: ts-node {file}[/yellow]")
 
+@db.group()
+def seed():
+    """Commandes pour seed la base de données"""
+    pass
+
+@seed.command('brands')
+@click.option('--local', is_flag=True, help='Utiliser le container local (reboulstore-postgres)')
+@click.option('--container', type=str, help='Nom du container PostgreSQL (override)')
+def seed_brands(local, container):
+    """🌱 Importer les brands depuis brands-data-with-urls.json"""
+    from commands.db_seed import seed_brands as seed_brands_func
+    
+    seed_brands_func(local=local, container_name=container)
+
 @db.command('analyze')
 @click.argument('type', type=click.Choice(['schema']))
 def analyze_db(type):

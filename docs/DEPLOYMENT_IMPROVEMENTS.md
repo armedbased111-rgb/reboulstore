@@ -268,11 +268,52 @@ ssh deploy@152.228.218.35 "cd /opt/reboulstore/backend/scripts && python3 ... | 
 
 ## 🎯 Prochaines Étapes
 
-1. **Créer `deploy-all.sh`** : Script unifié pour les deux projets
-2. **Améliorer `deploy-admin.sh`** : Protection contre les erreurs de répertoire
-3. **Ajouter purge cache Cloudflare** : Automatisation
-4. **Créer commande seed brands** : `./rcli db seed brands`
-5. **Documenter le processus** : Guide simple et clair
+1. ✅ **Créer `deploy-all.sh`** : Script unifié pour les deux projets
+2. ✅ **Améliorer `deploy-admin.sh`** : Protection contre les erreurs de répertoire
+3. ✅ **Ajouter purge cache Cloudflare** : Automatisation complète
+4. ✅ **Créer commande seed brands** : `./rcli db seed brands`
+5. ✅ **Améliorer vérifications post-déploiement** : Ajoutées dans `deploy-prod.sh`
+6. ✅ **Améliorer backup automatique** : Vérification contenu et affichage résumé
+7. ✅ **Créer script SQL seed-brands.sql** : Template pour référence
+
+## ✅ Améliorations Implémentées (30/12/2025)
+
+### 1. Script `deploy-all.sh` créé
+- Script unifié pour déployer Reboul Store + Admin Central
+- Options `--reboul` et `--admin` pour déployer sélectivement
+- Gestion des erreurs et vérifications automatiques
+
+### 2. `deploy-admin.sh` amélioré
+- Détection automatique du répertoire (depuis admin-central/ ou racine)
+- Protection contre l'arrêt des containers Reboul Store
+- Vérification que docker-compose.prod.yml est bien celui d'Admin Central
+
+### 3. Vérifications post-déploiement dans `deploy-prod.sh`
+- Vérification des containers (statut "Up")
+- Health checks backend et frontend (Reboul + Admin)
+- Vérification des fichiers frontend dans les volumes
+- Vérification de la base de données (nombre de tables)
+
+### 4. Commande CLI `./rcli db seed brands`
+- Import automatique depuis `brands-data-with-urls.json`
+- Support local et production (`--local` flag)
+- Affichage du nombre de brands importées et avec logos
+
+### 5. Backup automatique amélioré
+- Vérification que le backup contient des données (compte INSERT)
+- Affichage de la taille et du nombre d'INSERT statements
+- Avertissement si le backup semble vide
+
+### 6. Script SQL `seed-brands.sql`
+- Template pour référence
+- Documentation du processus d'import
+
+### 7. Purge automatique cache Cloudflare ✅
+- Script `cloudflare-purge.sh` pour purger le cache
+- Intégration automatique dans `deploy-prod.sh` et `deploy-all.sh`
+- Support API Token (recommandé) et API Key + Email
+- Purge complète ou sélective (fichiers spécifiques)
+- Documentation complète dans `docs/CLOUDFLARE_PURGE_SETUP.md`
 
 ---
 

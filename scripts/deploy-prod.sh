@@ -218,8 +218,35 @@ if [ "$SKIP_BACKUP" = false ]; then
         BACKUP_CMD="cd $SERVER_PATH && ./scripts/backup-db.sh"
         
         SSH_CMD=$(build_ssh_cmd)
-        if eval "$SSH_CMD $SERVER_USER@$SERVER_HOST \"$BACKUP_CMD\""; then
+        SSH_OPTS=$(get_ssh_opts)
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$BACKUP_CMD\""; then
             info "✅ Backup créé"
+            
+            # Vérifier que le backup contient des données
+            info "Vérification du contenu du backup..."
+            LATEST_BACKUP_CMD="ls -t $SERVER_PATH/backups/reboulstore_db_*.sql.gz 2>/dev/null | head -1"
+            LATEST_BACKUP=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$LATEST_BACKUP_CMD\"")
+            
+            if [ -n "$LATEST_BACKUP" ]; then
+                # Vérifier la taille du backup
+                BACKUP_SIZE_CMD="du -h $LATEST_BACKUP | cut -f1"
+                BACKUP_SIZE=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$BACKUP_SIZE_CMD\"")
+                
+                # Vérifier qu'il contient des INSERT (données)
+                BACKUP_CONTENT_CMD="zcat $LATEST_BACKUP | grep -c 'INSERT INTO' || echo '0'"
+                INSERT_COUNT=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$BACKUP_CONTENT_CMD\"")
+                
+                info "  📊 Taille: $BACKUP_SIZE"
+                info "  📊 INSERT statements: $INSERT_COUNT"
+                
+                if [ "$INSERT_COUNT" -eq "0" ]; then
+                    warn "⚠️  Le backup semble vide (0 INSERT). La base de données était peut-être vide."
+                else
+                    info "✅ Backup valide avec $INSERT_COUNT INSERT statements"
+                fi
+            else
+                warn "⚠️  Aucun backup trouvé (peut-être première installation)"
+            fi
         else
             warn "⚠️  Échec du backup, continuation du déploiement"
         fi
