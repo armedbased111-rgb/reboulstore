@@ -1333,6 +1333,105 @@ Voir `cli/utils/server_helper.py` pour la configuration.
 
 ## 🔒 Règles de Build et Déploiement - OBLIGATOIRES
 
+### 🚨 WORKFLOW DE DÉPLOIEMENT - RÈGLE CRITIQUE ABSOLUE
+
+**RÈGLE FONDAMENTALE** : **JAMAIS de `docker compose down` ou `docker compose down -v` qui supprime les volumes de base de données.**
+
+#### ⚠️ INTERDICTIONS ABSOLUES
+
+**JAMAIS exécuter** :
+- ❌ `docker compose down` (peut supprimer les volumes si mal configuré)
+- ❌ `docker compose down -v` (supprime TOUS les volumes, y compris la base de données)
+- ❌ `docker volume rm` sur les volumes contenant `postgres`, `db`, `database`
+- ❌ Supprimer le container PostgreSQL sans préserver le volume
+- ❌ Recréer le container PostgreSQL sans préserver le volume
+
+#### ✅ WORKFLOW CORRECT DE DÉPLOIEMENT
+
+**1. AVANT TOUT : Sauvegarde automatique de la base de données**
+```bash
+# OBLIGATOIRE avant chaque déploiement
+./rcli db backup --server
+```
+
+**2. Arrêt des services SANS supprimer les volumes**
+```bash
+# ✅ CORRECT : Arrêt sans supprimer les volumes
+docker compose -f docker-compose.prod.yml --env-file .env.production down
+
+# ❌ INTERDIT : Arrêt avec suppression des volumes
+# docker compose -f docker-compose.prod.yml --env-file .env.production down -v
+```
+
+**3. Suppression UNIQUEMENT des volumes de build (frontend_build)**
+```bash
+# ✅ CORRECT : Supprimer uniquement les volumes de build
+docker volume rm reboulstore_frontend_build admin_central_frontend_build 2>/dev/null || true
+
+# ❌ INTERDIT : Supprimer les volumes de base de données
+# docker volume rm reboulstore_postgres_prod
+# docker volume rm postgres_data_prod
+```
+
+**4. Build et redémarrage**
+```bash
+# Build des nouvelles images
+docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend
+
+# Démarrage des services (le volume PostgreSQL est préservé)
+docker compose -f docker-compose.prod.yml --env-file .env.production up -d
+```
+
+#### 🔒 PROTECTION DES VOLUMES DE BASE DE DONNÉES
+
+**Volumes à JAMAIS supprimer** :
+- ✅ `reboulstore_postgres_prod` (ou `postgres_data_prod`)
+- ✅ Tous les volumes contenant `postgres`, `db`, `database` dans leur nom
+- ✅ Vérifier AVANT toute suppression : `docker volume ls | grep -E '(postgres|db|database)'`
+
+**Vérification avant déploiement** :
+```bash
+# Vérifier que les volumes de base de données existent
+docker volume ls | grep -E '(postgres|db|database)'
+
+# Si volumes présents → NE PAS les supprimer
+# Si volumes absents → ERREUR, restaurer depuis backup
+```
+
+#### 📋 CHECKLIST OBLIGATOIRE AVANT DÉPLOIEMENT
+
+- [ ] **Sauvegarde automatique** : `./rcli db backup --server` ✅
+- [ ] **Vérification volumes DB** : `docker volume ls | grep postgres` ✅
+- [ ] **Arrêt services** : `docker compose down` (SANS `-v`) ✅
+- [ ] **Suppression volumes build uniquement** : `docker volume rm frontend_build` ✅
+- [ ] **Build images** : `docker compose build --no-cache` ✅
+- [ ] **Démarrage services** : `docker compose up -d` ✅
+- [ ] **Vérification DB** : `docker exec postgres psql -c "SELECT COUNT(*) FROM brand;"` ✅
+
+#### 🚨 EN CAS D'ERREUR
+
+**Si la base de données a été supprimée** :
+1. **ARRÊTER IMMÉDIATEMENT** tout déploiement
+2. **Vérifier les backups** : `./rcli db backup-list`
+3. **Restaurer depuis backup** : `./rcli db backup-restore <backup_file> --yes`
+4. **Vérifier la restauration** : `docker exec postgres psql -c "SELECT COUNT(*) FROM brand;"`
+
+#### 📚 Script de déploiement correct
+
+**Utiliser UNIQUEMENT** : `./scripts/deploy-prod.sh`
+
+Ce script :
+- ✅ Sauvegarde automatiquement la base de données avant déploiement
+- ✅ Arrête les services SANS supprimer les volumes de base de données
+- ✅ Supprime UNIQUEMENT les volumes de build (frontend_build)
+- ✅ Vérifie que les volumes de base de données sont préservés
+- ✅ Build et redémarre les services
+
+**JAMAIS exécuter manuellement** :
+- ❌ `docker compose down -v` (supprime TOUS les volumes)
+- ❌ `docker volume rm` sur les volumes de base de données
+- ❌ Commandes Docker Compose sans `--env-file .env.production`
+
 ### Protection fichiers .env.production
 
 **RÈGLE CRITIQUE** : Les fichiers `.env.production` sont **OBLIGATOIRES** pour tous les builds et déploiements.

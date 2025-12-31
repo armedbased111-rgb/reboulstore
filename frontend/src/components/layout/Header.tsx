@@ -31,12 +31,9 @@ export const Header = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const BRANDS_PER_PAGE = 10;
   
-  // Refs pour le slider touch
+  // Refs pour le slider (anciennes refs touch supprimées - swipe non utilisé)
   const brandsSliderRef = useRef<HTMLDivElement>(null);
   const brandsSliderContainerRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
-  const isDragging = useRef(false);
   
   // États pour le menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -377,79 +374,6 @@ export const Header = () => {
     if (clampedPage !== brandsPage) {
       setBrandsPage(clampedPage);
     }
-  };
-
-  // Gestion du touch/swipe VERTICAL pour le slider
-  const handleTouchStart = (e: React.TouchEvent) => {
-    // Ne pas bloquer si on clique directement sur un lien
-    const target = e.target as HTMLElement;
-    if (target.tagName === 'A' || target.closest('a')) return;
-    
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    isDragging.current = false;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchStartY.current === null) return;
-    
-    const touchCurrentX = e.touches[0].clientX;
-    const touchCurrentY = e.touches[0].clientY;
-    const diffX = Math.abs(touchStartX.current - touchCurrentX);
-    const diffY = Math.abs(touchStartY.current - touchCurrentY);
-
-    // Si le mouvement vertical est plus important que l'horizontal, c'est un swipe vertical
-    if (diffY > diffX && diffY > 5) {
-      isDragging.current = true;
-      e.preventDefault(); // Empêcher le scroll par défaut
-      e.stopPropagation();
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchStartY.current === null) {
-      isDragging.current = false;
-      return;
-    }
-
-    // Ne pas bloquer si on clique directement sur un lien
-    const target = e.target as HTMLElement;
-    if (target.tagName === 'A' || target.closest('a')) {
-      // Si on a swipé, ne pas suivre le lien
-      if (isDragging.current) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      touchStartX.current = null;
-      touchStartY.current = null;
-      isDragging.current = false;
-      return;
-    }
-
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const diffX = touchStartX.current - touchEndX;
-    const diffY = touchStartY.current - touchEndY;
-
-    // Seuil minimum pour déclencher un swipe (30px pour être plus sensible)
-    const minSwipeDistance = 30;
-
-    // Si le mouvement vertical est plus important que l'horizontal
-    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > minSwipeDistance) {
-      const maxPage = Math.ceil(brands.length / BRANDS_PER_PAGE);
-      
-      if (diffY > 0) {
-        // Swipe vers le haut = page suivante
-        changeBrandsPage(brandsPage + 1, maxPage);
-      } else {
-        // Swipe vers le bas = page précédente
-        changeBrandsPage(brandsPage - 1, maxPage);
-      }
-    }
-
-    touchStartX.current = null;
-    touchStartY.current = null;
-    isDragging.current = false;
   };
 
   // Fermeture du menu mobile avec Escape
