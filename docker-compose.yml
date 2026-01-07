@@ -1,25 +1,4 @@
 services:
-  # Base de données PostgreSQL
-  postgres:
-    image: postgres:15-alpine
-    container_name: reboulstore-postgres
-    environment:
-      POSTGRES_USER: reboulstore
-      POSTGRES_PASSWORD: reboulstore_password
-      POSTGRES_DB: reboulstore_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - reboulstore-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U reboulstore -d reboulstore_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-
   # Backend NestJS
   backend:
     build:
@@ -31,20 +10,24 @@ services:
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
+    env_file:
+      - ./backend/.env
     environment:
       - NODE_ENV=development
-      # Configuration DB : utilise .env.production (VPS) ou valeurs par défaut
-      - DB_HOST=${DB_HOST:-postgres}
-      - DB_PORT=${DB_PORT:-5432}
-      - DB_USERNAME=${DB_USERNAME:-reboulstore}
-      - DB_PASSWORD=${DB_PASSWORD:-reboulstore_password}
-      - DB_DATABASE=${DB_DATABASE:-reboulstore_db}
+      # Configuration DB : Base de données UNIQUEMENT sur le VPS (via tunnel SSH)
+      # Les variables sont chargées depuis ./backend/.env
+      # DB_HOST doit être host.docker.internal (tunnel SSH) ou l'IP du VPS
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
       - PORT=3001
+      # Configuration Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
-      # Note: La dépendance postgres est toujours définie mais peut être ignorée si DB distante
-      # Pour utiliser DB distante: définir USE_LOCAL_DB=false dans .env.local
-      postgres:
-        condition: service_healthy
+      - redis
     networks:
       - reboulstore-network
     # Permettre l'accès à host.docker.internal pour le tunnel SSH (DB distante)
@@ -62,6 +45,23 @@ services:
       driver: "json-file"
       options:
         tag: "{{.Name}}/backend"
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: reboulstore-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - reboulstore-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   # Frontend React + Vite
   frontend:
@@ -90,7 +90,7 @@ services:
       "
 
 volumes:
-  postgres_data:
+  redis_data:
   backend_node_modules:
   frontend_node_modules:
 

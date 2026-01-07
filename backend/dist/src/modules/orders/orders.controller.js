@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const orders_service_1 = require("./orders.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const update_order_status_dto_1 = require("./dto/update-order-status.dto");
+const apply_coupon_dto_1 = require("./dto/apply-coupon.dto");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const email_service_1 = require("./email.service");
 const invoice_service_1 = require("./invoice.service");
@@ -31,6 +32,9 @@ let OrdersController = class OrdersController {
     }
     async create(createOrderDto) {
         return this.ordersService.create(createOrderDto);
+    }
+    async applyCoupon(applyCouponDto) {
+        return this.ordersService.applyCoupon(applyCouponDto.code, applyCouponDto.cartId);
     }
     async findMyOrders(req) {
         return this.ordersService.findByUser(req.user.id);
@@ -97,6 +101,14 @@ __decorate([
     __metadata("design:paramtypes", [create_order_dto_1.CreateOrderDto]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('apply-coupon'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [apply_coupon_dto_1.ApplyCouponDto]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "applyCoupon", null);
 __decorate([
     (0, common_1.Get)('me'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const cache_manager_1 = require("@nestjs/cache-manager");
+const common_2 = require("@nestjs/common");
 const typeorm_2 = require("typeorm");
 const product_entity_1 = require("../../entities/product.entity");
 const category_entity_1 = require("../../entities/category.entity");
@@ -31,7 +33,8 @@ let ProductsService = class ProductsService {
     collectionRepository;
     brandRepository;
     cloudinaryService;
-    constructor(productRepository, categoryRepository, variantRepository, imageRepository, collectionRepository, brandRepository, cloudinaryService) {
+    cacheManager;
+    constructor(productRepository, categoryRepository, variantRepository, imageRepository, collectionRepository, brandRepository, cloudinaryService, cacheManager) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
@@ -39,9 +42,15 @@ let ProductsService = class ProductsService {
         this.collectionRepository = collectionRepository;
         this.brandRepository = brandRepository;
         this.cloudinaryService = cloudinaryService;
+        this.cacheManager = cacheManager;
     }
     async findAll(query) {
         const { category, brand, minPrice, maxPrice, search, page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', } = query;
+        const cacheKey = `products:${JSON.stringify(query)}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
         const activeCollection = await this.collectionRepository.findOne({
             where: { isActive: true },
         });
@@ -105,6 +114,11 @@ let ProductsService = class ProductsService {
         };
     }
     async findOne(id) {
+        const cacheKey = `product:${id}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
         const product = await this.productRepository.findOne({
             where: { id },
             relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
@@ -112,6 +126,7 @@ let ProductsService = class ProductsService {
         if (!product) {
             throw new common_1.NotFoundException(`Product with ID ${id} not found`);
         }
+        await this.cacheManager.set(cacheKey, product, 300);
         return product;
     }
     async findByCategory(categoryId, query) {
@@ -184,7 +199,8 @@ let ProductsService = class ProductsService {
             ...createProductDto,
             collectionId,
         });
-        return this.productRepository.save(product);
+        const savedProduct = await this.productRepository.save(product);
+        return savedProduct;
     }
     async update(id, updateProductDto) {
         const product = await this.findOne(id);
@@ -205,11 +221,14 @@ let ProductsService = class ProductsService {
             }
         }
         Object.assign(product, updateProductDto);
-        return this.productRepository.save(product);
+        const savedProduct = await this.productRepository.save(product);
+        await this.cacheManager.del(`product:${id}`);
+        return savedProduct;
     }
     async remove(id) {
         const product = await this.findOne(id);
         await this.productRepository.remove(product);
+        await this.cacheManager.del(`product:${id}`);
     }
     async findVariantsByProduct(productId) {
         await this.findOne(productId);
@@ -379,12 +398,13 @@ exports.ProductsService = ProductsService = __decorate([
     __param(3, (0, typeorm_1.InjectRepository)(image_entity_1.Image)),
     __param(4, (0, typeorm_1.InjectRepository)(collection_entity_1.Collection)),
     __param(5, (0, typeorm_1.InjectRepository)(brand_entity_1.Brand)),
+    __param(7, (0, common_2.Inject)(cache_manager_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        cloudinary_service_1.CloudinaryService])
+        cloudinary_service_1.CloudinaryService, Object])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

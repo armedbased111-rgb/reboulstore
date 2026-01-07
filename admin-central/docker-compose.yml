@@ -15,9 +15,12 @@ services:
       - PORT=4001
       - FRONTEND_URL=http://localhost:4000
       
-      # Connexion Reboul Database (via réseau Docker partagé)
-      - REBOUL_DB_HOST=reboulstore-postgres
-      - REBOUL_DB_PORT=5432
+      # Connexion Reboul Database (via tunnel SSH vers VPS - comme backend Reboul)
+      # ⚠️ IMPORTANT : La base Reboul est TOUJOURS sur le VPS, même en développement
+      # Le tunnel SSH expose PostgreSQL du VPS sur localhost:5433 de la machine locale
+      # Le container Docker utilise host.docker.internal:5433 pour accéder au tunnel
+      - REBOUL_DB_HOST=host.docker.internal
+      - REBOUL_DB_PORT=5433
       - REBOUL_DB_USER=reboulstore
       - REBOUL_DB_PASSWORD=reboulstore_password
       - REBOUL_DB_NAME=reboulstore_db

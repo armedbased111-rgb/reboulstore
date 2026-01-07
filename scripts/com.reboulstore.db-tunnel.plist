@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.reboulstore.db-tunnel</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/ssh</string>
+        <string>-L</string>
+        <string>5433:localhost:5432</string>
+        <string>-i</string>
+        <string>/Users/tripleseptinteractive/.ssh/id_ed25519</string>
+        <string>-N</string>
+        <string>-o</string>
+        <string>ServerAliveInterval=60</string>
+        <string>-o</string>
+        <string>ServerAliveCountMax=3</string>
+        <string>-o</string>
+        <string>ExitOnForwardFailure=yes</string>
+        <string>deploy@152.228.218.35</string>
+    </array>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/com.reboulstore.db-tunnel.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/com.reboulstore.db-tunnel.error.log</string>
+</dict>
+</plist>
+

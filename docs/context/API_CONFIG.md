@@ -2,6 +2,8 @@
 
 Ce document centralise **TOUTES** les configurations API, variables d'environnement et ports utilisés dans le projet.
 
+Voir aussi : [[ARCHITECTURE_ADMIN_CENTRAL.md|ARCHITECTURE_ADMIN_CENTRAL]] - [[CONTEXT.md|CONTEXT]] - [[../../backend/BACKEND.md|BACKEND]]
+
 ---
 
 ## 📊 Architecture & Ports

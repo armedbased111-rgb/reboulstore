@@ -14,6 +14,7 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { ApplyCouponDto } from './dto/apply-coupon.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmailService } from './email.service';
 import { InvoiceService } from './invoice.service';
@@ -34,6 +35,18 @@ export class OrdersController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto);
+  }
+
+  /**
+   * Applique un code promo à un panier
+   */
+  @Post('apply-coupon')
+  @HttpCode(HttpStatus.OK)
+  async applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
+    return this.ordersService.applyCoupon(
+      applyCouponDto.code,
+      applyCouponDto.cartId,
+    );
   }
 
   /**

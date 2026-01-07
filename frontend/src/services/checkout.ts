@@ -19,15 +19,20 @@ interface CreateCheckoutSessionResponse {
 /**
  * Créer une session Stripe Checkout
  * @param items - Liste des items du panier (variantId, quantity)
+ * @param couponCode - Code promo optionnel à appliquer
  * @returns URL de redirection vers Stripe Checkout
  */
 export const createCheckoutSession = async (
-  items: Array<{ variantId: string; quantity: number }>
+  items: Array<{ variantId: string; quantity: number }>,
+  couponCode?: string,
 ): Promise<string> => {
   const response = await api.post<CreateCheckoutSessionResponse>(
     '/checkout/create-session',
-    { items }
+    {
+      items,
+      ...(couponCode && { couponCode }),
+    },
   );
-  
+
   return response.url;
 };

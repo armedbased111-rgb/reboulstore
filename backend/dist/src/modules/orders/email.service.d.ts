@@ -17,5 +17,15 @@ export declare class EmailService {
     sendOrderDelivered(order: Order): Promise<void>;
     sendOrderCancelled(order: Order): Promise<void>;
     private persistEmail;
+    sendStockAvailableNotification(email: string, product: {
+        id: string;
+        name: string;
+        slug: string;
+        imageUrl?: string | null;
+    }, variant?: {
+        id: string;
+        color?: string;
+        size?: string;
+    }): Promise<void>;
     private getStatusLabel;
 }

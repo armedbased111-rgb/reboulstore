@@ -1,0 +1,23 @@
+{
+  "file-recovery": true,
+  "canvas": true,
+  "graph-analysis": true,
+  "backlink": true,
+  "outline": true,
+  "page-preview": true,
+  "daily-notes": false,
+  "templates": false,
+  "note-composer": false,
+  "command-palette": true,
+  "switcher": true,
+  "markdown-importer": false,
+  "word-count": true,
+  "file-explorer": true,
+  "search": true,
+  "quick-switcher": true,
+  "global-search": true,
+  "slides": false,
+  "tag-pane": true,
+  "starred": true,
+  "random-note": false
+}

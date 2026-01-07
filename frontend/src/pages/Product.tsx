@@ -406,7 +406,7 @@ export const Product = () => {
 
                       {/* Ligne 2 : Badge stock (zone réservée fixe) */}
                       <div className="min-h-[28px] flex items-center gap-2">
-                        {selectedVariant && (
+                        {selectedVariant ? (
                           <>
                             <StockBadge variant={selectedVariant} />
                             {/* Bouton notification si rupture de stock */}
@@ -420,6 +420,17 @@ export const Product = () => {
                               </button>
                             )}
                           </>
+                        ) : (
+                          // Si aucun variant sélectionné mais qu'il y a des variants en rupture, proposer de s'inscrire
+                          product.variants && product.variants.length > 0 && product.variants.every(v => (v.stock || 0) === 0) && (
+                            <button
+                              type="button"
+                              onClick={() => setIsNotificationModalOpen(true)}
+                              className="font-[Geist] text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-gray-600 hover:text-black underline transition-colors"
+                            >
+                              M'alerter quand disponible
+                            </button>
+                          )
                         )}
                       </div>
                     </div>

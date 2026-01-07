@@ -1079,15 +1079,17 @@ def backup_db(local, server, container, db_name, db_user, backup_dir, keep):
         console.print(f"[blue]Base de données: {db_name}[/blue]\n")
         
         # Exécuter le backup sur le serveur
+        # Générer le timestamp en Python pour éviter le problème $TIMESTAMP littéral
+        from datetime import datetime
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        backup_file = f"{server_backup_dir}/reboulstore_db_{timestamp}.sql"
         backup_cmd = (
             f"cd {project_dir} && "
             f"mkdir -p {server_backup_dir} && "
-            f"TIMESTAMP=$(date +'%Y%m%d_%H%M%S') && "
-            f"BACKUP_FILE='{server_backup_dir}/reboulstore_db_$TIMESTAMP.sql' && "
-            f"docker exec {container_name} pg_dump -U {db_user} -d {db_name} > \"$BACKUP_FILE\" && "
-            f"gzip \"$BACKUP_FILE\" && "
-            f"echo 'Backup créé: $BACKUP_FILE.gz' && "
-            f"ls -lh \"$BACKUP_FILE.gz\" | awk '{{print $5}}'"
+            f"docker exec {container_name} pg_dump -U {db_user} -d {db_name} > \"{backup_file}\" && "
+            f"gzip \"{backup_file}\" && "
+            f"echo 'Backup créé: {backup_file}.gz' && "
+            f"ls -lh \"{backup_file}.gz\" | awk '{{print $5}}'"
         )
         
         stdout, stderr = ssh_exec(backup_cmd)

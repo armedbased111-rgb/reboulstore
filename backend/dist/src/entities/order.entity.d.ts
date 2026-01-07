@@ -53,6 +53,8 @@ export declare class Order {
         quantity: number;
     }> | null;
     trackingNumber: string;
+    couponId: string | null;
+    discountAmount: number | null;
     paidAt: Date;
     shippedAt: Date;
     deliveredAt: Date;

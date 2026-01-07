@@ -5,6 +5,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     container_name: admin-central-backend-prod
+    env_file:
+      - .env.production
     environment:
       - NODE_ENV=production
       - PORT=4001

@@ -7,7 +7,7 @@ import { useBrands } from '../../hooks/useBrands';
 import { useAuth } from '../../hooks/useAuth';
 import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
 import { Button } from "@/components/ui/button"
-import type { Brand, Product } from '../../types';
+import type { Brand, Product, Category } from '../../types';
 import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
 import * as anime from 'animejs';
 import { toMilliseconds, convertEasing } from '../../animations/utils/constants';
@@ -25,6 +25,9 @@ export const Header = () => {
   const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
   const [randomProductImage, setRandomProductImage] = useState<string | null>(null);
   const [loadingProductImage, setLoadingProductImage] = useState(false);
+  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
+  const [randomProductImageCategory, setRandomProductImageCategory] = useState<string | null>(null);
+  const [loadingProductImageCategory, setLoadingProductImageCategory] = useState(false);
   
   // État pour le slider des brands (afficher 10 à la fois)
   const [brandsPage, setBrandsPage] = useState(0);
@@ -292,11 +295,14 @@ export const Header = () => {
 
   // Récupérer une image aléatoire d'un produit de la marque au hover
   useEffect(() => {
+    // Réinitialiser immédiatement les states si aucune marque n'est survolée
+    if (!hoveredBrand) {
+      setRandomProductImage(null);
+      setLoadingProductImage(false);
+      return;
+    }
+
     const fetchRandomProductImage = async () => {
-      if (!hoveredBrand) {
-        setRandomProductImage(null);
-        return;
-      }
 
       // Si la marque a déjà des images megaMenu, on les utilise
       if (hoveredBrand.megaMenuImage1 || hoveredBrand.megaMenuVideo1) {
@@ -350,6 +356,63 @@ export const Header = () => {
 
     fetchRandomProductImage();
   }, [hoveredBrand]);
+
+  // Récupérer une image aléatoire d'un produit de la catégorie au hover
+  useEffect(() => {
+    // Réinitialiser immédiatement les states si aucune catégorie n'est survolée
+    if (!hoveredCategory) {
+      setRandomProductImageCategory(null);
+      setLoadingProductImageCategory(false);
+      return;
+    }
+
+    const fetchRandomProductImage = async () => {
+      try {
+        setLoadingProductImageCategory(true);
+        // Récupérer les produits de cette catégorie (utiliser l'ID, pas le slug)
+        const response = await getProducts({
+          category: hoveredCategory.id,
+          limit: 50, // Récupérer jusqu'à 50 produits pour avoir plus de choix
+        });
+
+        // Filtrer les produits qui ont des images
+        const productsWithImages = response.products.filter(
+          (product: Product) => product.images && product.images.length > 0
+        );
+
+        if (productsWithImages.length > 0) {
+          // Sélectionner un produit aléatoire
+          const randomProduct = productsWithImages[
+            Math.floor(Math.random() * productsWithImages.length)
+          ];
+          
+          // Prendre la première image du produit (ou une aléatoire)
+          const randomImageIndex = Math.floor(
+            Math.random() * randomProduct.images!.length
+          );
+          const selectedImage = randomProduct.images![randomImageIndex];
+          
+          // Construire l'URL complète de l'image avec getImageUrl
+          const imageUrl = getImageUrl(selectedImage.url);
+          
+          if (imageUrl) {
+            setRandomProductImageCategory(imageUrl);
+          } else {
+            setRandomProductImageCategory(null);
+          }
+        } else {
+          setRandomProductImageCategory(null);
+        }
+      } catch (error) {
+        console.error('Error fetching random product image for category:', error);
+        setRandomProductImageCategory(null);
+      } finally {
+        setLoadingProductImageCategory(false);
+      }
+    };
+
+    fetchRandomProductImage();
+  }, [hoveredCategory]);
 
   // Animation du slider des brands au changement de page
   useEffect(() => {
@@ -453,10 +516,14 @@ export const Header = () => {
                 onClick={() => {
                   setIsShopMenuOpen(!isShopMenuOpen);
                   setIsBrandsMenuOpen(false);
+                  if (!isShopMenuOpen) {
+                    setHoveredCategory(null); // Réinitialiser hoveredCategory à l'ouverture
+                  }
                 }}
                 onMouseEnter={() => {
                   setIsShopMenuOpen(true);
                   setIsBrandsMenuOpen(false);
+                  setHoveredCategory(null); // Réinitialiser hoveredCategory à l'ouverture
                 }}
                 className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
@@ -481,6 +548,7 @@ export const Header = () => {
                   if (!isBrandsMenuOpen) {
                     setBrandsPage(0); // Reset à la première page quand on ouvre le menu
                     setIsTransitioning(false); // Reset l'état de transition
+                    setHoveredBrand(null); // Réinitialiser hoveredBrand à l'ouverture
                   }
                 }}
                 onMouseEnter={() => {
@@ -488,6 +556,7 @@ export const Header = () => {
                   setIsShopMenuOpen(false);
                   setBrandsPage(0); // Reset à la première page quand on ouvre le menu
                   setIsTransitioning(false); // Reset l'état de transition
+                  setHoveredBrand(null); // Réinitialiser hoveredBrand à l'ouverture
                 }}
                 className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
@@ -554,11 +623,17 @@ export const Header = () => {
             <div 
               ref={shopMenuRef}
               className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[80]"
-              onMouseLeave={() => setIsShopMenuOpen(false)}
+              onMouseLeave={() => {
+                setIsShopMenuOpen(false);
+                setHoveredCategory(null);
+              }}
             >
               <div className="flex">
                 {/* Colonne gauche : Catégories - Large espace */}
-                <div className="w-[500px] px-[4px] py-[1px] flex-shrink-0">
+                <div 
+                  className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
+                  onMouseLeave={() => setHoveredCategory(null)}
+                >
                   <ul>
                     {categoriesLoading ? (
                       <li className="text-base text-gray-500">Chargement...</li>
@@ -573,6 +648,8 @@ export const Header = () => {
                             to={`/catalog?category=${category.slug}`}
                             className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
                             onClick={() => setIsShopMenuOpen(false)}
+                            onMouseEnter={() => setHoveredCategory(category)}
+                            onMouseLeave={() => setHoveredCategory(null)}
                           >
                             {category.name}
                           </Link>
@@ -591,33 +668,70 @@ export const Header = () => {
                   </ul>
                 </div>
 
-                {/* Section droite : Images promotionnelles - Espace plus compact */}
-                <div className="flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end">
-                  {/* Image 1 */}
-                  <div className="max-w-[320px]">
-                    <img 
-                      src="/webdesign/AW25_LB_4_5_03_2.png"
-                      alt="AUTUMN/WINTER 2025 Collection"
-                      className="w-full aspect-[4/5] object-cover mb-3"
-                      loading="lazy"
-                    />
-                    <p className="text-xs text-black uppercase">
-                      AUTUMN/WINTER 2025
-                    </p>
-                  </div>
+                {/* Section droite : Images dynamiques qui changent au hover */}
+                {/* Toujours rendre le container mais le masquer complètement si aucune catégorie n'est survolée */}
+                <div 
+                  key={`images-container-category-${hoveredCategory?.id || 'empty'}`}
+                  className={`flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end transition-opacity duration-300 ${
+                    !hoveredCategory ? 'opacity-0 pointer-events-none invisible' : 'opacity-100'
+                  }`}
+                  onMouseLeave={() => setHoveredCategory(null)}
+                >
+                  {hoveredCategory && (
+                    <>
+                      {/* Image 1 : Produit aléatoire de la catégorie */}
+                      <div className="max-w-[320px]" key={`image1-category-${hoveredCategory.id}`}>
+                        {loadingProductImageCategory ? (
+                          <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                            <div className="text-xs text-gray-400">Chargement...</div>
+                          </div>
+                        ) : randomProductImageCategory ? (
+                          <img 
+                            key={`img1-random-category-${hoveredCategory.id}`}
+                            src={randomProductImageCategory}
+                            alt={hoveredCategory.name || 'Category Collection'}
+                            className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                              // Fallback vers placeholder si erreur
+                              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                            <div className="text-xs text-gray-400">Aucune image</div>
+                          </div>
+                        )}
+                        <p className="text-xs text-black uppercase">
+                          {hoveredCategory.name || 'OUR COLLECTIONS'}
+                        </p>
+                      </div>
 
-                  {/* Image 2 */}
-                  <div className="max-w-[320px]">
-                    <img 
-                      src="/webdesign/publicity2.png"
-                      alt="ARSENAL* COLLECTION"
-                      className="w-full aspect-[4/5] object-cover mb-3"
-                      loading="lazy"
-                    />
-                    <p className="text-xs text-black uppercase">
-                      ARSENAL* X REBOULSTORE
-                    </p>
-                  </div> 
+                      {/* Image 2 : Image de la catégorie */}
+                      <div className="max-w-[320px]" key={`image2-category-${hoveredCategory.id}`}>
+                        {hoveredCategory.imageUrl ? (
+                          <img 
+                            key={`img2-category-${hoveredCategory.id}`}
+                            src={getImageUrl(hoveredCategory.imageUrl)}
+                            alt={hoveredCategory.name || 'Category Image'}
+                            className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                              // Fallback vers placeholder si erreur
+                              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3">
+                            <div className="text-xs text-gray-400">Aucune image</div>
+                          </div>
+                        )}
+                        <p className="text-xs text-black uppercase">
+                          {`${hoveredCategory.name} COLLECTION`}
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -646,6 +760,7 @@ export const Header = () => {
                 {/* Colonne gauche : Marques - Large espace avec slider vertical */}
                 <div 
                   className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
+                  onMouseLeave={() => setHoveredBrand(null)}
                 >
                   {/* Container slider VERTICAL avec overflow hidden */}
                   <div 
@@ -769,104 +884,115 @@ export const Header = () => {
                 </div>
 
                 {/* Section droite : Images/Vidéos qui changent au hover */}
-                <div className="flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end">
-                  {/* Image 1 : Image aléatoire d'un produit de la marque OU megaMenuImage1 */}
-                  <div className="max-w-[320px]" key={`image1-${hoveredBrand?.id || 'default'}`}>
-                    {hoveredBrand?.megaMenuVideo1 ? (
-                      <video 
-                        key={`video1-${hoveredBrand.id}`}
-                        src={hoveredBrand.megaMenuVideo1}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                      />
-                    ) : hoveredBrand?.megaMenuImage1 ? (
-                      <img 
-                        key={`img1-${hoveredBrand.id}`}
-                        src={hoveredBrand.megaMenuImage1}
-                        alt={hoveredBrand.name || 'Brand Collection'}
-                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                        loading="lazy"
-                        onError={(e) => {
-                          // Fallback vers placeholder si erreur
-                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
-                        }}
-                      />
-                    ) : loadingProductImage ? (
-                      <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
-                        <div className="text-xs text-gray-400">Chargement...</div>
-                      </div>
-                    ) : randomProductImage ? (
-                      <img 
-                        key={`img1-random-${hoveredBrand?.id || 'default'}`}
-                        src={randomProductImage}
-                        alt={hoveredBrand?.name || 'Brand Collection'}
-                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                        loading="lazy"
-                        onError={(e) => {
-                          // Fallback vers placeholder si erreur
-                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
-                        <div className="text-xs text-gray-400">Aucune image</div>
-                      </div>
-                    )}
-                    <p className="text-xs text-black uppercase">
-                      {hoveredBrand?.name || 'OUR BRANDS'}
-                    </p>
-                  </div>
-
-                  {/* Image 2 : Logo de la marque en noir OU megaMenuImage2 */}
-                  <div className="max-w-[320px]" key={`image2-${hoveredBrand?.id || 'default'}`}>
-                    {hoveredBrand?.megaMenuVideo2 ? (
-                      <video 
-                        key={`video2-${hoveredBrand?.id || 'default'}`}
-                        src={hoveredBrand.megaMenuVideo2}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                      />
-                    ) : hoveredBrand?.megaMenuImage2 ? (
-                      <img 
-                        key={`img2-${hoveredBrand?.id || 'default'}`}
-                        src={hoveredBrand.megaMenuImage2}
-                        alt={hoveredBrand?.name || 'Brand Collection'}
-                        className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                        loading="lazy"
-                        onError={(e) => {
-                          // Fallback vers placeholder si erreur
-                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
-                        }}
-                      />
-                    ) : hoveredBrand?.logoUrl ? (
-                      <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3 p-8">
+                {/* Toujours rendre le container mais le masquer complètement si aucune marque n'est survolée */}
+                <div 
+                  key={`images-container-${hoveredBrand?.id || 'empty'}`}
+                  className={`flex-1 flex gap-[2px] px-[4px] mb-[10px] justify-end transition-opacity duration-300 ${
+                    !hoveredBrand ? 'opacity-0 pointer-events-none invisible' : 'opacity-100'
+                  }`}
+                  onMouseLeave={() => setHoveredBrand(null)}
+                >
+                    {/* Image 1 : Image aléatoire d'un produit de la marque OU megaMenuImage1 */}
+                    {hoveredBrand && (
+                      <>
+                      <div className="max-w-[320px]" key={`image1-${hoveredBrand.id}`}>
+                        {hoveredBrand.megaMenuVideo1 ? (
+                        <video 
+                          key={`video1-${hoveredBrand.id}`}
+                          src={hoveredBrand.megaMenuVideo1}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                        />
+                      ) : hoveredBrand.megaMenuImage1 ? (
                         <img 
-                          key={`logo-${hoveredBrand?.id || 'default'}`}
-                          src={getImageUrl(hoveredBrand?.logoUrl || '') || ''}
-                          alt={hoveredBrand?.name || 'Brand Logo'}
-                          className="max-w-full max-h-full object-contain filter brightness-0"
+                          key={`img1-${hoveredBrand.id}`}
+                          src={hoveredBrand.megaMenuImage1}
+                          alt={hoveredBrand.name || 'Brand Collection'}
+                          className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                           loading="lazy"
                           onError={(e) => {
                             // Fallback vers placeholder si erreur
-                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23FFFFFF" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3ELogo%3C/text%3E%3C/svg%3E';
+                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
                           }}
                         />
+                      ) : loadingProductImage ? (
+                        <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                          <div className="text-xs text-gray-400">Chargement...</div>
+                        </div>
+                      ) : randomProductImage ? (
+                        <img 
+                          key={`img1-random-${hoveredBrand.id}`}
+                          src={randomProductImage}
+                          alt={hoveredBrand.name || 'Brand Collection'}
+                          className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                          loading="lazy"
+                          onError={(e) => {
+                            // Fallback vers placeholder si erreur
+                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center mb-3">
+                          <div className="text-xs text-gray-400">Aucune image</div>
+                        </div>
+                      )}
+                      <p className="text-xs text-black uppercase">
+                        {hoveredBrand.name || 'OUR BRANDS'}
+                      </p>
+                    </div>
+
+                    {/* Image 2 : Logo de la marque en noir OU megaMenuImage2 */}
+                    <div className="max-w-[320px]" key={`image2-${hoveredBrand.id}`}>
+                      {hoveredBrand.megaMenuVideo2 ? (
+                        <video 
+                          key={`video2-${hoveredBrand.id}`}
+                          src={hoveredBrand.megaMenuVideo2}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                        />
+                      ) : hoveredBrand.megaMenuImage2 ? (
+                        <img 
+                          key={`img2-${hoveredBrand.id}`}
+                          src={hoveredBrand.megaMenuImage2}
+                          alt={hoveredBrand.name || 'Brand Collection'}
+                          className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
+                          loading="lazy"
+                          onError={(e) => {
+                            // Fallback vers placeholder si erreur
+                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
+                          }}
+                        />
+                      ) : hoveredBrand.logoUrl ? (
+                        <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3 p-8">
+                          <img 
+                            key={`logo-${hoveredBrand.id}`}
+                            src={getImageUrl(hoveredBrand.logoUrl || '') || ''}
+                            alt={hoveredBrand.name || 'Brand Logo'}
+                            className="max-w-full max-h-full object-contain filter brightness-0"
+                            loading="lazy"
+                            onError={(e) => {
+                              // Fallback vers placeholder si erreur
+                              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23FFFFFF" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3ELogo%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3">
+                          <div className="text-xs text-gray-400">Aucun logo</div>
+                        </div>
+                      )}
+                        <p className="text-xs text-black uppercase">
+                          {`${hoveredBrand.name} COLLECTION`}
+                        </p>
                       </div>
-                    ) : (
-                      <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3">
-                        <div className="text-xs text-gray-400">Aucun logo</div>
-                      </div>
+                      </>
                     )}
-                    <p className="text-xs text-black uppercase">
-                      {hoveredBrand ? `${hoveredBrand.name} COLLECTION` : 'PREMIUM BRANDS'}
-                    </p>
-                  </div> 
                 </div>
               </div>
             </div>

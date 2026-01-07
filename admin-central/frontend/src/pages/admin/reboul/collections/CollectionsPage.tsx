@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import AdminLayout from '../../../../components/Layout/AdminLayout';
 import { reboulCollectionsService, Collection } from '../../../../services/reboul-collections.service';
-import { Plus, CheckCircle2, XCircle, Package, Trash2 } from 'lucide-react';
+import { reboulProductsService } from '../../../../services/reboul-products.service';
+import { Product } from '../../../../types/reboul.types';
+import { Plus, CheckCircle2, XCircle, Package, Trash2, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import { cn } from '../../../../utils/cn';
 
 /**
@@ -36,6 +39,9 @@ export default function CollectionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [expandedCollections, setExpandedCollections] = useState<Set<string>>(new Set());
+  const [collectionProducts, setCollectionProducts] = useState<Record<string, Product[]>>({});
+  const [loadingProducts, setLoadingProducts] = useState<Set<string>>(new Set());
 
   const loadCollections = async () => {
     setLoading(true);
@@ -105,6 +111,43 @@ export default function CollectionsPage() {
       alert(message);
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const toggleCollection = async (collectionId: string) => {
+    const isExpanded = expandedCollections.has(collectionId);
+    
+    if (isExpanded) {
+      // Fermer
+      setExpandedCollections((prev) => {
+        const next = new Set(prev);
+        next.delete(collectionId);
+        return next;
+      });
+    } else {
+      // Ouvrir et charger les produits
+      setExpandedCollections((prev) => new Set(prev).add(collectionId));
+      
+      // Si les produits ne sont pas déjà chargés
+      if (!collectionProducts[collectionId]) {
+        setLoadingProducts((prev) => new Set(prev).add(collectionId));
+        try {
+          const collection = await reboulCollectionsService.getCollection(collectionId);
+          const products = collection.products || [];
+          setCollectionProducts((prev) => ({
+            ...prev,
+            [collectionId]: products as Product[],
+          }));
+        } catch (err) {
+          console.error('Erreur lors du chargement des produits:', err);
+        } finally {
+          setLoadingProducts((prev) => {
+            const next = new Set(prev);
+            next.delete(collectionId);
+            return next;
+          });
+        }
+      }
     }
   };
 
@@ -199,82 +242,147 @@ export default function CollectionsPage() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {collections.map((collection) => (
-                      <tr key={collection.id} className={cn(
-                        "hover:bg-gray-50",
-                        collection.isActive && "bg-green-50"
-                      )}>
-                        <td className="px-4 lg:px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {collection.displayName || collection.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {collection.name}
-                          </div>
-                        </td>
-                        <td className="px-4 lg:px-6 py-4">
-                          {collection.isActive ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Active
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              <XCircle className="w-3 h-3 mr-1" />
-                              Archivée
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Package className="w-4 h-4 mr-1" />
-                            {collection.productsCount || collection.products?.length || 0}
-                          </div>
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
-                          {collection.description || '—'}
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
-                          {collection.createdAt ? formatDate(collection.createdAt) : '—'}
-                        </td>
-                        <td className="px-4 lg:px-6 py-4 text-right text-sm font-medium">
-                          <div className="flex justify-end space-x-2">
-                            {!collection.isActive && (
+                      <>
+                        <tr key={collection.id} className={cn(
+                          "hover:bg-gray-50",
+                          collection.isActive && "bg-green-50"
+                        )}>
+                          <td className="px-4 lg:px-6 py-4">
+                            <div className="flex items-center gap-2">
                               <button
-                                onClick={() => handleActivate(collection.id)}
-                                disabled={actionLoading === collection.id}
-                                className={cn(
-                                  "p-2 text-green-600 hover:text-green-900 hover:bg-green-50 rounded transition-colors",
-                                  actionLoading === collection.id && "opacity-50 cursor-not-allowed"
-                                )}
-                                title="Activer"
+                                onClick={() => toggleCollection(collection.id)}
+                                className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                title={expandedCollections.has(collection.id) ? 'Masquer les produits' : 'Afficher les produits'}
                               >
-                                <CheckCircle2 className="w-4 h-4" />
+                                {expandedCollections.has(collection.id) ? (
+                                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4 text-gray-500" />
+                                )}
                               </button>
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {collection.displayName || collection.name}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {collection.name}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 lg:px-6 py-4">
+                            {collection.isActive ? (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <XCircle className="w-3 h-3 mr-1" />
+                                Archivée
+                              </span>
                             )}
-                            {collection.isActive && (
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 text-sm text-gray-500">
+                            <div className="flex items-center">
+                              <Package className="w-4 h-4 mr-1" />
+                              {collection.productsCount || collection.products?.length || 0}
+                            </div>
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                            {collection.description || '—'}
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                            {collection.createdAt ? formatDate(collection.createdAt) : '—'}
+                          </td>
+                          <td className="px-4 lg:px-6 py-4 text-right text-sm font-medium">
+                            <div className="flex justify-end space-x-2">
+                              {!collection.isActive && (
+                                <button
+                                  onClick={() => handleActivate(collection.id)}
+                                  disabled={actionLoading === collection.id}
+                                  className={cn(
+                                    "p-2 text-green-600 hover:text-green-900 hover:bg-green-50 rounded transition-colors",
+                                    actionLoading === collection.id && "opacity-50 cursor-not-allowed"
+                                  )}
+                                  title="Activer"
+                                >
+                                  <CheckCircle2 className="w-4 h-4" />
+                                </button>
+                              )}
+                              {collection.isActive && (
+                                <button
+                                  onClick={() => handleArchive(collection.id)}
+                                  disabled={actionLoading === collection.id}
+                                  className={cn(
+                                    "p-2 text-orange-600 hover:text-orange-900 hover:bg-orange-50 rounded transition-colors",
+                                    actionLoading === collection.id && "opacity-50 cursor-not-allowed"
+                                  )}
+                                  title="Archiver"
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                </button>
+                              )}
                               <button
-                                onClick={() => handleArchive(collection.id)}
+                                className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
+                                title="Supprimer"
+                                onClick={() => handleDelete(collection.id, collection.displayName || collection.name)}
                                 disabled={actionLoading === collection.id}
-                                className={cn(
-                                  "p-2 text-orange-600 hover:text-orange-900 hover:bg-orange-50 rounded transition-colors",
-                                  actionLoading === collection.id && "opacity-50 cursor-not-allowed"
-                                )}
-                                title="Archiver"
                               >
-                                <XCircle className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4" />
                               </button>
-                            )}
-                            <button
-                              className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
-                              title="Supprimer"
-                              onClick={() => handleDelete(collection.id, collection.displayName || collection.name)}
-                              disabled={actionLoading === collection.id}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                            </div>
+                          </td>
+                        </tr>
+                        {/* Ligne expandable avec les produits */}
+                        {expandedCollections.has(collection.id) && (
+                          <tr>
+                            <td colSpan={6} className="px-4 lg:px-6 py-4 bg-gray-50">
+                              {loadingProducts.has(collection.id) ? (
+                                <div className="text-center py-4">
+                                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black mx-auto"></div>
+                                  <p className="mt-2 text-sm text-gray-600">Chargement des produits...</p>
+                                </div>
+                              ) : collectionProducts[collection.id]?.length > 0 ? (
+                                <div className="space-y-2">
+                                  <h4 className="text-sm font-medium text-gray-700 mb-3">
+                                    Produits dans cette collection ({collectionProducts[collection.id].length})
+                                  </h4>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    {collectionProducts[collection.id].map((product) => (
+                                      <div
+                                        key={product.id}
+                                        className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md hover:bg-gray-50"
+                                      >
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                                          <p className="text-xs text-gray-500">
+                                            {new Intl.NumberFormat('fr-FR', {
+                                              style: 'currency',
+                                              currency: 'EUR',
+                                            }).format(product.price)}
+                                          </p>
+                                        </div>
+                                        <Link
+                                          to={`/admin/reboul/products/${product.id}/edit`}
+                                          className="ml-2 p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                                          title="Modifier le produit"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </Link>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="text-center py-4">
+                                  <p className="text-sm text-gray-500">Aucun produit dans cette collection</p>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ))}
                   </tbody>
                 </table>
@@ -289,10 +397,25 @@ export default function CollectionsPage() {
                   )}>
                     <div className="flex justify-between items-start">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900">
-                          {collection.displayName || collection.name}
-                        </h3>
-                        <p className="mt-1 text-xs text-gray-500">{collection.name}</p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleCollection(collection.id)}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            title={expandedCollections.has(collection.id) ? 'Masquer les produits' : 'Afficher les produits'}
+                          >
+                            {expandedCollections.has(collection.id) ? (
+                              <ChevronDown className="w-4 h-4 text-gray-500" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-gray-500" />
+                            )}
+                          </button>
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900">
+                              {collection.displayName || collection.name}
+                            </h3>
+                            <p className="mt-1 text-xs text-gray-500">{collection.name}</p>
+                          </div>
+                        </div>
                         {collection.isActive ? (
                           <span className="inline-flex items-center mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -360,6 +483,52 @@ export default function CollectionsPage() {
                     {collection.description && (
                       <div className="text-sm text-gray-500">
                         {collection.description}
+                      </div>
+                    )}
+                    {/* Produits expandables */}
+                    {expandedCollections.has(collection.id) && (
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        {loadingProducts.has(collection.id) ? (
+                          <div className="text-center py-4">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black mx-auto"></div>
+                            <p className="mt-2 text-sm text-gray-600">Chargement des produits...</p>
+                          </div>
+                        ) : collectionProducts[collection.id]?.length > 0 ? (
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-medium text-gray-700">
+                              Produits ({collectionProducts[collection.id].length})
+                            </h4>
+                            <div className="space-y-2">
+                              {collectionProducts[collection.id].map((product) => (
+                                <div
+                                  key={product.id}
+                                  className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-md"
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {new Intl.NumberFormat('fr-FR', {
+                                        style: 'currency',
+                                        currency: 'EUR',
+                                      }).format(product.price)}
+                                    </p>
+                                  </div>
+                                  <Link
+                                    to={`/admin/reboul/products/${product.id}/edit`}
+                                    className="ml-2 p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                                    title="Modifier le produit"
+                                  >
+                                    <ExternalLink className="w-4 h-4" />
+                                  </Link>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-2">
+                            <p className="text-sm text-gray-500">Aucun produit dans cette collection</p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

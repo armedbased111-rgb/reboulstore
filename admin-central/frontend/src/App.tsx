@@ -21,6 +21,9 @@ import CreateBrandPage from './pages/admin/reboul/brands/CreateBrandPage';
 import EditBrandPage from './pages/admin/reboul/brands/EditBrandPage';
 import CollectionsPage from './pages/admin/reboul/collections/CollectionsPage';
 import SettingsPage from './pages/admin/reboul/settings/SettingsPage';
+import CouponsPage from './pages/admin/reboul/coupons/CouponsPage';
+import CreateCouponPage from './pages/admin/reboul/coupons/CreateCouponPage';
+import EditCouponPage from './pages/admin/reboul/coupons/EditCouponPage';
 
 /**
  * Router interne avec tracking GA4
@@ -168,6 +171,30 @@ function AppRouter() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reboul/coupons"
+          element={
+            <ProtectedRoute>
+              <CouponsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reboul/coupons/new"
+          element={
+            <ProtectedRoute>
+              <CreateCouponPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reboul/coupons/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditCouponPage />
             </ProtectedRoute>
           }
         />

@@ -29,6 +29,9 @@ const variant_entity_1 = require("../../entities/variant.entity");
 const user_entity_1 = require("../../entities/user.entity");
 const stock_service_1 = require("./stock.service");
 const email_service_1 = require("./email.service");
+const coupons_service_1 = require("../coupons/coupons.service");
+const notifications_gateway_1 = require("../notifications/notifications.gateway");
+const sms_service_1 = require("../sms/sms.service");
 let OrdersService = OrdersService_1 = class OrdersService {
     orderRepository;
     cartRepository;
@@ -38,9 +41,12 @@ let OrdersService = OrdersService_1 = class OrdersService {
     stockService;
     emailService;
     configService;
+    couponsService;
+    notificationsGateway;
+    smsService;
     stripe;
     logger = new common_1.Logger(OrdersService_1.name);
-    constructor(orderRepository, cartRepository, cartItemRepository, variantRepository, userRepository, stockService, emailService, configService) {
+    constructor(orderRepository, cartRepository, cartItemRepository, variantRepository, userRepository, stockService, emailService, configService, couponsService, notificationsGateway, smsService) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
@@ -49,6 +55,9 @@ let OrdersService = OrdersService_1 = class OrdersService {
         this.stockService = stockService;
         this.emailService = emailService;
         this.configService = configService;
+        this.couponsService = couponsService;
+        this.notificationsGateway = notificationsGateway;
+        this.smsService = smsService;
         const stripeSecretKey = this.configService.get('STRIPE_SECRET_KEY');
         if (stripeSecretKey) {
             this.stripe = new stripe_1.default(stripeSecretKey, {
@@ -70,15 +79,30 @@ let OrdersService = OrdersService_1 = class OrdersService {
         for (const item of cart.items) {
             await this.stockService.checkStockAvailability(item.variantId, item.quantity);
         }
-        const total = cart.items.reduce((sum, item) => {
+        const cartTotal = cart.items.reduce((sum, item) => {
             const price = parseFloat(item.variant.product.price.toString());
             return sum + price * item.quantity;
         }, 0);
+        let discountAmount = 0;
+        let couponId = null;
+        if (createOrderDto.couponCode) {
+            const validation = await this.couponsService.validateCoupon(createOrderDto.couponCode, cartTotal);
+            if (!validation.isValid) {
+                throw new common_1.BadRequestException(validation.message || 'Invalid coupon code');
+            }
+            discountAmount = validation.discountAmount;
+            const coupon = await this.couponsService.findByCode(createOrderDto.couponCode);
+            couponId = coupon.id;
+            await this.couponsService.applyCoupon(createOrderDto.couponCode);
+        }
+        const total = Math.round((cartTotal - discountAmount) * 100) / 100;
         const order = this.orderRepository.create({
             cartId: createOrderDto.cartId,
             status: order_entity_1.OrderStatus.PENDING,
             total,
             customerInfo: createOrderDto.customerInfo,
+            couponId,
+            discountAmount: discountAmount > 0 ? discountAmount : null,
         });
         const savedOrder = await this.orderRepository.save(order);
         const orderWithRelations = await this.orderRepository.findOne({
@@ -88,7 +112,31 @@ let OrdersService = OrdersService_1 = class OrdersService {
         if (orderWithRelations) {
             this.emailService.sendOrderConfirmation(orderWithRelations);
         }
-        return this.findOne(savedOrder.id);
+        const orderResponse = await this.findOne(savedOrder.id);
+        if (orderResponse) {
+            try {
+                const orderNumber = `ORD-${orderResponse.id.substring(0, 8).toUpperCase()}`;
+                const customerName = orderResponse.customerInfo?.name || 'Client';
+                const nameParts = customerName.split(' ');
+                const firstName = nameParts[0] || 'Client';
+                const lastName = nameParts.slice(1).join(' ') || '';
+                this.notificationsGateway.notifyOrderCreated({
+                    id: orderResponse.id,
+                    orderNumber,
+                    total: parseFloat(orderResponse.total.toString()),
+                    customerInfo: {
+                        firstName,
+                        lastName,
+                        email: orderResponse.customerInfo?.email || '',
+                    },
+                    createdAt: orderResponse.createdAt,
+                });
+            }
+            catch (error) {
+                this.logger.error('Error sending order created notification:', error);
+            }
+        }
+        return orderResponse;
     }
     async checkOrderAccess(order, userId) {
         if (!userId) {
@@ -148,6 +196,10 @@ let OrdersService = OrdersService_1 = class OrdersService {
             cartId: order.cartId,
             status: order.status,
             total: parseFloat(order.total.toString()),
+            couponId: order.couponId,
+            discountAmount: order.discountAmount
+                ? parseFloat(order.discountAmount.toString())
+                : null,
             customerInfo: order.customerInfo,
             cart: order.cart
                 ? {
@@ -190,6 +242,10 @@ let OrdersService = OrdersService_1 = class OrdersService {
             cartId: order.cartId,
             status: order.status,
             total: parseFloat(order.total.toString()),
+            couponId: order.couponId,
+            discountAmount: order.discountAmount
+                ? parseFloat(order.discountAmount.toString())
+                : null,
             customerInfo: order.customerInfo,
             cart: order.cart
                 ? {
@@ -251,8 +307,27 @@ let OrdersService = OrdersService_1 = class OrdersService {
             relations: ['user', 'cart', 'cart.items'],
         });
         if (orderWithRelations) {
+            if (orderWithRelations.userId) {
+                const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+                this.notificationsGateway.notifyOrderStatusChanged({
+                    id: orderWithRelations.id,
+                    orderNumber,
+                    status: newStatus,
+                    userId: orderWithRelations.userId,
+                });
+            }
             if (newStatus === order_entity_1.OrderStatus.SHIPPED) {
                 this.emailService.sendShippingNotification(orderWithRelations);
+                const phoneNumber = orderWithRelations.customerInfo?.phone || orderWithRelations.user?.phone;
+                if (phoneNumber) {
+                    try {
+                        const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+                        await this.smsService.sendOrderShippedSMS(phoneNumber, orderNumber, orderWithRelations.trackingNumber || undefined, undefined);
+                    }
+                    catch (error) {
+                        this.logger.error('Failed to send shipping SMS:', error);
+                    }
+                }
             }
             else if (newStatus === order_entity_1.OrderStatus.DELIVERED) {
                 this.emailService.sendOrderDelivered(orderWithRelations);
@@ -280,6 +355,10 @@ let OrdersService = OrdersService_1 = class OrdersService {
             cartId: order.cartId,
             status: order.status,
             total: parseFloat(order.total.toString()),
+            couponId: order.couponId,
+            discountAmount: order.discountAmount
+                ? parseFloat(order.discountAmount.toString())
+                : null,
             customerInfo: order.customerInfo,
             cart: order.cart
                 ? {
@@ -361,7 +440,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
         }
         return this.findOne(id, userId);
     }
-    async createFromStripeCheckout(items, userId, paymentIntentId, customerEmail, customerName, shippingAddress, billingAddress, amountTotal) {
+    async createFromStripeCheckout(items, userId, paymentIntentId, customerEmail, customerName, shippingAddress, billingAddress, amountTotal, couponId, discountAmount) {
         const variantIds = items.map((item) => item.variantId);
         const variants = await this.variantRepository.find({
             where: variantIds.map((id) => ({ id })),
@@ -373,13 +452,15 @@ let OrdersService = OrdersService_1 = class OrdersService {
         for (const item of items) {
             await this.stockService.checkStockAvailability(item.variantId, item.quantity);
         }
-        const total = items.reduce((sum, item) => {
+        const subtotal = items.reduce((sum, item) => {
             const variant = variants.find((v) => v.id === item.variantId);
             if (!variant || !variant.product)
                 return sum;
             const price = parseFloat(variant.product.price.toString());
             return sum + price * item.quantity;
         }, 0);
+        const finalDiscountAmount = discountAmount || 0;
+        const total = Math.max(0, subtotal - finalDiscountAmount);
         if (amountTotal !== null && amountTotal !== undefined) {
             const calculatedTotal = Math.round(total * 100) / 100;
             const stripeTotal = Math.round(amountTotal * 100) / 100;
@@ -529,6 +610,32 @@ let OrdersService = OrdersService_1 = class OrdersService {
             throw new common_1.BadRequestException(`Failed to capture payment: ${error.message}`);
         }
     }
+    async applyCoupon(code, cartId) {
+        const cart = await this.cartRepository.findOne({
+            where: { id: cartId },
+            relations: ['items', 'items.variant', 'items.variant.product'],
+        });
+        if (!cart) {
+            throw new common_1.NotFoundException(`Cart with ID ${cartId} not found`);
+        }
+        if (!cart.items || cart.items.length === 0) {
+            throw new common_1.BadRequestException('Cart is empty');
+        }
+        const cartTotal = cart.items.reduce((sum, item) => {
+            const price = parseFloat(item.variant.product.price.toString());
+            return sum + price * item.quantity;
+        }, 0);
+        const validation = await this.couponsService.validateCoupon(code, cartTotal);
+        if (!validation.isValid) {
+            throw new common_1.BadRequestException(validation.message || 'Invalid coupon code');
+        }
+        return {
+            code,
+            discountAmount: validation.discountAmount,
+            totalBeforeDiscount: cartTotal,
+            totalAfterDiscount: Math.round((cartTotal - validation.discountAmount) * 100) / 100,
+        };
+    }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = OrdersService_1 = __decorate([
@@ -545,6 +652,9 @@ exports.OrdersService = OrdersService = OrdersService_1 = __decorate([
         typeorm_2.Repository,
         stock_service_1.StockService,
         email_service_1.EmailService,
-        config_1.ConfigService])
+        config_1.ConfigService,
+        coupons_service_1.CouponsService,
+        notifications_gateway_1.NotificationsGateway,
+        sms_service_1.SmsService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

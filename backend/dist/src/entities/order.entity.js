@@ -38,6 +38,8 @@ let Order = class Order {
     paymentIntentId;
     items;
     trackingNumber;
+    couponId;
+    discountAmount;
     paidAt;
     shippedAt;
     deliveredAt;
@@ -103,6 +105,14 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Order.prototype, "trackingNumber", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", Object)
+], Order.prototype, "couponId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, nullable: true }),
+    __metadata("design:type", Object)
+], Order.prototype, "discountAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)

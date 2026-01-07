@@ -10,6 +10,7 @@ import { Category } from './entities/category.entity';
 import { Variant } from './entities/variant.entity';
 import { Image } from './entities/image.entity';
 import { Brand } from './entities/brand.entity';
+import { Collection } from './entities/collection.entity';
 
 /**
  * Service pour gérer les produits Reboul depuis l'Admin Centrale
@@ -31,6 +32,8 @@ export class ReboulProductsService {
     private imageRepository: Repository<Image>,
     @InjectRepository(Brand, 'reboul')
     private brandRepository: Repository<Brand>,
+    @InjectRepository(Collection, 'reboul')
+    private collectionRepository: Repository<Collection>,
   ) {}
 
   /**
@@ -127,7 +130,35 @@ export class ReboulProductsService {
       }
     }
 
-    const product = this.productRepository.create(productData);
+    // Si collectionId n'est pas fourni, assigner à la collection active
+    let collectionId = productData.collectionId;
+    if (!collectionId) {
+      const activeCollection = await this.collectionRepository.findOne({
+        where: { isActive: true },
+      });
+      if (activeCollection) {
+        collectionId = activeCollection.id;
+      } else {
+        throw new BadRequestException(
+          'Aucune collection active trouvée. Veuillez activer une collection d\'abord.',
+        );
+      }
+    } else {
+      // Vérifier que la collection existe
+      const collection = await this.collectionRepository.findOne({
+        where: { id: collectionId },
+      });
+      if (!collection) {
+        throw new BadRequestException(
+          `Collection avec l'ID ${collectionId} non trouvée`,
+        );
+      }
+    }
+
+    const product = this.productRepository.create({
+      ...productData,
+      collectionId,
+    });
     return this.productRepository.save(product);
   }
 
@@ -339,11 +370,17 @@ export class ReboulProductsService {
       await Promise.all(
         variants.map(async (variant) => {
           if (variant.id) {
-            // Mettre à jour le variant existant
-            await this.variantRepository.update(
-              { id: variant.id, productId: product.id },
-              { color: variant.color, size: variant.size, stock: variant.stock, sku: variant.sku },
-            );
+            // Mettre à jour le variant existant - utiliser findOne + save pour garantir la mise à jour
+            const existingVariant = await this.variantRepository.findOne({
+              where: { id: variant.id, productId: product.id },
+            });
+            if (existingVariant) {
+              existingVariant.color = variant.color;
+              existingVariant.size = variant.size;
+              existingVariant.stock = variant.stock;
+              existingVariant.sku = variant.sku;
+              await this.variantRepository.save(existingVariant);
+            }
           } else {
             // Ajouter un nouveau variant
             const variantEntity = this.variantRepository.create({

@@ -100,6 +100,13 @@ export class Order {
   @Column({ nullable: true })
   trackingNumber: string;
 
+  // Code promo
+  @Column({ type: 'uuid', nullable: true })
+  couponId: string | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  discountAmount: number | null;
+
   // Dates de suivi
   @Column({ type: 'timestamp', nullable: true })
   paidAt: Date;

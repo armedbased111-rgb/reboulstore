@@ -10,6 +10,9 @@ import { OrderResponseDto } from './dto/order-response.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { StockService } from './stock.service';
 import { EmailService } from './email.service';
+import { CouponsService } from '../coupons/coupons.service';
+import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { SmsService } from '../sms/sms.service';
 export declare class OrdersService {
     private orderRepository;
     private cartRepository;
@@ -19,9 +22,12 @@ export declare class OrdersService {
     private stockService;
     private emailService;
     private configService;
+    private couponsService;
+    private notificationsGateway;
+    private smsService;
     private stripe;
     private readonly logger;
-    constructor(orderRepository: Repository<Order>, cartRepository: Repository<Cart>, cartItemRepository: Repository<CartItem>, variantRepository: Repository<Variant>, userRepository: Repository<User>, stockService: StockService, emailService: EmailService, configService: ConfigService);
+    constructor(orderRepository: Repository<Order>, cartRepository: Repository<Cart>, cartItemRepository: Repository<CartItem>, variantRepository: Repository<Variant>, userRepository: Repository<User>, stockService: StockService, emailService: EmailService, configService: ConfigService, couponsService: CouponsService, notificationsGateway: NotificationsGateway, smsService: SmsService);
     create(createOrderDto: CreateOrderDto): Promise<OrderResponseDto>;
     private checkOrderAccess;
     findOneEntity(id: string, userId?: string): Promise<Order>;
@@ -50,6 +56,12 @@ export declare class OrdersService {
         postalCode: string;
         country: string;
         phone?: string;
-    } | null, amountTotal?: number | null): Promise<OrderResponseDto>;
+    } | null, amountTotal?: number | null, couponId?: string | null, discountAmount?: number): Promise<OrderResponseDto>;
     capturePayment(orderId: string): Promise<OrderResponseDto>;
+    applyCoupon(code: string, cartId: string): Promise<{
+        code: string;
+        discountAmount: number;
+        totalBeforeDiscount: number;
+        totalAfterDiscount: number;
+    }>;
 }

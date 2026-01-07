@@ -1,0 +1,17 @@
+{
+  "vimMode": false,
+  "showLineNumber": true,
+  "spellcheck": true,
+  "foldHeading": true,
+  "foldIndent": true,
+  "showIndentGuide": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "",
+  "attachmentFolderPath": "",
+  "useMarkdownLinks": true,
+  "alwaysUpdateLinks": true,
+  "strictLineBreaks": false,
+  "showFrontmatter": true,
+  "readableLineLength": true,
+  "defaultViewMode": "source"
+}

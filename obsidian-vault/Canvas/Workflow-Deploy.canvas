@@ -1,0 +1,23 @@
+{
+	"nodes":[
+		{"id":"verify","type":"text","text":"## 3. Vérification\n\n- État services\n- Logs erreurs API\n- Monitoring ressources\n- Tests fonctionnels","x":350,"y":400,"width":300,"height":250,"color":"5"},
+		{"id":"rollback","type":"text","text":"## Rollback (si problème)\n\n```bash\n./rcli server rollback --latest\n```\n\n- Lister backups\n- Restaurer backup\n- Vérifier restauration","x":700,"y":400,"width":300,"height":250,"color":"6"},
+		{"id":"deploy","type":"text","text":"## 2. Déploiement\n\n```bash\n./scripts/deploy-prod.sh\n```\n\n- Sauvegarde auto\n- Arrêt services\n- Build images\n- Redémarrage","x":0,"y":400,"width":300,"height":250,"color":"4"},
+		{"id":"title","type":"text","text":"# Workflow Déploiement\n\nProcessus sécurisé de déploiement","x":0,"y":-60,"width":400,"height":100,"color":"1"},
+		{"id":"pre-check","type":"text","text":"## 1. Pré-déploiement\n\n- Backup DB\n- Vérifier ressources\n- Vérifier logs erreurs\n- Audit sécurité","x":0,"y":100,"width":300,"height":200,"color":"2"},
+		{"id":"backup","type":"text","text":"## Backup\n\n```bash\n./rcli db backup --server\n```\n\nOBLIGATOIRE avant déploiement","x":400,"y":100,"width":250,"height":200,"color":"3"},
+		{"id":"maintenance","type":"text","text":"## Maintenance\n\n- Quotidienne : logs, services\n- Hebdomadaire : SSL, backups\n- Mensuelle : sécurité, performance","x":350,"y":800,"width":300,"height":200,"color":"2"},
+		{"id":"monitoring","type":"text","text":"## 4. Monitoring\n\n- Logs erreurs\n- Requêtes lentes\n- Activité utilisateurs\n- Ressources système","x":0,"y":800,"width":300,"height":200,"color":"1"},
+		{"id":"deploy-doc","type":"file","file":"obsidian-vault/Workflows/Deployment.md","x":700,"y":800,"width":300,"height":200,"color":"3"}
+	],
+	"edges":[
+		{"id":"pre-backup","fromNode":"pre-check","fromSide":"right","toNode":"backup","toSide":"left"},
+		{"id":"backup-deploy","fromNode":"backup","fromSide":"bottom","toNode":"deploy","toSide":"top"},
+		{"id":"pre-deploy","fromNode":"pre-check","fromSide":"bottom","toNode":"deploy","toSide":"top"},
+		{"id":"deploy-verify","fromNode":"deploy","fromSide":"right","toNode":"verify","toSide":"left"},
+		{"id":"verify-rollback","fromNode":"verify","fromSide":"right","toNode":"rollback","toSide":"left"},
+		{"id":"verify-monitoring","fromNode":"verify","fromSide":"bottom","toNode":"monitoring","toSide":"top"},
+		{"id":"monitoring-maintenance","fromNode":"monitoring","fromSide":"right","toNode":"maintenance","toSide":"left"}
+	],
+	"groups":[]
+}

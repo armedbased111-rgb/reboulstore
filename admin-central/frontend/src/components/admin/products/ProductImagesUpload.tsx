@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Upload, X, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
 import { uploadService } from '../../../services/upload.service';
 import { cn } from '../../../utils/cn';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 /**
  * Interface pour une image de produit
@@ -165,56 +166,100 @@ export default function ProductImagesUpload({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((image, index) => (
             <div
-              key={image.id || index}
-              className="relative group border border-gray-200 rounded-md overflow-hidden bg-gray-50"
+              key={image.id || `new-${index}-${image.url}`}
+              className="relative group border border-gray-200 rounded-md overflow-hidden bg-white"
             >
               {/* Image */}
-              <div className="aspect-square relative">
-                <img
-                  src={image.url}
-                  alt={image.alt || `Image ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-                {/* Overlay avec actions */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
-                    {/* Réorganisation */}
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleMoveUp(index)}
-                        disabled={index === 0}
-                        className={cn(
-                          'p-1.5 bg-white rounded text-gray-700 hover:bg-gray-100',
-                          index === 0 && 'opacity-50 cursor-not-allowed'
-                        )}
-                        title="Déplacer vers le haut"
-                      >
-                        <ArrowUp className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleMoveDown(index)}
-                        disabled={index === images.length - 1}
-                        className={cn(
-                          'p-1.5 bg-white rounded text-gray-700 hover:bg-gray-100',
-                          index === images.length - 1 && 'opacity-50 cursor-not-allowed'
-                        )}
-                        title="Déplacer vers le bas"
-                      >
-                        <ArrowDown className="w-4 h-4" />
-                      </button>
-                    </div>
-                    {/* Suppression */}
+              <div className="aspect-square relative bg-white overflow-hidden">
+                {(() => {
+                  const imageUrl = getImageUrl(image.url);
+                  console.log('🖼️ Rendering image:', { original: image.url, formatted: imageUrl, index });
+                  if (!imageUrl) {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400 text-xs">
+                        Image non disponible (URL invalide)
+                      </div>
+                    );
+                  }
+                  return (
+                    <img
+                      key={imageUrl}
+                      src={imageUrl}
+                      alt={image.alt || `Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      style={{ 
+                        display: 'block', 
+                        width: '100%', 
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                      onError={(e) => {
+                        console.error('❌ Image failed to load:', imageUrl, e);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        // Vérifier si le placeholder n'existe pas déjà
+                        const parent = target.parentElement;
+                        if (parent && !parent.querySelector('.image-placeholder')) {
+                          const placeholder = document.createElement('div');
+                          placeholder.className = 'image-placeholder absolute inset-0 w-full h-full flex items-center justify-center bg-red-100 text-red-600 text-xs border-2 border-red-300';
+                          placeholder.textContent = `❌ Erreur: ${imageUrl.substring(0, 50)}...`;
+                          parent.appendChild(placeholder);
+                        }
+                      }}
+                      onLoad={(e) => {
+                        console.log('✅ Image loaded successfully:', imageUrl);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'block';
+                        target.style.opacity = '1';
+                        target.style.visibility = 'visible';
+                        // Supprimer le placeholder s'il existe
+                        const placeholder = target.parentElement?.querySelector('.image-placeholder');
+                        if (placeholder) {
+                          placeholder.remove();
+                        }
+                      }}
+                      loading="lazy"
+                    />
+                  );
+                })()}
+                {/* Actions - Overlay retiré temporairement pour debug */}
+                <div className="absolute top-2 right-2 flex gap-1 z-20">
+                  {/* Réorganisation */}
+                  <div className="flex gap-1 bg-white/90 backdrop-blur-sm rounded p-1">
                     <button
                       type="button"
-                      onClick={() => handleRemove(index)}
-                      className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700"
-                      title="Supprimer"
+                      onClick={() => handleMoveUp(index)}
+                      disabled={index === 0}
+                      className={cn(
+                        'p-1.5 bg-white rounded text-gray-700 hover:bg-gray-100 shadow-sm',
+                        index === 0 && 'opacity-50 cursor-not-allowed'
+                      )}
+                      title="Déplacer vers le haut"
                     >
-                      <X className="w-4 h-4" />
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMoveDown(index)}
+                      disabled={index === images.length - 1}
+                      className={cn(
+                        'p-1.5 bg-white rounded text-gray-700 hover:bg-gray-100 shadow-sm',
+                        index === images.length - 1 && 'opacity-50 cursor-not-allowed'
+                      )}
+                      title="Déplacer vers le bas"
+                    >
+                      <ArrowDown className="w-4 h-4" />
                     </button>
                   </div>
+                  {/* Suppression */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(index)}
+                    className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 shadow-sm"
+                    title="Supprimer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
                 {/* Badge ordre */}
                 <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs font-medium px-2 py-1 rounded">

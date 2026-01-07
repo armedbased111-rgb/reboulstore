@@ -55,4 +55,8 @@ export class CreateOrderDto {
   @ValidateNested()
   @Type(() => CustomerInfoDto)
   customerInfo: CustomerInfoDto;
+
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
 }

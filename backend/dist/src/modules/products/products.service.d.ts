@@ -1,3 +1,4 @@
+import type { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
@@ -27,14 +28,9 @@ export declare class ProductsService {
     private collectionRepository;
     private brandRepository;
     private readonly cloudinaryService;
-    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, collectionRepository: Repository<Collection>, brandRepository: Repository<Brand>, cloudinaryService: CloudinaryService);
-    findAll(query: ProductQueryDto): Promise<{
-        products: Product[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-    }>;
+    private cacheManager;
+    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, collectionRepository: Repository<Collection>, brandRepository: Repository<Brand>, cloudinaryService: CloudinaryService, cacheManager: Cache);
+    findAll(query: ProductQueryDto): Promise<{}>;
     findOne(id: string): Promise<Product>;
     findByCategory(categoryId: string, query: ProductQueryDto): Promise<{
         products: Product[];

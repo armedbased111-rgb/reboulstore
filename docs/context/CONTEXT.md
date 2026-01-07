@@ -37,7 +37,7 @@ Le projet prévoit **3 sites e-commerce indépendants** gérés depuis une **Adm
 - **Prochaine étape** : Phase 16 (Backend Admin & Permissions) - Phase 17 (Frontend Admin)
 - **MVP** : Connecté uniquement à Reboul pour Février 2025
 
-**📚 Documentation complète** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](../architecture/ARCHITECTURE_ADMIN_CENTRAL.md)
+**📚 Documentation complète** : Voir [[../architecture/ARCHITECTURE_ADMIN_CENTRAL.md|ARCHITECTURE_ADMIN_CENTRAL]]
 
 **✅ Infrastructure Admin-Centrale (Phase 15.5)** :
 - Structure `admin-central/` créée (backend + frontend)

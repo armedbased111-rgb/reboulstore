@@ -4,6 +4,8 @@
 **Date** : 10 décembre 2025  
 **Outil** : Figma (compte complet 20€/mois)
 
+Voir aussi : [[../context/ROADMAP_COMPLETE.md|ROADMAP_COMPLETE]] - [[../../frontend/FRONTEND.md|FRONTEND]] - [[../animations/ANIMATIONS_GUIDE.md|ANIMATIONS_GUIDE]]
+
 ---
 
 ## 🎯 Philosophie

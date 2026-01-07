@@ -4,6 +4,8 @@
 
 Ce document décrit les conventions et le workflow Git pour le projet Reboul Store.
 
+Voir aussi : [[context/ROADMAP_COMPLETE.md|ROADMAP_COMPLETE]] - [[context/CONTEXT.md|CONTEXT]]
+
 ## 🌿 Structure des Branches
 
 ### Branches Principales

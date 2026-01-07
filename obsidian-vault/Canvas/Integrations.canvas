@@ -1,0 +1,27 @@
+{
+	"nodes":[
+		{"id":"cloudflare","type":"text","text":"## Cloudflare\n\nInfrastructure\n- CDN\n- SSL/TLS\n- Cache\n- DDoS","x":800,"y":50,"width":300,"height":230},
+		{"id":"cloudinary","type":"text","text":"## Cloudinary\n\nImages\n- Upload\n- Optimisation\n- CDN","x":400,"y":50,"width":300,"height":200},
+		{"id":"title","type":"text","text":"# Intégrations Reboul Store\n\nServices externes et intégrations","x":-50,"y":-120,"width":400,"height":100},
+		{"id":"stripe","type":"text","text":"## Stripe\n\nPaiements\n- Checkout\n- Webhooks\n- Commandes","x":0,"y":50,"width":300,"height":200},
+		{"id":"stripe-doc","type":"file","file":"obsidian-vault/Integrations/Stripe.md","x":-440,"y":50,"width":300,"height":270},
+		{"id":"images-doc","type":"file","file":"obsidian-vault/Integrations/Images.md","x":650,"y":-320,"width":300,"height":200},
+		{"id":"frontend","type":"text","text":"## Frontend\n\nReact App\n- Stripe Checkout\n- GA4 Tracking\n- Images Cloudinary","x":400,"y":800,"width":300,"height":200},
+		{"id":"backend","type":"text","text":"## Backend\n\nNestJS API\n- Stripe Webhooks\n- Cloudinary API\n- GA4 API","x":1150,"y":800,"width":300,"height":200},
+		{"id":"cloudflare-doc","type":"file","file":"obsidian-vault/Integrations/Cloudflare.md","x":1150,"y":-320,"width":300,"height":200},
+		{"id":"ga4","type":"text","text":"## GA4\n\nAnalytics\n- Tracking\n- Events\n- Dashboard","x":1150,"y":50,"width":300,"height":200}
+	],
+	"edges":[
+		{"id":"stripe-frontend","fromNode":"stripe","fromSide":"bottom","toNode":"frontend","toSide":"top"},
+		{"id":"stripe-backend","fromNode":"stripe","fromSide":"bottom","toNode":"backend","toSide":"top"},
+		{"id":"cloudinary-frontend","fromNode":"cloudinary","fromSide":"bottom","toNode":"frontend","toSide":"top"},
+		{"id":"cloudinary-backend","fromNode":"cloudinary","fromSide":"bottom","toNode":"backend","toSide":"top"},
+		{"id":"ga4-frontend","fromNode":"ga4","fromSide":"bottom","toNode":"frontend","toSide":"top"},
+		{"id":"ga4-backend","fromNode":"ga4","fromSide":"bottom","toNode":"backend","toSide":"top"},
+		{"id":"cloudflare-all","fromNode":"cloudflare","fromSide":"bottom","toNode":"frontend","toSide":"top"},
+		{"id":"498c61cf844dad58","fromNode":"images-doc","fromSide":"bottom","toNode":"cloudinary","toSide":"top"},
+		{"id":"894a7a15eb2a086e","fromNode":"cloudflare","fromSide":"top","toNode":"cloudflare-doc","toSide":"left"},
+		{"id":"bb1049e630024619","fromNode":"backend","fromSide":"left","toNode":"frontend","toSide":"right","fromEnd":"arrow","color":"4"}
+	],
+	"groups":[]
+}

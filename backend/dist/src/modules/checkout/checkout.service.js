@@ -25,18 +25,21 @@ const stripe_1 = __importDefault(require("stripe"));
 const variant_entity_1 = require("../../entities/variant.entity");
 const stock_service_1 = require("../orders/stock.service");
 const orders_service_1 = require("../orders/orders.service");
+const coupons_service_1 = require("../coupons/coupons.service");
 let CheckoutService = CheckoutService_1 = class CheckoutService {
     configService;
     variantRepository;
     stockService;
     ordersService;
+    couponsService;
     stripe;
     logger = new common_1.Logger(CheckoutService_1.name);
-    constructor(configService, variantRepository, stockService, ordersService) {
+    constructor(configService, variantRepository, stockService, ordersService, couponsService) {
         this.configService = configService;
         this.variantRepository = variantRepository;
         this.stockService = stockService;
         this.ordersService = ordersService;
+        this.couponsService = couponsService;
         const stripeSecretKey = this.configService.get('STRIPE_SECRET_KEY');
         if (!stripeSecretKey) {
             throw new Error('STRIPE_SECRET_KEY is not configured');
@@ -82,13 +85,49 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
                 : `/${imageUrl}`;
             return `${cleanBaseUrl}${cleanImageUrl}`;
         };
+        const subtotal = variants.reduce((sum, variant) => {
+            const item = dto.items.find((i) => i.variantId === variant.id);
+            if (!item)
+                return sum;
+            const price = parseFloat(variant.product.price.toString());
+            return sum + price * item.quantity;
+        }, 0);
+        let couponId = null;
+        let discountAmount = 0;
+        let totalDiscountPercentage = 0;
+        if (dto.couponCode) {
+            try {
+                const coupon = await this.couponsService.findByCode(dto.couponCode);
+                const validation = await this.couponsService.validateCoupon(dto.couponCode, subtotal);
+                if (validation.isValid) {
+                    couponId = coupon.id;
+                    discountAmount = validation.discountAmount;
+                    totalDiscountPercentage = subtotal > 0 ? (discountAmount / subtotal) * 100 : 0;
+                }
+                else {
+                    throw new common_1.BadRequestException(validation.message || 'Invalid coupon code');
+                }
+            }
+            catch (error) {
+                if (error instanceof common_1.BadRequestException) {
+                    throw error;
+                }
+                throw new common_1.BadRequestException('Invalid coupon code');
+            }
+        }
         const lineItems = dto.items.map((item) => {
             const variant = variants.find((v) => v.id === item.variantId);
             if (!variant || !variant.product) {
                 throw new common_1.NotFoundException(`Variant ${item.variantId} or product not found`);
             }
             const product = variant.product;
-            const priceInCents = Math.round(parseFloat(product.price.toString()) * 100);
+            let priceInCents = Math.round(parseFloat(product.price.toString()) * 100);
+            if (totalDiscountPercentage > 0) {
+                const itemSubtotal = parseFloat(product.price.toString()) * item.quantity;
+                const itemDiscount = (itemSubtotal * totalDiscountPercentage) / 100;
+                const itemPriceAfterDiscount = itemSubtotal - itemDiscount;
+                priceInCents = Math.round((itemPriceAfterDiscount / item.quantity) * 100);
+            }
             let productImage = null;
             if (product.images && product.images.length > 0) {
                 const colorImage = product.images.find((img) => img.alt?.toLowerCase().includes(variant.color.toLowerCase()));
@@ -125,13 +164,7 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
                 quantity: item.quantity,
             };
         });
-        const total = variants.reduce((sum, variant) => {
-            const item = dto.items.find((i) => i.variantId === variant.id);
-            if (!item)
-                return sum;
-            const price = parseFloat(variant.product.price.toString());
-            return sum + price * item.quantity;
-        }, 0);
+        const total = Math.max(0, subtotal - discountAmount);
         const session = await this.stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
@@ -147,9 +180,20 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
             },
             success_url: `${frontendUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${frontendUrl}/cart`,
+            ...(dto.couponCode && discountAmount > 0 && {
+                custom_text: {
+                    submit: {
+                        message: `Code promo ${dto.couponCode} appliqué : -${discountAmount.toFixed(2)}€ de réduction`,
+                    },
+                },
+            }),
             metadata: {
                 userId: userId || 'anonymous',
+                subtotal: subtotal.toString(),
                 total: total.toString(),
+                discountAmount: discountAmount.toString(),
+                couponId: couponId || '',
+                couponCode: dto.couponCode || '',
                 itemCount: dto.items.length.toString(),
                 items: JSON.stringify(dto.items.map((item) => ({
                     variantId: item.variantId,
@@ -266,7 +310,12 @@ let CheckoutService = CheckoutService_1 = class CheckoutService {
             const amountTotal = session.amount_total
                 ? session.amount_total / 100
                 : null;
-            await this.ordersService.createFromStripeCheckout(items, userId === 'anonymous' ? null : userId, paymentIntentId, customerEmail, customerName, shippingAddress, billingAddress, amountTotal);
+            const couponId = session.metadata?.couponId || null;
+            const couponCode = session.metadata?.couponCode || null;
+            const discountAmount = session.metadata?.discountAmount
+                ? parseFloat(session.metadata.discountAmount)
+                : 0;
+            await this.ordersService.createFromStripeCheckout(items, userId === 'anonymous' ? null : userId, paymentIntentId, customerEmail, customerName, shippingAddress, billingAddress, amountTotal, couponId, discountAmount);
             this.logger.log(`Order created successfully from checkout session ${session.id} with status PENDING (awaiting capture)`);
         }
         catch (error) {
@@ -282,6 +331,7 @@ exports.CheckoutService = CheckoutService = CheckoutService_1 = __decorate([
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_2.Repository,
         stock_service_1.StockService,
-        orders_service_1.OrdersService])
+        orders_service_1.OrdersService,
+        coupons_service_1.CouponsService])
 ], CheckoutService);
 //# sourceMappingURL=checkout.service.js.map

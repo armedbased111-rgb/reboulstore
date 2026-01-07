@@ -28,30 +28,6 @@ export class Shop {
   description: string | null;
 
   /**
-   * Informations de contact du shop
-   */
-  @Column({ type: 'jsonb', nullable: true })
-  contactInfo: {
-    email?: string;
-    phone?: string;
-    address?: {
-      street?: string;
-      city?: string;
-      postalCode?: string;
-      country?: string;
-    };
-  } | null;
-
-  /**
-   * Configuration Stripe
-   */
-  @Column({ type: 'jsonb', nullable: true })
-  stripeConfig: {
-    accountId?: string; // Stripe Account ID
-    dashboardUrl?: string; // URL du dashboard Stripe
-  } | null;
-
-  /**
    * Politique de livraison du shop
    * Structure JSON avec infos globales de livraison
    */

@@ -12,6 +12,7 @@ import { Shop } from './entities/shop.entity';
 import { Address } from './entities/address.entity';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
+import { Coupon } from './entities/coupon.entity';
 import { ReboulProductsService } from './reboul-products.service';
 import { ReboulProductsController } from './reboul-products.controller';
 import { ReboulOrdersService } from './reboul-orders.service';
@@ -28,6 +29,8 @@ import { ReboulCollectionsService } from './reboul-collections.service';
 import { ReboulCollectionsController } from './reboul-collections.controller';
 import { ReboulSettingsService } from './reboul-settings.service';
 import { ReboulSettingsController } from './reboul-settings.controller';
+import { ReboulCouponsService } from './reboul-coupons.service';
+import { ReboulCouponsController } from './reboul-coupons.controller';
 
 /**
  * Module Reboul pour l'Admin Centrale
@@ -56,6 +59,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
         Address,
         Cart,
         CartItem,
+        Coupon,
       ],
       'reboul', // ⚠️ Nom de la connexion TypeORM
     ),
@@ -69,6 +73,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
     ReboulBrandsService, // ✅ Phase 17.7 - Service marques créé
     ReboulCollectionsService, // ✅ Phase 24.4 - Service collections créé
     ReboulSettingsService, // ✅ Phase 17.8 - Service settings créé
+    ReboulCouponsService, // ✅ Phase 18.4 - Service coupons créé
   ],
   controllers: [
     ReboulProductsController, // ✅ Phase 16 - Controller produits créé
@@ -79,6 +84,7 @@ import { ReboulSettingsController } from './reboul-settings.controller';
     ReboulBrandsController, // ✅ Phase 17.7 - Controller marques créé
     ReboulCollectionsController, // ✅ Phase 24.4 - Controller collections créé
     ReboulSettingsController, // ✅ Phase 17.8 - Controller settings créé
+    ReboulCouponsController, // ✅ Phase 18.4 - Controller coupons créé
   ],
   exports: [
     // Exporter les services pour utilisation dans d'autres modules si besoin

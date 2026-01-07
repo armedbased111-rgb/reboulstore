@@ -1,0 +1,21 @@
+{
+	"nodes":[
+		{"id":"2582c723999a5fa4","x":-20,"y":-20,"width":1040,"height":870,"color":"1","type":"group","label":"Groupe sans titre"},
+		{"id":"title","type":"text","text":"# Règle Déploiement\n\nProtection Base de Données","x":0,"y":0,"width":400,"height":100},
+		{"id":"interdit","type":"text","text":"## ❌ INTERDIT\n\nJAMAIS docker compose down -v\nJAMAIS docker volume rm postgres\nJAMAIS supprimer volumes DB","x":0,"y":150,"width":300,"height":200},
+		{"id":"backup","type":"text","text":"## 1. Backup OBLIGATOIRE\n\n./rcli db backup --server\nAVANT chaque déploiement","x":350,"y":150,"width":300,"height":200},
+		{"id":"arret","type":"text","text":"## 2. Arrêt Services\n\ndocker compose down\nSANS -v\n(préserve volumes)","x":700,"y":150,"width":300,"height":200},
+		{"id":"build","type":"text","text":"## 4. Build & Start\n\ndocker compose build\ndocker compose up -d\nVolume DB préservé","x":350,"y":400,"width":300,"height":200},
+		{"id":"verif","type":"text","text":"## 5. Vérification\n\ndocker exec postgres\npsql -c \"SELECT COUNT(*)\nFROM brand;\"\nVérifier données","x":700,"y":400,"width":300,"height":200},
+		{"id":"cleanup","type":"text","text":"## 3. Cleanup Build\n\ndocker volume rm\nfrontend_build\nUNIQUEMENT volumes build","x":0,"y":400,"width":300,"height":200},
+		{"id":"rollback","type":"text","text":"## Rollback (si problème)\n\n./rcli db backup-list\n./rcli db backup-restore\nbackup_file --yes","x":700,"y":680,"width":300,"height":150}
+	],
+	"edges":[
+		{"id":"backup-arret","fromNode":"backup","fromSide":"right","toNode":"arret","toSide":"left"},
+		{"id":"arret-cleanup","fromNode":"arret","fromSide":"bottom","toNode":"cleanup","toSide":"top"},
+		{"id":"cleanup-build","fromNode":"cleanup","fromSide":"right","toNode":"build","toSide":"left"},
+		{"id":"build-verif","fromNode":"build","fromSide":"right","toNode":"verif","toSide":"left"},
+		{"id":"verif-rollback","fromNode":"verif","fromSide":"bottom","toNode":"rollback","toSide":"top"}
+	],
+	"groups":[]
+}

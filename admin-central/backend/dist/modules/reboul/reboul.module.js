@@ -21,6 +21,7 @@ const shop_entity_1 = require("./entities/shop.entity");
 const address_entity_1 = require("./entities/address.entity");
 const cart_entity_1 = require("./entities/cart.entity");
 const cart_item_entity_1 = require("./entities/cart-item.entity");
+const coupon_entity_1 = require("./entities/coupon.entity");
 const reboul_products_service_1 = require("./reboul-products.service");
 const reboul_products_controller_1 = require("./reboul-products.controller");
 const reboul_orders_service_1 = require("./reboul-orders.service");
@@ -37,6 +38,8 @@ const reboul_collections_service_1 = require("./reboul-collections.service");
 const reboul_collections_controller_1 = require("./reboul-collections.controller");
 const reboul_settings_service_1 = require("./reboul-settings.service");
 const reboul_settings_controller_1 = require("./reboul-settings.controller");
+const reboul_coupons_service_1 = require("./reboul-coupons.service");
+const reboul_coupons_controller_1 = require("./reboul-coupons.controller");
 let ReboulModule = class ReboulModule {
 };
 exports.ReboulModule = ReboulModule;
@@ -56,6 +59,7 @@ exports.ReboulModule = ReboulModule = __decorate([
                 address_entity_1.Address,
                 cart_entity_1.Cart,
                 cart_item_entity_1.CartItem,
+                coupon_entity_1.Coupon,
             ], 'reboul'),
         ],
         providers: [
@@ -67,6 +71,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_brands_service_1.ReboulBrandsService,
             reboul_collections_service_1.ReboulCollectionsService,
             reboul_settings_service_1.ReboulSettingsService,
+            reboul_coupons_service_1.ReboulCouponsService,
         ],
         controllers: [
             reboul_products_controller_1.ReboulProductsController,
@@ -77,6 +82,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_brands_controller_1.ReboulBrandsController,
             reboul_collections_controller_1.ReboulCollectionsController,
             reboul_settings_controller_1.ReboulSettingsController,
+            reboul_coupons_controller_1.ReboulCouponsController,
         ],
         exports: [],
     })

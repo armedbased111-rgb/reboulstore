@@ -1,0 +1,21 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Git\n\nBranches, commits, PR","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"branches","type":"text","text":"## Branches\n\nmain (production)\nfeature/* (fonctionnalités)\nfix/* (bugs)\nhotfix/* (urgent)","x":0,"y":150,"width":300,"height":200,"color":"2"},
+		{"id":"creer","type":"text","text":"## 1. Créer Branche\n\ngit checkout main\ngit pull\ngit checkout -b\nfeature/nom","x":350,"y":150,"width":300,"height":200,"color":"3"},
+		{"id":"developper","type":"text","text":"## 2. Développer\n\ngit add .\ngit commit -m\n\"feat: description\"\ngit push origin\nfeature/nom","x":700,"y":150,"width":300,"height":200,"color":"4"},
+		{"id":"pr","type":"text","text":"## 3. Pull Request\n\nGitHub\nNew Pull Request\nDescription\nReviewers\nCréer PR","x":0,"y":400,"width":300,"height":200,"color":"5"},
+		{"id":"review","type":"text","text":"## 4. Review & Merge\n\nReviewers vérifient\nTests CI/CD\nApprouver\nMerge dans main","x":350,"y":400,"width":300,"height":200,"color":"6"},
+		{"id":"deploy","type":"text","text":"## 5. Déploiement\n\nGitHub Actions\nDéploiement auto\nProduction","x":700,"y":400,"width":300,"height":200,"color":"1"},
+		{"id":"conventions","type":"text","text":"## Conventions\n\nfeat: nouvelle fonctionnalité\nfix: correction bug\ndocs: documentation\nrefactor: refactoring","x":0,"y":650,"width":500,"height":150,"color":"2"}
+	],
+	"edges":[
+		{"id":"b-c","fromNode":"branches","fromSide":"right","toNode":"creer","toSide":"left"},
+		{"id":"c-d","fromNode":"creer","fromSide":"right","toNode":"developper","toSide":"left"},
+		{"id":"d-pr","fromNode":"developper","fromSide":"bottom","toNode":"pr","toSide":"top"},
+		{"id":"pr-r","fromNode":"pr","fromSide":"right","toNode":"review","toSide":"left"},
+		{"id":"r-deploy","fromNode":"review","fromSide":"right","toNode":"deploy","toSide":"left"},
+		{"id":"conv-d","fromNode":"conventions","fromSide":"top","toNode":"developper","toSide":"bottom"}
+	],
+	"groups":[]
+}

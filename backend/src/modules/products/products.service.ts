@@ -4,6 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import { Inject } from '@nestjs/common';
 import { Repository, FindOptionsWhere, ILike, Between } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { Category } from '../../entities/category.entity';
@@ -44,6 +47,7 @@ export class ProductsService {
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
     private readonly cloudinaryService: CloudinaryService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async findAll(query: ProductQueryDto) {
@@ -58,6 +62,15 @@ export class ProductsService {
       sortBy = 'createdAt',
       sortOrder = 'DESC',
     } = query;
+
+    // Générer une clé de cache unique basée sur les paramètres de requête
+    const cacheKey = `products:${JSON.stringify(query)}`;
+    
+    // Vérifier le cache
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
 
     // Trouver la collection active
     const activeCollection = await this.collectionRepository.findOne({
@@ -141,6 +154,14 @@ export class ProductsService {
   }
 
   async findOne(id: string): Promise<Product> {
+    const cacheKey = `product:${id}`;
+    
+    // Vérifier le cache
+    const cached = await this.cacheManager.get<Product>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const product = await this.productRepository.findOne({
       where: { id },
       relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
@@ -149,6 +170,9 @@ export class ProductsService {
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
+
+    // Mettre en cache le produit (TTL 5 minutes = 300 secondes)
+    await this.cacheManager.set(cacheKey, product, 300);
 
     return product;
   }
@@ -251,7 +275,12 @@ export class ProductsService {
       ...createProductDto,
       collectionId,
     });
-    return this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product);
+    
+    // Note: Le cache expire automatiquement après 5 minutes (TTL)
+    // Pour une invalidation complète, on pourrait utiliser redis directement avec un pattern
+    
+    return savedProduct;
   }
 
   async update(
@@ -287,12 +316,22 @@ export class ProductsService {
     }
 
     Object.assign(product, updateProductDto);
-    return this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product);
+    
+    // Invalider le cache du produit spécifique
+    await this.cacheManager.del(`product:${id}`);
+    // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
+    
+    return savedProduct;
   }
 
   async remove(id: string): Promise<void> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);
+    
+    // Invalider le cache du produit spécifique
+    await this.cacheManager.del(`product:${id}`);
+    // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
   }
 
   async findVariantsByProduct(productId: string): Promise<Variant[]> {

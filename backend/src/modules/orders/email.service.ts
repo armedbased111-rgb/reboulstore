@@ -335,6 +335,55 @@ export class EmailService {
   }
 
   /**
+   * Envoie un email de notification de disponibilité de stock
+   * @param email - Email du destinataire
+   * @param product - Produit concerné
+   * @param variant - Variante concernée (optionnel)
+   */
+  async sendStockAvailableNotification(
+    email: string,
+    product: { id: string; name: string; slug: string; imageUrl?: string | null },
+    variant?: { id: string; color?: string; size?: string },
+  ): Promise<void> {
+    const productUrl = `${this.frontendUrl}/products/${product.slug}`;
+    const productName = variant
+      ? `${product.name} - ${variant.color || ''} ${variant.size || ''}`.trim()
+      : product.name;
+
+    // Logo Reboul Store (utiliser le logo noir depuis Cloudinary)
+    const logoUrl = 'https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png';
+
+    try {
+      this.logger.debug(`Sending stock notification email to ${email} with logoUrl: ${logoUrl}`);
+      const result = await this.mailerService.sendMail({
+        to: email,
+        subject: `Votre produit est de nouveau disponible - ${productName}`,
+        template: 'stock-available',
+        context: {
+          productName,
+          productUrl,
+          productImageUrl: product.imageUrl || null,
+          logoUrl: logoUrl || null,
+          variant: variant
+            ? `${variant.color || ''} ${variant.size || ''}`.trim()
+            : null,
+        },
+      });
+
+      this.logger.log(`Stock available notification sent to ${email} for product ${product.id}`);
+      this.logger.debug(`Email result: ${JSON.stringify(result)}`);
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to send stock available notification to ${email}:`,
+        error?.message || error,
+        error?.stack,
+      );
+      // Ne pas throw pour ne pas bloquer le processus si l'email échoue
+      // L'utilisateur pourra être notifié lors de la prochaine vérification
+    }
+  }
+
+  /**
    * Convertit le statut de commande en libellé français
    */
   private getStatusLabel(status: string): string {

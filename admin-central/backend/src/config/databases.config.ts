@@ -4,8 +4,13 @@ import { ConfigService } from '@nestjs/config';
 /**
  * Configuration de la connexion à la base de données Reboul
  * 
- * Cette connexion permet à l'admin d'accéder directement à la base Reboul
- * via le réseau Docker partagé (reboulstore-network).
+ * ⚠️ IMPORTANT : La base Reboul est TOUJOURS sur le VPS, même en développement
+ * 
+ * Cette connexion permet à l'admin d'accéder à la base Reboul via le tunnel SSH :
+ * - Le tunnel SSH expose PostgreSQL du VPS sur localhost:5433 de la machine locale
+ * - Le container Docker utilise host.docker.internal:5433 pour accéder au tunnel
+ * - En développement : host.docker.internal:5433 (via tunnel SSH)
+ * - En production : connexion directe au VPS (selon configuration)
  * 
  * Le nom de la connexion 'reboul' sera utilisé dans les services pour
  * injecter les repositories avec @InjectRepository(Entity, 'reboul')
@@ -15,8 +20,8 @@ export const getReboulDatabaseConfig = (
 ): TypeOrmModuleOptions => ({
   name: 'reboul', // ⚠️ Nom unique de la connexion (utilisé dans @InjectRepository)
   type: 'postgres',
-  host: configService.get<string>('REBOUL_DB_HOST', 'reboulstore-postgres'), // Nom du container Docker
-  port: configService.get<number>('REBOUL_DB_PORT', 5432),
+  host: configService.get<string>('REBOUL_DB_HOST', 'host.docker.internal'), // Tunnel SSH vers VPS
+  port: configService.get<number>('REBOUL_DB_PORT', 5433), // Port du tunnel SSH
   username: configService.get<string>('REBOUL_DB_USER', 'reboulstore'),
   password: configService.get<string>('REBOUL_DB_PASSWORD', 'reboulstore_password'),
   database: configService.get<string>('REBOUL_DB_NAME', 'reboulstore_db'),

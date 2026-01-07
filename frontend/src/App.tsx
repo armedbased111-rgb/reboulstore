@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Layout } from './components/layout/Layout'
 import { Home } from './pages/Home'
 import { Catalog } from './pages/Catalog'
+import { Search } from './pages/Search'
 import { Product } from './pages/Product'
 import { Cart } from './pages/Cart'
 import { Checkout } from './pages/Checkout'
@@ -10,6 +11,14 @@ import { OrderConfirmation } from './pages/OrderConfirmation'
 import { Orders } from './pages/Orders'
 import { OrderDetail } from './pages/OrderDetail'
 import { About } from './pages/About'
+import { Contact } from './pages/Contact'
+import { Stores } from './pages/Stores'
+import { ShippingReturns } from './pages/ShippingReturns'
+import { Terms } from './pages/Terms'
+import { Privacy } from './pages/Privacy'
+import { NotFound } from './pages/NotFound'
+import { ServerError } from './pages/ServerError'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Profile } from './pages/Profile'
@@ -81,6 +90,14 @@ function App() {
           } 
         />
         <Route 
+          path="/search" 
+          element={
+            <Layout>
+              <Search />
+            </Layout>
+          } 
+        />
+        <Route 
           path="/product/:id" 
           element={
             <Layout>
@@ -117,6 +134,46 @@ function App() {
           element={
             <Layout>
               <About />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/contact" 
+          element={
+            <Layout>
+              <Contact />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/stores" 
+          element={
+            <Layout>
+              <Stores />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/shipping-returns" 
+          element={
+            <Layout>
+              <ShippingReturns />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/terms" 
+          element={
+            <Layout>
+              <Terms />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/privacy" 
+          element={
+            <Layout>
+              <Privacy />
             </Layout>
           } 
         />
@@ -167,8 +224,27 @@ function App() {
           } 
         />
         
+        {/* Pages d'erreur */}
+        <Route 
+          path="/500" 
+          element={
+            <Layout>
+              <ServerError />
+            </Layout>
+          } 
+        />
+        
+        {/* Route 404 - Doit être en dernier */}
+        <Route 
+          path="*" 
+          element={
+            <Layout>
+              <NotFound />
+            </Layout>
+          } 
+        />
+        
         {/* Pages de test sans Layout */}
-
         <Route path="/loader-playground" element={<LoaderPlayground />} />
       </Routes>
     </BrowserRouter>

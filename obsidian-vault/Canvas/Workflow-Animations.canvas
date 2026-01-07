@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Animations AnimeJS\n\nCréation d'animations réutilisables","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"decider","type":"text","text":"## 1. Décider Type\n\nRéutilisable?\n→ animations/presets/\nSpécifique?\n→ animations/components/","x":0,"y":150,"width":300,"height":200,"color":"2"},
+		{"id":"creer","type":"text","text":"## 2. Créer Fichier\n\nkebab-case.ts\nExporter animate[Nom]\nJSDoc\nUtiliser constantes\nconvertEasing()","x":350,"y":150,"width":300,"height":200,"color":"3"},
+		{"id":"exporter","type":"text","text":"## 3. Exporter\n\nAjouter dans\nanimations/index.ts","x":700,"y":150,"width":300,"height":150,"color":"4"},
+		{"id":"utiliser","type":"text","text":"## 4. Utiliser\n\nImporter depuis index\nuseRef + useEffect\nuseAnimation() hook\nNettoyage auto","x":0,"y":400,"width":300,"height":200,"color":"5"},
+		{"id":"structure","type":"text","text":"## Structure\n\nanimations/\n├── presets/\n├── components/\n└── utils/\n    ├── constants.ts\n    └── animejs-helpers.ts","x":350,"y":400,"width":300,"height":200,"color":"6"},
+		{"id":"bonnes-pratiques","type":"text","text":"## Bonnes Pratiques\n\n✅ Réutilisables presets/\n✅ useAnimation() hook\n✅ Respecter constantes\n✅ Documenter JSDoc\n❌ Dupliquer code\n❌ Oublier cleanup","x":700,"y":400,"width":300,"height":200,"color":"1"}
+	],
+	"edges":[
+		{"id":"d-c","fromNode":"decider","fromSide":"right","toNode":"creer","toSide":"left"},
+		{"id":"c-e","fromNode":"creer","fromSide":"right","toNode":"exporter","toSide":"left"},
+		{"id":"e-u","fromNode":"exporter","fromSide":"bottom","toNode":"utiliser","toSide":"top"},
+		{"id":"s-u","fromNode":"structure","fromSide":"left","toNode":"utiliser","toSide":"right"},
+		{"id":"bp-u","fromNode":"bonnes-pratiques","fromSide":"left","toNode":"utiliser","toSide":"right"}
+	],
+	"groups":[]
+}

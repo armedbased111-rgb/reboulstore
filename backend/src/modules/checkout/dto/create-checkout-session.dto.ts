@@ -5,6 +5,7 @@ import {
   IsInt,
   Min,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -23,4 +24,8 @@ export class CreateCheckoutSessionDto {
   @ValidateNested({ each: true })
   @Type(() => CheckoutItemDto)
   items: CheckoutItemDto[];
+
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
 }

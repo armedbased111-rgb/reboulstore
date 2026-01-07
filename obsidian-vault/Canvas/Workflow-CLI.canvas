@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow CLI Python\n\nAutomatisation des tâches","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"avant","type":"text","text":"## Avant Développement\n\n./rcli context generate\n./rcli roadmap check\n./rcli server status","x":0,"y":150,"width":300,"height":200,"color":"2"},
+		{"id":"code","type":"text","text":"## Génération Code\n\n./rcli code generate\nmodule FeatureName --full\n./rcli code component\nProductCard --domain Product","x":350,"y":150,"width":350,"height":200,"color":"3"},
+		{"id":"db","type":"text","text":"## Base de Données\n\n./rcli db backup --server\n./rcli db generate\nmigration AddUserTable\n./rcli db generate seed","x":750,"y":150,"width":300,"height":200,"color":"4"},
+		{"id":"docs","type":"text","text":"## Documentation\n\n./rcli docs sync\n./rcli docs generate api\n./rcli docs generate\ncomponents","x":0,"y":400,"width":300,"height":200,"color":"5"},
+		{"id":"serveur","type":"text","text":"## Serveur\n\n./rcli server status\n./rcli server monitor\n./rcli logs errors\n--last 1h","x":350,"y":400,"width":350,"height":200,"color":"6"},
+		{"id":"apres","type":"text","text":"## Après Tâche\n\n./rcli roadmap update\n--task \"15.1 Config\"\n./rcli docs sync","x":750,"y":400,"width":300,"height":200,"color":"1"},
+		{"id":"cli-doc","type":"file","file":"obsidian-vault/CLI/Overview.md","x":0,"y":650,"width":500,"height":150,"color":"2"}
+	],
+	"edges":[
+		{"id":"avant-code","fromNode":"avant","fromSide":"right","toNode":"code","toSide":"left"},
+		{"id":"code-db","fromNode":"code","fromSide":"right","toNode":"db","toSide":"left"},
+		{"id":"avant-docs","fromNode":"avant","fromSide":"bottom","toNode":"docs","toSide":"top"},
+		{"id":"docs-serveur","fromNode":"docs","fromSide":"right","toNode":"serveur","toSide":"left"},
+		{"id":"serveur-apres","fromNode":"serveur","fromSide":"right","toNode":"apres","toSide":"left"}
+	],
+	"groups":[]
+}

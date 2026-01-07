@@ -30,10 +30,9 @@ let ReboulSettingsService = class ReboulSettingsService {
             const newShop = this.shopRepository.create({
                 name: 'Reboul',
                 slug: 'reboul',
+                description: null,
                 shippingPolicy: null,
                 returnPolicy: null,
-                contactInfo: null,
-                stripeConfig: null,
             });
             return this.shopRepository.save(newShop);
         }

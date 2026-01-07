@@ -6,6 +6,8 @@ class OrderResponseDto {
     cartId;
     status;
     total;
+    couponId;
+    discountAmount;
     customerInfo;
     cart;
     createdAt;

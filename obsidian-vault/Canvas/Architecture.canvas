@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"f7d57ba213370cd4","x":-20,"y":-20,"width":1140,"height":990,"color":"1","type":"group","label":"Groupe sans titre"},
+		{"id":"title","type":"text","text":"# Architecture Reboul Store\n\nVue d'ensemble du système","x":0,"y":0,"width":400,"height":100},
+		{"id":"reboul","type":"text","text":"## Reboul Store\n\n- Frontend (React)\n- Backend (NestJS)\n- Database PostgreSQL\n- Ports: 3000, 4000","x":0,"y":150,"width":300,"height":200},
+		{"id":"cpcompany","type":"text","text":"## CP Company\n\n- Frontend (React)\n- Backend (NestJS)\n- Database PostgreSQL\n- Futur","x":400,"y":150,"width":300,"height":200},
+		{"id":"outlet","type":"text","text":"## Outlet\n\n- Frontend (React)\n- Backend (NestJS)\n- Database PostgreSQL\n- Futur","x":800,"y":150,"width":300,"height":200},
+		{"id":"admin","type":"text","text":"## Admin Centrale\n\n- Frontend (React)\n- Backend (NestJS)\n- Connexions multiples\n- Ports: 4000, 4001","x":400,"y":450,"width":300,"height":200},
+		{"id":"infra","type":"text","text":"## Infrastructure\n\n- Docker Compose\n- Nginx (reverse proxy)\n- Cloudflare (CDN)\n- VPS OVH","x":0,"y":750,"width":300,"height":200},
+		{"id":"services","type":"text","text":"## Services Externes\n\n- Stripe (paiement)\n- Cloudinary (images)\n- GA4 (analytics)","x":400,"y":750,"width":300,"height":200}
+	],
+	"edges":[
+		{"id":"reboul-admin","fromNode":"reboul","fromSide":"bottom","toNode":"admin","toSide":"top"},
+		{"id":"cpcompany-admin","fromNode":"cpcompany","fromSide":"bottom","toNode":"admin","toSide":"top"},
+		{"id":"outlet-admin","fromNode":"outlet","fromSide":"bottom","toNode":"admin","toSide":"top"},
+		{"id":"reboul-infra","fromNode":"reboul","fromSide":"bottom","toNode":"infra","toSide":"top"},
+		{"id":"admin-services","fromNode":"admin","fromSide":"bottom","toNode":"services","toSide":"top"}
+	],
+	"groups":[]
+}

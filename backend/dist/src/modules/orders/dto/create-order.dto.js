@@ -68,6 +68,7 @@ __decorate([
 class CreateOrderDto {
     cartId;
     customerInfo;
+    couponCode;
 }
 exports.CreateOrderDto = CreateOrderDto;
 __decorate([
@@ -81,4 +82,9 @@ __decorate([
     (0, class_transformer_1.Type)(() => CustomerInfoDto),
     __metadata("design:type", CustomerInfoDto)
 ], CreateOrderDto.prototype, "customerInfo", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateOrderDto.prototype, "couponCode", void 0);
 //# sourceMappingURL=create-order.dto.js.map

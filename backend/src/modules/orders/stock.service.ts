@@ -8,9 +8,13 @@ import { Repository } from 'typeorm';
 import { Variant } from '../../entities/variant.entity';
 import { Order } from '../../entities/order.entity';
 import { CartItem } from '../../entities/cart-item.entity';
+import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { Product } from '../../entities/product.entity';
 
 @Injectable()
 export class StockService {
+  private readonly STOCK_LOW_THRESHOLD = 10; // Seuil pour considérer le stock comme faible
+
   constructor(
     @InjectRepository(Variant)
     private variantRepository: Repository<Variant>,
@@ -18,6 +22,9 @@ export class StockService {
     private orderRepository: Repository<Order>,
     @InjectRepository(CartItem)
     private cartItemRepository: Repository<CartItem>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
+    private notificationsGateway: NotificationsGateway,
   ) {}
 
   /**
@@ -61,9 +68,26 @@ export class StockService {
     const variant = await this.checkStockAvailability(variantId, quantity);
 
     variant.stock -= quantity;
-    await this.variantRepository.save(variant);
+    const savedVariant = await this.variantRepository.save(variant);
 
-    return variant;
+    // Vérifier si le stock est maintenant faible et notifier les admins
+    if (savedVariant.stock <= this.STOCK_LOW_THRESHOLD) {
+      const product = await this.productRepository.findOne({
+        where: { id: savedVariant.productId },
+      });
+
+      if (product) {
+        this.notificationsGateway.notifyProductStockLow({
+          id: product.id,
+          name: product.name,
+          variantId: savedVariant.id,
+          variantName: `${savedVariant.color} - ${savedVariant.size}`,
+          stock: savedVariant.stock,
+        });
+      }
+    }
+
+    return savedVariant;
   }
 
   /**
@@ -103,13 +127,26 @@ export class StockService {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    if (!order.cart || !order.cart.items) {
+    // Pour les commandes depuis Stripe Checkout (sans cart), utiliser order.items
+    if (order.items && order.items.length > 0) {
+      for (const item of order.items) {
+        await this.decrementStock(item.variantId, item.quantity);
+      }
       return;
     }
 
-    for (const item of order.cart.items) {
-      await this.decrementStock(item.variantId, item.quantity);
+    // Pour les commandes depuis un panier, utiliser cart.items
+    if (order.cart && order.cart.items && order.cart.items.length > 0) {
+      for (const item of order.cart.items) {
+        await this.decrementStock(item.variantId, item.quantity);
+      }
+      return;
     }
+
+    // Aucun item trouvé
+    throw new BadRequestException(
+      `Order ${orderId} has no items (neither in cart nor in items field)`,
+    );
   }
 
   /**
@@ -127,12 +164,25 @@ export class StockService {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    if (!order.cart || !order.cart.items) {
+    // Pour les commandes depuis Stripe Checkout (sans cart), utiliser order.items
+    if (order.items && order.items.length > 0) {
+      for (const item of order.items) {
+        await this.incrementStock(item.variantId, item.quantity);
+      }
       return;
     }
 
-    for (const item of order.cart.items) {
-      await this.incrementStock(item.variantId, item.quantity);
+    // Pour les commandes depuis un panier, utiliser cart.items
+    if (order.cart && order.cart.items && order.cart.items.length > 0) {
+      for (const item of order.cart.items) {
+        await this.incrementStock(item.variantId, item.quantity);
+      }
+      return;
     }
+
+    // Aucun item trouvé
+    throw new BadRequestException(
+      `Order ${orderId} has no items (neither in cart nor in items field)`,
+    );
   }
 }

@@ -1,24 +1,4 @@
 services:
-  # Base de données PostgreSQL (Production)
-  postgres:
-    image: postgres:15-alpine
-    container_name: reboulstore-postgres-prod
-    environment:
-      POSTGRES_USER: ${DB_USERNAME:-reboulstore}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE:-reboulstore_db}
-    volumes:
-      - postgres_data_prod:/var/lib/postgresql/data
-    networks:
-      - reboulstore-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-reboulstore} -d ${DB_DATABASE:-reboulstore_db}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    restart: unless-stopped
-
   # Backend NestJS (Production)
   backend:
     build:
@@ -29,11 +9,14 @@ services:
       - .env.production
     environment:
       - NODE_ENV=production
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USERNAME=${DB_USERNAME:-reboulstore}
+      # Configuration DB : Base de données UNIQUEMENT sur le VPS (connexion directe)
+      # Les variables sont chargées depuis .env.production
+      # DB_HOST doit être l'IP du VPS ou localhost si base sur même serveur
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_DATABASE:-reboulstore_db}
+      - DB_DATABASE=${DB_DATABASE}
       - PORT=3001
       - JWT_SECRET=${JWT_SECRET}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
@@ -42,9 +25,16 @@ services:
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - FRONTEND_URL=${FRONTEND_URL:-https://reboulstore.com}
+      # Configuration SMTP
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      # Configuration Redis
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
     depends_on:
-      postgres:
-        condition: service_healthy
+      - redis
     networks:
       - reboulstore-network
     restart: unless-stopped
@@ -54,6 +44,28 @@ services:
         max-size: "10m"
         max-file: "3"
         tag: "{{.Name}}/backend"
+
+  # Redis Cache (Production)
+  redis:
+    image: redis:7-alpine
+    container_name: reboulstore-redis-prod
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - reboulstore-network
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}/redis"
 
   # Frontend React + Vite (Production) - Build statique servi par Nginx
   frontend:
@@ -105,10 +117,10 @@ services:
         tag: "{{.Name}}/nginx"
 
 volumes:
-  postgres_data_prod:
-    name: reboulstore_postgres_prod
   frontend_build:
     name: reboulstore_frontend_build
+  redis_data_prod:
+    name: reboulstore_redis_prod
 
 networks:
   reboulstore-network:

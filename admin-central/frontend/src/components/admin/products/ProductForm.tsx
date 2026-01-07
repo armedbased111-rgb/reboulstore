@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Product } from '../../../types/reboul.types';
 import { Category } from '../../../services/reboul-categories.service';
 import { Brand } from '../../../services/reboul-brands.service';
+import { Collection } from '../../../services/reboul-collections.service';
 import { reboulCategoriesService } from '../../../services/reboul-categories.service';
 import { reboulBrandsService } from '../../../services/reboul-brands.service';
+import { reboulCollectionsService } from '../../../services/reboul-collections.service';
 import { Plus, X } from 'lucide-react';
 import ProductImagesUpload, { ProductImage } from './ProductImagesUpload';
 import ProductVariantsManager, { ProductVariant } from './ProductVariantsManager';
@@ -29,10 +31,12 @@ export default function ProductForm({
 }: ProductFormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
+    reference: initialData?.reference || '',
     description: initialData?.description || '',
     price: initialData?.price || 0,
     categoryId: initialData?.categoryId || '',
     brandId: initialData?.brandId || '',
+    collectionId: initialData?.collectionId || '',
     materials: initialData?.materials || '',
     careInstructions: initialData?.careInstructions || '',
     madeIn: initialData?.madeIn || '',
@@ -64,20 +68,23 @@ export default function ProductForm({
   );
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Charger les catégories et marques
+  // Charger les catégories, marques et collections
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [categoriesData, brandsData] = await Promise.all([
+        const [categoriesData, brandsData, collectionsData] = await Promise.all([
           reboulCategoriesService.getAll(),
           reboulBrandsService.getAll(),
+          reboulCollectionsService.getCollections(),
         ]);
         setCategories(categoriesData);
         setBrands(brandsData);
+        setCollections(collectionsData);
       } catch (error) {
-        console.error('Erreur lors du chargement des catégories/marques:', error);
+        console.error('Erreur lors du chargement des catégories/marques/collections:', error);
       }
     };
     loadOptions();
@@ -88,10 +95,12 @@ export default function ProductForm({
     if (initialData) {
       setFormData({
         name: initialData.name || '',
+        reference: initialData.reference || '',
         description: initialData.description || '',
         price: initialData.price || 0,
         categoryId: initialData.categoryId || '',
         brandId: initialData.brandId || '',
+        collectionId: initialData.collectionId || '',
         materials: initialData.materials || '',
         careInstructions: initialData.careInstructions || '',
         madeIn: initialData.madeIn || '',
@@ -179,14 +188,38 @@ export default function ProductForm({
     }
 
     try {
-      await onSubmit({
+      // Préparer les données avec images et variants
+      const submitData: any = {
         ...formData,
         price: Number(formData.price),
         customSizeChart: sizeChartItems.length > 0 ? sizeChartItems : undefined,
         materials: formData.materials || undefined,
         careInstructions: formData.careInstructions || undefined,
         madeIn: formData.madeIn || undefined,
+        // Inclure les images et variants pour la mise à jour complète
+        images: productImages.map((img) => ({
+          id: img.id || undefined, // Ne pas envoyer id si undefined
+          url: img.url,
+          publicId: img.publicId || undefined,
+          alt: img.alt || undefined,
+          order: img.order,
+        })),
+        variants: productVariants.map((v) => ({
+          id: v.id || undefined, // Ne pas envoyer id si undefined
+          color: v.color,
+          size: v.size,
+          stock: Number(v.stock),
+          sku: v.sku,
+        })),
+      };
+
+      console.log('📤 Envoi des données:', {
+        imagesCount: submitData.images.length,
+        images: submitData.images,
+        variantsCount: submitData.variants.length,
       });
+
+      await onSubmit(submitData);
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
     }
@@ -210,6 +243,24 @@ export default function ProductForm({
           placeholder="Ex: T-shirt Premium"
         />
         {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+      </div>
+
+      {/* Référence produit */}
+      <div>
+        <label htmlFor="reference" className="block text-sm font-medium text-gray-700">
+          Référence produit
+        </label>
+        <input
+          type="text"
+          id="reference"
+          value={formData.reference}
+          onChange={(e) => handleChange('reference', e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+          placeholder="Ex: REF-001, SKU-12345"
+        />
+        <p className="mt-1 text-xs text-gray-500">
+          Référence unique du produit (utilisée pour l'intégration AS400)
+        </p>
       </div>
 
       {/* Description */}
@@ -288,6 +339,29 @@ export default function ProductForm({
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Collection */}
+      <div>
+        <label htmlFor="collectionId" className="block text-sm font-medium text-gray-700">
+          Collection
+        </label>
+        <select
+          id="collectionId"
+          value={formData.collectionId}
+          onChange={(e) => handleChange('collectionId', e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+        >
+          <option value="">Aucune collection (sera assignée à la collection active)</option>
+          {collections.map((collection) => (
+            <option key={collection.id} value={collection.id}>
+              {collection.displayName || collection.name} {collection.isActive ? '(Active)' : ''}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-gray-500">
+          Si aucune collection n'est sélectionnée, le produit sera automatiquement assigné à la collection active
+        </p>
       </div>
 
       {/* Matériaux */}

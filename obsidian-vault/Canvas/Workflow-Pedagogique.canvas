@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Pédagogique\n\nComment on travaille ensemble","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"backend","type":"text","text":"## Backend / API\n\nMode pédagogique\n1. Tu me donnes le code\n2. Tu expliques\n3. Je code\n4. Tu vérifies\n5. On corrige","x":350,"y":150,"width":300,"height":250,"color":"3"},
+		{"id":"frontend","type":"text","text":"## Frontend / UI\n\nMode pédagogique\n1. Tu me donnes le code\n2. Tu expliques\n3. Je code\n4. Tu vérifies\n5. On corrige","x":700,"y":150,"width":300,"height":250,"color":"4"},
+		{"id":"exception","type":"text","text":"## Exception\n\nBibliothèques (shadcn/ui)\nTu peux intégrer directement","x":440,"y":-40,"width":300,"height":140,"color":"6"},
+		{"id":"philosophie","type":"text","text":"## Philosophie\n\nTu ne codes pas à ma place\nTu m'apprends à le faire\nTu me guides pas à pas","x":-40,"y":200,"width":300,"height":150,"color":"2"},
+		{"id":"verification","type":"text","text":"## Vérification\n\nToujours vérifier\nCorriger ensemble\nExpliquer les erreurs","x":550,"y":510,"width":300,"height":150,"color":"1"},
+		{"id":"design","type":"text","text":"## Design / Figma\n\nMode guide\n1. Tu me guides\n2. Je design dans Figma\n3. Tu valides\n4. On code","x":1120,"y":165,"width":300,"height":220,"color":"5"}
+	],
+	"edges":[
+		{"id":"philo-backend","fromNode":"philosophie","fromSide":"right","toNode":"backend","toSide":"left"},
+		{"id":"philo-frontend","fromNode":"philosophie","fromSide":"right","toNode":"frontend","toSide":"left"},
+		{"id":"backend-verif","fromNode":"backend","fromSide":"bottom","toNode":"verification","toSide":"top"},
+		{"id":"frontend-verif","fromNode":"frontend","fromSide":"bottom","toNode":"verification","toSide":"top"},
+		{"id":"fbe021ec90f8a8cf","fromNode":"design","fromSide":"left","toNode":"frontend","toSide":"right"}
+	],
+	"groups":[]
+}

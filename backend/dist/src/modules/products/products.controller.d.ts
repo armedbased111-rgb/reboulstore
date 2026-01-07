@@ -20,13 +20,7 @@ export declare class ProductsController {
     deleteImage(productId: string, imageId: string): Promise<void>;
     updateImageOrder(productId: string, imageId: string, updateOrderDto: UpdateImageOrderDto): Promise<import("../../entities/image.entity").Image>;
     create(createProductDto: CreateProductDto): Promise<import("../../entities/product.entity").Product>;
-    findAll(query: ProductQueryDto): Promise<{
-        products: import("../../entities/product.entity").Product[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-    }>;
+    findAll(query: ProductQueryDto): Promise<{}>;
     findVariantsByProduct(id: string): Promise<import("../../entities/variant.entity").Variant[]>;
     findOne(id: string): Promise<import("../../entities/product.entity").Product>;
     findByCategory(categoryId: string, query: ProductQueryDto): Promise<{

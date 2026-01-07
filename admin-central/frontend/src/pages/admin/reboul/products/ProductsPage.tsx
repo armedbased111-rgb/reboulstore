@@ -7,6 +7,9 @@ import { reboulBrandsService, Brand } from '../../../../services/reboul-brands.s
 import { reboulProductsService } from '../../../../services/reboul-products.service';
 import { Search, Plus, Edit, Trash2 } from 'lucide-react';
 import { cn } from '../../../../utils/cn';
+import VariantEditModal from '../../../../components/admin/products/VariantEditModal';
+import VariantTooltip from '../../../../components/admin/products/VariantTooltip';
+import { Product, Variant } from '../../../../types/reboul.types';
 
 /**
  * Format du prix en euros
@@ -51,6 +54,9 @@ export default function ProductsPage() {
   const [brandFilter, setBrandFilter] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
 
   // Charger les catégories et marques
   useEffect(() => {
@@ -72,7 +78,26 @@ export default function ProductsPage() {
   // const [sortBy, setSortBy] = useState<string>('createdAt');
   // const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
 
-  const { products, pagination, loading, error, updateParams, changePage } = useReboulProducts({
+  // Fonction pour ouvrir la modale d'édition de variant
+  const handleVariantClick = (product: Product, variant: Variant) => {
+    setSelectedProduct(product);
+    setSelectedVariant(variant);
+    setIsVariantModalOpen(true);
+  };
+
+  // Fonction pour fermer la modale
+  const handleCloseModal = () => {
+    setIsVariantModalOpen(false);
+    setSelectedProduct(null);
+    setSelectedVariant(null);
+  };
+
+  // Fonction pour rafraîchir après sauvegarde
+  const handleVariantSave = () => {
+    refetch();
+  };
+
+  const { products, pagination, loading, error, updateParams, changePage, refetch } = useReboulProducts({
     page: 1,
     limit: 20,
     search: search || undefined,
@@ -210,6 +235,9 @@ export default function ProductsPage() {
                         Prix
                       </th>
                       <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Variants
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                         Date création
                       </th>
                       <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -222,9 +250,13 @@ export default function ProductsPage() {
                       <tr key={product.id} className="hover:bg-gray-50">
                         <td className="px-4 lg:px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                          {product.description && (
+                          {product.reference ? (
                             <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {product.description}
+                              {product.reference}
+                            </div>
+                          ) : (
+                            <div className="text-sm text-gray-400 italic truncate max-w-xs">
+                              Aucune référence
                             </div>
                           )}
                         </td>
@@ -236,6 +268,17 @@ export default function ProductsPage() {
                         </td>
                         <td className="px-4 lg:px-6 py-4 text-sm text-gray-900 font-medium">
                           {formatPrice(product.price)}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                          {product.variants && product.variants.length > 0 ? (
+                            <VariantTooltip
+                              product={product}
+                              variants={product.variants}
+                              onVariantClick={handleVariantClick}
+                            />
+                          ) : (
+                            <span className="text-gray-400">Aucun variant</span>
+                          )}
                         </td>
                         <td className="px-4 lg:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
                           {formatDate(product.createdAt)}
@@ -283,8 +326,10 @@ export default function ProductsPage() {
                       <div className="flex justify-between items-start">
                         <div className="flex-1 min-w-0">
                           <h3 className="text-sm font-medium text-gray-900 truncate">{product.name}</h3>
-                          {product.description && (
-                            <p className="mt-1 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+                          {product.reference ? (
+                            <p className="mt-1 text-sm text-gray-500">{product.reference}</p>
+                          ) : (
+                            <p className="mt-1 text-sm text-gray-400 italic">Aucune référence</p>
                           )}
                         </div>
                         <div className="flex space-x-2 ml-4 flex-shrink-0">
@@ -437,6 +482,17 @@ export default function ProductsPage() {
                 </div>
               )}
             </>
+          )}
+
+          {/* Modale d'édition rapide de variant */}
+          {selectedProduct && selectedVariant && (
+            <VariantEditModal
+              isOpen={isVariantModalOpen}
+              onClose={handleCloseModal}
+              product={selectedProduct}
+              variant={selectedVariant}
+              onSave={handleVariantSave}
+            />
           )}
         </div>
       </div>

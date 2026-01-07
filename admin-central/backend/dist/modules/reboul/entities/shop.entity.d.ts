@@ -4,20 +4,6 @@ export declare class Shop {
     name: string;
     slug: string;
     description: string | null;
-    contactInfo: {
-        email?: string;
-        phone?: string;
-        address?: {
-            street?: string;
-            city?: string;
-            postalCode?: string;
-            country?: string;
-        };
-    } | null;
-    stripeConfig: {
-        accountId?: string;
-        dashboardUrl?: string;
-    } | null;
     shippingPolicy: {
         freeShippingThreshold?: number;
         deliveryTime?: string;

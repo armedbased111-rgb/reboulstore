@@ -53,7 +53,7 @@ export const VariantSelector = ({
               <option
                 key={variant.id}
                 value={variant.id}
-                disabled={isOutOfStock}
+                // Ne pas désactiver pour permettre la sélection et l'inscription aux notifications
                 className={isOutOfStock ? 'opacity-50' : ''}
               >
                 {variant.size} {variant.color && `- ${variant.color}`}

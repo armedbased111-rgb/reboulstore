@@ -5,6 +5,8 @@
 **Dernière mise à jour** : 16 décembre 2025  
 **Statut** : ✅ Validée et approuvée - Phase 15.5 (Infrastructure) terminée
 
+Voir aussi : [[../context/CONTEXT.md|CONTEXT]] - [[../context/ROADMAP_COMPLETE.md|ROADMAP_COMPLETE]] - [[../context/API_CONFIG.md|API_CONFIG]]
+
 ---
 
 ## 📋 Vue d'ensemble

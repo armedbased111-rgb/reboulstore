@@ -4,6 +4,8 @@
 **Date** : 20 décembre 2025  
 **Bibliothèque** : AnimeJS
 
+Voir aussi : [[../../frontend/FRONTEND.md|FRONTEND]] - [[../export/FIGMA_WORKFLOW.md|FIGMA_WORKFLOW]]
+
 ---
 
 ## 📋 Table des matières

@@ -4,5 +4,6 @@ declare class CheckoutItemDto {
 }
 export declare class CreateCheckoutSessionDto {
     items: CheckoutItemDto[];
+    couponCode?: string;
 }
 export {};

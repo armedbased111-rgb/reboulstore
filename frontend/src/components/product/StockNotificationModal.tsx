@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import type { Product } from '../../types';
+import { stockNotificationsService } from '../../services/stock-notifications.service';
+import { useToast } from '../../contexts/ToastContext';
 
 interface StockNotificationModalProps {
   product: Product;
@@ -26,6 +28,41 @@ export const StockNotificationModal = ({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAlreadySubscribed, setIsAlreadySubscribed] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const { showToast } = useToast();
+
+  // Réinitialiser l'état quand le modal se ferme
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail('');
+      setPhone('');
+      setIsAlreadySubscribed(false);
+      setIsChecking(false);
+    }
+  }, [isOpen]);
+
+  const checkSubscription = async () => {
+    if (!email.trim()) {
+      setIsAlreadySubscribed(false);
+      return;
+    }
+
+    setIsChecking(true);
+    try {
+      const result = await stockNotificationsService.checkSubscription(
+        product.id,
+        email.trim(),
+        variantId,
+      );
+      setIsAlreadySubscribed(result.isSubscribed);
+    } catch (error) {
+      console.error('Erreur lors de la vérification:', error);
+      setIsAlreadySubscribed(false);
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -36,35 +73,32 @@ export const StockNotificationModal = ({
       return;
     }
 
+    // Vérifier si déjà inscrit
+    if (isAlreadySubscribed) {
+      showToast('Vous êtes déjà inscrit aux notifications pour ce produit', 'info');
+      onClose();
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
-      // Stocker en localStorage pour MVP
-      const notifications = JSON.parse(localStorage.getItem('stockNotifications') || '[]');
-      const notification = {
-        productId: product.id,
-        variantId: variantId || null,
+      await stockNotificationsService.subscribe(product.id, {
         email: email.trim(),
-        phone: phone.trim() || null,
-        createdAt: new Date().toISOString(),
-      };
-      
-      // Vérifier si déjà inscrit
-      const alreadySubscribed = notifications.some(
-        (n: any) => n.productId === product.id && n.email === email.trim()
-      );
+        phone: phone.trim() || undefined,
+        variantId: variantId || undefined,
+      });
 
-      if (!alreadySubscribed) {
-        notifications.push(notification);
-        localStorage.setItem('stockNotifications', JSON.stringify(notifications));
-      }
-
+      showToast('Vous serez notifié quand ce produit sera de nouveau disponible', 'success');
       onSubscribe();
       setEmail('');
       setPhone('');
+      setIsAlreadySubscribed(false);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
+      const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription';
+      showToast(errorMessage, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -108,11 +142,26 @@ export const StockNotificationModal = ({
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                // Reset l'état d'inscription seulement si on change l'email
+                if (isAlreadySubscribed) {
+                  setIsAlreadySubscribed(false);
+                }
+              }}
+              onBlur={checkSubscription}
               required
-              className="w-full px-4 py-2 border border-black rounded-md font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] focus:outline-none focus:ring-2 focus:ring-black"
+              disabled={isChecking}
+              autoFocus
+              className="w-full px-4 py-2 border border-black rounded-md font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50"
               placeholder="votre@email.com"
             />
+            {isChecking && (
+              <p className="text-xs text-gray-500 mt-1">Vérification...</p>
+            )}
+            {isAlreadySubscribed && !isChecking && (
+              <p className="text-xs text-green-600 mt-1">✓ Vous êtes déjà inscrit aux notifications</p>
+            )}
           </div>
 
           <div>

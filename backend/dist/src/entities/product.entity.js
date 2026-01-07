@@ -20,6 +20,7 @@ const collection_entity_1 = require("./collection.entity");
 let Product = class Product {
     id;
     name;
+    reference;
     description;
     price;
     categoryId;
@@ -48,6 +49,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)
 ], Product.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true, unique: true }),
+    __metadata("design:type", Object)
+], Product.prototype, "reference", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", Object)

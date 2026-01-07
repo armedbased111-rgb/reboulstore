@@ -21,18 +21,21 @@ const category_entity_1 = require("./entities/category.entity");
 const variant_entity_1 = require("./entities/variant.entity");
 const image_entity_1 = require("./entities/image.entity");
 const brand_entity_1 = require("./entities/brand.entity");
+const collection_entity_1 = require("./entities/collection.entity");
 let ReboulProductsService = class ReboulProductsService {
     productRepository;
     categoryRepository;
     variantRepository;
     imageRepository;
     brandRepository;
-    constructor(productRepository, categoryRepository, variantRepository, imageRepository, brandRepository) {
+    collectionRepository;
+    constructor(productRepository, categoryRepository, variantRepository, imageRepository, brandRepository, collectionRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
         this.imageRepository = imageRepository;
         this.brandRepository = brandRepository;
+        this.collectionRepository = collectionRepository;
     }
     async findAll(page = 1, limit = 20, filters) {
         const skip = (page - 1) * limit;
@@ -91,7 +94,30 @@ let ReboulProductsService = class ReboulProductsService {
                 throw new common_1.BadRequestException(`Marque avec l'ID ${productData.brandId} non trouvée`);
             }
         }
-        const product = this.productRepository.create(productData);
+        let collectionId = productData.collectionId;
+        if (!collectionId) {
+            const activeCollection = await this.collectionRepository.findOne({
+                where: { isActive: true },
+            });
+            if (activeCollection) {
+                collectionId = activeCollection.id;
+            }
+            else {
+                throw new common_1.BadRequestException('Aucune collection active trouvée. Veuillez activer une collection d\'abord.');
+            }
+        }
+        else {
+            const collection = await this.collectionRepository.findOne({
+                where: { id: collectionId },
+            });
+            if (!collection) {
+                throw new common_1.BadRequestException(`Collection avec l'ID ${collectionId} non trouvée`);
+            }
+        }
+        const product = this.productRepository.create({
+            ...productData,
+            collectionId,
+        });
         return this.productRepository.save(product);
     }
     async update(id, updateData) {
@@ -201,7 +227,16 @@ let ReboulProductsService = class ReboulProductsService {
             }
             await Promise.all(variants.map(async (variant) => {
                 if (variant.id) {
-                    await this.variantRepository.update({ id: variant.id, productId: product.id }, { color: variant.color, size: variant.size, stock: variant.stock, sku: variant.sku });
+                    const existingVariant = await this.variantRepository.findOne({
+                        where: { id: variant.id, productId: product.id },
+                    });
+                    if (existingVariant) {
+                        existingVariant.color = variant.color;
+                        existingVariant.size = variant.size;
+                        existingVariant.stock = variant.stock;
+                        existingVariant.sku = variant.sku;
+                        await this.variantRepository.save(existingVariant);
+                    }
                 }
                 else {
                     const variantEntity = this.variantRepository.create({
@@ -226,7 +261,9 @@ exports.ReboulProductsService = ReboulProductsService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(variant_entity_1.Variant, 'reboul')),
     __param(3, (0, typeorm_1.InjectRepository)(image_entity_1.Image, 'reboul')),
     __param(4, (0, typeorm_1.InjectRepository)(brand_entity_1.Brand, 'reboul')),
+    __param(5, (0, typeorm_1.InjectRepository)(collection_entity_1.Collection, 'reboul')),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

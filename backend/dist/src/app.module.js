@@ -11,10 +11,12 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const mailer_1 = require("@nestjs-modules/mailer");
+const cache_manager_1 = require("@nestjs/cache-manager");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const database_config_1 = require("./config/database.config");
 const email_config_1 = require("./config/email.config");
+const cache_config_1 = require("./config/cache.config");
 const categories_module_1 = require("./modules/categories/categories.module");
 const products_module_1 = require("./modules/products/products.module");
 const cart_module_1 = require("./modules/cart/cart.module");
@@ -27,6 +29,10 @@ const checkout_module_1 = require("./modules/checkout/checkout.module");
 const cloudinary_module_1 = require("./modules/cloudinary/cloudinary.module");
 const collections_module_1 = require("./modules/collections/collections.module");
 const images_optimization_module_1 = require("./modules/images-optimization/images-optimization.module");
+const coupons_module_1 = require("./modules/coupons/coupons.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
+const sms_module_1 = require("./modules/sms/sms.module");
+const stock_notifications_module_1 = require("./modules/stock-notifications/stock-notifications.module");
 const schedule_1 = require("@nestjs/schedule");
 let AppModule = class AppModule {
 };
@@ -49,6 +55,12 @@ exports.AppModule = AppModule = __decorate([
                 useFactory: email_config_1.getEmailConfig,
                 inject: [config_1.ConfigService],
             }),
+            cache_manager_1.CacheModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: cache_config_1.getCacheConfig,
+                inject: [config_1.ConfigService],
+                isGlobal: true,
+            }),
             categories_module_1.CategoriesModule,
             products_module_1.ProductsModule,
             cart_module_1.CartModule,
@@ -61,6 +73,10 @@ exports.AppModule = AppModule = __decorate([
             cloudinary_module_1.CloudinaryModule,
             collections_module_1.CollectionsModule,
             images_optimization_module_1.ImagesOptimizationModule,
+            coupons_module_1.CouponsModule,
+            notifications_module_1.NotificationsModule,
+            sms_module_1.SmsModule,
+            stock_notifications_module_1.StockNotificationsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

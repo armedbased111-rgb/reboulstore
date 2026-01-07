@@ -7,6 +7,7 @@ import { Collection } from './collection.entity';
 export declare class Product {
     id: string;
     name: string;
+    reference: string | null;
     description: string | null;
     price: number;
     categoryId: string;

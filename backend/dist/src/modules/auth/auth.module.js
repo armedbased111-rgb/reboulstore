@@ -16,6 +16,7 @@ const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./jwt.strategy");
 const user_entity_1 = require("../../entities/user.entity");
 const orders_module_1 = require("../orders/orders.module");
+const sms_module_1 = require("../sms/sms.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -29,6 +30,7 @@ exports.AuthModule = AuthModule = __decorate([
                 signOptions: { expiresIn: '7d' },
             }),
             (0, common_1.forwardRef)(() => orders_module_1.OrdersModule),
+            sms_module_1.SmsModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

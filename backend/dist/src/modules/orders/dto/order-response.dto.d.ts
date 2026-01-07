@@ -4,6 +4,8 @@ export declare class OrderResponseDto {
     cartId: string | null;
     status: OrderStatus;
     total: number;
+    couponId?: string | null;
+    discountAmount?: number | null;
     customerInfo: {
         name: string;
         email: string;

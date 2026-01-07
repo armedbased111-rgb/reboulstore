@@ -19,6 +19,9 @@ import { OrderResponseDto } from './dto/order-response.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { StockService } from './stock.service';
 import { EmailService } from './email.service';
+import { CouponsService } from '../coupons/coupons.service';
+import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class OrdersService {
@@ -39,6 +42,9 @@ export class OrdersService {
     private stockService: StockService,
     private emailService: EmailService,
     private configService: ConfigService,
+    private couponsService: CouponsService,
+    private notificationsGateway: NotificationsGateway,
+    private smsService: SmsService,
   ) {
     // Initialiser Stripe pour la capture manuelle
     const stripeSecretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
@@ -78,10 +84,39 @@ export class OrdersService {
     }
 
     // Calculer le total
-    const total = cart.items.reduce((sum, item) => {
+    const cartTotal = cart.items.reduce((sum, item) => {
       const price = parseFloat(item.variant.product.price.toString());
       return sum + price * item.quantity;
     }, 0);
+
+    // Valider et appliquer le coupon si fourni
+    let discountAmount = 0;
+    let couponId: string | null = null;
+
+    if (createOrderDto.couponCode) {
+      const validation = await this.couponsService.validateCoupon(
+        createOrderDto.couponCode,
+        cartTotal,
+      );
+
+      if (!validation.isValid) {
+        throw new BadRequestException(
+          validation.message || 'Invalid coupon code',
+        );
+      }
+
+      discountAmount = validation.discountAmount;
+      const coupon = await this.couponsService.findByCode(
+        createOrderDto.couponCode,
+      );
+      couponId = coupon.id;
+
+      // Incrémenter le compteur d'utilisations
+      await this.couponsService.applyCoupon(createOrderDto.couponCode);
+    }
+
+    // Calculer le total final avec réduction
+    const total = Math.round((cartTotal - discountAmount) * 100) / 100;
 
     // Créer la commande (statut PENDING - le stock sera décrémenté après paiement)
     const order = this.orderRepository.create({
@@ -89,6 +124,8 @@ export class OrdersService {
       status: OrderStatus.PENDING,
       total,
       customerInfo: createOrderDto.customerInfo,
+      couponId,
+      discountAmount: discountAmount > 0 ? discountAmount : null,
     });
 
     const savedOrder = await this.orderRepository.save(order);
@@ -106,7 +143,38 @@ export class OrdersService {
     }
 
     // Retourner la commande avec les relations
-    return this.findOne(savedOrder.id);
+    const orderResponse = await this.findOne(savedOrder.id);
+
+    // Notifier les admins via WebSocket qu'une nouvelle commande a été créée
+    if (orderResponse) {
+      try {
+        // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
+        const orderNumber = `ORD-${orderResponse.id.substring(0, 8).toUpperCase()}`;
+        
+        // Extraire firstName et lastName depuis customerInfo.name
+        const customerName = orderResponse.customerInfo?.name || 'Client';
+        const nameParts = customerName.split(' ');
+        const firstName = nameParts[0] || 'Client';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        this.notificationsGateway.notifyOrderCreated({
+          id: orderResponse.id,
+          orderNumber,
+          total: parseFloat(orderResponse.total.toString()),
+          customerInfo: {
+            firstName,
+            lastName,
+            email: orderResponse.customerInfo?.email || '',
+          },
+          createdAt: orderResponse.createdAt,
+        });
+      } catch (error) {
+        this.logger.error('Error sending order created notification:', error);
+        // Ne pas bloquer la création de commande si la notification échoue
+      }
+    }
+
+    return orderResponse;
   }
 
   /**
@@ -198,6 +266,10 @@ export class OrdersService {
       cartId: order.cartId,
       status: order.status,
       total: parseFloat(order.total.toString()),
+      couponId: order.couponId,
+      discountAmount: order.discountAmount
+        ? parseFloat(order.discountAmount.toString())
+        : null,
       customerInfo: order.customerInfo,
       cart: order.cart
         ? {
@@ -246,6 +318,10 @@ export class OrdersService {
       cartId: order.cartId,
       status: order.status,
       total: parseFloat(order.total.toString()),
+      couponId: order.couponId,
+      discountAmount: order.discountAmount
+        ? parseFloat(order.discountAmount.toString())
+        : null,
       customerInfo: order.customerInfo,
       cart: order.cart
         ? {
@@ -337,9 +413,39 @@ export class OrdersService {
     });
 
     if (orderWithRelations) {
+      // Notifier l'utilisateur via WebSocket du changement de statut
+      if (orderWithRelations.userId) {
+        // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
+        const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+        
+        this.notificationsGateway.notifyOrderStatusChanged({
+          id: orderWithRelations.id,
+          orderNumber,
+          status: newStatus,
+          userId: orderWithRelations.userId,
+        });
+      }
+
       // Email selon le statut
       if (newStatus === OrderStatus.SHIPPED) {
         this.emailService.sendShippingNotification(orderWithRelations);
+
+        // Envoyer SMS de notification d'expédition si numéro de téléphone disponible
+        const phoneNumber = orderWithRelations.customerInfo?.phone || orderWithRelations.user?.phone;
+        if (phoneNumber) {
+          try {
+            const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+            await this.smsService.sendOrderShippedSMS(
+              phoneNumber,
+              orderNumber,
+              orderWithRelations.trackingNumber || undefined,
+              undefined, // Carrier optionnel
+            );
+          } catch (error) {
+            this.logger.error('Failed to send shipping SMS:', error);
+            // Ne pas bloquer la mise à jour du statut si l'SMS échoue
+          }
+        }
       } else if (newStatus === OrderStatus.DELIVERED) {
         this.emailService.sendOrderDelivered(orderWithRelations);
       } else if (
@@ -372,6 +478,10 @@ export class OrdersService {
       cartId: order.cartId,
       status: order.status,
       total: parseFloat(order.total.toString()),
+      couponId: order.couponId,
+      discountAmount: order.discountAmount
+        ? parseFloat(order.discountAmount.toString())
+        : null,
       customerInfo: order.customerInfo,
       cart: order.cart
         ? {
@@ -529,6 +639,8 @@ export class OrdersService {
       phone?: string;
     } | null,
     amountTotal?: number | null, // Montant total depuis Stripe (pour validation)
+    couponId?: string | null, // ID du coupon appliqué
+    discountAmount?: number, // Montant de la réduction
   ): Promise<OrderResponseDto> {
     // Récupérer les variants avec leurs produits
     const variantIds = items.map((item) => item.variantId);
@@ -549,13 +661,17 @@ export class OrdersService {
       );
     }
 
-    // Calculer le total
-    const total = items.reduce((sum, item) => {
+    // Calculer le subtotal
+    const subtotal = items.reduce((sum, item) => {
       const variant = variants.find((v) => v.id === item.variantId);
       if (!variant || !variant.product) return sum;
       const price = parseFloat(variant.product.price.toString());
       return sum + price * item.quantity;
     }, 0);
+
+    // Calculer le total avec réduction
+    const finalDiscountAmount = discountAmount || 0;
+    const total = Math.max(0, subtotal - finalDiscountAmount);
 
     // Valider que le montant correspond (si fourni)
     if (amountTotal !== null && amountTotal !== undefined) {
@@ -791,5 +907,51 @@ export class OrdersService {
         `Failed to capture payment: ${error.message}`,
       );
     }
+  }
+
+  /**
+   * Valide et applique un code promo pour un panier
+   * @param code - Code promo à valider
+   * @param cartId - ID du panier
+   */
+  async applyCoupon(code: string, cartId: string) {
+    // Récupérer le panier avec ses items
+    const cart = await this.cartRepository.findOne({
+      where: { id: cartId },
+      relations: ['items', 'items.variant', 'items.variant.product'],
+    });
+
+    if (!cart) {
+      throw new NotFoundException(`Cart with ID ${cartId} not found`);
+    }
+
+    if (!cart.items || cart.items.length === 0) {
+      throw new BadRequestException('Cart is empty');
+    }
+
+    // Calculer le total du panier
+    const cartTotal = cart.items.reduce((sum, item) => {
+      const price = parseFloat(item.variant.product.price.toString());
+      return sum + price * item.quantity;
+    }, 0);
+
+    // Valider le coupon
+    const validation = await this.couponsService.validateCoupon(
+      code,
+      cartTotal,
+    );
+
+    if (!validation.isValid) {
+      throw new BadRequestException(
+        validation.message || 'Invalid coupon code',
+      );
+    }
+
+    return {
+      code,
+      discountAmount: validation.discountAmount,
+      totalBeforeDiscount: cartTotal,
+      totalAfterDiscount: Math.round((cartTotal - validation.discountAmount) * 100) / 100,
+    };
   }
 }

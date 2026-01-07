@@ -2,7 +2,7 @@
 
 **Version** : 4.3  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 30/12/2025 (Améliorations déploiement complètes - Purge Cloudflare configurée)
+**Dernière mise à jour** : 05/01/2026 à 20:50
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -25,9 +25,8 @@
 3. **Incrémental** : On peut tester à chaque étape
 4. **MVP First** : Les fonctionnalités essentielles d'abord, les optimisations ensuite
 5. **Multi-sites** : Architecture 3 projets Docker séparés + 1 Admin Centralisée
-6. **🎨 Workflow Figma** : Design d'abord dans Figma, puis implémentation code (voir [FIGMA_WORKFLOW.md](../export/FIGMA_WORKFLOW.md))
-7. **🏗️ Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](../architecture/ARCHITECTURE_ADMIN_CENTRAL.md) pour détails complets
-7. **🏗️ Architecture** : Voir [`ARCHITECTURE_ADMIN_CENTRAL.md`](../architecture/ARCHITECTURE_ADMIN_CENTRAL.md) pour détails complets
+6. **🎨 Workflow Figma** : Design d'abord dans Figma, puis implémentation code (voir [[../export/FIGMA_WORKFLOW.md|FIGMA_WORKFLOW]])
+7. **🏗️ Architecture** : Voir [[../architecture/ARCHITECTURE_ADMIN_CENTRAL.md|ARCHITECTURE_ADMIN_CENTRAL]] pour détails complets
 
 ---
 
@@ -1763,45 +1762,62 @@
 - [ ] Calcul rating moyen par produit
 - [ ] Seul acheteur peut laisser avis (vérifier commande livrée)
 
-### 18.4 Promotions & Codes Promo
-- [ ] Créer entité Coupon (code, discountType, discountValue, expiresAt, maxUses)
-- [ ] Endpoint POST /orders/apply-coupon (appliquer code promo)
-- [ ] Vérifier validité (expiré, déjà utilisé, minimum achat)
-- [ ] Calculer réduction dans panier
+### 18.4 Promotions & Codes Promo ✅
+- [x] Créer entité Coupon (code, discountType, discountValue, expiresAt, maxUses)
+- [x] Endpoint POST /orders/apply-coupon (appliquer code promo)
+- [x] Vérifier validité (expiré, déjà utilisé, minimum achat)
+- [x] Calculer réduction dans panier
+- [x] PromoBanner frontend avec rotation automatique des coupons actifs
+- [x] Application de coupon dans CartSummary
+- [x] Administration complète des coupons dans Admin Central (liste, création, édition, suppression)
+- [x] Synchronisation admin backend avec base VPS (même base que backend Reboul)
 
-### 18.5 Notifications Push (WebSockets)
-- [ ] Installer @nestjs/websockets, socket.io
-- [ ] Gateway WebSocket
-- [ ] Event : commande créée (admin notifié)
-- [ ] Event : statut commande changé (user notifié)
-- [ ] Event : produit en rupture de stock (admin)
+### 18.5 Notifications Push (WebSockets) ✅
+- [x] Installer @nestjs/websockets, socket.io
+- [x] Gateway WebSocket
+- [x] Event : commande créée (admin notifié)
+- [x] Event : statut commande changé (user notifié)
+- [x] Event : produit en rupture de stock (admin)
+- [x] Service frontend WebSocket (websocket.service.ts)
+- [x] Hook React useWebSocket
+- [x] Composants notifications (NotificationToast, NotificationContainer, NotificationsProvider)
+- [x] Intégration dans l'application frontend avec connexion automatique selon rôle
 
-### 18.6 SMS (Twilio ou similaire)
-- [ ] Installer twilio ou vonage
-- [ ] Configurer API keys
-- [ ] Service SMS : sendSMS()
-- [ ] Envoi SMS : commande expédiée (avec tracking)
-- [ ] Envoi SMS : réinitialisation mot de passe
+### 18.6 SMS (Twilio ou similaire) ✅
+- [x] Installer twilio ou vonage
+- [x] Configurer API keys (variables d'environnement : TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER)
+- [x] Service SMS : sendSMS()
+- [x] Envoi SMS : commande expédiée (avec tracking) - intégré dans OrdersService.updateStatus()
+- [x] Envoi SMS : réinitialisation mot de passe - endpoints POST /auth/password-reset/sms et POST /auth/password-reset/confirm
 
-### 18.7 Cache Redis
-- [ ] Installer @nestjs/cache-manager, cache-manager-redis-store
-- [ ] Configurer Redis (Docker service)
-- [ ] Cache produits (TTL 5 min)
-- [ ] Cache catégories (TTL 10 min)
-- [ ] Invalider cache après modification
+### 18.7 Cache Redis ✅
+- [x] Installer @nestjs/cache-manager, cache-manager-redis-store, redis
+- [x] Configurer Redis (Docker service) - service redis ajouté dans docker-compose.yml
+- [x] Cache produits (TTL 5 min) - findAll() et findOne() avec cache
+- [x] Cache catégories (TTL 10 min) - findAll(), findOne(), findBySlug() avec cache
+- [x] Invalider cache après modification - invalidation dans create/update/remove pour produits et catégories
 
-### 18.8 Notifications Rupture de Stock (Backend)
+### 18.8 Notifications Rupture de Stock (Backend) ✅
 **📝 Note** : Version MVP actuelle utilise localStorage. Cette phase migre vers backend pour notifications réelles.
 
 **💻 Phase Implémentation Backend** :
-- [ ] Créer entité StockNotification (productId, variantId nullable, email, phone nullable, createdAt, notifiedAt nullable)
-- [ ] Endpoint POST /products/:id/notify-stock (s'inscrire aux notifications)
-- [ ] Endpoint GET /products/:id/notify-stock (vérifier si déjà inscrit)
-- [ ] Service StockNotification : subscribe(), checkSubscription(), notifyAll()
-- [ ] Job cron : Vérifier stock quotidiennement, envoyer emails si stock > 0
-- [ ] Template email : "Votre produit est de nouveau disponible"
-- [ ] Migration données localStorage → Backend (script de migration)
-- [ ] Frontend : Remplacer localStorage par appels API
+- [x] Créer entité StockNotification (productId, variantId nullable, email, phone nullable, createdAt, notifiedAt nullable)
+- [x] Endpoint POST /products/:id/notify-stock (s'inscrire aux notifications)
+- [x] Endpoint GET /products/:id/notify-stock (vérifier si déjà inscrit)
+- [x] Service StockNotification : subscribe(), checkSubscription(), notifyAll()
+- [x] Job cron : Vérifier stock quotidiennement à 9h, envoyer emails si stock > 0
+- [x] Template email : "Votre produit est de nouveau disponible" (stock-available.hbs)
+  - [x] Logo Reboul depuis Cloudinary intégré
+  - [x] Image du produit intégrée (première image)
+  - [x] Design responsive et professionnel
+- [x] Endpoint test : POST /test/stock-notifications/test-email (pour tests)
+- [ ] Migration données localStorage → Backend (script de migration - optionnel)
+- [x] Frontend : Remplacer localStorage par appels API
+  - [x] Service stock-notifications.service.ts créé
+  - [x] StockNotificationModal modifié pour utiliser l'API
+  - [x] Vérification automatique si déjà inscrit
+  - [x] Messages d'erreur et de succès avec Toast
+  - [x] VariantSelector permet de sélectionner les variantes en rupture pour s'abonner
 
 ---
 
@@ -1810,11 +1826,11 @@
 **Objectif** : Compléter expérience utilisateur
 
 ### 19.1 Recherche & Filtres
-- [ ] Barre de recherche Header (autocomplete)
-- [ ] Page /search?q=query
-- [ ] Sidebar filtres (catégorie, prix, couleur, taille, note)
-- [ ] Tri (pertinence, prix, nouveautés, meilleures ventes)
-- [ ] Pagination ou infinite scroll
+- [x] Barre de recherche Header (autocomplete)
+- [x] Page /search?q=query
+- [x] Sidebar filtres (catégorie, prix, couleur, taille, note)
+- [x] Tri (pertinence, prix, nouveautés, meilleures ventes)
+- [x] Pagination ou infinite scroll
 
 ### 19.2 Wishlist
 - [ ] Bouton "Ajouter à la wishlist" (coeur) sur ProductCard
@@ -1829,11 +1845,15 @@
 - [ ] Formulaire ajouter avis (si achat validé)
 - [ ] Trier avis (récents, mieux notés, moins bien notés)
 
-### 19.4 Codes Promo
-- [ ] Champ "Code promo" dans CartSummary
-- [ ] Appliquer code → afficher réduction
-- [ ] Message erreur si code invalide
-- [ ] Afficher économies dans récapitulatif
+### 19.4 Codes Promo ✅
+- [x] Champ "Code promo" dans CartSummary
+- [x] Appliquer code → afficher réduction
+- [x] Message erreur si code invalide
+- [x] Afficher économies dans récapitulatif
+- [x] Intégration coupon dans checkout Stripe
+- [x] Application coupon lors de la création de commande
+- [x] Application réduction dans les prix Stripe (line_items)
+- [x] Message personnalisé sur page Stripe indiquant code promo appliqué
 
 ### 19.5 Notifications Temps Réel (WebSockets)
 - [ ] Connecter Socket.io client
@@ -1841,128 +1861,18 @@
 - [ ] Badge "nouveau message" si admin envoie notif
 - [ ] Page /notifications (historique)
 
-### 19.6 Pages Vitrine
-- [ ] Page /about (à propos de Reboul Store)
-- [ ] Page /contact (formulaire contact + infos boutique physique)
-- [ ] Page /stores (localisation boutiques Marseille/Cassis/Sanary)
-- [ ] Page /shipping-returns (politiques détaillées)
-- [ ] Page /terms (CGV)
-- [ ] Page /privacy (mentions légales, RGPD)
+### 19.6 Pages Vitrine ✅
+- [x] Page /about (à propos de Reboul Store)
+- [x] Page /contact (formulaire contact + infos boutique physique)
+- [x] Page /stores (localisation boutiques Marseille/Cassis/Sanary)
+- [x] Page /shipping-returns (politiques détaillées)
+- [x] Page /terms (CGV)
+- [x] Page /privacy (mentions légales, RGPD)
 
-### 19.7 Page 404 & Erreurs
-- [ ] Page 404 personnalisée (style A-COLD-WALL*)
-- [ ] Page 500 (erreur serveur)
-- [ ] Composant ErrorBoundary (catch erreurs React)
-
----
-
-## 🖥️ Phase 25 : Upgrade/Migration Serveur OVH (OPTIONNEL)
-
-**🎯 Objectif** : Upgrade ou migration vers un serveur plus puissant si nécessaire
-
-**⏰ Timing** : Seulement si besoin de ressources supplémentaires (pas nécessaire pour CP Company/Outlet)
-
-**📋 Contexte** :
-- ✅ VPS-3 actuel (8 vCores / 24 GB RAM / 200 GB SSD) supporte déjà l'architecture complète
-- ✅ Pas de migration nécessaire pour ajouter CP Company ou Outlet
-- ⚠️ Cette phase devient nécessaire uniquement si :
-  - Upgrade vers VPS supérieur nécessaire (VPS-4, VPS-5, VPS-6)
-  - Besoin de ressources supplémentaires (CPU, RAM, stockage)
-  - Migration vers Serveur Dédié pour performance garantie
-
-**📋 Prérequis** (si migration nécessaire) :
-- Serveur VPS-3 actuel en production (8 vCores / 24 GB RAM / 200 GB SSD)
-- Serveur actuel fonctionne correctement mais ressources insuffisantes
-- Décision prise d'upgrade/migration
-
-### 25.1 Analyse & Planification Migration
-
-- [ ] **Évaluer besoins nouveaux serveur** :
-  - [ ] Calculer ressources nécessaires (3 sites + admin = 15 containers)
-  - [ ] Choisir nouveau serveur (VPS Scalable 8+ cores / 16+ GB ou Dédié)
-  - [ ] Estimer coût nouveau serveur
-  - [ ] Estimer temps migration (1-2h prévu)
-
-- [ ] **Planifier migration** :
-  - [ ] Choisir fenêtre de maintenance (hors heures de pointe)
-  - [ ] Prévoir backup complet avant migration
-  - [ ] Préparer checklist migration
-  - [ ] Notifier équipe/maintenance window
-
-### 25.2 Achat & Configuration Nouveau Serveur
-
-- [ ] **Acheter nouveau serveur OVH** :
-  - [ ] Choisir VPS Scalable (8+ cores / 16+ GB RAM / 100+ GB SSD) ou Dédié
-  - [ ] Commander nouveau serveur
-  - [ ] Noter informations accès (IP, credentials)
-
-- [ ] **Configuration nouveau serveur** :
-  - [ ] Suivre guide `docs/OVH_SERVER_SETUP.md` (sections 5-7)
-  - [ ] Installer Docker, configurer firewall
-  - [ ] Créer utilisateur deploy
-  - [ ] Configurer DNS pour nouveau serveur (si changement IP)
-
-### 25.3 Migration Données & Application
-
-- [ ] **Backup complet serveur actuel** :
-  - [ ] Backup base de données PostgreSQL (script `backup-db.sh`)
-  - [ ] Backup fichiers `.env.production`
-  - [ ] Backup certificats SSL (si applicable)
-  - [ ] Vérifier intégrité backups
-
-- [ ] **Déploiement sur nouveau serveur** :
-  - [ ] Cloner repository sur nouveau serveur
-  - [ ] Copier fichiers `.env.production` (avec modifications si besoin)
-  - [ ] Restaurer backup base de données
-  - [ ] Déployer application (scripts `deploy-reboul.sh`, `deploy-admin.sh`)
-  - [ ] Vérifier fonctionnement (health checks, endpoints)
-
-- [ ] **Configuration DNS** :
-  - [ ] Si changement IP : mettre à jour enregistrements DNS
-  - [ ] Vérifier propagation DNS (24-48h)
-  - [ ] Tester accès nouveaux domaines
-
-### 25.4 Tests & Validation
-
-- [ ] **Tests fonctionnels** :
-  - [ ] Tester site Reboul (frontend + backend)
-  - [ ] Tester Admin Central (frontend + backend)
-  - [ ] Tester paiements Stripe
-  - [ ] Tester upload images Cloudinary
-  - [ ] Vérifier performances (CPU, RAM, disque)
-
-- [ ] **Tests monitoring** :
-  - [ ] Vérifier health checks (`/health`)
-  - [ ] Vérifier logs (Docker logs, monitoring)
-  - [ ] Vérifier backups automatiques fonctionnent
-  - [ ] Vérifier UptimeRobot (monitoring uptime)
-
-### 25.5 Bascule & Cleanup
-
-- [ ] **Bascule DNS** :
-  - [ ] Mettre à jour enregistrements DNS vers nouveau serveur
-  - [ ] Attendre propagation (24-48h)
-  - [ ] Vérifier trafic arrive sur nouveau serveur
-
-- [ ] **Arrêt ancien serveur** :
-  - [ ] Arrêter containers Docker sur ancien serveur
-  - [ ] Garder ancien serveur actif 1 semaine (sécurité)
-  - [ ] Annuler/resilier ancien serveur OVH après validation
-
-- [ ] **Documentation** :
-  - [ ] Mettre à jour `docs/OVH_SERVER_SETUP.md` avec nouvelles informations
-  - [ ] Mettre à jour documentation déploiement
-  - [ ] Noter nouvelles informations serveur (IP, accès, etc.)
-
-**📝 Notes importantes** :
-- ⚠️ Migration nécessite maintenance window (1-2h downtime possible)
-- 🔐 Garder ancien serveur actif 1 semaine après migration (sécurité)
-- 💾 Backups complets avant migration obligatoires
-- 📋 Checklist complète dans `docs/OVH_SERVER_SETUP.md` section migration
-
-**💰 Coût estimé nouveau serveur** :
-- VPS Scalable (8 cores / 16 GB / 100 GB SSD) : ~60-80€/mois
-- Serveur Dédié (8 cores / 16 GB / 2x 250 GB SSD) : ~80-120€/mois
+### 19.7 Page 404 & Erreurs ✅
+- [x] Page 404 personnalisée (style A-COLD-WALL*)
+- [x] Page 500 (erreur serveur)
+- [x] Composant ErrorBoundary (catch erreurs React)
 
 ---
 
@@ -1971,12 +1881,87 @@
 **Objectif** : Automatiser tâches répétitives
 
 ### 20.1 n8n - Workflows
+
+#### 20.1.1 Installation & Configuration
 - [ ] Installer n8n (Docker service ou cloud)
+- [ ] Configurer accès base de données PostgreSQL
+- [ ] Configurer accès API backend (si nécessaire)
+- [ ] Configurer variables d'environnement (credentials, URLs)
+
+#### 20.1.2 Synchronisation AS400 → PostgreSQL (PRIORITÉ) ⭐
+
+**Objectif** : Synchronisation temps réel des produits AS400 vers PostgreSQL
+
+##### Phase 1 : Exploration & Compréhension
+- [ ] Analyser structure AS400 (tables produits, champs disponibles)
+- [ ] Tester connexion AS400 (ODBC, API REST, fichiers)
+- [ ] Identifier méthode d'accès (ODBC, API, webhooks, exports)
+- [ ] Documenter mapping AS400 → PostgreSQL (champs, formats)
+- [ ] Identifier champ "date de modification" ou mécanisme de détection changements
+
+##### Phase 2 : Prototype & Tests
+- [ ] Créer workflow N8N basique (récupération 1 produit)
+- [ ] Tester connexion AS400 depuis N8N
+- [ ] Tester récupération données produit
+- [ ] Tester mapping AS400 → structure PostgreSQL
+- [ ] Tester création/mise à jour dans PostgreSQL via API backend
+- [ ] Valider données synchronisées
+
+##### Phase 3 : Synchronisation Polling (Approche initiale)
+- [ ] Workflow N8N avec trigger Schedule (cron toutes les 5-15 min)
+- [ ] Requête AS400 : produits modifiés depuis dernière sync
+- [ ] Comparer avec PostgreSQL (par référence produit)
+- [ ] Créer produits manquants
+- [ ] Mettre à jour produits existants
+- [ ] Gérer variants (tailles/couleurs) si applicable
+- [ ] Logger résultats et erreurs
+
+##### Phase 4 : Optimisation Temps Réel (Si possible)
+- [ ] Évaluer possibilité webhooks AS400
+- [ ] Si webhooks disponibles : configurer webhook AS400
+- [ ] Workflow N8N avec trigger Webhook (temps réel)
+- [ ] Synchronisation immédiate à chaque modification AS400
+- [ ] Système de déduplication (éviter doublons)
+- [ ] Fallback polling si webhook échoue
+
+##### Phase 5 : Gestion Variants & Images
+- [ ] Parser variants depuis AS400 (tailles/couleurs)
+- [ ] Synchroniser variants vers PostgreSQL
+- [ ] Gérer images (téléchargement depuis AS400 si applicable)
+- [ ] Upload images vers Cloudinary
+- [ ] Mettre à jour Product.images
+
+##### Phase 6 : Mapping & Règles métier
+- [ ] Table de mapping catégories AS400 → catégories PostgreSQL
+- [ ] Table de mapping marques AS400 → marques PostgreSQL
+- [ ] Règles de création automatique (catégories/marques inconnues)
+- [ ] Gestion conflits (AS400 = source de vérité)
+- [ ] Règles de validation données
+
+##### Phase 7 : Monitoring & Alertes
+- [ ] Logger toutes les synchronisations (succès/échec)
+- [ ] Métriques : temps sync, taux succès, délai réel
+- [ ] Alertes email/SMS en cas d'erreur répétée
+- [ ] Dashboard N8N pour monitoring
+- [ ] Système de retry automatique
+
+##### Phase 8 : Production & Documentation
+- [ ] Déployer N8N sur serveur production
+- [ ] Configurer accès AS400 sécurisé
+- [ ] Activer synchronisation
+- [ ] Tests en production (surveillance 1 semaine)
+- [ ] Documenter workflow N8N complet
+- [ ] Documenter mapping AS400 → PostgreSQL
+- [ ] Guide de troubleshooting
+
+**📝 Documentation** : Voir `obsidian-vault/Context/AS400-Sync-Reflexion.md` pour réflexion complète
+
+#### 20.1.3 Autres Workflows (Après AS400)
 - [ ] Workflow : Auto-remboursement si retour validé
 - [ ] Workflow : Relance panier abandonné (email après 24h)
 - [ ] Workflow : Notification stock bas (email admin)
 - [ ] Workflow : Export commandes vers comptabilité (CSV daily)
-
+ 
 ### 20.2 Cron Jobs (NestJS)
 - [ ] Installer @nestjs/schedule
 - [ ] Job : Nettoyage paniers expirés (> 7 jours)

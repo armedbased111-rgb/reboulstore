@@ -11,6 +11,7 @@ import Stripe from 'stripe';
 import { Variant } from '../../entities/variant.entity';
 import { StockService } from '../orders/stock.service';
 import { OrdersService } from '../orders/orders.service';
+import { CouponsService } from '../coupons/coupons.service';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 
 @Injectable()
@@ -25,6 +26,7 @@ export class CheckoutService {
     private variantRepository: Repository<Variant>,
     private stockService: StockService,
     private ordersService: OrdersService,
+    private couponsService: CouponsService,
   ) {
     const stripeSecretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
 
@@ -96,7 +98,47 @@ export class CheckoutService {
       return `${cleanBaseUrl}${cleanImageUrl}`;
     };
 
+    // Calculer le subtotal d'abord (sans réduction)
+    const subtotal = variants.reduce((sum, variant) => {
+      const item = dto.items.find((i) => i.variantId === variant.id);
+      if (!item) return sum;
+      const price = parseFloat(variant.product.price.toString());
+      return sum + price * item.quantity;
+    }, 0);
+
+    // Valider et calculer la réduction du coupon
+    let couponId: string | null = null;
+    let discountAmount = 0;
+    let totalDiscountPercentage = 0;
+
+    if (dto.couponCode) {
+      try {
+        const coupon = await this.couponsService.findByCode(dto.couponCode);
+        const validation = await this.couponsService.validateCoupon(
+          dto.couponCode,
+          subtotal,
+        );
+
+        if (validation.isValid) {
+          couponId = coupon.id;
+          discountAmount = validation.discountAmount;
+          // Calculer le pourcentage de réduction pour l'appliquer proportionnellement
+          totalDiscountPercentage = subtotal > 0 ? (discountAmount / subtotal) * 100 : 0;
+        } else {
+          throw new BadRequestException(
+            validation.message || 'Invalid coupon code',
+          );
+        }
+      } catch (error) {
+        if (error instanceof BadRequestException) {
+          throw error;
+        }
+        throw new BadRequestException('Invalid coupon code');
+      }
+    }
+
     // Préparer les line_items pour Stripe avec images et description enrichie
+    // Appliquer la réduction proportionnellement sur chaque item
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
       dto.items.map((item) => {
         const variant = variants.find((v) => v.id === item.variantId);
@@ -107,9 +149,18 @@ export class CheckoutService {
         }
 
         const product = variant.product;
-        const priceInCents = Math.round(
+        let priceInCents = Math.round(
           parseFloat(product.price.toString()) * 100,
         );
+
+        // Appliquer la réduction proportionnellement si un coupon est appliqué
+        if (totalDiscountPercentage > 0) {
+          const itemSubtotal = parseFloat(product.price.toString()) * item.quantity;
+          const itemDiscount = (itemSubtotal * totalDiscountPercentage) / 100;
+          const itemPriceAfterDiscount = itemSubtotal - itemDiscount;
+          // Prix unitaire après réduction
+          priceInCents = Math.round((itemPriceAfterDiscount / item.quantity) * 100);
+        }
 
         // Trouver l'image du produit
         // Priorité : image correspondant à la couleur du variant, sinon première image
@@ -160,13 +211,9 @@ export class CheckoutService {
         };
       });
 
-    // Calculer le total (pour les métadonnées)
-    const total = variants.reduce((sum, variant) => {
-      const item = dto.items.find((i) => i.variantId === variant.id);
-      if (!item) return sum;
-      const price = parseFloat(variant.product.price.toString());
-      return sum + price * item.quantity;
-    }, 0);
+    // Le subtotal et la réduction sont déjà calculés ci-dessus
+    // Calculer le total final avec réduction
+    const total = Math.max(0, subtotal - discountAmount);
 
     // Créer la session Stripe Checkout avec capture manuelle
     // Note: Stripe limite les metadata à 500 caractères, on stocke les items sérialisés
@@ -188,9 +235,21 @@ export class CheckoutService {
       },
       success_url: `${frontendUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${frontendUrl}/cart`,
+      // Afficher un message personnalisé si un coupon est appliqué
+      ...(dto.couponCode && discountAmount > 0 && {
+        custom_text: {
+          submit: {
+            message: `Code promo ${dto.couponCode} appliqué : -${discountAmount.toFixed(2)}€ de réduction`,
+          },
+        },
+      }),
       metadata: {
         userId: userId || 'anonymous',
+        subtotal: subtotal.toString(),
         total: total.toString(),
+        discountAmount: discountAmount.toString(),
+        couponId: couponId || '',
+        couponCode: dto.couponCode || '',
         itemCount: dto.items.length.toString(),
         // Stocker les items comme JSON string dans metadata
         items: JSON.stringify(
@@ -394,6 +453,13 @@ export class CheckoutService {
         ? session.amount_total / 100
         : null;
 
+      // Récupérer les informations du coupon depuis les métadonnées
+      const couponId = session.metadata?.couponId || null;
+      const couponCode = session.metadata?.couponCode || null;
+      const discountAmount = session.metadata?.discountAmount
+        ? parseFloat(session.metadata.discountAmount)
+        : 0;
+
       // Créer la commande en PENDING (pas PAID) car capture manuelle
       await this.ordersService.createFromStripeCheckout(
         items,
@@ -404,6 +470,8 @@ export class CheckoutService {
         shippingAddress,
         billingAddress,
         amountTotal,
+        couponId,
+        discountAmount,
       );
 
       this.logger.log(

@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { User } from '../../entities/user.entity';
 import { OrdersModule } from '../orders/orders.module';
+import { SmsModule } from '../sms/sms.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OrdersModule } from '../orders/orders.module';
       signOptions: { expiresIn: '7d' }, // Token expire dans 7 jours
     }),
     forwardRef(() => OrdersModule), // Pour accéder à EmailService
+    SmsModule, // Pour l'envoi de SMS
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

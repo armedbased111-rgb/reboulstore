@@ -32,6 +32,14 @@ let AuthController = class AuthController {
     async getMe(req) {
         return req.user;
     }
+    async requestPasswordResetBySMS(body) {
+        const token = await this.authService.requestPasswordResetBySMS(body.phoneNumber);
+        return { message: 'SMS sent successfully', token };
+    }
+    async resetPasswordByToken(body) {
+        await this.authService.resetPasswordByToken(body.token, body.newPassword);
+        return { message: 'Password reset successfully' };
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -56,6 +64,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.Post)('password-reset/sms'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "requestPasswordResetBySMS", null);
+__decorate([
+    (0, common_1.Post)('password-reset/confirm'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPasswordByToken", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -13,5 +13,6 @@ declare class CustomerInfoDto {
 export declare class CreateOrderDto {
     cartId: string;
     customerInfo: CustomerInfoDto;
+    couponCode?: string;
 }
 export {};

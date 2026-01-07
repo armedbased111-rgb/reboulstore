@@ -4,13 +4,15 @@ import { Category } from './entities/category.entity';
 import { Variant } from './entities/variant.entity';
 import { Image } from './entities/image.entity';
 import { Brand } from './entities/brand.entity';
+import { Collection } from './entities/collection.entity';
 export declare class ReboulProductsService {
     private productRepository;
     private categoryRepository;
     private variantRepository;
     private imageRepository;
     private brandRepository;
-    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, brandRepository: Repository<Brand>);
+    private collectionRepository;
+    constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, brandRepository: Repository<Brand>, collectionRepository: Repository<Collection>);
     findAll(page?: number, limit?: number, filters?: {
         categoryId?: string;
         brandId?: string;

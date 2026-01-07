@@ -22,6 +22,9 @@ const variant_entity_1 = require("../../entities/variant.entity");
 const product_entity_1 = require("../../entities/product.entity");
 const user_entity_1 = require("../../entities/user.entity");
 const order_email_entity_1 = require("../../entities/order-email.entity");
+const coupons_module_1 = require("../coupons/coupons.module");
+const notifications_module_1 = require("../notifications/notifications.module");
+const sms_module_1 = require("../sms/sms.module");
 let OrdersModule = class OrdersModule {
 };
 exports.OrdersModule = OrdersModule;
@@ -38,6 +41,9 @@ exports.OrdersModule = OrdersModule = __decorate([
                 order_email_entity_1.OrderEmail,
             ]),
             config_1.ConfigModule,
+            coupons_module_1.CouponsModule,
+            notifications_module_1.NotificationsModule,
+            sms_module_1.SmsModule,
         ],
         controllers: [orders_controller_1.OrdersController],
         providers: [orders_service_1.OrdersService, stock_service_1.StockService, email_service_1.EmailService, invoice_service_1.InvoiceService],

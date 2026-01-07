@@ -77,20 +77,31 @@ export const SearchCombobox = ({
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-    } else if (e.key === 'Enter' && selectedIndex >= 0 && allItems[selectedIndex]) {
+    } else if (e.key === 'Enter') {
       e.preventDefault();
-      const item = allItems[selectedIndex];
-      if (item.type === 'history') {
-        // C'est un historique
-        setSearchQuery(item.data.query);
-      } else {
-        // C'est une suggestion
-        handleSelect(item.data);
+      if (selectedIndex >= 0 && allItems[selectedIndex]) {
+        const item = allItems[selectedIndex];
+        if (item.type === 'history') {
+          // C'est un historique - rediriger vers /search
+          addToHistory(item.data.query);
+          navigate(`/search?q=${encodeURIComponent(item.data.query)}`);
+          setSearchQuery('');
+          onOpenChange(false);
+        } else {
+          // C'est une suggestion
+          handleSelect(item.data);
+        }
+      } else if (searchQuery.trim()) {
+        // Pas de sélection mais une recherche tapée - rediriger vers /search
+        addToHistory(searchQuery.trim());
+        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        setSearchQuery('');
+        onOpenChange(false);
       }
     } else if (e.key === 'Escape') {
       onOpenChange(false);
     }
-  }, [selectedIndex, history, suggestions, handleSelect, onOpenChange]);
+  }, [selectedIndex, history, suggestions, handleSelect, onOpenChange, searchQuery, navigate, addToHistory]);
 
   const popularCategories = categories?.slice(0, 5) || [];
   const popularBrands = brands?.slice(0, 5) || [];

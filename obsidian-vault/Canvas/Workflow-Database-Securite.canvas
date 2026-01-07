@@ -1,0 +1,25 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Database & Sécurité\n\nGestion complète base de données et sécurité","x":0,"y":0,"width":500,"height":120,"color":"1"},
+		{"id":"sauvegarde-auto","type":"text","text":"## 💾 Sauvegarde Automatique\n\n✅ OBLIGATOIRE avant:\n- Migration\n- Modification schéma\n- Suppression données\n- Déploiement\n\nCommande:\n./rcli db backup --server","x":0,"y":200,"width":400,"height":250,"color":"3"},
+		{"id":"sauvegarde-cron","type":"text","text":"## ⏰ Backup Quotidien\n\nCron job: 2h du matin\nConservation: 30 derniers\n\nActiver:\n./rcli server cron --enable-backup","x":450,"y":200,"width":350,"height":200,"color":"4"},
+		{"id":"securite-suppression","type":"text","text":"## 🔒 Sécurité Suppression\n\n❌ INTERDIT:\n- DELETE sans backup\n- Suppression cascade\n- TRUNCATE sans backup\n- DROP TABLE sans backup\n\n✅ OBLIGATOIRE:\n- Backup AVANT\n- Vérification dépendances\n- Soft delete si possible","x":0,"y":500,"width":400,"height":300,"color":"5"},
+		{"id":"verification","type":"text","text":"## ✅ Vérification\n\nAvant suppression:\n1. Backup automatique\n2. Vérifier dépendances\n3. Vérifier commandes actives\n4. Confirmation utilisateur\n\nAprès suppression:\n1. Vérifier données\n2. Logs d'audit","x":450,"y":500,"width":350,"height":300,"color":"6"},
+		{"id":"soft-delete","type":"text","text":"## 🗑️ Soft Delete\n\nPréférer:\n- isDeleted flag\n- deletedAt timestamp\n- Archive au lieu de DELETE\n\nAvantages:\n- Récupération possible\n- Historique conservé\n- Audit trail","x":850,"y":500,"width":350,"height":250,"color":"2"},
+		{"id":"workflow-suppression","type":"text","text":"## 📋 Workflow Suppression\n\n1. Backup automatique\n2. Vérifier dépendances\n3. Vérifier commandes actives\n4. Soft delete (si possible)\n5. Logs d'audit\n6. Notification admin","x":0,"y":850,"width":400,"height":300,"color":"1"},
+		{"id":"restauration","type":"text","text":"## 🔄 Restauration\n\nSi problème:\n1. Lister backups\n./rcli db backup-list\n\n2. Restaurer\n./rcli db backup-restore\nbackup_file --yes\n\n3. Vérifier données","x":450,"y":850,"width":350,"height":250,"color":"3"},
+		{"id":"audit","type":"text","text":"## 📊 Audit & Logs\n\nToutes les suppressions:\n- Logs avec timestamp\n- User ID\n- Raison suppression\n- Données supprimées\n\nVérification:\n./rcli logs errors\n./rcli logs search DELETE","x":850,"y":850,"width":350,"height":250,"color":"4"}
+	],
+	"edges":[
+		{"id":"title-sauvegarde","fromNode":"title","fromSide":"bottom","toNode":"sauvegarde-auto","toSide":"top"},
+		{"id":"sauvegarde-cron-link","fromNode":"sauvegarde-auto","fromSide":"right","toNode":"sauvegarde-cron","toSide":"left"},
+		{"id":"sauvegarde-securite","fromNode":"sauvegarde-auto","fromSide":"bottom","toNode":"securite-suppression","toSide":"top"},
+		{"id":"securite-verif","fromNode":"securite-suppression","fromSide":"right","toNode":"verification","toSide":"left"},
+		{"id":"verif-soft","fromNode":"verification","fromSide":"right","toNode":"soft-delete","toSide":"left"},
+		{"id":"securite-workflow","fromNode":"securite-suppression","fromSide":"bottom","toNode":"workflow-suppression","toSide":"top"},
+		{"id":"workflow-restauration","fromNode":"workflow-suppression","fromSide":"right","toNode":"restauration","toSide":"left"},
+		{"id":"restauration-audit","fromNode":"restauration","fromSide":"right","toNode":"audit","toSide":"left"}
+	],
+	"groups":[]
+}
+

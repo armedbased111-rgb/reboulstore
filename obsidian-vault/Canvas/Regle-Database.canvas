@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"regle","type":"text","text":"## Règle Fondamentale\n\nLa DB est TOUJOURS sur le VPS\nDéveloppement ET Production","x":0,"y":150,"width":300,"height":150},
+		{"id":"verif","type":"text","text":"## Vérification\n\ndocker exec backend\nprintenv | grep DB_\n\nDoit afficher:\nDB_HOST=host.docker.internal\nDB_PORT=5433","x":750,"y":420,"width":300,"height":220},
+		{"id":"interdit","type":"text","text":"## ❌ INTERDIT\n\nJAMAIS DB locale Docker\nJAMAIS postgres:5432\nJAMAIS localhost\nJAMAIS détection auto","x":-150,"y":420,"width":300,"height":200},
+		{"id":"correct","type":"text","text":"## ✅ CORRECT\n\nUtiliser variables env\nDB_HOST=host.docker.internal\nDB_PORT=5433 (dev)\nDB_PORT=5432 (prod)","x":280,"y":520,"width":350,"height":200},
+		{"id":"dev","type":"text","text":"## Développement Local\n\nTunnel SSH\nhost.docker.internal:5433\n\nCommande:\nssh -L 5433:localhost:5432\ndeploy@152.228.218.35 -N","x":550,"y":-130,"width":350,"height":230},
+		{"id":"prod","type":"text","text":"## Production\n\nConnexion directe VPS\nDB_HOST = VPS IP\nDB_PORT = 5432","x":550,"y":150,"width":300,"height":170},
+		{"id":"title","type":"text","text":"# Règle Base de Données\n\nRÈGLE CRITIQUE","x":-10,"y":75,"width":320,"height":50}
+	],
+	"edges":[
+		{"id":"regle-dev","fromNode":"regle","fromSide":"right","toNode":"dev","toSide":"left","color":"3"},
+		{"id":"regle-prod","fromNode":"regle","fromSide":"right","toNode":"prod","toSide":"left","color":"4"},
+		{"id":"regle-interdit","fromNode":"regle","fromSide":"bottom","toNode":"interdit","toSide":"top","color":"1"},
+		{"id":"regle-correct","fromNode":"regle","fromSide":"bottom","toNode":"correct","toSide":"top","color":"4"},
+		{"id":"correct-verif","fromNode":"correct","fromSide":"right","toNode":"verif","toSide":"left"}
+	],
+	"groups":[]
+}

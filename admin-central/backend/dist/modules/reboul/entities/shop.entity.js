@@ -17,8 +17,6 @@ let Shop = class Shop {
     name;
     slug;
     description;
-    contactInfo;
-    stripeConfig;
     shippingPolicy;
     returnPolicy;
     products;
@@ -42,14 +40,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", Object)
 ], Shop.prototype, "description", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
-    __metadata("design:type", Object)
-], Shop.prototype, "contactInfo", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
-    __metadata("design:type", Object)
-], Shop.prototype, "stripeConfig", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
     __metadata("design:type", Object)

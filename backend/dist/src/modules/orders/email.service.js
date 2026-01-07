@@ -211,6 +211,35 @@ let EmailService = EmailService_1 = class EmailService {
             this.logger.error(`Error persisting email record for order ${orderId}:`, error);
         }
     }
+    async sendStockAvailableNotification(email, product, variant) {
+        const productUrl = `${this.frontendUrl}/products/${product.slug}`;
+        const productName = variant
+            ? `${product.name} - ${variant.color || ''} ${variant.size || ''}`.trim()
+            : product.name;
+        const logoUrl = 'https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png';
+        try {
+            this.logger.debug(`Sending stock notification email to ${email} with logoUrl: ${logoUrl}`);
+            const result = await this.mailerService.sendMail({
+                to: email,
+                subject: `Votre produit est de nouveau disponible - ${productName}`,
+                template: 'stock-available',
+                context: {
+                    productName,
+                    productUrl,
+                    productImageUrl: product.imageUrl || null,
+                    logoUrl: logoUrl || null,
+                    variant: variant
+                        ? `${variant.color || ''} ${variant.size || ''}`.trim()
+                        : null,
+                },
+            });
+            this.logger.log(`Stock available notification sent to ${email} for product ${product.id}`);
+            this.logger.debug(`Email result: ${JSON.stringify(result)}`);
+        }
+        catch (error) {
+            this.logger.error(`Failed to send stock available notification to ${email}:`, error?.message || error, error?.stack);
+        }
+    }
     getStatusLabel(status) {
         const labels = {
             pending: 'En attente de paiement',

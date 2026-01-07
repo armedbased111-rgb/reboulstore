@@ -13,4 +13,16 @@ export declare class AuthController {
         access_token: string;
     }>;
     getMe(req: any): Promise<any>;
+    requestPasswordResetBySMS(body: {
+        phoneNumber: string;
+    }): Promise<{
+        message: string;
+        token: string;
+    }>;
+    resetPasswordByToken(body: {
+        token: string;
+        newPassword: string;
+    }): Promise<{
+        message: string;
+    }>;
 }

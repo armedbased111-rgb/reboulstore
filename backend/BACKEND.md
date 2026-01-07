@@ -4,6 +4,8 @@
 
 Backend API REST construite avec **NestJS** et **TypeORM**, connectée à une base de données **PostgreSQL** via Docker.
 
+Voir aussi : [[../docs/context/API_CONFIG.md|API_CONFIG]] - [[../docs/context/CONTEXT.md|CONTEXT]] - [[../docs/context/ROADMAP_COMPLETE.md|ROADMAP_COMPLETE]]
+
 ## 🛠️ Stack technique
 
 - **Framework** : NestJS
@@ -143,7 +145,7 @@ backend/
 
 ## 📊 État actuel
 
-### Version : 0.24.0 - Phase 17.11.4 terminée ✅
+### Version : 0.24.2 - Phase 17.11.4 terminée ✅
 
 **Statut** : ✅ Backend complet et production-ready - Tous les modules essentiels complétés, infrastructure Docker production configurée, monitoring & logs en place
 

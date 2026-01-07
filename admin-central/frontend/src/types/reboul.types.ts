@@ -46,16 +46,29 @@ export interface StocksStats {
 }
 
 /**
+ * Variant de produit
+ */
+export interface Variant {
+  id: string;
+  color: string;
+  size: string;
+  stock: number;
+  sku: string;
+}
+
+/**
  * Produit
  */
 export interface Product {
   id: string;
   name: string;
+  reference?: string | null; // Référence produit (ex: REF-001, SKU-12345)
   description?: string | null;
   price: number;
   categoryId: string;
   brandId?: string | null;
   shopId?: string | null;
+  collectionId?: string | null;
   materials?: string | null;
   careInstructions?: string | null;
   madeIn?: string | null;
@@ -73,13 +86,7 @@ export interface Product {
     alt?: string | null;
     order: number;
   }>;
-  variants?: Array<{
-    id: string;
-    color: string;
-    size: string;
-    stock: number;
-    sku: string;
-  }>;
+  variants?: Variant[];
   createdAt: string;
   updatedAt: string;
 }

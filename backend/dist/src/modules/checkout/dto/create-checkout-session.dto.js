@@ -28,6 +28,7 @@ __decorate([
 ], CheckoutItemDto.prototype, "quantity", void 0);
 class CreateCheckoutSessionDto {
     items;
+    couponCode;
 }
 exports.CreateCheckoutSessionDto = CreateCheckoutSessionDto;
 __decorate([
@@ -36,4 +37,9 @@ __decorate([
     (0, class_transformer_1.Type)(() => CheckoutItemDto),
     __metadata("design:type", Array)
 ], CreateCheckoutSessionDto.prototype, "items", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateCheckoutSessionDto.prototype, "couponCode", void 0);
 //# sourceMappingURL=create-checkout-session.dto.js.map

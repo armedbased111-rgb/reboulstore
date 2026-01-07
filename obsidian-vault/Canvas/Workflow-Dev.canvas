@@ -1,0 +1,23 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Développement\n\nProcessus complet de développement","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"start","type":"text","text":"## 1. Consultation\n\n- Vérifier ROADMAP_COMPLETE\n- Identifier phase en cours\n- Vérifier dépendances","x":0,"y":150,"width":250,"height":190,"color":"2"},
+		{"id":"design","type":"text","text":"## 2. Design (si nécessaire)\n\n- Créer design Figma\n- Respecter design system\n- Partager lien Figma","x":300,"y":150,"width":250,"height":190,"color":"3"},
+		{"id":"backend","type":"text","text":"## 3. Backend\n\n- Créer entité\n- Créer DTOs\n- Créer service\n- Créer controller\n- Tester endpoints","x":0,"y":400,"width":250,"height":200,"color":"4"},
+		{"id":"frontend","type":"text","text":"## 4. Frontend\n\n- Créer composant\n- Ajouter route\n- Créer services API\n- Styling TailwindCSS\n- Tester responsive","x":300,"y":400,"width":250,"height":200,"color":"5"},
+		{"id":"test","type":"text","text":"## 5. Tests\n\n- Tests unitaires\n- Tests E2E\n- Tests manuels\n- Vérifier fonctionnalité","x":600,"y":400,"width":250,"height":200,"color":"6"},
+		{"id":"doc","type":"text","text":"## 6. Documentation\n\n- Mettre à jour ROADMAP\n- Mettre à jour CONTEXT\n- Mettre à jour BACKEND/FRONTEND","x":0,"y":700,"width":250,"height":200,"color":"1"},
+		{"id":"commit","type":"text","text":"## 7. Commit\n\n- Message clair\n- Convention Git\n- Pull Request\n- Review","x":300,"y":700,"width":250,"height":200,"color":"2"},
+		{"id":"workflow-doc","type":"file","file":"obsidian-vault/Workflows/Development.md","x":600,"y":700,"width":520,"height":160,"color":"3"}
+	],
+	"edges":[
+		{"id":"start-design","fromNode":"start","fromSide":"right","toNode":"design","toSide":"left"},
+		{"id":"design-backend","fromNode":"design","fromSide":"bottom","toNode":"backend","toSide":"top"},
+		{"id":"design-frontend","fromNode":"design","fromSide":"bottom","toNode":"frontend","toSide":"top"},
+		{"id":"backend-test","fromNode":"backend","fromSide":"right","toNode":"test","toSide":"left"},
+		{"id":"frontend-test","fromNode":"frontend","fromSide":"right","toNode":"test","toSide":"left"},
+		{"id":"test-doc","fromNode":"test","fromSide":"bottom","toNode":"doc","toSide":"top"},
+		{"id":"doc-commit","fromNode":"doc","fromSide":"right","toNode":"commit","toSide":"left"}
+	],
+	"groups":[]
+}

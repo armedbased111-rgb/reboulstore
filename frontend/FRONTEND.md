@@ -4,6 +4,8 @@
 
 Application frontend construite avec **React** (TypeScript), **Vite** comme build tool, et **TailwindCSS** pour le styling, containerisée avec Docker.
 
+Voir aussi : [[AUTH_USAGE.md|AUTH_USAGE]] - [[../docs/context/CONTEXT.md|CONTEXT]] - [[../docs/export/FIGMA_WORKFLOW.md|FIGMA_WORKFLOW]] - [[../docs/animations/ANIMATIONS_GUIDE.md|ANIMATIONS_GUIDE]]
+
 ## 🛠️ Stack technique
 
 - **Build tool** : Vite
@@ -292,10 +294,10 @@ Routes principales :
 
 ## 📊 État actuel
 
-### Version : 0.24.0 - Phase 17.11.4 terminée ✅
+### Version : 0.24.2 - Phase 17.11.4 terminée ✅
 
 **Statut** : ✅ Frontend complet et production-ready - Pages principales complétées, design system A-COLD-WALL* appliqué, responsive optimisé, infrastructure Docker production configurée
-**Dernière mise à jour** : 17/12/2025
+**Dernière mise à jour** : 05/01/2026 à 20:50
 
 #### ✅ Complété (Phase 1)
 - Structure de base définie

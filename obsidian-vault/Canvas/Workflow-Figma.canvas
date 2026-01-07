@@ -1,0 +1,18 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Workflow Figma → Frontend\n\nDesign d'abord, code ensuite","x":0,"y":0,"width":400,"height":100,"color":"1"},
+		{"id":"phase1","type":"text","text":"## Phase 1: Design Figma\n\n1. Créer/ouvrir Figma\n2. Designer page/composant\n3. Auto Layout\n4. Couleurs, typo, espacements\n5. Partager lien Figma","x":0,"y":150,"width":300,"height":250,"color":"2"},
+		{"id":"phase2","type":"text","text":"## Phase 2: Implémentation\n\n1. Consulter Figma\n2. Noter mesures\n3. Repérer shadcn/ui\n4. Planifier structure\n5. Coder React/Tailwind","x":350,"y":150,"width":300,"height":250,"color":"3"},
+		{"id":"phase3","type":"text","text":"## Phase 3: Validation\n\n1. Comparer avec Figma\n2. Tester responsive\n3. Tester interactions\n4. Ajuster si besoin","x":700,"y":150,"width":300,"height":250,"color":"4"},
+		{"id":"design-system","type":"text","text":"## Design System\n\nA-COLD-WALL*\n- Minimaliste, premium\n- Monochrome + rouge\n- Geist typo\n- shadcn/ui base","x":0,"y":450,"width":300,"height":200,"color":"5"},
+		{"id":"export","type":"text","text":"## ⚠️ Export Figma\n\nNE PAS copier-coller\nUtiliser comme référence\nRecoder proprement\nReact + shadcn + Tailwind","x":350,"y":450,"width":300,"height":200,"color":"6"},
+		{"id":"workflow-doc","type":"file","file":"obsidian-vault/Workflows/Design.md","x":700,"y":450,"width":300,"height":200,"color":"1"}
+	],
+	"edges":[
+		{"id":"p1-p2","fromNode":"phase1","fromSide":"right","toNode":"phase2","toSide":"left"},
+		{"id":"p2-p3","fromNode":"phase2","fromSide":"right","toNode":"phase3","toSide":"left"},
+		{"id":"ds-p1","fromNode":"design-system","fromSide":"top","toNode":"phase1","toSide":"bottom"},
+		{"id":"export-p2","fromNode":"export","fromSide":"top","toNode":"phase2","toSide":"bottom"}
+	],
+	"groups":[]
+}

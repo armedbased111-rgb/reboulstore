@@ -23,6 +23,9 @@ export class Product {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
+  reference: string | null; // Référence produit (ex: REF-001, SKU-12345)
+
   @Column({ type: 'text', nullable: true })
   description: string | null;
 

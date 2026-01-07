@@ -4,8 +4,8 @@ exports.getOutletDatabaseConfig = exports.getCpCompanyDatabaseConfig = exports.g
 const getReboulDatabaseConfig = (configService) => ({
     name: 'reboul',
     type: 'postgres',
-    host: configService.get('REBOUL_DB_HOST', 'reboulstore-postgres'),
-    port: configService.get('REBOUL_DB_PORT', 5432),
+    host: configService.get('REBOUL_DB_HOST', 'host.docker.internal'),
+    port: configService.get('REBOUL_DB_PORT', 5433),
     username: configService.get('REBOUL_DB_USER', 'reboulstore'),
     password: configService.get('REBOUL_DB_PASSWORD', 'reboulstore_password'),
     database: configService.get('REBOUL_DB_NAME', 'reboulstore_db'),

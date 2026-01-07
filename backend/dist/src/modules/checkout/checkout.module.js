@@ -14,6 +14,7 @@ const checkout_service_1 = require("./checkout.service");
 const variant_entity_1 = require("../../entities/variant.entity");
 const product_entity_1 = require("../../entities/product.entity");
 const orders_module_1 = require("../orders/orders.module");
+const coupons_module_1 = require("../coupons/coupons.module");
 let CheckoutModule = class CheckoutModule {
 };
 exports.CheckoutModule = CheckoutModule;
@@ -22,6 +23,7 @@ exports.CheckoutModule = CheckoutModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([variant_entity_1.Variant, product_entity_1.Product]),
             orders_module_1.OrdersModule,
+            coupons_module_1.CouponsModule,
         ],
         controllers: [checkout_controller_1.CheckoutController],
         providers: [checkout_service_1.CheckoutService],

@@ -16,53 +16,92 @@ exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const cache_manager_1 = require("@nestjs/cache-manager");
 const category_entity_1 = require("../../entities/category.entity");
 let CategoriesService = class CategoriesService {
     categoryRepository;
-    constructor(categoryRepository) {
+    cacheManager;
+    constructor(categoryRepository, cacheManager) {
         this.categoryRepository = categoryRepository;
+        this.cacheManager = cacheManager;
     }
     async findAll() {
-        return this.categoryRepository.find({
+        const cacheKey = 'categories:all';
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
+        const categories = await this.categoryRepository.find({
             order: { name: 'ASC' },
         });
+        await this.cacheManager.set(cacheKey, categories, 600);
+        return categories;
     }
     async findOne(id) {
+        const cacheKey = `category:${id}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
         const category = await this.categoryRepository.findOne({
             where: { id },
         });
         if (!category) {
             throw new common_1.NotFoundException(`Category with ID ${id} not found`);
         }
+        await this.cacheManager.set(cacheKey, category, 600);
         return category;
     }
     async findBySlug(slug) {
+        const cacheKey = `category:slug:${slug}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            return cached;
+        }
         const category = await this.categoryRepository.findOne({
             where: { slug },
         });
         if (!category) {
             throw new common_1.NotFoundException(`Category with slug ${slug} not found`);
         }
+        await this.cacheManager.set(cacheKey, category, 600);
         return category;
     }
     async create(createCategoryDto) {
         const category = this.categoryRepository.create(createCategoryDto);
-        return this.categoryRepository.save(category);
+        const savedCategory = await this.categoryRepository.save(category);
+        await this.invalidateCategoriesCache();
+        return savedCategory;
     }
     async update(id, updateCategoryDto) {
         const category = await this.findOne(id);
         Object.assign(category, updateCategoryDto);
-        return this.categoryRepository.save(category);
+        const savedCategory = await this.categoryRepository.save(category);
+        await this.cacheManager.del(`category:${id}`);
+        if (category.slug) {
+            await this.cacheManager.del(`category:slug:${category.slug}`);
+        }
+        await this.invalidateCategoriesCache();
+        return savedCategory;
     }
     async remove(id) {
         const category = await this.findOne(id);
         await this.categoryRepository.remove(category);
+        await this.cacheManager.del(`category:${id}`);
+        if (category.slug) {
+            await this.cacheManager.del(`category:slug:${category.slug}`);
+        }
+        await this.invalidateCategoriesCache();
+    }
+    async invalidateCategoriesCache() {
+        await this.cacheManager.del('categories:all');
     }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
 ], CategoriesService);
 //# sourceMappingURL=categories.service.js.map
