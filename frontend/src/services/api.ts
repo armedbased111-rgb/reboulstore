@@ -100,28 +100,45 @@ function handleApiError(error: AxiosError): Promise<ApiError> {
 // Fonctions utilitaires pour les requêtes HTTP
 export const api = {
   get: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-    const response = await apiClient.get<ApiResponse<T>>(url, config);
-    return response.data.data;
+    const response = await apiClient.get<T | ApiResponse<T>>(url, config);
+    // NestJS retourne directement l'objet, pas dans un wrapper { data: ... }
+    // Mais certaines réponses peuvent être dans ApiResponse<T>
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return (response.data as ApiResponse<T>).data;
+    }
+    return response.data as T;
   },
 
   post: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
-    const response = await apiClient.post<ApiResponse<T>>(url, data, config);
-    return response.data.data;
+    const response = await apiClient.post<T | ApiResponse<T>>(url, data, config);
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return (response.data as ApiResponse<T>).data;
+    }
+    return response.data as T;
   },
 
   put: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
-    const response = await apiClient.put<ApiResponse<T>>(url, data, config);
-    return response.data.data;
+    const response = await apiClient.put<T | ApiResponse<T>>(url, data, config);
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return (response.data as ApiResponse<T>).data;
+    }
+    return response.data as T;
   },
 
   patch: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
-    const response = await apiClient.patch<ApiResponse<T>>(url, data, config);
-    return response.data.data;
+    const response = await apiClient.patch<T | ApiResponse<T>>(url, data, config);
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return (response.data as ApiResponse<T>).data;
+    }
+    return response.data as T;
   },
 
   delete: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-    const response = await apiClient.delete<ApiResponse<T>>(url, config);
-    return response.data.data;
+    const response = await apiClient.delete<T | ApiResponse<T>>(url, config);
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return (response.data as ApiResponse<T>).data;
+    }
+    return response.data as T;
   },
 };
 

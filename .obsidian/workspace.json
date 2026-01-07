@@ -30,15 +30,15 @@
             "state": {
               "type": "canvas",
               "state": {
-                "file": "obsidian-vault/Canvas/Regle-Deploiement.canvas",
+                "file": "obsidian-vault/Canvas/Workflow-Deploy.canvas",
                 "viewState": {
-                  "x": 555.4797151547256,
-                  "y": 421.4160847458479,
-                  "zoom": -0.2880483617352568
+                  "x": 532.7306521400594,
+                  "y": 971.3598521502477,
+                  "zoom": -0.50337134660382
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "Regle-Deploiement"
+              "title": "Workflow-Deploy"
             }
           }
         ],
@@ -206,27 +206,29 @@
   },
   "active": "788432563014b5e7",
   "lastOpenFiles": [
-    "frontend/dist/archive reboul 2024/white_b.png",
-    "frontend/dist/archive reboul 2024/uploads/placeholder.svg",
+    "obsidian-vault/Canvas/Workflow-CLI.canvas",
+    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
+    "obsidian-vault/Canvas/Regle-Deploiement.canvas",
+    "frontend/dist/archive reboul 2024/topo_w.png",
+    "frontend/dist/archive reboul 2024/topo_b.png",
+    "frontend/dist/archive reboul 2024/rrd_w.png",
+    "frontend/dist/assets/index-Dp1dj0xq.js",
     "frontend/dist/archive reboul 2024/uploads/f1687d88-0519-4f44-b859-5c8f90ad56cb.webp",
-    "frontend/dist/archive reboul 2024/uploads/ea96b122-e88e-451b-8d2f-e577dedfc7e6.webp",
-    "frontend/dist/archive reboul 2024/uploads/dab44e3e-becd-4385-85b0-8c054040b036.webp",
-    "frontend/dist/archive reboul 2024/uploads/d6337bc6-1d09-4e15-a63e-3be40029a957.webp",
-    "frontend/dist/archive reboul 2024/uploads/d364620c-b9fe-4d0d-b06b-e40477ea8c3f.webp",
     "frontend/dist/archive reboul 2024/uploads/adb55478-8944-4abb-86e6-b501a5a82efd.webp",
     "frontend/dist/archive reboul 2024/uploads/a6ba3b48-aa14-408f-a478-b14a3b468000.webp",
-    "frontend/dist/archive reboul 2024/uploads/a50fca73-0874-40c1-a816-74fb66725528.webp",
     "frontend/dist/archive reboul 2024/uploads/9f315eeb-65d4-47c4-b793-24e1d62a1f71.webp",
-    "frontend/dist/archive reboul 2024/uploads",
+    "frontend/dist/archive reboul 2024/uploads/6e5f5494-8fca-453d-9762-49caeaefc24e.webp",
+    "frontend/dist/archive reboul 2024/uploads/6c08443d-2275-4109-b074-7e929398f544.webp",
+    "frontend/dist/archive reboul 2024/uploads/4ed94f1d-46a9-441c-96d5-fd236fe5c668.webp",
     "frontend/dist/archive reboul 2024/tests/workers.html",
     "frontend/dist/archive reboul 2024/tests",
     "frontend/dist/archive reboul 2024/placeholders",
+    "frontend/dist/assets/index-Bbwku3rM.js",
+    "frontend/dist/archive reboul 2024/uploads",
     "frontend/dist/assets/index-CmWD1nSE.js",
     "frontend/dist/assets/index-B1GzxeyE.js",
     "frontend/dist/assets/index-wAfI0pLk.css",
     "backend/dist/templates/emails/stock-available.hbs",
-    "backend/dist/templates/emails/shipping-notification.hbs",
-    "backend/dist/templates/emails/registration-confirmation.hbs",
     "backend/node_modules/flat-cache/node_modules/keyv/README.md",
     "backend/node_modules/socket.io/node_modules/mime-types/HISTORY.md",
     "backend/node_modules/socket.io/node_modules/negotiator/README.md",
@@ -252,9 +254,7 @@
     "backend/node_modules/cache-manager-redis-store/node_modules/@redis/client/README.md",
     "backend/node_modules/cache-manager-redis-store/node_modules/@redis/json/README.md",
     "backend/node_modules/cache-manager-redis-store/node_modules/@redis/graph/README.md",
-    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
     "obsidian-vault/Canvas/Regle-Database.canvas",
-    "obsidian-vault/Canvas/Regle-Deploiement.canvas",
     "obsidian-vault/Canvas/Workflow-Database-Securite.canvas",
     "obsidian-vault/Canvas/Architecture.canvas",
     "obsidian-vault/Canvas/Integrations.canvas",

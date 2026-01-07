@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import type { Product } from '../../types';
+import type { Product, Category } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -99,12 +99,17 @@ export const FeaturedProducts = ({
       setCategoryLoading(true);
       setCategoryError(null);
       getCategoryBySlug(categorySlug)
-        .then((category) => {
+        .then((category: Category) => {
           console.log('✅ FeaturedProducts: Catégorie trouvée:', category);
-          setCategoryId(category.id);
+          if (category && category.id) {
+            setCategoryId(category.id);
+          } else {
+            console.warn('⚠️ FeaturedProducts: Catégorie trouvée mais sans ID:', category);
+            setCategoryError('Catégorie invalide');
+          }
           setCategoryLoading(false);
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           console.error('❌ FeaturedProducts: Erreur catégorie:', err);
           setCategoryError(err instanceof Error ? err.message : 'Erreur lors du chargement de la catégorie');
           setCategoryLoading(false);

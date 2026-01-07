@@ -11,7 +11,16 @@ import { PageLoader } from './PageLoader'
  * mais offre un feedback visuel fluide lors des transitions.
  */
 export const NavigationLoader = () => {
-  const location = useLocation()
+  // Utiliser useLocation avec gestion d'erreur
+  let location: ReturnType<typeof useLocation>;
+  try {
+    location = useLocation();
+  } catch (error) {
+    // Si le contexte Router n'est pas disponible, ne rien afficher
+    console.warn('NavigationLoader: Router context not available');
+    return null;
+  }
+
   const [isVisible, setIsVisible] = useState(false)
   const firstRenderRef = useRef(true)
 

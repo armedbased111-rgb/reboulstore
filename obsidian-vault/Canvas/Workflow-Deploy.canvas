@@ -1,23 +1,34 @@
 {
 	"nodes":[
-		{"id":"verify","type":"text","text":"## 3. Vérification\n\n- État services\n- Logs erreurs API\n- Monitoring ressources\n- Tests fonctionnels","x":350,"y":400,"width":300,"height":250,"color":"5"},
-		{"id":"rollback","type":"text","text":"## Rollback (si problème)\n\n```bash\n./rcli server rollback --latest\n```\n\n- Lister backups\n- Restaurer backup\n- Vérifier restauration","x":700,"y":400,"width":300,"height":250,"color":"6"},
-		{"id":"deploy","type":"text","text":"## 2. Déploiement\n\n```bash\n./scripts/deploy-prod.sh\n```\n\n- Sauvegarde auto\n- Arrêt services\n- Build images\n- Redémarrage","x":0,"y":400,"width":300,"height":250,"color":"4"},
 		{"id":"title","type":"text","text":"# Workflow Déploiement\n\nProcessus sécurisé de déploiement","x":0,"y":-60,"width":400,"height":100,"color":"1"},
-		{"id":"pre-check","type":"text","text":"## 1. Pré-déploiement\n\n- Backup DB\n- Vérifier ressources\n- Vérifier logs erreurs\n- Audit sécurité\n- VERIFICATION BUILD TS & Reparation avant","x":0,"y":100,"width":320,"height":220,"color":"2"},
-		{"id":"backup","type":"text","text":"## Backup\n\n```bash\n./rcli db backup --server\n```\n\nOBLIGATOIRE avant déploiement","x":400,"y":100,"width":250,"height":200,"color":"3"},
-		{"id":"maintenance","type":"text","text":"## Maintenance\n\n- Quotidienne : logs, services\n- Hebdomadaire : SSL, backups\n- Mensuelle : sécurité, performance","x":350,"y":800,"width":300,"height":200,"color":"2"},
+		{"id":"modes","type":"text","text":"## 🎯 Modes de Déploiement\n\n**Quick** (2-3 min) : Corrections mineures\n```bash\n./scripts/deploy-prod.sh --quick\n```\n\n**Fast** (3-5 min) : Build avec cache\n```bash\n./scripts/deploy-prod.sh --fast-build\n```\n\n**Full** (10-15 min) : Releases majeures\n```bash\n./scripts/deploy-prod.sh --full\n```","x":0,"y":100,"width":400,"height":300,"color":"2"},
+		{"id":"pre-check","type":"text","text":"## 1. Pré-déploiement\n\n- Backup DB (OBLIGATOIRE)\n- Vérifier ressources\n- Vérifier logs erreurs\n- Audit sécurité\n- VERIFICATION BUILD TS & Reparation avant","x":450,"y":100,"width":320,"height":220,"color":"2"},
+		{"id":"backup","type":"text","text":"## Backup\n\n```bash\n./rcli db backup --server\n```\n\nOBLIGATOIRE avant déploiement","x":800,"y":100,"width":250,"height":200,"color":"3"},
+		{"id":"quick-deploy","type":"text","text":"## 🚀 Quick Deploy\n\n**Temps** : 2-3 min\n**Usage** : Corrections mineures\n\n1. Build local (`npm run build`)\n2. Upload `dist/`\n3. Copie dans container\n4. Restart services\n5. Vérification rapide","x":0,"y":450,"width":350,"height":280,"color":"4"},
+		{"id":"fast-deploy","type":"text","text":"## ⚡ Fast Deploy\n\n**Temps** : 3-5 min\n**Usage** : Corrections moyennes\n\n1. Backup DB\n2. Upload source\n3. Build serveur (avec cache)\n4. Restart services\n5. Vérification","x":400,"y":450,"width":350,"height":280,"color":"4"},
+		{"id":"full-deploy","type":"text","text":"## 🔨 Full Deploy\n\n**Temps** : 10-15 min\n**Usage** : Releases majeures\n\n1. Backup DB\n2. Upload source\n3. Build serveur (--no-cache)\n4. Restart services\n5. Vérification complète","x":800,"y":450,"width":350,"height":280,"color":"4"},
+		{"id":"verify","type":"text","text":"## 3. Vérification\n\n- État services\n- Logs erreurs API\n- Monitoring ressources\n- Tests fonctionnels","x":400,"y":800,"width":300,"height":250,"color":"5"},
+		{"id":"rollback","type":"text","text":"## Rollback (si problème)\n\n```bash\n./rcli server rollback --latest\n```\n\n- Lister backups\n- Restaurer backup\n- Vérifier restauration","x":750,"y":800,"width":300,"height":250,"color":"6"},
 		{"id":"monitoring","type":"text","text":"## 4. Monitoring\n\n- Logs erreurs\n- Requêtes lentes\n- Activité utilisateurs\n- Ressources système","x":0,"y":800,"width":300,"height":200,"color":"1"},
-		{"id":"deploy-doc","type":"file","file":"obsidian-vault/Workflows/Deployment.md","x":700,"y":800,"width":300,"height":200,"color":"3"}
+		{"id":"maintenance","type":"text","text":"## Maintenance\n\n- Quotidienne : logs, services\n- Hebdomadaire : SSL, backups\n- Mensuelle : sécurité, performance","x":400,"y":1100,"width":300,"height":200,"color":"2"},
+		{"id":"improvements","type":"text","text":"## 🔧 Améliorations\n\n✅ Timeout configurable\n✅ Mode quick (build local)\n✅ Mode fast (cache)\n✅ Gestion erreurs\n✅ Rollback auto","x":0,"y":1100,"width":300,"height":200,"color":"3"},
+		{"id":"deploy-doc","type":"file","file":"obsidian-vault/Workflows/Deployment.md","x":750,"y":1100,"width":300,"height":200,"color":"3"},
+		{"id":"improvements-doc","type":"file","file":"docs/deployment/DEPLOYMENT_IMPROVEMENTS.md","x":0,"y":1350,"width":400,"height":150,"color":"4"}
 	],
 	"edges":[
 		{"id":"pre-backup","fromNode":"pre-check","fromSide":"right","toNode":"backup","toSide":"left"},
-		{"id":"backup-deploy","fromNode":"backup","fromSide":"bottom","toNode":"deploy","toSide":"top"},
-		{"id":"pre-deploy","fromNode":"pre-check","fromSide":"bottom","toNode":"deploy","toSide":"top"},
-		{"id":"deploy-verify","fromNode":"deploy","fromSide":"right","toNode":"verify","toSide":"left"},
+		{"id":"backup-quick","fromNode":"backup","fromSide":"bottom","toNode":"quick-deploy","toSide":"top"},
+		{"id":"backup-fast","fromNode":"backup","fromSide":"bottom","toNode":"fast-deploy","toSide":"top"},
+		{"id":"backup-full","fromNode":"backup","fromSide":"bottom","toNode":"full-deploy","toSide":"top"},
+		{"id":"quick-verify","fromNode":"quick-deploy","fromSide":"bottom","toNode":"verify","toSide":"top"},
+		{"id":"fast-verify","fromNode":"fast-deploy","fromSide":"bottom","toNode":"verify","toSide":"top"},
+		{"id":"full-verify","fromNode":"full-deploy","fromSide":"bottom","toNode":"verify","toSide":"top"},
 		{"id":"verify-rollback","fromNode":"verify","fromSide":"right","toNode":"rollback","toSide":"left"},
 		{"id":"verify-monitoring","fromNode":"verify","fromSide":"bottom","toNode":"monitoring","toSide":"top"},
-		{"id":"monitoring-maintenance","fromNode":"monitoring","fromSide":"right","toNode":"maintenance","toSide":"left"}
+		{"id":"monitoring-maintenance","fromNode":"monitoring","fromSide":"right","toNode":"maintenance","toSide":"left"},
+		{"id":"modes-quick","fromNode":"modes","fromSide":"bottom","toNode":"quick-deploy","toSide":"top"},
+		{"id":"modes-fast","fromNode":"modes","fromSide":"bottom","toNode":"fast-deploy","toSide":"top"},
+		{"id":"modes-full","fromNode":"modes","fromSide":"bottom","toNode":"full-deploy","toSide":"top"}
 	],
 	"groups":[]
 }
