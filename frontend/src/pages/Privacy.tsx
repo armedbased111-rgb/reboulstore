@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+// useRef utilisé via useScrollAnimation
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 

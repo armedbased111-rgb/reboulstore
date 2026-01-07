@@ -42,10 +42,10 @@ export const applyCoupon = async (
   code: string,
   cartId: string,
 ): Promise<CouponValidation> => {
-  const response = await api.post<CouponValidation>('/orders/apply-coupon', {
+  // api.post retourne déjà les données directement (response.data est extrait)
+  return await api.post<CouponValidation>('/orders/apply-coupon', {
     code,
     cartId,
   });
-  return response.data;
 };
 

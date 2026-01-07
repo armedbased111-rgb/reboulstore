@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { ProductGrid } from '../components/catalog/ProductGrid';
 import { Search as SearchIcon, X, SlidersHorizontal } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
 import { useBrands } from '../hooks/useBrands';
-import type { Category, Brand } from '../types';
+// Category et Brand non utilisés directement dans ce fichier
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
 
@@ -21,8 +21,7 @@ import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
  * - Pagination
  */
 export const Search = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   
   // États pour les filtres
@@ -49,7 +48,7 @@ export const Search = () => {
     page: currentPage,
     limit: 20,
     sortBy: sortBy === 'relevance' ? undefined : sortBy,
-    sortOrder: sortBy === 'price-asc' ? 'ASC' : sortBy === 'price-desc' ? 'DESC' : 'DESC',
+    sortOrder: (sortBy === 'price-asc' ? 'ASC' : sortBy === 'price-desc' ? 'DESC' : 'DESC') as 'ASC' | 'DESC',
   };
 
   const { products: allProducts, loading, error } = useProducts(productQuery);

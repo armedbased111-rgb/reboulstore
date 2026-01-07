@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
+// useRef utilisé via useScrollAnimation
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';

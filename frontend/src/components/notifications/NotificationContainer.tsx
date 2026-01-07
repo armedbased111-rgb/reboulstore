@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+// useState et useCallback non utilisés dans ce composant
 import { NotificationToast } from './NotificationToast';
 import type { Notification } from '../../types/notifications';
 

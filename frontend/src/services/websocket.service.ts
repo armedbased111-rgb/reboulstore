@@ -44,11 +44,11 @@ class WebSocketService {
       this.reconnectAttempts = 0;
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', (reason: string) => {
       console.log('WebSocket disconnected:', reason);
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', (error: Error) => {
       console.error('WebSocket connection error:', error);
       this.reconnectAttempts++;
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
@@ -70,7 +70,7 @@ class WebSocketService {
     });
 
     // Test de connexion
-    this.socket.on('pong', (data) => {
+    this.socket.on('pong', (data: unknown) => {
       console.log('WebSocket ping/pong:', data);
     });
   }

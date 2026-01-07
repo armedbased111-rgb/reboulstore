@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+// useRef et useEffect utilisés via useScrollAnimation
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
 import { animateRevealUp } from '../animations';

@@ -4,7 +4,7 @@
 		{"id":"rollback","type":"text","text":"## Rollback (si problème)\n\n```bash\n./rcli server rollback --latest\n```\n\n- Lister backups\n- Restaurer backup\n- Vérifier restauration","x":700,"y":400,"width":300,"height":250,"color":"6"},
 		{"id":"deploy","type":"text","text":"## 2. Déploiement\n\n```bash\n./scripts/deploy-prod.sh\n```\n\n- Sauvegarde auto\n- Arrêt services\n- Build images\n- Redémarrage","x":0,"y":400,"width":300,"height":250,"color":"4"},
 		{"id":"title","type":"text","text":"# Workflow Déploiement\n\nProcessus sécurisé de déploiement","x":0,"y":-60,"width":400,"height":100,"color":"1"},
-		{"id":"pre-check","type":"text","text":"## 1. Pré-déploiement\n\n- Backup DB\n- Vérifier ressources\n- Vérifier logs erreurs\n- Audit sécurité","x":0,"y":100,"width":300,"height":200,"color":"2"},
+		{"id":"pre-check","type":"text","text":"## 1. Pré-déploiement\n\n- Backup DB\n- Vérifier ressources\n- Vérifier logs erreurs\n- Audit sécurité\n- VERIFICATION BUILD TS & Reparation avant","x":0,"y":100,"width":320,"height":220,"color":"2"},
 		{"id":"backup","type":"text","text":"## Backup\n\n```bash\n./rcli db backup --server\n```\n\nOBLIGATOIRE avant déploiement","x":400,"y":100,"width":250,"height":200,"color":"3"},
 		{"id":"maintenance","type":"text","text":"## Maintenance\n\n- Quotidienne : logs, services\n- Hebdomadaire : SSL, backups\n- Mensuelle : sécurité, performance","x":350,"y":800,"width":300,"height":200,"color":"2"},
 		{"id":"monitoring","type":"text","text":"## 4. Monitoring\n\n- Logs erreurs\n- Requêtes lentes\n- Activité utilisateurs\n- Ressources système","x":0,"y":800,"width":300,"height":200,"color":"1"},

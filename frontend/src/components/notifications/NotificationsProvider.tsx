@@ -1,4 +1,5 @@
-import { useState, useCallback, ReactNode } from 'react';
+import { useState, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { NotificationContainer } from './NotificationContainer';
 import type { Notification } from '../../types/notifications';
 import { useWebSocket } from '../../hooks/useWebSocket';

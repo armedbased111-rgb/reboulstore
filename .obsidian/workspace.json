@@ -11,17 +11,38 @@
             "id": "3e0655cdde2bb3a8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "obsidian-vault/Context/AS400-Sync-Reflexion.md",
-                "mode": "source",
-                "source": false
+                "file": "obsidian-vault/Canvas/Workflow-Deploy.canvas",
+                "viewState": {
+                  "x": 497.6654897739505,
+                  "y": 493.345102260495,
+                  "zoom": -0.3278172868178436
+                }
               },
-              "icon": "lucide-file",
-              "title": "AS400-Sync-Reflexion"
+              "icon": "lucide-layout-dashboard",
+              "title": "Workflow-Deploy"
+            }
+          },
+          {
+            "id": "788432563014b5e7",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "obsidian-vault/Canvas/Regle-Deploiement.canvas",
+                "viewState": {
+                  "x": 555.4797151547256,
+                  "y": 421.4160847458479,
+                  "zoom": -0.2880483617352568
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Regle-Deploiement"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,23 +204,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "3e0655cdde2bb3a8",
+  "active": "788432563014b5e7",
   "lastOpenFiles": [
+    "backend/dist/tsconfig.tsbuildinfo",
+    "backend/dist/test/app.e2e-spec.js.map",
+    "backend/dist/test/app.e2e-spec.js",
+    "backend/dist/test/app.e2e-spec.d.ts",
+    "backend/dist/test",
+    "backend/dist/src/scripts/seed.js.map",
+    "backend/dist/src/scripts/seed.js",
+    "backend/dist/src/scripts/seed.d.ts",
+    "backend/dist/src/scripts",
+    "backend/dist/src/migrations/1767633000000-AddProductReference.js.map",
+    "backend/dist/src/migrations/1767633000000-AddProductReference.js",
+    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
+    "obsidian-vault/Context/AS400-Sync-Reflexion.md",
     "obsidian-vault/Canvas/Regle-Database.canvas",
     "obsidian-vault/Canvas/Regle-Deploiement.canvas",
-    "obsidian-vault/Context/AS400-Sync-Reflexion.md",
     "obsidian-vault/Server/Database-Securite.md",
     "obsidian-vault/Canvas/Workflow-Database-Securite.canvas",
-    "backend/dist/src/scripts/seed-homepage.d.ts",
-    "backend/dist/src/scripts/seed-homepage.js",
-    "backend/dist/src/scripts/seed-homepage.js.map",
-    "backend/src/scripts/seed-homepage.ts",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-promo/EditHomepagePromoPage.tsx",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-promo/CreateHomepagePromoPage.tsx",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-hero/EditHomepageHeroPage.tsx",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-hero/CreateHomepageHeroPage.tsx",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-promo/HomepagePromosPage.tsx",
-    "admin-central/frontend/src/pages/admin/reboul/homepage-hero/HomepageHeroesPage.tsx",
     "docs/context/MIGRATION_HOMEPAGE_HERO_PROMO.md",
     "docs/context/CREATION_ENTITES_HOMEPAGE.md",
     "docs/context/VERIFICATION_PROMOCARD.md",
@@ -215,8 +238,6 @@
     "obsidian-vault/Canvas/Workflow-Git.canvas",
     "obsidian-vault/Canvas/Workflow-Figma.canvas",
     "obsidian-vault/Canvas/Workflow-Dev.canvas",
-    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
-    "obsidian-vault/Canvas/Workflow-CLI.canvas",
     "obsidian-vault/Server/Development.md",
     "obsidian-vault/Workflows/Testing.md",
     "obsidian-vault/Server/Production.md",

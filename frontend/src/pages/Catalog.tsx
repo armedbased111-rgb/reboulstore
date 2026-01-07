@@ -110,7 +110,7 @@ export const Catalog = () => {
     page: currentPage,
     limit: 20,
     sortBy: sortBy === 'relevance' ? undefined : sortBy,
-    sortOrder: sortBy === 'price-asc' ? 'ASC' : sortBy === 'price-desc' ? 'DESC' : 'DESC',
+    sortOrder: (sortBy === 'price-asc' ? 'ASC' : sortBy === 'price-desc' ? 'DESC' : 'DESC') as 'ASC' | 'DESC',
   };
 
   const { products: allProducts, loading, error } = useProducts(productQuery);

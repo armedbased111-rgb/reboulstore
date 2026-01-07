@@ -712,7 +712,7 @@ export const Header = () => {
                         {hoveredCategory.imageUrl ? (
                           <img 
                             key={`img2-category-${hoveredCategory.id}`}
-                            src={getImageUrl(hoveredCategory.imageUrl)}
+                            src={getImageUrl(hoveredCategory.imageUrl) || ''}
                             alt={hoveredCategory.name || 'Category Image'}
                             className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
                             loading="lazy"

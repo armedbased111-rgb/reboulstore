@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+// useRef utilisé via useScrollAnimation
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';

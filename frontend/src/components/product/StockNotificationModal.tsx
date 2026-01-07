@@ -75,7 +75,7 @@ export const StockNotificationModal = ({
 
     // Vérifier si déjà inscrit
     if (isAlreadySubscribed) {
-      showToast('Vous êtes déjà inscrit aux notifications pour ce produit', 'info');
+      showToast({ message: 'Vous êtes déjà inscrit aux notifications pour ce produit' });
       onClose();
       return;
     }
@@ -89,7 +89,7 @@ export const StockNotificationModal = ({
         variantId: variantId || undefined,
       });
 
-      showToast('Vous serez notifié quand ce produit sera de nouveau disponible', 'success');
+      showToast({ message: 'Vous serez notifié quand ce produit sera de nouveau disponible' });
       onSubscribe();
       setEmail('');
       setPhone('');
@@ -98,7 +98,7 @@ export const StockNotificationModal = ({
     } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
       const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription';
-      showToast(errorMessage, 'error');
+      showToast({ message: errorMessage });
     } finally {
       setIsSubmitting(false);
     }

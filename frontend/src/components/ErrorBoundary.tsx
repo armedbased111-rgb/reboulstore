@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 
@@ -85,7 +86,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* Détails de l'erreur en développement uniquement */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {(import.meta.env.DEV || import.meta.env.MODE === 'development') && this.state.error && (
               <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-md text-left">
                 <p className="text-sm font-medium text-red-800 uppercase mb-2">
                   Détails de l'erreur (dev uniquement) :

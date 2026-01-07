@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+// useRef utilisé via useScrollAnimation
 import { Link } from 'react-router-dom';
 import { Home, RefreshCw } from 'lucide-react';
 import { animateRevealUp } from '../animations';
