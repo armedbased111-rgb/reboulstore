@@ -1,5 +1,5 @@
 // Types pour les réponses API
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   statusCode?: number;
@@ -10,11 +10,11 @@ export interface ApiError {
   error?: string;
   message: string;
   statusCode: number;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 // Types pour les réponses paginées
-export interface PaginatedResponse<T = any> {
+export interface PaginatedResponse<T = unknown> {
   data: T[];
   total: number;
   page: number;

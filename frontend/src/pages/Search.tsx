@@ -130,6 +130,7 @@ export const Search = () => {
 
   // Réinitialiser la page quand les filtres changent
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
   }, [selectedCategory, selectedBrand, priceRange, selectedColors, selectedSizes, sortBy]);
 

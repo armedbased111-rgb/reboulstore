@@ -32,13 +32,14 @@ export const Register = () => {
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...registerData } = formData;
       await register(registerData);
       
       // Redirection après inscription réussie
       navigate('/', { replace: true });
-    } catch (err: any) {
-      setError(err.message || 'Échec de l\'inscription');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'Échec de l\'inscription');
     }
   };
 

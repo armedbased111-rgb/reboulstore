@@ -19,10 +19,10 @@ export const Login = () => {
 
     try {
       await login(formData);
-      const from = (location.state as any)?.from?.pathname || '/';
+      const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/';
       navigate(from, { replace: true });
-    } catch (err: any) {
-      setError(err.message || 'Échec de la connexion');
+    } catch (err: unknown) {
+      setError((err as { message?: string })?.message || 'Échec de la connexion');
     }
   };
 

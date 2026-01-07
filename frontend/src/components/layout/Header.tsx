@@ -479,21 +479,21 @@ export const Header = () => {
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as any)}
+                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
                 />
                 <path 
                   id="hamburger-line-2"
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as any)}
+                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
                 />
                 <path 
                   id="hamburger-line-3"
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as any)}
+                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
                 />
               </svg>
             </button>

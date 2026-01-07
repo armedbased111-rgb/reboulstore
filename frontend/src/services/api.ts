@@ -70,12 +70,12 @@ function handleApiError(error: AxiosError): Promise<ApiError> {
   }
 
   const statusCode = error.response.status;
-  const responseData = error.response.data as any;
+  const responseData = error.response.data as Record<string, unknown>;
 
   const apiError: ApiError = {
-    message: responseData?.message || error.message || 'Une erreur est survenue',
+    message: (responseData?.message as string) || error.message || 'Une erreur est survenue',
     statusCode,
-    error: responseData?.error || 'API Error',
+    error: (responseData?.error as string) || 'API Error',
     details: responseData,
   };
 
@@ -99,29 +99,29 @@ function handleApiError(error: AxiosError): Promise<ApiError> {
 
 // Fonctions utilitaires pour les requêtes HTTP
 export const api = {
-  get: async <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+  get: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
     const response = await apiClient.get<ApiResponse<T>>(url, config);
-    return response.data as any;
+    return response.data.data;
   },
 
-  post: async <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  post: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
     const response = await apiClient.post<ApiResponse<T>>(url, data, config);
-    return response.data as any;
+    return response.data.data;
   },
 
-  put: async <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  put: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
     const response = await apiClient.put<ApiResponse<T>>(url, data, config);
-    return response.data as any;
+    return response.data.data;
   },
 
-  patch: async <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  patch: async <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
     const response = await apiClient.patch<ApiResponse<T>>(url, data, config);
-    return response.data as any;
+    return response.data.data;
   },
 
-  delete: async <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+  delete: async <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
     const response = await apiClient.delete<ApiResponse<T>>(url, config);
-    return response.data as any;
+    return response.data.data;
   },
 };
 

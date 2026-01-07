@@ -95,9 +95,9 @@ export const StockNotificationModal = ({
       setPhone('');
       setIsAlreadySubscribed(false);
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur lors de l\'inscription:', error);
-      const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription';
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Une erreur est survenue lors de l\'inscription';
       showToast({ message: errorMessage });
     } finally {
       setIsSubmitting(false);

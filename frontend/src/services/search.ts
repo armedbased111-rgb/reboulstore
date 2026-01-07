@@ -92,7 +92,7 @@ export const searchProducts = async (
   }
 ): Promise<SearchResult> => {
   try {
-    const params: any = { search: query };
+    const params: Record<string, string | number> = { search: query };
     if (filters?.category) params.category = filters.category;
     if (filters?.brand) params.brand = filters.brand;
     if (filters?.minPrice) params.minPrice = filters.minPrice;

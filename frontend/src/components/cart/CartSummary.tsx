@@ -34,9 +34,9 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
       const validation = await applyCoupon(couponCode.toUpperCase(), cart.id);
       setAppliedCoupon(validation);
       setCouponCode(''); // Vider le champ après application réussie
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erreur lors de l\'application du coupon:', err);
-      setCouponError(err.message || 'Code promo invalide');
+      setCouponError((err as { message?: string })?.message || 'Code promo invalide');
       setAppliedCoupon(null);
     } finally {
       setCouponLoading(false);
@@ -74,9 +74,9 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
 
       // Rediriger vers Stripe Checkout
       window.location.href = checkoutUrl;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erreur lors de la création de la session checkout:', err);
-      setError(err.message || 'Une erreur est survenue lors du checkout');
+      setError((err as { message?: string })?.message || 'Une erreur est survenue lors du checkout');
       setLoading(false);
     }
   };

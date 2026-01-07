@@ -5,8 +5,8 @@
 
 declare global {
   interface Window {
-    dataLayer: any[];
-    gtag: (...args: any[]) => void;
+    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
   }
 }
 
@@ -33,7 +33,7 @@ export const initAnalytics = (): void => {
 
   // Initialiser dataLayer et gtag
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: any[]) {
+  window.gtag = function gtag(...args: unknown[]) {
     window.dataLayer.push(args);
   };
 
@@ -48,7 +48,7 @@ export const initAnalytics = (): void => {
  */
 export const trackEvent = (
   eventName: string,
-  eventParams?: Record<string, any>
+  eventParams?: Record<string, unknown>
 ): void => {
   if (typeof window.gtag === 'function') {
     window.gtag('event', eventName, eventParams);
