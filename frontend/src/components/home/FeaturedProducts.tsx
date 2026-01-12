@@ -96,6 +96,7 @@ export const FeaturedProducts = ({
   useEffect(() => {
     if (categorySlug) {
       console.log('🔍 FeaturedProducts: Récupération catégorie avec slug:', categorySlug);
+      // Utiliser des fonctions de mise à jour pour éviter les warnings
       setCategoryLoading(true);
       setCategoryError(null);
       getCategoryBySlug(categorySlug)

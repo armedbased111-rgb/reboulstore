@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../../../components/Layout/AdminLayout';
-import { reboulCouponsService, Coupon, CreateCouponDto } from '../../../../services/reboul-coupons.service';
+import { reboulCouponsService, CreateCouponDto } from '../../../../services/reboul-coupons.service';
 
 /**
  * Page d'édition d'un coupon Reboul

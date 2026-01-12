@@ -22,9 +22,11 @@ class WebSocketService {
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 
-                   import.meta.env.VITE_API_URL ||
-                   (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
+    const apiUrl = import.meta.env.PROD 
+      ? '/api'  // En production, TOUJOURS utiliser /api
+      : (import.meta.env.VITE_API_BASE_URL || 
+         import.meta.env.VITE_API_URL ||
+         (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001'));
 
     const wsUrl = apiUrl.replace(/\/api$/, ''); // Retirer /api si présent
 

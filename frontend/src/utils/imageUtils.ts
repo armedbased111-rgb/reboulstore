@@ -7,9 +7,11 @@
  * Utilise la même logique que api.ts pour la cohérence
  */
 const getApiBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL ||
-    import.meta.env.VITE_API_URL || 
-    (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
+  return import.meta.env.PROD 
+    ? '/api'  // En production, TOUJOURS utiliser /api
+    : (import.meta.env.VITE_API_BASE_URL ||
+       import.meta.env.VITE_API_URL ||
+       (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001'));
 };
 
 /**

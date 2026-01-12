@@ -10,9 +10,11 @@ export type { ApiResponse, ApiError };
 // Configuration de l'instance Axios
 // En production, utiliser toujours '/api' (proxy nginx)
 // En développement, utiliser VITE_API_URL ou '/api' si disponible
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
+const API_BASE_URL = import.meta.env.PROD 
+  ? '/api'  // En production, TOUJOURS utiliser /api
+  : (import.meta.env.VITE_API_BASE_URL || 
+     import.meta.env.VITE_API_URL ||
+     (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001'));
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

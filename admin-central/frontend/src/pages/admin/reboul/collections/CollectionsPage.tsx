@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../../../components/Layout/AdminLayout';
 import { reboulCollectionsService, Collection } from '../../../../services/reboul-collections.service';
-import { reboulProductsService } from '../../../../services/reboul-products.service';
 import { Product } from '../../../../types/reboul.types';
 import { Plus, CheckCircle2, XCircle, Package, Trash2, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import { cn } from '../../../../utils/cn';

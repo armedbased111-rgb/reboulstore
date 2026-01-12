@@ -1,13 +1,18 @@
 #!/bin/bash
 
 # Script de déploiement sur serveur de production
-# Usage: ./scripts/deploy-prod.sh [--skip-check] [--skip-backup] [--dry-run]
+# Usage: ./scripts/deploy-prod.sh [--quick|--fast-build|--full] [--skip-check] [--skip-backup] [--dry-run]
+#
+# 🎯 MODES DE DÉPLOIEMENT :
+# --quick      (2-3 min) : Build local → Upload dist/ → Copie dans container → Restart
+# --fast-build (3-5 min) : Build serveur avec cache Docker
+# --full       (10-15 min) : Build serveur avec --no-cache (défaut)
 #
 # RÈGLES DE BUILD :
 # - Supprime TOUJOURS les anciennes images Docker AVANT de builder (plus rapide)
 # - S'applique à Reboul Store ET Admin Central
 # - Supprime les volumes de build pour garantir un build propre
-# - Utilise --no-cache pour éviter les problèmes de cache
+# - Utilise --no-cache pour éviter les problèmes de cache (mode --full uniquement)
 #
 # ⚠️ RÈGLE CRITIQUE : Suppression UNIQUEMENT sur le serveur
 # - Les images Docker locales ne sont JAMAIS supprimées
@@ -64,6 +69,8 @@ get_ssh_opts() {
 }
 SKIP_BACKUP=false
 DRY_RUN=false
+DEPLOY_MODE="full"  # Par défaut: full (comportement actuel)
+DEPLOY_TIMEOUT="${DEPLOY_TIMEOUT:-300}"  # Timeout configurable (défaut: 5 min)
 
 # Fonction pour afficher les messages
 info() {
@@ -87,27 +94,52 @@ section() {
 
 # Fonction d'aide
 show_help() {
-    echo "Usage: $0 [OPTIONS]"
+    echo "Usage: $0 [MODE] [OPTIONS]"
     echo ""
     echo "Variables d'environnement requises:"
     echo "  DEPLOY_HOST      Adresse du serveur (ex: example.com)"
     echo "  DEPLOY_USER      Utilisateur SSH (défaut: root)"
     echo "  DEPLOY_PATH      Chemin sur le serveur (défaut: /var/www/reboulstore)"
     echo "  DEPLOY_SSH_KEY   Chemin vers la clé SSH (défaut: ~/.ssh/id_rsa)"
+    echo "  DEPLOY_TIMEOUT   Timeout en secondes (défaut: 300)"
+    echo ""
+    echo "Modes de déploiement:"
+    echo "  --quick          Déploiement rapide (2-3 min) : Build local → Upload dist/ → Restart"
+    echo "  --fast-build     Déploiement rapide avec cache (3-5 min) : Build serveur avec cache"
+    echo "  --full           Déploiement complet (10-15 min) : Build serveur avec --no-cache (défaut)"
     echo ""
     echo "Options:"
     echo "  --skip-check     Déployer sans vérification préalable"
-    echo "  --skip-backup     Déployer sans backup de la base de données"
-    echo "  --dry-run         Simuler le déploiement sans rien faire"
-    echo "  --help            Afficher cette aide"
+    echo "  --skip-backup    Déployer sans backup de la base de données"
+    echo "  --dry-run        Simuler le déploiement sans rien faire"
+    echo "  --help           Afficher cette aide"
     echo ""
-    echo "Exemple:"
-    echo "  DEPLOY_HOST=example.com DEPLOY_USER=deploy DEPLOY_PATH=/var/www/reboulstore $0"
+    echo "Exemples:"
+    echo "  # Déploiement rapide (corrections mineures)"
+    echo "  DEPLOY_HOST=example.com $0 --quick"
+    echo ""
+    echo "  # Déploiement avec cache (corrections moyennes)"
+    echo "  DEPLOY_HOST=example.com $0 --fast-build"
+    echo ""
+    echo "  # Déploiement complet (releases majeures)"
+    echo "  DEPLOY_HOST=example.com $0 --full"
 }
 
 # Parser les arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --quick)
+            DEPLOY_MODE="quick"
+            shift
+            ;;
+        --fast-build)
+            DEPLOY_MODE="fast"
+            shift
+            ;;
+        --full)
+            DEPLOY_MODE="full"
+            shift
+            ;;
         --skip-check)
             SKIP_CHECK=true
             shift
@@ -141,6 +173,19 @@ info "Configuration:"
 info "  Serveur: $SERVER_USER@$SERVER_HOST"
 info "  Chemin: $SERVER_PATH"
 info "  Clé SSH: $SSH_KEY"
+info "  Mode: $DEPLOY_MODE"
+case $DEPLOY_MODE in
+    quick)
+        info "  ⚡ Temps estimé: 2-3 minutes"
+        ;;
+    fast)
+        info "  ⚡ Temps estimé: 3-5 minutes"
+        ;;
+    full)
+        info "  ⚡ Temps estimé: 10-15 minutes"
+        ;;
+esac
+info "  Timeout: ${DEPLOY_TIMEOUT}s"
 
 if [ "$DRY_RUN" = true ]; then
     warn "⚠️  Mode DRY-RUN activé (simulation uniquement)"
@@ -331,69 +376,123 @@ if [ "$SKIP_BACKUP" = false ]; then
     fi
 fi
 
-# Build local des fichiers de production (compilation TypeScript/React + test Docker)
-section "📦 Build local (compilation + test Docker)"
-
-info "⚠️  IMPORTANT : On teste d'abord que le code compile ET que les images Docker se buildent correctement."
-info "⚠️  Les images Docker seront rebuildées sur le serveur, mais on vérifie qu'elles fonctionnent en local d'abord."
-
-info "Build frontend (compilation TypeScript/React)..."
-if [ "$DRY_RUN" = false ]; then
-    cd frontend
-    if npm run build; then
-        info "✅ Build frontend réussi"
+# Build local selon le mode
+if [ "$DEPLOY_MODE" = "quick" ]; then
+    section "📦 Build local (mode QUICK)"
+    info "⚠️  Mode QUICK : Build local uniquement, pas de build Docker sur le serveur"
+    
+    info "Build frontend (compilation TypeScript/React)..."
+    if [ "$DRY_RUN" = false ]; then
+        cd frontend
+        if npm run build; then
+            info "✅ Build frontend réussi"
+        else
+            error "❌ Échec build frontend"
+        fi
+        cd ..
     else
-        error "❌ Échec build frontend"
-    fi
-    cd ..
-else
-    info "✅ Build frontend (simulation)"
-fi
-
-info "Build backend (compilation TypeScript/NestJS)..."
-if [ "$DRY_RUN" = false ]; then
-    cd backend
-    if npm run build; then
-        info "✅ Build backend réussi"
-    else
-        error "❌ Échec build backend"
-    fi
-    cd ..
-else
-    info "✅ Build backend (simulation)"
-fi
-
-# Test des builds Docker localement (optionnel mais recommandé)
-info "Test des builds Docker localement (vérification que les Dockerfiles fonctionnent)..."
-if [ "$DRY_RUN" = false ]; then
-    info "  → Build test frontend Docker..."
-    if docker build -t reboulstore-frontend-test --target builder ./frontend -f ./frontend/Dockerfile.prod > /dev/null 2>&1; then
-        info "✅ Build Docker frontend test réussi"
-        docker rmi reboulstore-frontend-test > /dev/null 2>&1 || true
-    else
-        warn "⚠️  Build Docker frontend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+        info "✅ Build frontend (simulation)"
     fi
     
-    info "  → Build test backend Docker..."
-    if docker build -t reboulstore-backend-test ./backend -f ./backend/Dockerfile.prod > /dev/null 2>&1; then
-        info "✅ Build Docker backend test réussi"
-        docker rmi reboulstore-backend-test > /dev/null 2>&1 || true
+    info "Build backend (compilation TypeScript/NestJS)..."
+    if [ "$DRY_RUN" = false ]; then
+        cd backend
+        if npm run build; then
+            info "✅ Build backend réussi"
+        else
+            error "❌ Échec build backend"
+        fi
+        cd ..
     else
-        warn "⚠️  Build Docker backend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+        info "✅ Build backend (simulation)"
     fi
 else
-    info "✅ Test Docker (simulation)"
+    section "📦 Build local (compilation + test Docker)"
+    
+    info "⚠️  IMPORTANT : On teste d'abord que le code compile ET que les images Docker se buildent correctement."
+    info "⚠️  Les images Docker seront rebuildées sur le serveur, mais on vérifie qu'elles fonctionnent en local d'abord."
+    
+    info "Build frontend (compilation TypeScript/React)..."
+    if [ "$DRY_RUN" = false ]; then
+        cd frontend
+        if npm run build; then
+            info "✅ Build frontend réussi"
+        else
+            error "❌ Échec build frontend"
+        fi
+        cd ..
+    else
+        info "✅ Build frontend (simulation)"
+    fi
+    
+    info "Build backend (compilation TypeScript/NestJS)..."
+    if [ "$DRY_RUN" = false ]; then
+        cd backend
+        if npm run build; then
+            info "✅ Build backend réussi"
+        else
+            error "❌ Échec build backend"
+        fi
+        cd ..
+    else
+        info "✅ Build backend (simulation)"
+    fi
+    
+    # Test des builds Docker localement (optionnel mais recommandé)
+    info "Test des builds Docker localement (vérification que les Dockerfiles fonctionnent)..."
+    if [ "$DRY_RUN" = false ]; then
+        info "  → Build test frontend Docker..."
+        if docker build -t reboulstore-frontend-test --target builder ./frontend -f ./frontend/Dockerfile.prod > /dev/null 2>&1; then
+            info "✅ Build Docker frontend test réussi"
+            docker rmi reboulstore-frontend-test > /dev/null 2>&1 || true
+        else
+            warn "⚠️  Build Docker frontend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+        fi
+        
+        info "  → Build test backend Docker..."
+        if docker build -t reboulstore-backend-test ./backend -f ./backend/Dockerfile.prod > /dev/null 2>&1; then
+            info "✅ Build Docker backend test réussi"
+            docker rmi reboulstore-backend-test > /dev/null 2>&1 || true
+        else
+            warn "⚠️  Build Docker backend test échoué (peut-être normal si Docker n'est pas disponible localement)"
+        fi
+    else
+        info "✅ Test Docker (simulation)"
+    fi
 fi
 
 # Upload des fichiers sur le serveur
 section "📤 Upload des fichiers sur le serveur"
 
 if [ "$DRY_RUN" = false ]; then
-    info "Upload des fichiers avec rsync..."
-    
-    # Exclure les fichiers inutiles
-    EXCLUDE_FILE=$(mktemp)
-    cat > "$EXCLUDE_FILE" <<EOF
+    if [ "$DEPLOY_MODE" = "quick" ]; then
+        info "Mode QUICK : Upload uniquement du dossier dist/ frontend..."
+        
+        SSH_CMD=$(build_ssh_cmd)
+        SSH_OPTS=$(get_ssh_opts)
+        
+        # Vérifier que dist/ existe
+        if [ ! -d "frontend/dist" ]; then
+            error "❌ Le dossier frontend/dist n'existe pas. Exécutez 'npm run build' dans frontend/ d'abord."
+        fi
+        
+        # Upload uniquement dist/
+        info "Upload du dossier dist/ frontend..."
+        RSYNC_CMD="rsync -avz --delete"
+        RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD $SSH_OPTS\""
+        RSYNC_CMD="$RSYNC_CMD ./frontend/dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/frontend/dist/"
+        
+        if eval "$RSYNC_CMD"; then
+            info "✅ Upload dist/ réussi"
+        else
+            error "❌ Échec de l'upload dist/"
+        fi
+    else
+        info "Upload des fichiers avec rsync..."
+        
+        # Exclure les fichiers inutiles
+        EXCLUDE_FILE=$(mktemp)
+        cat > "$EXCLUDE_FILE" <<EOF
 node_modules/
 .git/
 .env.local
@@ -402,22 +501,24 @@ node_modules/
 .DS_Store
 dist/
 nginx/ssl/*.pem
+admin-central/.env.production
 EOF
-    
-    # Upload avec rsync
-    SSH_CMD=$(build_ssh_cmd)
-    SSH_OPTS=$(get_ssh_opts)
-    RSYNC_CMD="rsync -avz --delete --exclude-from=$EXCLUDE_FILE"
-    RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD $SSH_OPTS\""
-    RSYNC_CMD="$RSYNC_CMD ./ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/"
-    
-    if eval "$RSYNC_CMD"; then
-        info "✅ Upload réussi"
-    else
-        error "❌ Échec de l'upload"
+        
+        # Upload avec rsync
+        SSH_CMD=$(build_ssh_cmd)
+        SSH_OPTS=$(get_ssh_opts)
+        RSYNC_CMD="rsync -avz --delete --exclude-from=$EXCLUDE_FILE"
+        RSYNC_CMD="$RSYNC_CMD -e \"$SSH_CMD $SSH_OPTS\""
+        RSYNC_CMD="$RSYNC_CMD ./ $SERVER_USER@$SERVER_HOST:$SERVER_PATH/"
+        
+        if eval "$RSYNC_CMD"; then
+            info "✅ Upload réussi"
+        else
+            error "❌ Échec de l'upload"
+        fi
+        
+        rm "$EXCLUDE_FILE"
     fi
-    
-    rm "$EXCLUDE_FILE"
 else
     info "✅ Upload (simulation)"
 fi
@@ -437,7 +538,25 @@ if [ "$DRY_RUN" = false ]; then
         warn "⚠️  .env.production n'existe pas sur le serveur"
         warn "⚠️  Veuillez créer ce fichier manuellement avec toutes les variables nécessaires"
         warn "⚠️  Voir env.production.example pour un exemple"
+    fi
+    
+    # Recréer Admin Central .env.production si nécessaire (rsync l'a peut-être supprimé)
+    ADMIN_CHECK_CMD="test -d $SERVER_PATH/admin-central && test -f $SERVER_PATH/admin-central/docker-compose.prod.yml && echo 'exists' || echo 'not_found'"
+    ADMIN_EXISTS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_CHECK_CMD\"")
+    
+    if echo "$ADMIN_EXISTS" | grep -q "exists"; then
+        ADMIN_ENV_CHECK="test -f $SERVER_PATH/admin-central/.env.production && echo 'exists' || echo 'missing'"
+        ADMIN_ENV_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_ENV_CHECK\"")
+        
+        if echo "$ADMIN_ENV_STATUS" | grep -q "missing"; then
+            warn "⚠️  Admin Central .env.production manquant après upload, recréation..."
+            if ./scripts/protect-env-files.sh --auto-create-admin; then
+                info "✅ Admin Central .env.production recréé"
+            else
+                warn "⚠️  Échec de la recréation, le build Admin Central sera ignoré"
             fi
+        fi
+    fi
 else
     info "✅ Vérification .env.production (simulation)"
 fi
@@ -552,16 +671,31 @@ if [ "$DRY_RUN" = false ]; then
         exit 1
     fi
     
-    info "Rebuild complet des services Reboul Store (frontend + backend) avec --no-cache..."
-    REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
-    
-    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBUILD_CMD\""; then
-        info "✅ Services Reboul Store rebuild réussis"
+    # Déterminer les options de build selon le mode
+    if [ "$DEPLOY_MODE" = "quick" ]; then
+        info "Mode QUICK : Pas de rebuild Docker, copie directe de dist/ dans le container..."
+        # Pas de rebuild, on copiera dist/ directement dans le container
+        REBUILD_CMD=""
+    elif [ "$DEPLOY_MODE" = "fast" ]; then
+        info "Mode FAST : Rebuild avec cache Docker..."
+        REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build frontend backend"
     else
-        error "❌ Échec du rebuild Reboul Store"
-        error "❌ Vérifiez les logs pour identifier l'erreur"
-        error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
-        exit 1
+        info "Mode FULL : Rebuild complet avec --no-cache..."
+        REBUILD_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
+    fi
+    
+    # Exécuter le rebuild si nécessaire
+    if [ -n "$REBUILD_CMD" ]; then
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REBUILD_CMD\""; then
+            info "✅ Services Reboul Store rebuild réussis"
+        else
+            error "❌ Échec du rebuild Reboul Store"
+            error "❌ Vérifiez les logs pour identifier l'erreur"
+            error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
+            exit 1
+        fi
+    else
+        info "✅ Mode QUICK : Pas de rebuild Docker"
     fi
     
     # 5. Rebuild Admin Central si le répertoire existe
@@ -592,50 +726,93 @@ if [ "$DRY_RUN" = false ]; then
         fi
         
         info "  → Admin Central trouvé, .env.production présent et valide, rebuild en cours..."
-        ADMIN_REBUILD_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
-        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_REBUILD_CMD\""; then
-            info "✅ Services Admin Central rebuild réussis"
+        # Déterminer les options de build selon le mode
+        if [ "$DEPLOY_MODE" = "quick" ]; then
+            ADMIN_REBUILD_CMD=""  # Pas de rebuild en mode quick
+        elif [ "$DEPLOY_MODE" = "fast" ]; then
+            ADMIN_REBUILD_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production build frontend backend"
         else
-            error "❌ Échec du rebuild Admin Central"
-            error "❌ Vérifiez les logs pour identifier l'erreur"
-            error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
-            exit 1
+            ADMIN_REBUILD_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production build --no-cache frontend backend"
+        fi
+        
+        if [ -n "$ADMIN_REBUILD_CMD" ]; then
+            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_REBUILD_CMD\""; then
+                info "✅ Services Admin Central rebuild réussis"
+            else
+                error "❌ Échec du rebuild Admin Central"
+                error "❌ Vérifiez les logs pour identifier l'erreur"
+                error "❌ Vérifiez que .env.production contient toutes les variables nécessaires"
+                exit 1
+            fi
+        else
+            info "  → Mode QUICK : Pas de rebuild Admin Central"
         fi
     else
         info "  → Admin Central non trouvé, ignoré"
     fi
     
     # 6. Démarrer tous les services avec les nouvelles images
-    # ⚠️ IMPORTANT : Les volumes sont créés vides au démarrage
-    # Le script d'init dans le Dockerfile copie les fichiers depuis /app/build vers /usr/share/nginx/html
-    info "Démarrage des services Reboul Store avec les nouvelles images..."
-    info "  → Les volumes seront créés vides, le script d'init copiera les fichiers depuis l'image"
-    UP_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
-    
-    if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$UP_CMD\""; then
-        info "✅ Services Reboul Store redémarrés avec les nouvelles images"
+    if [ "$DEPLOY_MODE" = "quick" ]; then
+        info "Mode QUICK : Démarrage des services (sans rebuild)..."
+        UP_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
         
-        # Vérifier que les fichiers ont bien été copiés dans le volume
-        info "Vérification que les fichiers frontend ont été copiés dans le volume..."
-        sleep 3  # Attendre que le script d'init s'exécute
-        CHECK_FILES_CMD="docker exec reboulstore-frontend-prod ls -la /usr/share/nginx/html/index.html 2>/dev/null && echo 'OK' || echo 'MISSING'"
-        FILES_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CHECK_FILES_CMD\"")
-        if echo "$FILES_STATUS" | grep -q "OK"; then
-            info "✅ Fichiers frontend copiés correctement dans le volume"
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$UP_CMD\""; then
+            info "✅ Services Reboul Store redémarrés"
+            
+            # Copier dist/ directement dans le container
+            info "Copie de dist/ dans le container frontend..."
+            sleep 2  # Attendre que le container démarre
+            COPY_CMD="docker cp $SERVER_PATH/frontend/dist/. reboulstore-frontend-prod:/usr/share/nginx/html/"
+            if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$COPY_CMD\""; then
+                info "✅ Fichiers dist/ copiés dans le container"
+            else
+                warn "⚠️  Échec de la copie (le container utilise peut-être un volume)"
+            fi
         else
-            warn "⚠️  Les fichiers frontend ne semblent pas être présents (vérifier les logs du container)"
+            error "❌ Échec du démarrage des services Reboul Store"
         fi
     else
-        error "❌ Échec du démarrage des services Reboul Store"
+        # ⚠️ IMPORTANT : Les volumes sont créés vides au démarrage
+        # Le script d'init dans le Dockerfile copie les fichiers depuis /app/build vers /usr/share/nginx/html
+        info "Démarrage des services Reboul Store avec les nouvelles images..."
+        info "  → Les volumes seront créés vides, le script d'init copiera les fichiers depuis l'image"
+        UP_CMD="cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
+        
+        if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$UP_CMD\""; then
+            info "✅ Services Reboul Store redémarrés avec les nouvelles images"
+            
+            # Vérifier que les fichiers ont bien été copiés dans le volume
+            info "Vérification que les fichiers frontend ont été copiés dans le volume..."
+            sleep 3  # Attendre que le script d'init s'exécute
+            CHECK_FILES_CMD="docker exec reboulstore-frontend-prod ls -la /usr/share/nginx/html/index.html 2>/dev/null && echo 'OK' || echo 'MISSING'"
+            FILES_STATUS=$(eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$CHECK_FILES_CMD\"")
+            if echo "$FILES_STATUS" | grep -q "OK"; then
+                info "✅ Fichiers frontend copiés correctement dans le volume"
+            else
+                warn "⚠️  Les fichiers frontend ne semblent pas être présents (vérifier les logs du container)"
+            fi
+        else
+            error "❌ Échec du démarrage des services Reboul Store"
+        fi
     fi
     
     # 7. Démarrer Admin Central si configuré
     if echo "$ADMIN_EXISTS" | grep -q "exists"; then
         info "Démarrage des services Admin Central avec les nouvelles images..."
+        
+        # Supprimer le container nginx en conflit s'il existe (pour éviter "container name already in use")
+        info "Vérification et suppression des containers Admin Central existants..."
+        ADMIN_DOWN_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production down 2>/dev/null || true"
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_DOWN_CMD\"" || true
+        
+        # Supprimer explicitement le container nginx s'il existe encore
+        REMOVE_NGINX_CMD="docker rm -f admin-central-nginx-prod 2>/dev/null || true"
+        eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$REMOVE_NGINX_CMD\"" || true
+        
         ADMIN_UP_CMD="cd $SERVER_PATH/admin-central && docker compose -f docker-compose.prod.yml --env-file .env.production up -d"
         if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$ADMIN_UP_CMD\""; then
             info "✅ Services Admin Central redémarrés avec les nouvelles images"
-    else
+        else
             warn "⚠️  Échec du démarrage Admin Central"
         fi
     fi
@@ -653,7 +830,11 @@ if [ "$DRY_RUN" = false ]; then
     # Vérifier le healthcheck directement sur le serveur (plus fiable)
     info "Vérification du healthcheck..."
     
-    MAX_RETRIES=20  # Réduit de 30 à 20 (40 secondes max au lieu de 60)
+    # Calculer MAX_RETRIES basé sur DEPLOY_TIMEOUT (2 secondes par tentative)
+    MAX_RETRIES=$((DEPLOY_TIMEOUT / 2))
+    if [ $MAX_RETRIES -lt 10 ]; then
+        MAX_RETRIES=10  # Minimum 10 tentatives (20 secondes)
+    fi
     RETRY_COUNT=0
     BACKEND_READY=false
     
@@ -661,8 +842,9 @@ if [ "$DRY_RUN" = false ]; then
     SSH_OPTS=$(get_ssh_opts)
     
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-        # Vérifier directement depuis le serveur (plus fiable que depuis l'extérieur)
-        HEALTH_CHECK_CMD="curl -f http://localhost:3001/health > /dev/null 2>&1 || curl -f http://backend:3001/health > /dev/null 2>&1"
+        # Vérifier depuis l'intérieur du container backend (plus fiable)
+        # Le backend écoute sur localhost:3001 dans le container
+        HEALTH_CHECK_CMD="docker exec reboulstore-backend-prod curl -f http://localhost:3001/health > /dev/null 2>&1 || curl -f http://localhost:3001/health > /dev/null 2>&1"
         
         if eval "$SSH_CMD $SSH_OPTS $SERVER_USER@$SERVER_HOST \"$HEALTH_CHECK_CMD\""; then
             info "✅ Backend est prêt"
@@ -697,6 +879,20 @@ fi
 # Résumé final
 section "✅ Déploiement terminé"
 
+info "📋 Résumé du déploiement:"
+info "  Mode: $DEPLOY_MODE"
+case $DEPLOY_MODE in
+    quick)
+        info "  ⚡ Déploiement rapide (build local → upload dist/ → restart)"
+        ;;
+    fast)
+        info "  ⚡ Déploiement rapide avec cache Docker"
+        ;;
+    full)
+        info "  🔨 Déploiement complet avec --no-cache"
+        ;;
+esac
+info ""
 info "🌐 Site accessible sur: http://$SERVER_HOST"
 SSH_CMD=$(build_ssh_cmd)
 info "🔍 Vérifier les logs: $SSH_CMD $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker compose -f docker-compose.prod.yml --env-file .env.production logs -f'"

@@ -1,3 +1,5 @@
 import { Separator } from "radix-ui";
 
-export default () => <Separator.Root />;
+const SeparatorComponent = () => <Separator.Root />;
+
+export default SeparatorComponent;

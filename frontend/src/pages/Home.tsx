@@ -100,7 +100,7 @@ export const Home = () => {
           subtitle="Up To 50% Off"
           buttonText="Shop now"
           buttonLink="/catalog"
-          imageSrc="/public/webdesign/background.png" // Tu remplaceras par ton image
+          imageSrc="https://res.cloudinary.com/dxen69pdo/image/upload/v1768255803/homepage/homepage/background.jpg"
         />
       </div>
 
@@ -132,7 +132,7 @@ export const Home = () => {
           subtitle="Up To 50% Off"
           buttonText="Shop now"
           buttonLink="/catalog"
-          videoSrc="/public/webdesign/acw-video.mp4"
+          videoSrc="https://res.cloudinary.com/dxen69pdo/video/upload/v1768255804/homepage/homepage/acw-video.mp4"
         />
       </div>
       {/* Featured Products pour une catégorie spécifique */}
@@ -145,15 +145,15 @@ export const Home = () => {
       </div>
       <div ref={promoCardRef}>
         <PromoCard
-      gridImage1='/webdesign/addon.jpeg'
+      gridImage1='https://res.cloudinary.com/dxen69pdo/image/upload/v1768255806/homepage/homepage/addon.jpg'
       gridImage1Alt='VISAG3'
       gridImage1Link='/page1'
       gridImage1Description='VISAG3'
-      gridImage2='/webdesign/addon2.jpeg'
+      gridImage2='https://res.cloudinary.com/dxen69pdo/image/upload/v1768255807/homepage/homepage/addon2.jpg'
       gridImage2Alt='VISAG3'
       gridImage2Link='/page2'
       gridImage2Description='VISAG3'
-  imageUrl="/webdesign/promoimage.jpeg"
+  imageUrl="https://res.cloudinary.com/dxen69pdo/image/upload/v1768255808/homepage/homepage/promoimage.jpg"
   imageAlt="Material Study"
   overlayTopText="A-COLD-WALL* MATERIAL STUDY"
   overlayTitle="Alaska Alaska"

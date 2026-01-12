@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -25,7 +24,7 @@ interface BrandCarouselProps {
  * Structure :
  * - Titre avec boutons de navigation
  * - Carousel horizontal avec Swiper
- * - Chaque marque : logo cliquable (lien vers catalogue filtré par marque)
+ * - Chaque marque : logo (affichage uniquement, non cliquable)
  * 
  * Responsive :
  * - Mobile : 2-3 logos visibles
@@ -98,7 +97,7 @@ export const BrandCarousel = ({
   return (
     <section className="m-[2px] last:mb-0">
       <div className="p-[2px] relative w-full">
-        <div className="pb-4">
+        <div className="pb-12">
           {/* Header avec titre et navigation */}
           <div className="flex justify-between items-start mb-4">
             {/* Titre */}
@@ -179,35 +178,30 @@ export const BrandCarousel = ({
             >
               {brandsWithLogos.map((brand) => (
                 <SwiperSlide key={brand.id}>
-                  <Link
-                    to={`/catalog?brand=${brand.slug}`}
-                    className="block group"
-                  >
-                    <div className="aspect-square bg-gray-50 rounded-sm p-4 md:p-6 flex items-center justify-center transition-all duration-200 group-hover:bg-gray-100 border border-transparent group-hover:border-gray-200">
-                      {brand.logoUrl ? (
-                        <img
-                          src={brand.logoUrl}
-                          alt={brand.name}
-                          className="w-full h-full object-contain max-w-[120px] max-h-[120px] opacity-80 group-hover:opacity-100 transition-opacity duration-200"
-                          loading="lazy"
-                          onError={(e) => {
-                            // Si erreur de chargement, afficher placeholder
-                            e.currentTarget.style.display = 'none';
-                            const placeholder = e.currentTarget.nextElementSibling;
-                            if (placeholder) {
-                              placeholder.classList.remove('hidden');
-                            }
-                          }}
-                        />
-                      ) : null}
-                      {/* Placeholder si pas de logo ou erreur */}
-                      <div className="hidden w-full h-full flex items-center justify-center">
-                        <span className="text-gray-400 text-xs uppercase text-center">
-                          {brand.name}
-                        </span>
-                      </div>
+                  <div className="aspect-square p-4 md:p-6 flex items-center justify-center">
+                    {brand.logoUrl ? (
+                      <img
+                        src={brand.logoUrl}
+                        alt={brand.name}
+                        className="w-full h-full object-contain max-w-[120px] max-h-[120px]"
+                        loading="lazy"
+                        onError={(e) => {
+                          // Si erreur de chargement, afficher placeholder
+                          e.currentTarget.style.display = 'none';
+                          const placeholder = e.currentTarget.nextElementSibling;
+                          if (placeholder) {
+                            placeholder.classList.remove('hidden');
+                          }
+                        }}
+                      />
+                    ) : null}
+                    {/* Placeholder si pas de logo ou erreur */}
+                    <div className="hidden w-full h-full flex items-center justify-center">
+                      <span className="text-gray-400 text-xs uppercase text-center">
+                        {brand.name}
+                      </span>
                     </div>
-                  </Link>
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
