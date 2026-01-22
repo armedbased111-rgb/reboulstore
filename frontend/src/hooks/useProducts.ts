@@ -24,8 +24,6 @@ export const useProducts = (query?: ProductQuery): UseProductsReturn => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Mémoriser la query pour éviter les re-renders infinis
-    // Comparer les valeurs plutôt que la référence de l'objet
     const queryString = useMemo(() => JSON.stringify(query || {}), [
         query?.category,
         query?.brand,

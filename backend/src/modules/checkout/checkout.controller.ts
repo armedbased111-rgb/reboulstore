@@ -28,7 +28,6 @@ export class CheckoutController {
     @Body() createCheckoutSessionDto: CreateCheckoutSessionDto,
     @Request() req,
   ): Promise<CheckoutSessionResponseDto> {
-    // Récupérer userId si l'utilisateur est connecté, sinon null pour guest checkout
     const userId = req.user?.id || null;
     return this.checkoutService.createCheckoutSession(
       createCheckoutSessionDto,

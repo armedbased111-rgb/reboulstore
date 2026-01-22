@@ -139,7 +139,6 @@ export class OrdersController {
     @Res({ passthrough: false }) res: Response,
   ) {
     try {
-      // Récupérer l'entité Order complète avec toutes les relations pour le PDF
       const order = await this.ordersService.findOneEntity(id, req.user.id);
 
       // Générer le PDF

@@ -11,25 +11,19 @@ import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 
 /**
  * Page Home - Page d'accueil
- * Structure basique pour l'instant, les paramètres de layout seront ajustés depuis A-COLD-WALL*
  */
 export const Home = () => {
-  // Mémoriser l'objet query pour éviter les re-renders infinis
   const query = useMemo(() => ({ limit: 10 }), []);
-  
-  // Récupérer les produits pour le carousel (limite à 10 pour l'instant)
   const { products, loading } = useProducts(query);
 
-  // Animations déclenchées au scroll pour chaque section (plus lentes)
-  const heroImageRef = useScrollAnimation((element) => {
-    animateRevealUp(element, {
-      duration: 1.5,
-      distance: 50
-    });
-  }, { threshold: 0.2, rootMargin: '100px' });
+  const createRevealUp = (duration: number = 1.4, distance: number = 40) =>
+    useScrollAnimation((element) => {
+      animateRevealUp(element, { duration, distance });
+    }, { threshold: 0.2, rootMargin: '100px' });
 
-  const featuredProductsRef1 = useScrollAnimation((element) => {
-    if (!loading && products.length > 0) {
+  const createStaggerFade = (checkLoading: boolean = false) =>
+    useScrollAnimation((element) => {
+      if (checkLoading && (loading || products.length === 0)) return;
       const cards = element.querySelectorAll('.product-card');
       if (cards.length > 0) {
         animateStaggerFadeIn(cards, {
@@ -38,58 +32,16 @@ export const Home = () => {
           distance: 30
         });
       }
-    }
-  }, { threshold: 0.1, rootMargin: '150px' });
+    }, { threshold: 0.1, rootMargin: '150px' });
 
-  const categorySectionRef = useScrollAnimation((element) => {
-    animateRevealUp(element, {
-      duration: 1.4,
-      distance: 40
-    });
-  }, { threshold: 0.2, rootMargin: '100px' });
-
-  const brandCarouselRef = useScrollAnimation((element) => {
-    animateRevealUp(element, {
-      duration: 1.4,
-      distance: 40
-    });
-  }, { threshold: 0.2, rootMargin: '100px' });
-
-  const heroVideoRef = useScrollAnimation((element) => {
-    animateRevealUp(element, {
-      duration: 1.5,
-      distance: 50
-    });
-  }, { threshold: 0.2, rootMargin: '100px' });
-
-  const featuredProductsRef2 = useScrollAnimation((element) => {
-    const cards = element.querySelectorAll('.product-card');
-    if (cards.length > 0) {
-      animateStaggerFadeIn(cards, {
-        duration: 1.2,
-        stagger: 0.15,
-        distance: 30
-      });
-    }
-  }, { threshold: 0.1, rootMargin: '150px' });
-
-  const promoCardRef = useScrollAnimation((element) => {
-    animateRevealUp(element, {
-      duration: 1.4,
-      distance: 40
-    });
-  }, { threshold: 0.2, rootMargin: '100px' });
-
-  const featuredProductsRef3 = useScrollAnimation((element) => {
-    const cards = element.querySelectorAll('.product-card');
-    if (cards.length > 0) {
-      animateStaggerFadeIn(cards, {
-        duration: 1.2,
-        stagger: 0.15,
-        distance: 30
-      });
-    }
-  }, { threshold: 0.1, rootMargin: '150px' });
+  const heroImageRef = createRevealUp(1.5, 50);
+  const heroVideoRef = createRevealUp(1.5, 50);
+  const categorySectionRef = createRevealUp();
+  const brandCarouselRef = createRevealUp();
+  const promoCardRef = createRevealUp();
+  const featuredProductsRef1 = createStaggerFade(true);
+  const featuredProductsRef2 = createStaggerFade();
+  const featuredProductsRef3 = createStaggerFade();
 
   return (
     <div className='px-[4px]'>

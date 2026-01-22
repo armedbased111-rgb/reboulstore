@@ -24,6 +24,7 @@ from utils.pattern_analyzer import (
     analyze_patterns,
     generate_refactoring_suggestions,
 )
+from utils.verbosity_analyzer import analyze_verbosity
 
 class AnalyzeManager:
     """Gérer les analyses"""
@@ -77,6 +78,20 @@ class AnalyzeManager:
             'files_analyzed': results['files_analyzed'],
             'suggestions': suggestions,
         }
+    
+    @staticmethod
+    def verbosity(file_path: str = None, target_dir: str = None):
+        """Analyser la verbosité du code"""
+        from pathlib import Path
+        
+        file_path_obj = None
+        if file_path:
+            base = Path(__file__).parent.parent.parent
+            file_path_obj = base / file_path if not Path(file_path).is_absolute() else Path(file_path)
+        
+        results = analyze_verbosity(file_path_obj, target_dir)
+        
+        return results
 
 # Export pour main.py
 analyze_manager = AnalyzeManager()

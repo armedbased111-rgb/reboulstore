@@ -11,13 +11,11 @@ import { getActiveCoupons, type Coupon } from '../../services/coupons.service';
  * Rotation : Si plusieurs coupons actifs, affiche un coupon à la fois et change toutes les 7 secondes
  */
 export const PromoBanner = () => {
-  // Mémoriser la fermeture dans localStorage
   const [isClosed, setIsClosed] = useLocalStorage<boolean>('promoBannerClosed', false);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Récupérer les coupons actifs au chargement et à chaque actualisation
   useEffect(() => {
     const fetchCoupons = async () => {
       try {

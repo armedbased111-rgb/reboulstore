@@ -21,12 +21,10 @@ export const createOrder = async (
   return await api.post<Order>('/orders', dto);
 };
 
-// Récupérer les commandes de l'utilisateur connecté
 export const getMyOrders = async (): Promise<Order[]> => {
   return await api.get<Order[]>('/orders/me');
 };
 
-// Récupérer une commande par ID
 export const getOrder = async (id: string): Promise<Order> => {
   return await api.get<Order>(`/orders/${id}`);
 };
@@ -64,7 +62,6 @@ export const downloadInvoice = async (orderId: string): Promise<void> => {
     throw new Error(`Erreur lors du téléchargement de la facture (${response.status})`);
   }
 
-  // Récupérer le blob
   const blob = await response.blob();
 
   // Créer un lien de téléchargement

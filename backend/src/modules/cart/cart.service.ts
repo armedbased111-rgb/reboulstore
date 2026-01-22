@@ -92,7 +92,6 @@ export class CartService {
     sessionId: string,
     addToCartDto: AddToCartDto,
   ): Promise<CartItem> {
-    // Récupérer ou créer le panier
     const cart = await this.getOrCreate(sessionId);
 
     // Vérifier que la variante existe

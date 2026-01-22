@@ -8,6 +8,13 @@ alwaysApply: true
 
 **Approche pédagogique prioritaire** : Tu ne codes pas à ma place, tu m'apprends à le faire et tu me guides pas à pas au détail près. Tu vérifies mon code et le corriges avec moi. Tu modifies seulement si je te le dis explicitement.
 
+**🔴 RÈGLE PRIMORDIALE - Écriture du Code** : **Éviter d'être trop verbeux dans le code**
+- ✅ **Code concis et clair** : Privilégier la concision sans sacrifier la lisibilité
+- ✅ **Commentaires essentiels uniquement** : Commenter seulement ce qui n'est pas évident
+- ✅ **Noms explicites** : Utiliser des noms de variables/fonctions clairs plutôt que des commentaires
+- ❌ **Éviter** : Commentaires redondants, code verbeux, explications évidentes
+- **Impact** : Le code verbeux affecte négativement le "vibe coding" et la productivité
+
 ## Règles par contexte de développement
 
 ### Backend / API / Services
@@ -347,6 +354,114 @@ const MyComponent = () => {
 - **Mode normal** : Tu peux modifier les fichiers à ma place comme normalement
   - À utiliser uniquement si je te le demande explicitement
   - **Cas d'usage** : Pages complexes, composants avec logique métier, intégration API
+
+### 📦 Workflow Collection Réelle
+
+**Document principal** : `docs/COLLECTION_REAL.md`  
+**Commande Cursor** : `/collection-workflow`
+
+#### Approche actuelle
+
+**Import manuel via tables/CSV** : Collections reçues une à une sous forme de table (Excel/CSV), entrée manuelle des données une à une via Admin.
+
+#### Workflow global
+
+1. Réception Collection (Table Excel/CSV)
+2. Préparation & Validation Données
+3. Import via Admin (Upload fichier)
+4. Validation & Correction
+5. Upload Images Produits
+6. Publication Collection
+
+#### Format table/CSV attendu
+
+**Colonnes requises** :
+- `name` (obligatoire) : Nom du produit
+- `reference` (recommandé) : Référence/SKU produit
+- `price` (obligatoire) : Prix en euros
+- `brand` (recommandé) : Nom de la marque
+- `category` (obligatoire) : Nom de la catégorie
+- `collection` (obligatoire) : Nom collection
+- `color` (obligatoire) : Couleur du variant
+- `size` (obligatoire) : Taille du variant
+- `stock` (obligatoire) : Stock disponible
+- `sku` (obligatoire) : SKU unique par variant
+
+**Note** : Un produit peut avoir plusieurs lignes (une par variant : couleur + taille)
+
+#### Processus validation
+
+- **Avant import** : Vérifier format, colonnes, données complètes, formats corrects
+- **Pendant import** : Gérer erreurs bloquantes et warnings
+- **Après import** : Vérifier produits créés, stocks cohérents
+
+#### Points d'attention
+
+- **Variants complexes** : Chaussures (couleurs multiples, tailles différentes), pantalons (tailles italiennes)
+- **Stocks** : Gestion manuelle, alerte réassort 0-5 unités (à implémenter)
+- **Collections** : Rotation automatique (nouvelle collection remplace l'ancienne)
+
+### 🔄 Intégration AS400
+
+**Document d'analyse** : `docs/AS400_ANALYSIS_GUIDE.md`  
+**Commande Cursor** : `/as400-integration`  
+**Statut** : ⚠️ **EN SUSPENS** - Trop de temps nécessaire
+
+#### Approche alternative
+
+**Import manuel via tables/CSV** adopté (voir Workflow Collection Réelle ci-dessus).
+
+#### Exploration effectuée
+
+- Interface AS400 explorée (Menu principal → Option 22 "Recherche article")
+- Structure colonnes identifiée (Code, Marque, Référence, DPT, etc.)
+- IP/Port notés (192.168.110.200:23)
+- Pas d'export CSV direct visible
+- Nécessite méthode d'extraction (CSV export, ODBC/JDBC, ou autre)
+
+#### Si reprise future
+
+1. Analyser structure complète AS400
+2. Identifier méthode d'extraction
+3. Créer script transformation AS400 → notre structure
+4. Implémenter import données
+
+### 📸 Workflow Images Produits
+
+**Document principal** : `docs/integrations/IMAGES_WORKFLOW.md`  
+**Commande Cursor** : `/images-workflow`
+
+#### Processus actuel
+
+1. **Shooting** : À Aubagne au stock, récupération matériel chez le patron
+2. **Retouche** : Photoshop (correction couleur, détourage, ajustements)
+3. **Nommage** : Convention `[SKU]_[numero]_[type].jpg`
+4. **Upload** : Cloudinary via Admin (max 7 images par produit)
+
+#### Standards qualité
+
+- **Résolution** : 2048x2048px (ou 2048x1536px)
+- **Poids** : 200-300KB
+- **Format** : JPG (qualité 85-90%) ou PNG si transparence
+- **Espace couleur** : sRGB
+- **Quantité** : 3-5 images par produit
+
+#### Optimisation automatique
+
+- **Cron job quotidien** (3h) : Nouvelles images 24h → WebP
+- **Cron job hebdomadaire** (dimanche 4h) : Toutes les images → WebP
+- **Endpoints manuels** : Déclencher optimisation si nécessaire
+
+#### Convention nommage
+
+**Format** : `[SKU]_[numero]_[type].jpg`
+
+**Exemples** :
+- `REB001_1_main.jpg` : Image principale
+- `REB001_2_back.jpg` : Vue de dos
+- `REB001_3_detail.jpg` : Détail
+
+**Structure dossiers** : `products/[collection]/[sku]/`
 
 ### Git / Version Control
 
@@ -785,6 +900,12 @@ source venv/bin/activate
 # Analyser patterns et code dupliqué
 ./rcli analyze patterns
 
+# Analyser la verbosité du code (commentaires redondants, répétitions)
+# Détecte automatiquement les violations de la règle primordiale d'écriture du code
+./rcli analyze verbosity
+./rcli analyze verbosity --file frontend/src/pages/Home.tsx
+./rcli analyze verbosity --dir frontend/src/pages
+
 # Valider la cohérence du code
 ./rcli analyze code
 
@@ -798,6 +919,14 @@ source venv/bin/activate
 # Optimiser le contexte
 ./rcli context optimize
 ```
+
+**Note** : La commande `analyze verbosity` détecte automatiquement :
+- ✅ Commentaires redondants (qui expliquent l'évident)
+- ✅ Code répétitif (patterns similaires 3+ fois)
+- ✅ Blocs dupliqués (code identique)
+- ✅ Fonctions verbeuses (>30% de commentaires)
+
+Elle s'aligne avec la **règle primordiale d'écriture du code** : éviter la verbosité excessive.
 
 #### Gestion shadcn/ui et Figma
 ```bash
@@ -832,6 +961,7 @@ source venv/bin/activate
 | Synchronisation docs | 10 min | 1 sec | **99%** |
 | Génération tests | 65 min | 4 min | **94%** |
 | Analyse complète | 75 min | 4 min | **95%** |
+| Analyse verbosité | 20 min | 10 sec | **99%** |
 
 **Temps économisé** : ~15-20 heures par semaine  
 **Réduction d'erreurs** : ~90%

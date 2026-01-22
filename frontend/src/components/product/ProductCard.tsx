@@ -30,7 +30,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [hoverImageError, setHoverImageError] = useState(false);
 
-  // Récupérer les images du produit
   const firstImage = product.images && product.images.length > 0 
     ? product.images.find(img => img.order === 0) || product.images[0]
     : null;

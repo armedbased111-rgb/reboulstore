@@ -172,7 +172,6 @@ export class ImagesOptimizationService {
     };
 
     try {
-      // Récupérer toutes les images non optimisées
       const query = this.imageRepository
         .createQueryBuilder('image')
         .where("image.url NOT LIKE '%.webp'")

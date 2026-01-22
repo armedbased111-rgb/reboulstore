@@ -72,7 +72,6 @@ export class AdminAuthService {
    * Connexion admin
    */
   async login(email: string, password: string) {
-    // Récupérer l'admin avec le password (select: false nécessite explicitement)
     const adminUser = await this.adminUserRepository
       .createQueryBuilder('admin')
       .addSelect('admin.password')

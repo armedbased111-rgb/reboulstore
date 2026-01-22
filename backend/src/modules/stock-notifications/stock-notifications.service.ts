@@ -140,7 +140,6 @@ export class StockNotificationsService {
 
     for (const notification of notifications) {
       try {
-        // Récupérer la première image du produit
         const productImages = await this.imageRepository.find({
           where: { productId: notification.product.id },
           order: { order: 'ASC' },
@@ -179,7 +178,6 @@ export class StockNotificationsService {
    * Cette méthode est appelée par le job cron
    */
   async checkAndNotifyAll(): Promise<void> {
-    // Récupérer toutes les notifications actives (non notifiées)
     const activeNotifications = await this.stockNotificationRepository.find({
       where: { isNotified: false },
       relations: ['product', 'variant'],
@@ -213,7 +211,6 @@ export class StockNotificationsService {
       // Si en stock, notifier
       if (isInStock) {
         this.logger.log(`Product ${notification.productId} is in stock, sending notifications...`);
-        // Récupérer la première image du produit
         const productImages = await this.imageRepository.find({
           where: { productId: notification.productId },
           order: { order: 'ASC' },
@@ -292,7 +289,6 @@ export class StockNotificationsService {
    * (Pour tests uniquement)
    */
   async sendTestEmail(email: string): Promise<void> {
-    // Récupérer un produit avec image pour le test
     const products = await this.productRepository.find({
       relations: ['images'],
       take: 1,

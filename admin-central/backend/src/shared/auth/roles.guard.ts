@@ -15,18 +15,15 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // Récupérer les rôles requis depuis le decorator @Roles()
     const requiredRoles = this.reflector.getAllAndOverride<AdminRole[]>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
 
-    // Si pas de rôles requis, autoriser l'accès
     if (!requiredRoles) {
       return true;
     }
 
-    // Récupérer l'admin depuis la requête (ajouté par AdminJwtAuthGuard)
     const request = context.switchToHttp().getRequest();
     const admin: { role: AdminRole } = request.user;
 

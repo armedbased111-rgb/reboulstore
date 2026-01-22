@@ -5,7 +5,6 @@ import type { Cart, CartItem } from '../types/index';
  * Service pour la gestion du panier
  */
 
-// Récupérer ou créer un panier
 export const getCart = async (sessionId: string): Promise<Cart> => {
   return await api.get<Cart>('/cart', {
     headers: {

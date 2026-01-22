@@ -293,9 +293,7 @@ export const Header = () => {
     }
   }, [isMobileBrandsOpen]);
 
-  // Récupérer une image aléatoire d'un produit de la marque au hover
   useEffect(() => {
-    // Réinitialiser immédiatement les states si aucune marque n'est survolée
     if (!hoveredBrand) {
       setRandomProductImage(null);
       setLoadingProductImage(false);
@@ -303,8 +301,6 @@ export const Header = () => {
     }
 
     const fetchRandomProductImage = async () => {
-
-      // Si la marque a déjà des images megaMenu, on les utilise
       if (hoveredBrand.megaMenuImage1 || hoveredBrand.megaMenuVideo1) {
         setRandomProductImage(null);
         return;
@@ -312,10 +308,9 @@ export const Header = () => {
 
       try {
         setLoadingProductImage(true);
-        // Récupérer les produits de cette marque
         const response = await getProducts({
           brand: hoveredBrand.slug,
-          limit: 50, // Récupérer jusqu'à 50 produits pour avoir plus de choix
+          limit: 50,
         });
 
         // Filtrer les produits qui ont des images
@@ -357,9 +352,7 @@ export const Header = () => {
     fetchRandomProductImage();
   }, [hoveredBrand]);
 
-  // Récupérer une image aléatoire d'un produit de la catégorie au hover
   useEffect(() => {
-    // Réinitialiser immédiatement les states si aucune catégorie n'est survolée
     if (!hoveredCategory) {
       setRandomProductImageCategory(null);
       setLoadingProductImageCategory(false);
@@ -369,10 +362,9 @@ export const Header = () => {
     const fetchRandomProductImage = async () => {
       try {
         setLoadingProductImageCategory(true);
-        // Récupérer les produits de cette catégorie (utiliser l'ID, pas le slug)
         const response = await getProducts({
           category: hoveredCategory.id,
-          limit: 50, // Récupérer jusqu'à 50 produits pour avoir plus de choix
+          limit: 50,
         });
 
         // Filtrer les produits qui ont des images

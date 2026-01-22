@@ -828,6 +828,62 @@ def analyze_patterns_cmd(dir):
     if not result['patterns'] and not result['duplicates']:
         console.print("\n[green]✅ Aucun pattern répétitif ou code dupliqué détecté[/green]")
 
+@analyze.command('verbosity')
+@click.option('--file', type=str, help='Fichier spécifique à analyser (ex: frontend/src/pages/Home.tsx)')
+@click.option('--dir', type=str, help='Dossier spécifique à analyser (défaut: backend + frontend)')
+def analyze_verbosity_cmd(file, dir):
+    """Analyser la verbosité du code (commentaires redondants, répétitions, etc.)"""
+    from commands.analyze import analyze_manager
+    
+    console.print("[cyan]🔍 Analyse de la verbosité du code...[/cyan]")
+    
+    result = analyze_manager.verbosity(file, dir)
+    
+    # Afficher le résumé
+    summary = result['summary']
+    console.print(f"\n[blue]📊 Résumé:[/blue]")
+    console.print(f"  - Commentaires redondants: {summary['redundant_comments']}")
+    console.print(f"  - Blocs dupliqués: {summary['duplicate_blocks']}")
+    console.print(f"  - Fonctions verbeuses: {summary['verbose_functions']}")
+    console.print(f"  - Code répétitif: {summary['repetitive_code']}")
+    
+    # Afficher les issues par sévérité
+    if result['issues']:
+        console.print(f"\n[yellow]⚠️  Problèmes détectés ({len(result['issues'])}):[/yellow]")
+        
+        # Grouper par type
+        issues_by_type = {}
+        for issue in result['issues']:
+            issue_type = issue['type']
+            if issue_type not in issues_by_type:
+                issues_by_type[issue_type] = []
+            issues_by_type[issue_type].append(issue)
+        
+        for issue_type, issues in issues_by_type.items():
+            console.print(f"\n  [bold]{issue_type}[/bold]:")
+            for issue in issues[:10]:  # Limiter à 10 par type
+                severity_color = {
+                    'high': 'red',
+                    'medium': 'yellow',
+                    'low': 'blue',
+                }.get(issue['severity'], 'white')
+                console.print(f"    [{severity_color}]● Ligne {issue['line']}: {issue['description']}[/{severity_color}]")
+                if 'suggestion' in issue:
+                    console.print(f"      💡 {issue['suggestion']}")
+                console.print(f"      📁 {issue['file']}")
+                if 'code' in issue:
+                    console.print(f"      📝 {issue['code'][:60]}...")
+    
+    console.print(f"\n[blue]📊 {result['files_analyzed']} fichiers analysés[/blue]")
+    
+    if not result['issues']:
+        console.print("\n[green]✅ Aucun problème de verbosité détecté[/green]")
+    else:
+        total_issues = len(result['issues'])
+        high_issues = sum(1 for i in result['issues'] if i.get('severity') == 'high')
+        if high_issues > 0:
+            console.print(f"\n[red]⚠️  {high_issues} problème(s) critique(s) à corriger[/red]")
+
 @suggest.command('phase')
 @click.argument('domain', required=False)
 def suggest_phase(domain):

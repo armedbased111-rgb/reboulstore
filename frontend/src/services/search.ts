@@ -23,18 +23,15 @@ export const getSearchSuggestions = async (query: string): Promise<SearchSuggest
   }
 
   try {
-    // Récupérer les produits
     const productsResponse = await apiClient.get<{ products: Product[] }>('/products', {
       params: { search: query, limit: 5 },
     });
 
-    // Récupérer les catégories
     const categoriesResponse = await apiClient.get<Category[]>('/categories');
     const categories = categoriesResponse.data.filter((cat) =>
       cat.name.toLowerCase().includes(query.toLowerCase())
     ).slice(0, 5);
 
-    // Récupérer les marques
     const brandsResponse = await apiClient.get<Brand[]>('/brands');
     const brands = brandsResponse.data.filter((brand) =>
       brand.name.toLowerCase().includes(query.toLowerCase())
@@ -99,8 +96,6 @@ export const searchProducts = async (
     if (filters?.maxPrice) params.maxPrice = filters.maxPrice;
 
     const productsResponse = await apiClient.get<{ products: Product[] }>('/products', { params });
-
-    // Récupérer catégories et marques pour les résultats
     const categoriesResponse = await apiClient.get<Category[]>('/categories');
     const brandsResponse = await apiClient.get<Brand[]>('/brands');
 

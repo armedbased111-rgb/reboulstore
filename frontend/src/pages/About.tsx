@@ -1,32 +1,19 @@
-// useRef et useEffect utilisés via useScrollAnimation
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 
 /**
  * Page About - À propos de Reboul Store
- * 
- * Présente :
- * - Le concept-store
- * - L'histoire de la marque
- * - L'ancrage local (Marseille/Cassis/Sanary)
- * - Les valeurs et la vision
  */
 export const About = () => {
-  const heroRef = useScrollAnimation((element) => {
-    animateRevealUp(element, { duration: 1.2, distance: 40 });
-  }, { threshold: 0.1 });
+  const createRevealUp = (threshold: number = 0.2) =>
+    useScrollAnimation((element) => {
+      animateRevealUp(element, { duration: 1.2, distance: 40 });
+    }, { threshold });
 
-  const conceptRef = useScrollAnimation((element) => {
-    animateRevealUp(element, { duration: 1.2, distance: 40 });
-  }, { threshold: 0.2 });
-
-  const historyRef = useScrollAnimation((element) => {
-    animateRevealUp(element, { duration: 1.2, distance: 40 });
-  }, { threshold: 0.2 });
-
-  const localRef = useScrollAnimation((element) => {
-    animateRevealUp(element, { duration: 1.2, distance: 40 });
-  }, { threshold: 0.2 });
+  const heroRef = createRevealUp(0.1);
+  const conceptRef = createRevealUp();
+  const historyRef = createRevealUp();
+  const localRef = createRevealUp();
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">

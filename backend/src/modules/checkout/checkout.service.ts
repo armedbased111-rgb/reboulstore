@@ -50,7 +50,6 @@ export class CheckoutService {
       throw new BadRequestException('Cart is empty');
     }
 
-    // Récupérer les variants avec leurs produits, images, marques et catégories
     const variantIds = dto.items.map((item) => item.variantId);
     const variants = await this.variantRepository.find({
       where: variantIds.map((id) => ({ id })),
@@ -360,7 +359,6 @@ export class CheckoutService {
         return;
       }
 
-      // Récupérer le PaymentIntent ID (nécessaire pour la capture manuelle)
       const paymentIntentId =
         typeof session.payment_intent === 'string'
           ? session.payment_intent
@@ -379,7 +377,6 @@ export class CheckoutService {
         quantity: number;
       }>;
 
-      // Récupérer les informations du client depuis Stripe
       const customerEmail =
         session.customer_details?.email || session.customer_email || '';
       const customerName = session.customer_details?.name || '';
@@ -448,12 +445,10 @@ export class CheckoutService {
         };
       }
 
-      // Récupérer le montant total payé (en centimes depuis Stripe, convertir en euros)
       const amountTotal = session.amount_total
         ? session.amount_total / 100
         : null;
 
-      // Récupérer les informations du coupon depuis les métadonnées
       const couponId = session.metadata?.couponId || null;
       const couponCode = session.metadata?.couponCode || null;
       const discountAmount = session.metadata?.discountAmount

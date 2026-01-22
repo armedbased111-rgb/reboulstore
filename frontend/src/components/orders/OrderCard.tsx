@@ -68,21 +68,6 @@ const formatDate = (dateString: string): string => {
  * Composant OrderCard - Affiche un résumé de commande dans la liste
  */
 export const OrderCard = ({ order }: OrderCardProps) => {
-  // Récupérer les items de la commande (depuis cart ou items)
-  // const orderItems = order.cart?.items || [];
-  
-  // Récupérer les 3 premières images de produits (TODO: utiliser productImages dans le rendu)
-  // const productImages = orderItems
-  //   .slice(0, 3)
-  //   .map((item) => {
-  //     const product = item.variant?.product;
-  //     if (product?.images && product.images.length > 0) {
-  //       return product.images[0];
-  //     }
-  //     return null;
-  //   })
-  //   .filter((img) => img !== null);
-
   return (
     <Link
       to={`/orders/${order.id}`}

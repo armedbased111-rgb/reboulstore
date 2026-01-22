@@ -21,7 +21,6 @@ export class UsersService {
     private addressRepository: Repository<Address>,
   ) {}
 
-  // Récupérer le profil utilisateur
   async findOne(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -61,7 +60,6 @@ export class UsersService {
 
   // === GESTION ADRESSES ===
 
-  // Récupérer toutes les adresses de l'utilisateur
   async getAddresses(userId: string): Promise<Address[]> {
     return this.addressRepository.find({
       where: { userId },
@@ -90,7 +88,6 @@ export class UsersService {
     return this.addressRepository.save(address);
   }
 
-  // Récupérer une adresse spécifique
   async getAddress(userId: string, addressId: string): Promise<Address> {
     const address = await this.addressRepository.findOne({
       where: { id: addressId, userId },

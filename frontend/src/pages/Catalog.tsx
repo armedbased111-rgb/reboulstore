@@ -52,7 +52,6 @@ export const Catalog = () => {
   const { categories } = useCategories();
   const { brands } = useBrands();
 
-  // Récupérer la catégorie si un slug est présent dans l'URL
   useEffect(() => {
     const fetchCategory = async () => {
       if (categorySlug) {
@@ -76,7 +75,6 @@ export const Catalog = () => {
     fetchCategory();
   }, [categorySlug]);
 
-  // Récupérer la marque si un slug est présent dans l'URL
   useEffect(() => {
     const fetchBrand = async () => {
       if (brandSlug) {

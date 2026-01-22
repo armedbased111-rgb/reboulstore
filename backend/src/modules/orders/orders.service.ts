@@ -186,7 +186,6 @@ export class OrdersService {
       return;
     }
 
-    // Récupérer l'utilisateur pour vérifier son rôle
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -642,7 +641,6 @@ export class OrdersService {
     couponId?: string | null, // ID du coupon appliqué
     discountAmount?: number, // Montant de la réduction
   ): Promise<OrderResponseDto> {
-    // Récupérer les variants avec leurs produits
     const variantIds = items.map((item) => item.variantId);
     const variants = await this.variantRepository.find({
       where: variantIds.map((id) => ({ id })),
@@ -684,7 +682,6 @@ export class OrdersService {
       }
     }
 
-    // Récupérer l'utilisateur si userId fourni
     const user = userId
       ? await this.userRepository.findOne({ where: { id: userId } })
       : null;
@@ -793,7 +790,6 @@ export class OrdersService {
       );
     }
 
-    // Récupérer les items de la commande (depuis cart ou depuis order.items)
     let items: Array<{ variantId: string; quantity: number }> = [];
 
     if (order.cart && order.cart.items) {
@@ -915,7 +911,6 @@ export class OrdersService {
    * @param cartId - ID du panier
    */
   async applyCoupon(code: string, cartId: string) {
-    // Récupérer le panier avec ses items
     const cart = await this.cartRepository.findOne({
       where: { id: cartId },
       relations: ['items', 'items.variant', 'items.variant.product'],

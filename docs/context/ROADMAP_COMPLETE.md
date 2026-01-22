@@ -2372,26 +2372,32 @@ docker compose up backend frontend
 
 **📅 Date cible** : Février 2025 (sortie officielle)
 
-**📋 Statut** : 🟡 En préparation (brainstorming complété - voir `docs/PHASE_24_SYNTHESE.md`)
+**📋 Statut** : 🟢 **EN COURS** - 24.1 ✅, 24.2 ✅, 24.4 ✅ terminées. Reste : 24.3, 24.5bis, 24.6, 24.7, 24.8, 24.9
+
+**📅 Après Phase 24** : Phase 25 (Finalisation Avant Lancement) - Recherche, Home, SEO, Tests, Performance
 
 ### 📋 Ordre Logique des Sous-Phases
 
 **Ordre d'exécution recommandé** :
-1. **24.1** Documentation & Contexte (préparer toute la doc)
-2. **24.2** Insertion Marques avec Logos (peut être fait tôt, indépendant)
-3. **24.3** Politique Livraison Finale (réunion magasin, peut être fait tôt)
-4. **24.4** Système Rotation Collections ⚠️ **AVANT import AS400** (pour assigner collection aux produits)
-5. **24.5** Intégration AS400 - Transformation Données (import initial avec collection assignée)
-6. **24.6** Amélioration Processus Stocks (après import, sync quotidienne)
-7. **24.7** Workflow Images Produits (peut être fait en parallèle)
-8. **24.8** Workflow Ajout Continu Produits (après import initial)
-9. **24.9** Checklist Finale - Validation Collection (en dernier)
+1. ✅ **24.1** Documentation & Contexte - **TERMINÉ**
+2. ✅ **24.2** Insertion Marques avec Logos - **TERMINÉ** (57 marques créées)
+3. ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
+4. ✅ **24.4** Système Rotation Collections - **TERMINÉ**
+5. ⚠️ **24.5** Intégration AS400 - **EN SUSPENS** (approche manuelle adoptée)
+6. ⏳ **24.5bis** Import Manuel Collections via Tables/CSV - **À FAIRE** (priorité haute)
+7. ⏳ **24.6** Amélioration Processus Stocks - **À FAIRE** (gestion manuelle + alertes réassort)
+8. ⏳ **24.7** Workflow Images Produits - **PRESQUE TERMINÉ** (peut être fait en parallèle)
+9. ⏳ **24.8** Workflow Ajout Continu Produits - **À FAIRE** (entrée manuelle continue)
+10. ⏳ **24.9** Checklist Finale - Validation Collection - **À FAIRE** (en dernier)
+
+**📊 Progression Phase 24** : 3/10 sous-phases terminées (30%)
 
 **Dépendances clés** :
-- 24.4 (Rotation Collections) → **AVANT** 24.5 (Import AS400)
-- 24.5 (Import AS400) → **AVANT** 24.6 (Stocks) et 24.8 (Ajout Continu)
+- 24.4 (Rotation Collections) ✅ **TERMINÉ** → **AVANT** 24.5bis (Import Manuel)
+- 24.5bis (Import Manuel) → **AVANT** 24.6 (Stocks) et 24.8 (Ajout Continu)
 - 24.1-24.3 peuvent être faits en parallèle
 - 24.7 (Images) peut être fait en parallèle
+- **24.5 (AS400) EN SUSPENS** - Peut être repris plus tard si nécessaire
 
 ### ⚠️ Points Critiques Identifiés
 
@@ -2404,25 +2410,29 @@ docker compose up backend frontend
 
 - **Marques** : 36 marques (enfants + adultes), logos depuis ancien git de reboul
 - **Images** : Shooting à Aubagne, retouche Photoshop, stockage Cloudinary, 3-5 images/produit
-- **Stocks** : Réassorts quotidiens (matin/soir), sync quotidienne, rupture = stock = 0
+- **Stocks** : Réassorts quotidiens (matin/soir), gestion manuelle, rupture = stock = 0
 - **Priorités** : Sneakers → Reboul adulte → Reboul enfant
-- **AS400** : Export CSV disponible, journée en magasin prévue pour analyser structure complète
+- **AS400** : ⚠️ **EN SUSPENS** - Trop de temps nécessaire. Approche alternative adoptée
+- **Import Données** : ✅ **NOUVELLE APPROCHE** - Collections reçues une à une sous forme de table (Excel/CSV), entrée manuelle des données une à une via Admin
 
 ### 24.1 Documentation & Contexte
 
 **Objectif** : Créer toute la documentation nécessaire pour ce processus spécifique
 
-- [ ] **Nouveau document principal** : `docs/COLLECTION_REAL.md`
-  - [ ] Workflow complet d'intégration collection réelle
-  - [ ] Mapping données AS400 → notre structure
-  - [ ] Processus validation données
-  - [ ] Checklist qualité données
+- [x] **Nouveau document principal** : `docs/COLLECTION_REAL.md` ✅
+  - [x] Workflow complet d'intégration collection réelle ✅
+  - [x] Mapping données tables/CSV → notre structure ✅
+  - [x] Processus validation données ✅
+  - [x] Checklist qualité données ✅
+  - [x] Guide import manuel via Admin (entrée collection par collection) ✅
 
-- [ ] **Documentation AS400** : `docs/AS400_INTEGRATION.md`
-  - [ ] Structure tables AS400 (schéma, champs)
-  - [ ] Méthode de connexion/extraction (export CSV, API, dump SQL)
-  - [ ] Transformation des données (mapping champs)
-  - [ ] Validation et nettoyage données
+- [ ] **Documentation AS400** : `docs/AS400_INTEGRATION.md` ⚠️ **EN SUSPENS**
+  - [x] Structure tables AS400 explorée (voir `docs/AS400_ANALYSIS_GUIDE.md`) ✅
+  - [ ] Structure tables AS400 (schéma, champs) - À compléter si reprise
+  - [ ] Méthode de connexion/extraction (export CSV, API, dump SQL) - À compléter si reprise
+  - [ ] Transformation des données (mapping champs) - À compléter si reprise
+  - [ ] Validation et nettoyage données - À compléter si reprise
+  - **Note** : AS400 en suspens (trop de temps). Approche manuelle adoptée.
 
 - [x] **Documentation Images** : `docs/IMAGES_WORKFLOW.md` ✅
   - [x] Workflow création images produits (comment tu les fais) ✅
@@ -2433,23 +2443,25 @@ docker compose up backend frontend
   - [x] Documentation cron job optimisation (`docs/IMAGES_OPTIMIZATION_CRON.md`) ✅
   - [x] Documentation compatibilité WebP (`docs/IMAGES_WEBP_COMPATIBILITY.md`) ✅
 
-- [ ] **Nouvelles commandes Cursor** :
-  - [ ] `/collection-workflow` : Guide workflow collection réelle
-  - [ ] `/as400-integration` : Guide intégration AS400
-  - [ ] `/images-workflow` : Guide workflow images produits
+- [x] **Nouvelles commandes Cursor** : ✅
+  - [x] `/collection-workflow` : Guide workflow collection réelle ✅
+  - [x] `/as400-integration` : Guide intégration AS400 ✅
+  - [x] `/images-workflow` : Guide workflow images produits ✅ (déjà existait)
 
-- [ ] **Nouvelles règles project-rules.mdc** :
-  - [ ] Section "Workflow Collection Réelle"
-  - [ ] Section "Intégration AS400"
-  - [ ] Section "Workflow Images Produits"
+- [x] **Nouvelles règles project-rules.mdc** : ✅
+  - [x] Section "Workflow Collection Réelle" ✅
+  - [x] Section "Intégration AS400" ✅
+  - [x] Section "Workflow Images Produits" ✅
 
-### 24.2 Insertion Marques avec Logos
+### 24.2 Insertion Marques avec Logos ✅
 
 **Objectif** : Ajouter toutes les marques de la collection réelle avec leurs logos
 
 **📊 Informations** : 36 marques (enfants + adultes), logos depuis ancien git de reboul (récupération manuelle)
 
-- [ ] **Backend** :
+**✅ STATUT : TERMINÉ ET FONCTIONNEL**
+
+- [x] **Backend** : ✅
   - [x] Identifier toutes les marques de la collection réelle (57 marques trouvées) ✅
   - [x] Récupérer dossier logos depuis ancien git de reboul ✅
   - [x] Vérifier formats et optimiser si nécessaire ✅
@@ -2462,8 +2474,8 @@ docker compose up backend frontend
   - [x] Vérifier interface Brands fonctionne bien ✅
   - [x] Améliorer affichage logos (afficher images au lieu d'icônes) ✅
   - [x] Interface complète : liste, recherche, pagination, CRUD ✅
-  - [ ] Tester upload logo via Admin (à tester manuellement)
-  - [ ] Vérifier affichage logos dans navigation frontend (si applicable)
+  - [x] Tester upload logo via Admin (à tester manuellement) ✅
+  - [x] Vérifier affichage logos dans navigation frontend (si applicable) ✅
 
 - [x] **Frontend** :
   - [x] Composant BrandCarousel créé pour homepage ✅
@@ -2482,9 +2494,9 @@ docker compose up backend frontend
   - [x] Composant BrandCarousel créé et intégré dans Homepage ✅
   - [x] Logos noirs (_b) utilisés pour fond blanc (BrandCarousel) ✅
   - [x] BrandMarquee fonctionnel avec défilement automatique ✅
-  - [ ] Vérifier filtres par marque fonctionnent (frontend - si applicable)
-  - [ ] Tester BrandCarousel manuellement (affichage, navigation, liens)
-  - [ ] Tester BrandMarquee manuellement (défilement, logos blancs, sticky)
+  - [x] Vérifier filtres par marque fonctionnent (frontend - si applicable) ✅
+  - [x] Tester BrandCarousel manuellement (affichage, navigation, liens) ✅
+  - [x] Tester BrandMarquee manuellement (défilement, logos blancs, sticky) ✅
 
 ### 24.3 Politique Livraison Finale
 
@@ -2566,13 +2578,17 @@ docker compose up backend frontend
   - [x] Vérifier produits archivés masqués (0 produits retournés si collection inactive) ✅
   - [x] Vérifier produits actifs visibles (produits retournés si collection active) ✅
 
-### 24.5 Intégration AS400 - Transformation Données
+### 24.5 Intégration AS400 - Transformation Données ⚠️ **EN SUSPENS**
 
 **Objectif** : Récupérer données magasin AS400, transformer et intégrer dans notre base
 
+**⚠️ STATUT** : **EN SUSPENS** - Trop de temps nécessaire. Approche alternative adoptée (import manuel via tables/CSV - voir 24.5bis)
+
+**📊 Informations** : Exploration AS400 effectuée (voir `docs/AS400_ANALYSIS_GUIDE.md`), mais intégration automatique suspendue
+
 #### 24.5.1 Analyse & Mapping AS400
 
-**📊 Informations** : Export CSV disponible, réassorts quotidiens (matin/soir), journée en magasin prévue
+**📊 Informations** : Exploration effectuée en magasin, structure identifiée mais pas d'export CSV direct disponible
 
 - [ ] **Journée en magasin** (prévue) :
   - [ ] Analyser tables AS400 disponibles (produits, stocks, marques, catégories)
@@ -2628,28 +2644,73 @@ docker compose up backend frontend
   - [ ] Rapport post-import (statistiques)
   - [ ] Vérification données importées (échantillonnage)
 
-### 24.6 Amélioration Processus Stocks - Automatisation
+### 24.5bis Import Manuel Collections via Tables/CSV
 
-**Objectif** : Améliorer et accélérer la mise à jour des stocks depuis AS400
+**Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via entrée manuelle dans l'Admin
 
-- [ ] **Analyse processus actuel** :
-  - [ ] Documenter processus manuel actuel (si existant)
-  - [ ] Identifier goulots d'étranglement
-  - [ ] Identifier points d'automatisation possibles
+**📊 Informations** : Collections reçues une à une sous forme de table, entrée manuelle des données une à une
 
-- [ ] **Automatisation IA/ML (si pertinent)** :
-  - [ ] Discuter avec toi : besoins spécifiques, volume, fréquence
-  - [ ] Identifier tâches répétitives automatisables
-  - [ ] Proposer solutions (scripts, IA, workflow)
-  - [ ] Implémenter automatisation si valeur ajoutée
+- [ ] **Préparation format données** :
+  - [ ] Définir format table/CSV attendu (colonnes, structure)
+  - [ ] Créer template Excel/CSV pour faciliter la préparation des données
+  - [ ] Documenter mapping colonnes table → notre structure DB
 
-- [ ] **Scripts synchronisation stocks** :
-  - [ ] Créer script sync stocks AS400 → notre DB (quotidien, après réassorts manuels)
-  - [ ] Gérer différences (AS400 vs DB)
-  - [ ] Gérer cas spéciaux (produits supprimés, nouveaux, variants)
+- [ ] **Interface Admin - Import Collection** :
+  - [ ] Créer page Admin pour import collection (upload fichier CSV/Excel)
+  - [ ] Parser fichier CSV/Excel (validation format)
+  - [ ] Prévisualisation données avant import
+  - [ ] Validation données (champs requis, formats, contraintes)
+  - [ ] Gestion erreurs (afficher lignes avec erreurs)
+
+- [ ] **Processus import** :
+  - [ ] Créer produits depuis données table (avec vérification doublons)
+  - [ ] **Assigner collection active** aux produits importés (dépend de 24.4 ✅)
+  - [ ] Créer variants avec stocks (taille, couleur, stock)
+  - [ ] Gérer création/association marques et catégories
+  - [ ] Gérer images (association après upload - voir 24.7)
+
+- [ ] **Workflow entrée manuelle** :
+  - [ ] Guide étape par étape pour entrer une collection
+  - [ ] Processus validation avant publication
+  - [ ] Checklist qualité données avant import
+
+- [ ] **Documentation** :
+  - [ ] Documenter workflow import manuel
+  - [ ] Créer guide utilisation Admin pour import
+  - [ ] Template Excel/CSV avec exemples
+
+- [ ] **Validation** :
+  - [ ] Tester import collection complète
+  - [ ] Vérifier produits créés correctement
+  - [ ] Vérifier variants et stocks
+  - [ ] Vérifier association marques/catégories
+
+### 24.6 Amélioration Processus Stocks - Gestion Manuelle
+
+**Objectif** : Gérer la mise à jour des stocks manuellement via l'Admin
+
+**📊 Informations** : Stocks gérés manuellement (pas de sync AS400 pour l'instant)
+
+- [ ] **Interface Admin - Gestion Stocks** :
+  - [ ] Vérifier interface Admin permet bien modification stocks par variant
+  - [ ] Interface pour mise à jour stocks en masse (si nécessaire)
   - [ ] **Système d'alerte réassort** : Notifications pour produits avec stock entre 0 et 5 unités (dans l'admin)
-  - [ ] Rupture = stock = 0 (approche simplifiée, pas de vérification multi-magasins)
-  - [ ] Logs et alertes si écarts importants
+  - [ ] Affichage stocks faibles (0-5 unités) avec alerte visuelle
+
+- [ ] **Workflow mise à jour stocks** :
+  - [ ] Documenter processus manuel de mise à jour stocks
+  - [ ] Guide utilisation Admin pour modification stocks
+  - [ ] Processus validation après mise à jour
+
+- [ ] **Système d'alerte réassort** :
+  - [ ] Créer système notification produits avec stock 0-5 unités
+  - [ ] Affichage dans Admin (dashboard, liste produits)
+  - [ ] Alertes visuelles (badges, couleurs)
+
+- [ ] **Documentation** :
+  - [ ] Documenter workflow stocks final (manuel)
+  - [ ] Guide utilisation Admin
+  - [ ] Troubleshooting guide
 
 - [ ] **Workflow Admin** :
   - [ ] Interface Admin pour lancer sync stocks
@@ -2727,21 +2788,21 @@ docker compose up backend frontend
 
 ### 24.8 Workflow Ajout Continu Produits
 
-**Objectif** : Permettre l'ajout de nouveaux produits chaque semaine tout au long de la saison
+**Objectif** : Permettre l'ajout de nouveaux produits chaque semaine tout au long de la saison (entrée manuelle)
 
-**📊 Informations** : ⚠️ **IMPORTANT** - Nouveaux produits ajoutés chaque semaine, pas seulement import initial
+**📊 Informations** : ⚠️ **IMPORTANT** - Nouveaux produits ajoutés chaque semaine via entrée manuelle dans l'Admin
 
-- [ ] **Processus d'ajout manuel** :
-  - [ ] Interface Admin pour ajouter nouveaux produits manuellement
+- [x] **Processus d'ajout manuel** :
+  - [x] Interface Admin pour ajouter nouveaux produits manuellement ✅ (déjà disponible)
   - [ ] Workflow validation avant publication :
     - [ ] Vérifier données complètes
     - [ ] Vérifier images présentes
     - [ ] Validation manuelle si nécessaire
 
-- [ ] **Script import incrémental** :
-  - [ ] Script d'import incrémental depuis AS400 (nouveaux produits uniquement)
-  - [ ] Détection nouveaux produits (comparaison AS400 vs DB)
-  - [ ] Import automatique ou manuel selon préférence
+- [ ] **Import incrémental via table/CSV** :
+  - [ ] Utiliser interface import collection (24.5bis) pour nouveaux produits
+  - [ ] Processus import nouveaux produits depuis table/CSV
+  - [ ] Vérification doublons avant import
 
 - [ ] **Documentation** :
   - [ ] Documenter workflow ajout continu
@@ -2778,6 +2839,227 @@ docker compose up backend frontend
   - [ ] Vérification ajout continu produits
   - [ ] Vérification alertes réassort (stocks 0-5 unités)
   - [ ] Vérification variants complexes (couleurs multiples, tailles différentes)
+
+---
+
+## 🚀 Phase 25 : Finalisation Avant Lancement
+
+**🎯 Objectif** : Finaliser toutes les fonctionnalités critiques et améliorations essentielles avant le lancement officiel
+
+**📅 Timing** : Après Phase 24 (Collection Réelle), avant lancement Février 2025
+
+**⏱️ Durée estimée** : 2-3 semaines
+
+**📅 Date cible** : Février 2025 (avant lancement)
+
+**📋 Statut** : ⏳ À FAIRE
+
+### 📋 Ordre Logique des Sous-Phases
+
+**Ordre d'exécution recommandé** :
+1. **25.1** Recherche Produits (Backend + Frontend) - 🔴 **CRITICAL**
+2. **25.2** Page Home Complète (Frontend) - 🔴 **CRITICAL**
+3. **25.3** SEO de Base (Backend + Frontend) - 🟡 **HIGH**
+4. **25.4** Tests Critiques (E2E, Intégration) - 🟡 **HIGH**
+5. **25.5** Performance de Base (Optimisations essentielles) - 🟡 **HIGH**
+6. **25.6** Dashboard Admin Stats (Admin) - 🟡 **HIGH**
+7. **25.7** Filtres Avancés Catalog (Frontend) - 🟡 **HIGH**
+
+**Dépendances clés** :
+- 25.1 (Recherche) → **AVANT** 25.7 (Filtres Avancés)
+- 25.2 (Home) peut être fait en parallèle
+- 25.3 (SEO) peut être fait en parallèle
+- 25.4 (Tests) → **APRÈS** toutes les fonctionnalités
+- 25.5 (Performance) peut être fait en parallèle
+
+### 25.1 Recherche Produits (Backend + Frontend) 🔴 CRITICAL
+
+**Objectif** : Implémenter recherche full-text des produits
+
+**📊 Informations** : Essentiel pour l'UX, recherche par nom, référence, description
+
+**Note** : Frontend partiellement fait (Phase 19.1), mais backend manquant
+
+- [ ] **Backend** :
+  - [ ] Endpoint GET /products/search?q=query (recherche fulltext)
+  - [ ] Installer pg-search ou TypeORM fulltext search
+  - [ ] Recherche dans : name, reference, description
+  - [ ] Filtres combinables (catégorie, marque, prix)
+  - [ ] Tri (pertinence, prix, nouveautés)
+  - [ ] Pagination
+
+- [x] **Frontend** (déjà fait - Phase 19.1) :
+  - [x] Barre de recherche Header (autocomplete) ✅
+  - [x] Page /search?q=query ✅
+  - [x] Sidebar filtres (catégorie, prix, couleur, taille, note) ✅
+  - [x] Tri (pertinence, prix, nouveautés, meilleures ventes) ✅
+  - [x] Pagination ou infinite scroll ✅
+  - [ ] Connecter au backend search endpoint (à faire)
+
+- [ ] **Validation** :
+  - [ ] Tester recherche avec différents termes
+  - [ ] Vérifier performance (pas de lag)
+  - [ ] Vérifier résultats pertinents
+
+### 25.2 Page Home Complète (Frontend) 🔴 CRITICAL
+
+**Objectif** : Compléter la page d'accueil avec contenu réel et sections
+
+**📊 Informations** : Page actuellement basique, besoin de sections complètes
+
+- [ ] **Sections Home** :
+  - [ ] Hero section (image/vidéo + CTA)
+  - [ ] Section produits featured/nouveautés
+  - [ ] Section marques (BrandCarousel déjà créé ✅)
+  - [ ] Section catégories populaires
+  - [ ] Section actualités/blog (optionnel)
+  - [ ] Footer (déjà créé ✅)
+
+- [ ] **Contenu dynamique** :
+  - [ ] Produits featured depuis API (derniers produits, best-sellers)
+  - [ ] Catégories populaires depuis API
+  - [ ] Gestion loading/error states
+
+- [ ] **Design** :
+  - [ ] Style aligné avec design system A-COLD-WALL*
+  - [ ] Responsive (mobile/tablette/desktop)
+  - [ ] Animations AnimeJS (si nécessaire)
+
+- [ ] **Validation** :
+  - [ ] Tester affichage avec données réelles
+  - [ ] Vérifier responsive
+  - [ ] Vérifier performance
+
+### 25.3 SEO de Base (Backend + Frontend) 🟡 HIGH
+
+**Objectif** : Mettre en place les bases du référencement
+
+**📊 Informations** : Essentiel pour visibilité Google, partage réseaux sociaux
+
+- [ ] **Backend** :
+  - [ ] Générer sitemap.xml dynamique (backend)
+  - [ ] Endpoint GET /sitemap.xml
+  - [ ] robots.txt (fichier statique ou dynamique)
+  - [ ] URLs SEO-friendly (vérifier slugs partout)
+
+- [ ] **Frontend** :
+  - [ ] Metadata dynamique par page (React Helmet ou équivalent)
+  - [ ] Open Graph tags (partage réseaux sociaux)
+  - [ ] Structured data (JSON-LD pour produits)
+  - [ ] Title, description, keywords par page
+  - [ ] Canonical URLs
+
+- [ ] **Validation** :
+  - [ ] Tester sitemap.xml (Google Search Console)
+  - [ ] Tester Open Graph (Facebook Debugger)
+  - [ ] Vérifier structured data (Google Rich Results Test)
+
+### 25.4 Tests Critiques (E2E, Intégration) 🟡 HIGH
+
+**Objectif** : Assurer qualité et stabilité avant lancement
+
+**📊 Informations** : Tests essentiels pour éviter bugs en production
+
+- [ ] **Tests E2E Backend** :
+  - [ ] Flow complet : register → login → add cart → checkout
+  - [ ] Tests endpoints critiques (products, cart, orders)
+  - [ ] Tests authentification (login, register, JWT)
+
+- [ ] **Tests E2E Frontend** :
+  - [ ] Parcours utilisateur complet (navigation → produit → panier → checkout)
+  - [ ] Tests formulaires (register, login, checkout)
+  - [ ] Tests responsive (mobile/tablette/desktop)
+
+- [ ] **Tests Intégration** :
+  - [ ] Tests API (endpoints principaux)
+  - [ ] Tests services critiques (Products, Cart, Orders, Auth)
+
+- [ ] **Validation** :
+  - [ ] Tous les tests passent
+  - [ ] Coverage minimum 60% (backend)
+  - [ ] Documentation tests
+
+### 25.5 Performance de Base (Optimisations Essentielles) 🟡 HIGH
+
+**Objectif** : Optimiser performance pour expérience utilisateur fluide
+
+**📊 Informations** : Optimisations essentielles, pas toutes les optimisations avancées
+
+- [ ] **Frontend** :
+  - [ ] Lazy loading images (react-lazy-load-image ou équivalent)
+  - [ ] Code splitting (React.lazy, Suspense pour routes)
+  - [ ] Minification assets (Vite build - déjà fait ✅)
+  - [ ] Compression (gzip/brotli sur Nginx - déjà configuré ✅)
+
+- [ ] **Backend** :
+  - [ ] Index database (colonnes souvent filtrées : name, categoryId, brandId)
+  - [ ] Optimiser requêtes TypeORM (éviter N+1 queries)
+  - [ ] Pagination obligatoire (max 100 items - déjà fait ✅)
+  - [ ] Compression responses (NestJS compression)
+
+- [ ] **Validation** :
+  - [ ] Lighthouse score > 80 (Performance)
+  - [ ] Temps de chargement < 3s
+  - [ ] Pas de lag dans l'interface
+
+### 25.6 Dashboard Admin Stats (Admin) 🟡 HIGH
+
+**Objectif** : Ajouter statistiques et KPIs dans le dashboard Admin
+
+**📊 Informations** : Dashboard actuel basique, besoin de stats utiles
+
+- [ ] **Statistiques à afficher** :
+  - [ ] CA total (période : aujourd'hui, semaine, mois)
+  - [ ] Nombre commandes (période)
+  - [ ] Produits en stock faible (0-5 unités)
+  - [ ] Commandes en attente
+  - [ ] Top produits vendus
+  - [ ] Graphiques (évolution CA, commandes)
+
+- [ ] **Backend** :
+  - [ ] Endpoints stats (GET /admin/reboul/stats)
+  - [ ] Calculs CA, commandes, produits
+  - [ ] Filtres par période (jour, semaine, mois)
+
+- [ ] **Frontend** :
+  - [ ] Composants graphiques (Chart.js ou équivalent)
+  - [ ] Cards statistiques
+  - [ ] Filtres période
+  - [ ] Design responsive
+
+- [ ] **Validation** :
+  - [ ] Vérifier calculs corrects
+  - [ ] Tester avec données réelles
+  - [ ] Vérifier performance (pas de lag)
+
+### 25.7 Filtres Avancés Catalog (Frontend) 🟡 HIGH
+
+**Objectif** : Améliorer filtres dans la page Catalog
+
+**📊 Informations** : Filtres actuels basiques (catégorie, marque), besoin de plus
+
+- [ ] **Filtres à ajouter** :
+  - [ ] Filtre par prix (slider min/max)
+  - [ ] Filtre par couleur
+  - [ ] Filtre par taille
+  - [ ] Filtre par disponibilité (en stock, rupture)
+  - [ ] Tri avancé (pertinence, prix croissant/décroissant, nouveautés)
+
+- [ ] **Interface** :
+  - [ ] Sidebar filtres (desktop)
+  - [ ] Modal filtres (mobile)
+  - [ ] Badges filtres actifs
+  - [ ] Bouton "Réinitialiser filtres"
+
+- [ ] **Backend** :
+  - [ ] Endpoint GET /products avec tous les filtres
+  - [ ] Validation filtres
+  - [ ] Performance (index database)
+
+- [ ] **Validation** :
+  - [ ] Tester tous les filtres
+  - [ ] Vérifier combinaisons filtres
+  - [ ] Vérifier performance
 
 ---
 
@@ -2826,23 +3108,49 @@ docker compose up backend frontend
 - **Phase 17.1-17.8** : **Admin Centrale** connectée à Reboul (interface complète)
 - **Phase 17.9** : Brainstorming & Plan d'Amélioration ✅
 - **Phase 17.10** : Multi-sites UI ✅
-- **Phase 17.11** : Docker & Déploiement Production Ready
+- **Phase 17.11** : Docker & Déploiement Production Ready ✅
 - **Phase 17.12** : Tests E2E critiques
 - **Note** : Animations déjà complétées dans Phase 14.6
 - **Résultat** : Gestion complète de Reboul depuis l'Admin Centrale + Infrastructure prête pour déploiement
 
+### 🟢 Priorité 3 (Collection Réelle & Finalisation - FÉVRIER 2025) - Phases 24-25
+- **Phase 24** : Préparation Collection Réelle 🟢 EN COURS
+  - ✅ 24.1 Documentation & Contexte (terminé)
+  - ✅ 24.2 Insertion Marques avec Logos (terminé)
+  - ✅ 24.4 Système Rotation Collections (terminé)
+  - ⏳ 24.3, 24.5bis, 24.6, 24.7, 24.8, 24.9 (en cours)
+- **Phase 25** : Finalisation Avant Lancement ⏳ À FAIRE
+  - 🔴 25.1 Recherche Produits (CRITICAL)
+  - 🔴 25.2 Page Home Complète (CRITICAL)
+  - 🟡 25.3 SEO de Base (HIGH)
+  - 🟡 25.4 Tests Critiques (HIGH)
+  - 🟡 25.5 Performance de Base (HIGH)
+  - 🟡 25.6 Dashboard Admin Stats (HIGH)
+  - 🟡 25.7 Filtres Avancés Catalog (HIGH)
+- **Résultat** : Site Reboul prêt pour lancement avec collection réelle, recherche, SEO, tests
+
 ### 📝 Notes :
 - **Page Home** : Améliorations progressives au fil du temps
-- **Données réelles** : **🆕 Phase 24 - Préparation Collection Réelle** (après déploiement, avant lancement réel) 🟡 **EN PRÉPARATION**
-  - Intégration AS400 (transformation données magasin, journée en magasin prévue)
-  - Workflow images produits (shooting à Aubagne, retouche Photoshop, Cloudinary, 3-5 images/produit)
-  - Insertion marques avec logos (36 marques depuis ancien git)
-  - Politiques livraison finales (à définir avec équipe Reboul)
-  - Amélioration processus stocks (sync quotidienne + alertes réassort 0-5 unités)
-  - **Système rotation collections** (actif/archivée) ⚠️ **NOUVEAU**
-  - **Workflow ajout continu produits** (nouveaux produits chaque semaine) ⚠️ **NOUVEAU**
-  - **Variants complexes** (couleurs multiples, tailles différentes selon marques) ⚠️ **NOUVEAU**
-  - **Voir** : `docs/PHASE_24_SYNTHESE.md` (synthèse complète) et `docs/PHASE_24_FAQ_MAGASIN.md` (questions magasin)
+- **Données réelles** : **🆕 Phase 24 - Préparation Collection Réelle** 🟢 **EN COURS**
+  - ✅ **24.1** Documentation & Contexte (terminé)
+  - ✅ **24.2** Insertion Marques avec Logos (terminé - 57 marques créées)
+  - ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
+  - ✅ **24.4** Système Rotation Collections (terminé)
+  - ⚠️ **24.5** Intégration AS400 (EN SUSPENS - approche manuelle adoptée)
+  - ⏳ **24.5bis** Import Manuel Collections via Tables/CSV (à créer)
+  - ⏳ **24.6** Amélioration Processus Stocks (gestion manuelle + alertes réassort)
+  - ⏳ **24.7** Workflow Images Produits (presque terminé)
+  - ⏳ **24.8** Workflow Ajout Continu Produits (entrée manuelle continue)
+  - ⏳ **24.9** Checklist Finale - Validation Collection
+  - **Voir** : `docs/COLLECTION_REAL.md` (workflow complet), `docs/PHASE_24_SYNTHESE.md` (synthèse), `docs/AS400_ANALYSIS_GUIDE.md` (exploration AS400)
+- **Finalisation avant lancement** : **🆕 Phase 25 - Finalisation Avant Lancement** ⏳ **À FAIRE**
+  - 🔴 **25.1** Recherche Produits (Backend + Frontend) - CRITICAL
+  - 🔴 **25.2** Page Home Complète (Frontend) - CRITICAL
+  - 🟡 **25.3** SEO de Base (Backend + Frontend) - HIGH
+  - 🟡 **25.4** Tests Critiques (E2E, Intégration) - HIGH
+  - 🟡 **25.5** Performance de Base (Optimisations essentielles) - HIGH
+  - 🟡 **25.6** Dashboard Admin Stats (Admin) - HIGH
+  - 🟡 **25.7** Filtres Avancés Catalog (Frontend) - HIGH
 
 ### 🟢 Priorité 3 (Expansion Multi-Sites) - Après Reboul
 - **CP Company** : Créer Frontend + Backend + Database (même structure que Reboul)

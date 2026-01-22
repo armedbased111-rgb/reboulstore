@@ -398,7 +398,6 @@ async function seed() {
     if (brands.length === 0) {
       console.log('  ⚠️  Aucune marque trouvée. Créez d\'abord des marques.');
     } else {
-      // Récupérer la première catégorie (Adult par défaut)
       const defaultCategory = categories.find(c => c.slug === 'adult') || categories[0];
       
       if (!defaultCategory) {

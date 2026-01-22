@@ -41,7 +41,6 @@ export const OrderDetail = () => {
 
   const orderItems = order.cart?.items || [];
   
-  // Récupérer l'adresse de livraison (depuis shippingAddress ou customerInfo)
   const shippingAddress = order.shippingAddress || (order.customerInfo ? {
     firstName: order.customerInfo.name.split(' ')[0] || '',
     lastName: order.customerInfo.name.split(' ').slice(1).join(' ') || '',

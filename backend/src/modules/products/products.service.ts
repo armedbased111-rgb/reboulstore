@@ -463,7 +463,6 @@ export class ProductsService {
       },
     );
 
-    // Récupérer le dernier ordre pour ce produit
     const lastImage = await this.imageRepository.findOne({
       where: { productId },
       order: { order: 'DESC' },
@@ -498,7 +497,6 @@ export class ProductsService {
     // Vérifier que le produit existe
     await this.findOne(productId);
 
-    // Récupérer le dernier ordre pour ce produit
     const lastImage = await this.imageRepository.findOne({
       where: { productId },
       order: { order: 'DESC' },
