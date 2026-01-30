@@ -22,3 +22,6 @@ docs/GITHUB_SECRETS_VALUES.md
 cli/credentials/*.json
 cli/.env.ga4
 docs/stripe/STRIPE_LIVE_KEY.md
+
+# Factures (personnel, ne jamais commiter)
+factures/
