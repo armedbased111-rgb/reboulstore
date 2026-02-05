@@ -1,0 +1,4 @@
+name,reference,description,price,brand,category,collection,color,size,stock,sku,materials,careInstructions,madeIn
+"T-shirt Coton","TSH-001","T-shirt en coton bio",29.99,"Nike","T-shirts","SS2025","Noir","M",10,"TSH-001-N-M","100% Coton","Lavage 30°C","France"
+"T-shirt Coton","TSH-001","T-shirt en coton bio",29.99,"Nike","T-shirts","SS2025","Noir","L",5,"TSH-001-N-L","100% Coton","Lavage 30°C","France"
+"T-shirt Coton","TSH-001","T-shirt en coton bio",29.99,"Nike","T-shirts","SS2025","Blanc","M",8,"TSH-001-B-M","100% Coton","Lavage 30°C","France"

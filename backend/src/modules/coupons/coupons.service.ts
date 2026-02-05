@@ -101,7 +101,7 @@ export class CouponsService {
   /**
    * Récupère un coupon par son ID
    */
-  async findOne(id: string): Promise<CouponResponseDto> {
+  async findOne(id: number): Promise<CouponResponseDto> {
     const coupon = await this.couponRepository.findOne({ where: { id } });
 
     if (!coupon) {
@@ -218,7 +218,7 @@ export class CouponsService {
    * Met à jour un coupon
    */
   async update(
-    id: string,
+    id: number,
     updateCouponDto: UpdateCouponDto,
   ): Promise<CouponResponseDto> {
     const coupon = await this.couponRepository.findOne({ where: { id } });
@@ -294,7 +294,7 @@ export class CouponsService {
   /**
    * Supprime un coupon
    */
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const coupon = await this.couponRepository.findOne({ where: { id } });
 
     if (!coupon) {

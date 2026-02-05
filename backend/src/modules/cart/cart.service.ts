@@ -150,7 +150,7 @@ export class CartService {
    * Met à jour la quantité d'un article
    */
   async updateItem(
-    itemId: string,
+    itemId: number,
     updateCartItemDto: UpdateCartItemDto,
   ): Promise<CartItem> {
     const cartItem = await this.cartItemRepository.findOne({
@@ -180,7 +180,7 @@ export class CartService {
   /**
    * Supprime un article du panier
    */
-  async removeItem(itemId: string): Promise<void> {
+  async removeItem(itemId: number): Promise<void> {
     const cartItem = await this.cartItemRepository.findOne({
       where: { id: itemId },
     });
@@ -209,7 +209,7 @@ export class CartService {
   /**
    * Calcule le total du panier
    */
-  async calculateTotal(cartId: string): Promise<number> {
+  async calculateTotal(cartId: number): Promise<number> {
     const items = await this.cartItemRepository.find({
       where: { cartId },
       relations: ['variant', 'variant.product'],

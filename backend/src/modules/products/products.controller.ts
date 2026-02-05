@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from './multer.config';
@@ -39,7 +40,7 @@ export class ProductsController {
 
   // Images Endpoints
   @Get(':id/images')
-  findImagesByProduct(@Param('id') id: string) {
+  findImagesByProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findImagesByProduct(id);
   }
 
@@ -47,7 +48,7 @@ export class ProductsController {
   @UseInterceptors(FileInterceptor('file', multerConfig))
   @HttpCode(HttpStatus.CREATED)
   createImage(
-    @Param('id') productId: string,
+    @Param('id', ParseIntPipe) productId: number,
     @UploadedFile() file: MulterFile | undefined,
     @Body() body: any,
   ) {
@@ -68,7 +69,7 @@ export class ProductsController {
   @UseInterceptors(FilesInterceptor('files', 7, multerConfig))
   @HttpCode(HttpStatus.CREATED)
   createImagesBulk(
-    @Param('id') productId: string,
+    @Param('id', ParseIntPipe) productId: number,
     @UploadedFiles() files: MulterFile[] | undefined,
     @Body() body: any,
   ) {
@@ -119,16 +120,16 @@ export class ProductsController {
   @Delete(':productId/images/:imageId')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteImage(
-    @Param('productId') productId: string,
-    @Param('imageId') imageId: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('imageId', ParseIntPipe) imageId: number,
   ) {
     return this.productsService.deleteImage(imageId);
   }
 
   @Patch(':productId/images/:imageId/order')
   updateImageOrder(
-    @Param('productId') productId: string,
-    @Param('imageId') imageId: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('imageId', ParseIntPipe) imageId: number,
     @Body() updateOrderDto: UpdateImageOrderDto,
   ) {
     return this.productsService.updateImageOrder(imageId, updateOrderDto);
@@ -146,39 +147,39 @@ export class ProductsController {
   }
   // Variants Endpoints
   @Get(':id/variants')
-  findVariantsByProduct(@Param('id') id: string) {
+  findVariantsByProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findVariantsByProduct(id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
 
   @Get('category/:categoryId')
   findByCategory(
-    @Param('categoryId') categoryId: string,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
     @Query() query: ProductQueryDto,
   ) {
     return this.productsService.findByCategory(categoryId, query);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
 
   // Variants Endpoints
   @Get(':productId/variants/:variantId')
   findVariantById(
-    @Param('productId') productId: string,
-    @Param('variantId') variantId: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('variantId', ParseIntPipe) variantId: number,
   ) {
     return this.productsService.findVariantById(variantId);
   }
@@ -186,7 +187,7 @@ export class ProductsController {
   @Post(':id/variants')
   @HttpCode(HttpStatus.CREATED)
   createVariant(
-    @Param('id') productId: string,
+    @Param('id', ParseIntPipe) productId: number,
     @Body() createVariantDto: CreateVariantDto,
   ) {
     return this.productsService.createVariant(productId, createVariantDto);
@@ -194,8 +195,8 @@ export class ProductsController {
 
   @Patch(':productId/variants/:variantId')
   updateVariant(
-    @Param('productId') productId: string,
-    @Param('variantId') variantId: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('variantId', ParseIntPipe) variantId: number,
     @Body() updateVariantDto: UpdateVariantDto,
   ) {
     return this.productsService.updateVariant(variantId, updateVariantDto);
@@ -203,8 +204,8 @@ export class ProductsController {
 
   @Get(':productId/variants/:variantId/stock')
   checkStock(
-    @Param('productId') productId: string,
-    @Param('variantId') variantId: string,
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('variantId', ParseIntPipe) variantId: number,
     @Query('quantity') quantity: string,
   ) {
     const quantityNum = +quantity;

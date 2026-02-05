@@ -5,7 +5,7 @@ export declare class ReboulUsersController {
     constructor(usersService: ReboulUsersService);
     findAll(page: number, limit: number, role?: UserRole, search?: string): Promise<{
         data: {
-            id: string;
+            id: number;
             email: string;
             firstName: string;
             lastName: string;
@@ -29,7 +29,7 @@ export declare class ReboulUsersController {
         withoutOrders: number;
     }>;
     findOne(id: string): Promise<{
-        id: string;
+        id: number;
         email: string;
         firstName: string;
         lastName: string;
@@ -42,7 +42,7 @@ export declare class ReboulUsersController {
         updatedAt: Date;
     }>;
     updateRole(id: string, role: UserRole): Promise<{
-        id: string;
+        id: number;
         email: string;
         firstName: string;
         lastName: string;

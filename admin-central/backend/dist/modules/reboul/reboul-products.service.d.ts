@@ -14,8 +14,8 @@ export declare class ReboulProductsService {
     private collectionRepository;
     constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, brandRepository: Repository<Brand>, collectionRepository: Repository<Collection>);
     findAll(page?: number, limit?: number, filters?: {
-        categoryId?: string;
-        brandId?: string;
+        categoryId?: number | string;
+        brandId?: number | string;
         search?: string;
         minPrice?: number;
         maxPrice?: number;
@@ -26,10 +26,10 @@ export declare class ReboulProductsService {
         limit: number;
         totalPages: number;
     }>;
-    findOne(id: string): Promise<Product>;
+    findOne(id: number | string): Promise<Product>;
     create(productData: Partial<Product>): Promise<Product>;
-    update(id: string, updateData: Partial<Product>): Promise<Product>;
-    remove(id: string): Promise<{
+    update(id: number | string, updateData: Partial<Product>): Promise<Product>;
+    remove(id: number | string): Promise<{
         message: string;
     }>;
     getCategories(): Promise<Category[]>;
@@ -39,17 +39,17 @@ export declare class ReboulProductsService {
         withStock: number;
         outOfStock: number;
     }>;
-    addImage(productId: string, imageData: {
+    addImage(productId: number | string, imageData: {
         url: string;
         publicId?: string;
         alt?: string;
         order: number;
     }): Promise<Image>;
-    removeImage(productId: string, imageId: string): Promise<{
+    removeImage(productId: number | string, imageId: number | string): Promise<{
         message: string;
     }>;
-    updateImagesOrder(productId: string, images: Array<{
-        id: string;
+    updateImagesOrder(productId: number | string, images: Array<{
+        id: number | string;
         order: number;
     }>): Promise<Product>;
     createWithImages(productData: Partial<Product>, images?: Array<{
@@ -63,17 +63,24 @@ export declare class ReboulProductsService {
         stock: number;
         sku: string;
     }>): Promise<Product>;
-    updateWithImages(id: string, updateData: Partial<Product>, images?: Array<{
-        id?: string;
+    updateWithImages(id: number | string, updateData: Partial<Product>, images?: Array<{
+        id?: number | string;
         url: string;
         publicId?: string;
         alt?: string;
         order: number;
     }>, variants?: Array<{
-        id?: string;
+        id?: number | string;
         color: string;
         size: string;
         stock: number;
         sku: string;
     }>): Promise<Product>;
+    importFromPaste(pastedText: string): Promise<{
+        created: number;
+        errors: {
+            row: number;
+            message: string;
+        }[];
+    }>;
 }

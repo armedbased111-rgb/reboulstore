@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { ReboulProductsService } from './reboul-products.service';
 import { AdminJwtAuthGuard } from '../../shared/auth/admin-jwt-auth.guard';
@@ -89,6 +90,18 @@ export class ReboulProductsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
+  }
+
+  /**
+   * POST /admin/reboul/products/import-from-paste
+   * Importer des produits depuis un tableau collé (Marque, Genre, Reference, Stock).
+   */
+  @Post('import-from-paste')
+  async importFromPaste(@Body() body: { pastedText: string }) {
+    if (!body?.pastedText || typeof body.pastedText !== 'string') {
+      throw new BadRequestException('pastedText requis');
+    }
+    return this.productsService.importFromPaste(body.pastedText);
   }
 
   /**

@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   Res,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -71,7 +72,7 @@ export class OrdersController {
    */
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: string, @Request() req) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return this.ordersService.findOne(id, req.user.id);
   }
 
@@ -113,7 +114,7 @@ export class OrdersController {
   @Patch(':id/cancel')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async cancel(@Param('id') id: string, @Request() req) {
+  async cancel(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return this.ordersService.cancel(id, req.user.id);
   }
 
@@ -122,7 +123,7 @@ export class OrdersController {
    */
   @Patch(':id/status')
   async updateStatus(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateStatusDto: UpdateOrderStatusDto,
   ) {
     return this.ordersService.updateStatus(id, updateStatusDto);
@@ -134,7 +135,7 @@ export class OrdersController {
   @Get(':id/invoice')
   @UseGuards(JwtAuthGuard)
   async downloadInvoice(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Request() req,
     @Res({ passthrough: false }) res: Response,
   ) {
@@ -147,7 +148,7 @@ export class OrdersController {
       // Configurer les headers pour le téléchargement
       res.set({
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename=facture-${order.id.slice(0, 8)}.pdf`,
+        'Content-Disposition': `attachment; filename=facture-${order.id}.pdf`,
         'Content-Length': pdfBuffer.length,
       });
 
@@ -168,7 +169,7 @@ export class OrdersController {
   @Post(':id/capture')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async capturePayment(@Param('id') id: string) {
+  async capturePayment(@Param('id', ParseIntPipe) id: number) {
     return this.ordersService.capturePayment(id);
   }
 }

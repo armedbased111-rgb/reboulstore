@@ -1,7 +1,7 @@
 import { User } from './user.entity';
 export declare class Address {
-    id: string;
-    userId: string;
+    id: number;
+    userId: number;
     user: User;
     street: string;
     city: string;

@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { StockNotificationsService } from './stock-notifications.service';
 import { SubscribeStockNotificationDto } from './dto/subscribe-stock-notification.dto';
@@ -26,7 +27,7 @@ export class StockNotificationsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async subscribe(
-    @Param('productId') productId: string,
+    @Param('productId', ParseIntPipe) productId: number,
     @Body() subscribeDto: SubscribeStockNotificationDto,
   ) {
     return this.stockNotificationsService.subscribe(productId, subscribeDto);
@@ -38,7 +39,7 @@ export class StockNotificationsController {
    */
   @Get()
   async checkSubscription(
-    @Param('productId') productId: string,
+    @Param('productId', ParseIntPipe) productId: number,
     @Query('email') email: string,
     @Query('variantId') variantId?: string,
   ) {
@@ -49,7 +50,7 @@ export class StockNotificationsController {
     return this.stockNotificationsService.checkSubscription(
       productId,
       email,
-      variantId,
+      variantId ? parseInt(variantId, 10) : undefined,
     );
   }
 }

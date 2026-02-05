@@ -10,6 +10,7 @@ import {
   HttpStatus,
   Headers,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
@@ -53,7 +54,7 @@ export class CartController {
    */
   @Put('items/:id')
   async updateItem(
-    @Param('id') itemId: string,
+    @Param('id', ParseIntPipe) itemId: number,
     @Body() updateCartItemDto: UpdateCartItemDto,
   ) {
     return this.cartService.updateItem(itemId, updateCartItemDto);
@@ -64,7 +65,7 @@ export class CartController {
    */
   @Delete('items/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeItem(@Param('id') itemId: string) {
+  async removeItem(@Param('id', ParseIntPipe) itemId: number) {
     return this.cartService.removeItem(itemId);
   }
 

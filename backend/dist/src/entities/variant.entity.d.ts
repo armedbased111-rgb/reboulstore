@@ -1,7 +1,7 @@
 import { Product } from './product.entity';
 export declare class Variant {
-    id: string;
-    productId: string;
+    id: number;
+    productId: number;
     color: string;
     size: string;
     stock: number;

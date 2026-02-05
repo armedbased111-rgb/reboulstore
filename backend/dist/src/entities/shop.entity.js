@@ -25,8 +25,8 @@ let Shop = class Shop {
 };
 exports.Shop = Shop;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Shop.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
@@ -41,11 +41,11 @@ __decorate([
     __metadata("design:type", Object)
 ], Shop.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, name: 'shipping_policy' }),
     __metadata("design:type", Object)
 ], Shop.prototype, "shippingPolicy", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, name: 'return_policy' }),
     __metadata("design:type", Object)
 ], Shop.prototype, "returnPolicy", void 0);
 __decorate([
@@ -53,11 +53,11 @@ __decorate([
     __metadata("design:type", Array)
 ], Shop.prototype, "products", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Shop.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Shop.prototype, "updatedAt", void 0);
 exports.Shop = Shop = __decorate([

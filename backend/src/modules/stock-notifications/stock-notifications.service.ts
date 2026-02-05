@@ -28,7 +28,7 @@ export class StockNotificationsService {
    * S'abonner aux notifications de stock pour un produit
    */
   async subscribe(
-    productId: string,
+    productId: number,
     subscribeDto: SubscribeStockNotificationDto,
   ): Promise<StockNotification> {
     // Vérifier que le produit existe
@@ -92,9 +92,9 @@ export class StockNotificationsService {
    * Vérifier si un utilisateur est déjà inscrit
    */
   async checkSubscription(
-    productId: string,
+    productId: number,
     email: string,
-    variantId?: string,
+    variantId?: number,
   ): Promise<{ isSubscribed: boolean; notification: StockNotification | null }> {
     const whereCondition: any = {
       productId,
@@ -121,7 +121,7 @@ export class StockNotificationsService {
   /**
    * Notifier tous les utilisateurs inscrits pour un produit/variant qui est de nouveau en stock
    */
-  async notifyAll(productId: string, variantId?: string): Promise<void> {
+  async notifyAll(productId: number, variantId?: number): Promise<void> {
     const whereCondition: any = {
       productId,
       isNotified: false,
@@ -153,7 +153,7 @@ export class StockNotificationsService {
           {
             id: notification.product.id,
             name: notification.product.name,
-            slug: notification.product.id, // Utiliser l'ID comme slug (Product n'a pas de slug)
+            slug: String(notification.product.id),
             imageUrl: productImageUrl,
           },
           notification.variant || undefined,
@@ -236,8 +236,8 @@ export class StockNotificationsService {
    * Notifier tous les utilisateurs avec l'image du produit
    */
   private async notifyAllWithImage(
-    productId: string,
-    variantId?: string,
+    productId: number,
+    variantId?: number,
     productImageUrl?: string | null,
   ): Promise<void> {
     const whereCondition: any = {
@@ -264,7 +264,7 @@ export class StockNotificationsService {
           {
             id: notification.product.id,
             name: notification.product.name,
-            slug: notification.product.id,
+            slug: String(notification.product.id),
             imageUrl: productImageUrl,
           },
           notification.variant || undefined,
@@ -312,7 +312,7 @@ export class StockNotificationsService {
       {
         id: product.id,
         name: product.name,
-        slug: product.id,
+        slug: String(product.id),
         imageUrl: productImageUrl,
       },
       undefined, // Pas de variante pour le test

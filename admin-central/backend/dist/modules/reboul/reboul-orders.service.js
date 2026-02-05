@@ -31,8 +31,8 @@ let ReboulOrdersService = class ReboulOrdersService {
         if (filters?.status) {
             where.status = filters.status;
         }
-        if (filters?.userId) {
-            where.userId = filters.userId;
+        if (filters?.userId != null) {
+            where.userId = Number(filters.userId);
         }
         if (filters?.startDate || filters?.endDate) {
             where.createdAt = (0, typeorm_2.Between)(filters.startDate ?? new Date(0), filters.endDate ?? new Date());
@@ -53,8 +53,9 @@ let ReboulOrdersService = class ReboulOrdersService {
         };
     }
     async findOne(id) {
+        const numId = Number(id);
         const order = await this.orderRepository.findOne({
-            where: { id },
+            where: { id: numId },
             relations: ['user', 'cart', 'cart.items', 'cart.items.variant', 'cart.items.variant.product'],
         });
         if (!order) {

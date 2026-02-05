@@ -33,6 +33,7 @@ let Product = class Product {
     collection;
     images;
     variants;
+    variantsData;
     materials;
     careInstructions;
     madeIn;
@@ -42,8 +43,8 @@ let Product = class Product {
 };
 exports.Product = Product;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Product.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
@@ -62,39 +63,39 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "price", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'category_id' }),
+    __metadata("design:type", Number)
 ], Product.prototype, "categoryId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => category_entity_1.Category, (category) => category.products),
-    (0, typeorm_1.JoinColumn)({ name: 'categoryId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
 ], Product.prototype, "category", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: true, name: 'shop_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "shopId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => shop_entity_1.Shop, (shop) => shop.products),
-    (0, typeorm_1.JoinColumn)({ name: 'shopId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'shop_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "shop", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: true, name: 'brand_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "brandId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => brand_entity_1.Brand, (brand) => brand.products),
-    (0, typeorm_1.JoinColumn)({ name: 'brandId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'brand_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "brand", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: true, name: 'collection_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "collectionId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => collection_entity_1.Collection, (collection) => collection.products),
-    (0, typeorm_1.JoinColumn)({ name: 'collectionId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'collection_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "collection", void 0);
 __decorate([
@@ -106,27 +107,31 @@ __decorate([
     __metadata("design:type", Array)
 ], Product.prototype, "variants", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true, name: 'variants' }),
+    __metadata("design:type", Object)
+], Product.prototype, "variantsData", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", Object)
 ], Product.prototype, "materials", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true, name: 'care_instructions' }),
     __metadata("design:type", Object)
 ], Product.prototype, "careInstructions", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true, name: 'made_in' }),
     __metadata("design:type", Object)
 ], Product.prototype, "madeIn", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, name: 'custom_size_chart' }),
     __metadata("design:type", Object)
 ], Product.prototype, "customSizeChart", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Product.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Product.prototype, "updatedAt", void 0);
 exports.Product = Product = __decorate([

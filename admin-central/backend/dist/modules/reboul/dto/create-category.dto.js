@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SizeChartItem = exports.CreateCategoryDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const emptyStrToUndefined = ({ value }) => value === '' ? undefined : value;
 class CreateCategoryDto {
     name;
     slug;
@@ -28,21 +29,25 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(emptyStrToUndefined),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "slug", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(emptyStrToUndefined),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(emptyStrToUndefined),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "imageUrl", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(emptyStrToUndefined),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "videoUrl", void 0);
 __decorate([

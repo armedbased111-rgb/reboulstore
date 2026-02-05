@@ -22,7 +22,7 @@ export class CollectionsService {
     });
   }
 
-  async findOne(id: string): Promise<Collection> {
+  async findOne(id: number): Promise<Collection> {
     const collection = await this.collectionRepository.findOne({
       where: { id },
       relations: ['products'],
@@ -70,7 +70,7 @@ export class CollectionsService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateCollectionDto: UpdateCollectionDto,
   ): Promise<Collection> {
     const collection = await this.findOne(id);
@@ -94,7 +94,7 @@ export class CollectionsService {
     return this.collectionRepository.save(collection);
   }
 
-  async activate(id: string): Promise<Collection> {
+  async activate(id: number): Promise<Collection> {
     const collection = await this.findOne(id);
 
     // Désactiver toutes les autres collections
@@ -105,7 +105,7 @@ export class CollectionsService {
     return this.collectionRepository.save(collection);
   }
 
-  async archive(id: string): Promise<Collection> {
+  async archive(id: number): Promise<Collection> {
     const collection = await this.findOne(id);
 
     // Si c'est la collection active, on ne peut pas l'archiver directement
@@ -121,7 +121,7 @@ export class CollectionsService {
     return this.collectionRepository.save(collection);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const collection = await this.findOne(id);
 
     // Ne pas permettre de supprimer la collection active

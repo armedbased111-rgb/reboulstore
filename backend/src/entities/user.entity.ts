@@ -17,8 +17,8 @@ export enum UserRole {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ unique: true })
   email: string;
@@ -26,10 +26,10 @@ export class User {
   @Column({ select: false })
   password?: string; // Hash bcrypt
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'first_name' })
   firstName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'last_name' })
   lastName: string;
 
   @Column({ nullable: true })
@@ -42,7 +42,7 @@ export class User {
   })
   role: UserRole;
 
-  @Column({ default: false })
+  @Column({ default: false, name: 'is_verified' })
   isVerified: boolean;
 
   @OneToMany(() => Address, (address) => address.user, { cascade: true })
@@ -51,9 +51,9 @@ export class User {
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

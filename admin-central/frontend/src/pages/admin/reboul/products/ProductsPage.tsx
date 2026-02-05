@@ -5,7 +5,7 @@ import { useReboulProducts } from '../../../../hooks/useReboulProducts';
 import { reboulCategoriesService, Category } from '../../../../services/reboul-categories.service';
 import { reboulBrandsService, Brand } from '../../../../services/reboul-brands.service';
 import { reboulProductsService } from '../../../../services/reboul-products.service';
-import { Search, Plus, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Upload } from 'lucide-react';
 import { cn } from '../../../../utils/cn';
 import VariantEditModal from '../../../../components/admin/products/VariantEditModal';
 import VariantTooltip from '../../../../components/admin/products/VariantTooltip';
@@ -145,15 +145,26 @@ export default function ProductsPage() {
               Gérer les produits du site Reboul
             </p>
           </div>
-          <Link
-            to="/admin/reboul/products/new"
-            className={cn(
-              'inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors w-full sm:w-auto'
-            )}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nouveau produit
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/admin/reboul/products/import"
+              className={cn(
+                'inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors w-full sm:w-auto'
+              )}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importer collection
+            </Link>
+            <Link
+              to="/admin/reboul/products/new"
+              className={cn(
+                'inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors w-full sm:w-auto'
+              )}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nouveau produit
+            </Link>
+          </div>
         </div>
 
         {/* Filtres et recherche */}
@@ -263,7 +274,7 @@ export default function ProductsPage() {
                         <td className="px-4 lg:px-6 py-4 text-sm text-gray-500">
                           {(() => {
                             const category = categories.find((c) => c.id === product.categoryId);
-                            return category ? category.name : product.categoryId ? product.categoryId.substring(0, 8) + '...' : '—';
+                            return category ? category.name : product.categoryId != null ? `#${product.categoryId}` : '—';
                           })()}
                         </td>
                         <td className="px-4 lg:px-6 py-4 text-sm text-gray-900 font-medium">

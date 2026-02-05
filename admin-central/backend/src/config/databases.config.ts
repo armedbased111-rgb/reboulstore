@@ -29,7 +29,7 @@ export const getReboulDatabaseConfig = (
     __dirname + '/../modules/reboul/**/*.entity{.ts,.js}', // Entités Reboul
     __dirname + '/../shared/**/*.entity{.ts,.js}', // Entités partagées (AdminUser)
   ],
-  synchronize: configService.get<string>('NODE_ENV') === 'development', // ⚠️ true en dev pour créer tables automatiquement, false en prod (utiliser migrations)
+  synchronize: false, // Base Reboul gérée par le backend principal (migrations/schema). Ne pas modifier depuis l'admin.
   logging: configService.get<string>('NODE_ENV') === 'development',
   autoLoadEntities: true,
 });

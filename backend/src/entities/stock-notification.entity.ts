@@ -16,14 +16,14 @@ import { Variant } from './variant.entity';
  */
 @Entity('stock_notifications')
 export class StockNotification {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid' })
-  productId: string;
+  @Column({ type: 'int', name: 'product_id' })
+  productId: number;
 
-  @Column({ type: 'uuid', nullable: true })
-  variantId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'variant_id' })
+  variantId: number | null;
 
   @Column({ type: 'varchar', length: 255 })
   email: string;
@@ -31,24 +31,24 @@ export class StockNotification {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: false, name: 'is_notified' })
   isNotified: boolean;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'notified_at' })
   notifiedAt: Date | null;
 
   @ManyToOne(() => Product, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'productId' })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
   @ManyToOne(() => Variant, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn({ name: 'variantId' })
+  @JoinColumn({ name: 'variant_id' })
   variant: Variant | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
 

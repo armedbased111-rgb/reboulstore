@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere, ILike } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
 
@@ -72,9 +73,10 @@ export class ReboulCategoriesService {
   /**
    * Récupérer une catégorie Reboul par ID
    */
-  async findOne(id: string) {
+  async findOne(id: number | string) {
+    const numId = Number(id);
     const category = await this.categoryRepository.findOne({
-      where: { id },
+      where: { id: numId },
       relations: ['products'],
     });
 
@@ -82,9 +84,8 @@ export class ReboulCategoriesService {
       throw new NotFoundException(`Catégorie avec l'ID ${id} non trouvée`);
     }
 
-    // Compter le nombre de produits
     const productsCount = await this.productRepository.count({
-      where: { categoryId: id },
+      where: { categoryId: numId },
     });
 
     return {
@@ -97,30 +98,44 @@ export class ReboulCategoriesService {
    * Créer une nouvelle catégorie Reboul
    */
   async create(categoryData: Partial<Category>) {
-    // Vérifier que le slug est unique
-    if (categoryData.slug) {
+    const slugProvided = categoryData.slug?.trim();
+    if (slugProvided) {
       const existing = await this.categoryRepository.findOne({
-        where: { slug: categoryData.slug },
+        where: { slug: slugProvided },
       });
       if (existing) {
         throw new BadRequestException(
-          `Une catégorie avec le slug "${categoryData.slug}" existe déjà`,
+          `Une catégorie avec le slug "${slugProvided}" existe déjà`,
         );
       }
     }
 
-    // Générer le slug depuis le nom si non fourni
-    if (!categoryData.slug && categoryData.name) {
+    if (!slugProvided) {
       categoryData.slug = categoryData.name
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        ? categoryData.name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || undefined
+        : undefined;
+      if (!categoryData.slug) categoryData.slug = `category-${Date.now()}`;
+    } else {
+      categoryData.slug = slugProvided;
     }
 
     const category = this.categoryRepository.create(categoryData);
-    return this.categoryRepository.save(category);
+    try {
+      return await this.categoryRepository.save(category);
+    } catch (err) {
+      const code = err instanceof QueryFailedError ? err.driverError?.code : (err as any)?.code;
+      if (code === '23505') {
+        throw new BadRequestException(
+          'Une catégorie avec ce nom ou ce slug existe déjà.',
+        );
+      }
+      throw err;
+    }
   }
 
   /**
@@ -158,12 +173,11 @@ export class ReboulCategoriesService {
   /**
    * Supprimer une catégorie Reboul
    */
-  async remove(id: string) {
+  async remove(id: number | string) {
     const category = await this.findOne(id);
-
-    // Vérifier qu'il n'y a pas de produits associés
+    const numId = Number(id);
     const productsCount = await this.productRepository.count({
-      where: { categoryId: id },
+      where: { categoryId: numId },
     });
 
     if (productsCount > 0) {

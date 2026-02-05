@@ -1,7 +1,7 @@
 # 🏪 Reboul Store - Contexte du Projet
 
 **Version** : 0.31.0  
-**Phase actuelle** : Phase 24 EN COURS 🟢 (Préparation Collection Réelle) - 24.1 ✅, 24.2 ✅, 24.4 ✅ terminées
+**Phase actuelle** : Phase 24 EN COURS 🟢 (Préparation Collection Réelle) - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ terminées
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
@@ -504,7 +504,7 @@ Documentation/
    - ✅ 24.2 Insertion Marques avec Logos (terminé - 57 marques)
    - ✅ 24.4 Système Rotation Collections (terminé)
    - ⏳ 24.3 Politique Livraison Finale (réunion magasin)
-   - ⏳ 24.5bis Import Manuel Collections via Tables/CSV (priorité haute)
+   - ✅ 24.5bis Import Manuel Collections via Tables/CSV (fonctionnel)
    - ⏳ 24.6 Amélioration Processus Stocks (gestion manuelle + alertes)
    - ⏳ 24.7 Workflow Images Produits (presque terminé)
    - ⏳ 24.8 Workflow Ajout Continu Produits

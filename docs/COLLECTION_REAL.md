@@ -69,7 +69,36 @@ Documenter le workflow complet d'intégration des collections réelles dans le s
 
 **Note** : Un produit peut avoir plusieurs lignes (une par variant : couleur + taille)
 
+### Format fiche reçue (ex. Edite)
+
+Fiche type reçue (ex. PDF « Edite 1e 130126 a »). **C'est tout ce qu'on reçoit** — pas de prix ni nom produit dans la fiche.
+
+**Règle** : **1 ligne = 1 article = 1 variant**. La taille est **dans la colonne Reference** (ex. ref du type « XXX-36 » → taille 36).
+
+**Colonnes à utiliser** :
+
+| Colonne fiche | Mapping | Description |
+|---------------|---------|-------------|
+| **Marque** | → Brand (lookup par nom) | Marque du produit |
+| **Genre** | → Catégorie / type produit (lookup) | Genre du produit |
+| **Reference** | → Product.reference + extraction taille pour Variant.size | Référence article (contient la taille) |
+| **Stock** | → Variant.stock | Quantité en stock |
+
+**Colonnes à ignorer** : code article, prix achat, valeur, PLA
+
+**Données absentes de la fiche** (à compléter après import dans l'Admin) :
+- **Prix** : pas dans la fiche (non utilisable) → à saisir manuellement par produit après import
+- **Nom produit** : pas dans la fiche → à saisir manuellement ou déduire de la ref / marque
+- **Couleur** : à saisir si besoin (ou une seule couleur par ref par défaut)
+
+**Import proposé** : 1 ligne = 1 article = 1 variant. Référence = base du SKU, taille extraite de la ref, stock = stock. Après import : compléter prix et nom en édition produit dans l'Admin.
+
+**Format reçu** : pour l'instant **uniquement en PDF**. Pas d'export CSV/Excel fourni.  
+**Workflow cible** : copier le tableau depuis le PDF → **coller directement dans l'Admin** (zone « Coller le tableau ») → clic Importer. Pas d'Excel ni de fichier CSV intermédiaire. L'Admin parse le texte collé (colonnes Marque, Genre, Reference, Stock) et crée les produits + variants en un clic.
+
 ### Exemple de Table/CSV
+
+Template téléchargeable : `docs/import-collection-template.csv`
 
 ```csv
 name,reference,description,price,brand,category,collection,color,size,stock,sku,materials,careInstructions,madeIn

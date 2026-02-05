@@ -8,10 +8,10 @@ export declare class CategoriesService {
     private cacheManager;
     constructor(categoryRepository: Repository<Category>, cacheManager: Cache);
     findAll(): Promise<Category[]>;
-    findOne(id: string): Promise<Category>;
+    findOne(id: number): Promise<Category>;
     findBySlug(slug: string): Promise<Category>;
     create(createCategoryDto: CreateCategoryDto): Promise<Category>;
-    update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category>;
-    remove(id: string): Promise<void>;
+    update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<Category>;
+    remove(id: number): Promise<void>;
     private invalidateCategoriesCache;
 }

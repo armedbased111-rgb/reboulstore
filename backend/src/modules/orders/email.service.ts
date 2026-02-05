@@ -50,7 +50,7 @@ export class EmailService {
    * Envoie un email de réception de commande (PENDING - commande reçue)
    */
   async sendOrderReceived(order: Order): Promise<void> {
-    const subject = `Commande reçue #${order.id.substring(0, 8)}`;
+    const subject = `Commande reçue #${String(order.id)}`;
     try {
       const customerEmail =
         order.customerInfo?.email || order.user?.email || '';
@@ -65,7 +65,7 @@ export class EmailService {
         template: 'order-received',
         context: {
           customerName: order.customerInfo?.name || 'Client',
-          orderId: order.id.substring(0, 8),
+          orderId: String(order.id),
           orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
           total: parseFloat(order.total.toString()).toFixed(2),
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
@@ -102,7 +102,7 @@ export class EmailService {
    * Envoie un email de confirmation de commande (PAID - paiement confirmé)
    */
   async sendOrderConfirmation(order: Order): Promise<void> {
-    const subject = `Confirmation de commande #${order.id.substring(0, 8)}`;
+    const subject = `Confirmation de commande #${String(order.id)}`;
     try {
       const customerEmail =
         order.customerInfo?.email || order.user?.email || '';
@@ -117,7 +117,7 @@ export class EmailService {
         template: 'order-confirmation',
         context: {
           customerName: order.customerInfo?.name || 'Client',
-          orderId: order.id.substring(0, 8),
+          orderId: String(order.id),
           orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
           total: parseFloat(order.total.toString()).toFixed(2),
           status: this.getStatusLabel(order.status),
@@ -154,7 +154,7 @@ export class EmailService {
    * Envoie un email de notification d'expédition
    */
   async sendShippingNotification(order: Order): Promise<void> {
-    const subject = `Votre commande #${order.id.substring(0, 8)} a été expédiée`;
+    const subject = `Votre commande #${String(order.id)} a été expédiée`;
     try {
       const customerEmail =
         order.customerInfo?.email || order.user?.email || '';
@@ -169,7 +169,7 @@ export class EmailService {
         template: 'shipping-notification',
         context: {
           customerName: order.customerInfo?.name || 'Client',
-          orderId: order.id.substring(0, 8),
+          orderId: String(order.id),
           trackingNumber: order.trackingNumber || null,
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
           currentYear: new Date().getFullYear(),
@@ -203,7 +203,7 @@ export class EmailService {
    * Envoie un email de confirmation de livraison
    */
   async sendOrderDelivered(order: Order): Promise<void> {
-    const subject = `Votre commande #${order.id.substring(0, 8)} a été livrée`;
+    const subject = `Votre commande #${String(order.id)} a été livrée`;
     try {
       const customerEmail =
         order.customerInfo?.email || order.user?.email || '';
@@ -218,7 +218,7 @@ export class EmailService {
         template: 'order-delivered',
         context: {
           customerName: order.customerInfo?.name || 'Client',
-          orderId: order.id.substring(0, 8),
+          orderId: String(order.id),
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
           frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
@@ -252,7 +252,7 @@ export class EmailService {
    * Envoie un email d'annulation/remboursement
    */
   async sendOrderCancelled(order: Order): Promise<void> {
-    const subject = `Commande #${order.id.substring(0, 8)} annulée`;
+    const subject = `Commande #${String(order.id)} annulée`;
     try {
       const customerEmail =
         order.customerInfo?.email || order.user?.email || '';
@@ -272,7 +272,7 @@ export class EmailService {
         template: 'order-cancelled',
         context: {
           customerName: order.customerInfo?.name || 'Client',
-          orderId: order.id.substring(0, 8),
+          orderId: String(order.id),
           cancellationDate: new Date().toLocaleDateString('fr-FR'),
           refundAmount,
           frontendUrl: this.frontendUrl,
@@ -307,7 +307,7 @@ export class EmailService {
    * Persiste un email envoyé en base de données
    */
   private async persistEmail(
-    orderId: string,
+    orderId: number,
     emailType: EmailType,
     recipientEmail: string,
     subject: string,
@@ -342,8 +342,8 @@ export class EmailService {
    */
   async sendStockAvailableNotification(
     email: string,
-    product: { id: string; name: string; slug: string; imageUrl?: string | null },
-    variant?: { id: string; color?: string; size?: string },
+    product: { id: number; name: string; slug: string; imageUrl?: string | null },
+    variant?: { id: number; color?: string; size?: string },
   ): Promise<void> {
     const productUrl = `${this.frontendUrl}/products/${product.slug}`;
     const productName = variant

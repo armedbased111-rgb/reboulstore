@@ -8,11 +8,11 @@ export declare class UsersService {
     private userRepository;
     private addressRepository;
     constructor(userRepository: Repository<User>, addressRepository: Repository<Address>);
-    findOne(userId: string): Promise<User>;
-    updateProfile(userId: string, updateUserDto: UpdateUserDto): Promise<User>;
-    getAddresses(userId: string): Promise<Address[]>;
-    createAddress(userId: string, createAddressDto: CreateAddressDto): Promise<Address>;
-    getAddress(userId: string, addressId: string): Promise<Address>;
-    updateAddress(userId: string, addressId: string, updateAddressDto: UpdateAddressDto): Promise<Address>;
-    deleteAddress(userId: string, addressId: string): Promise<void>;
+    findOne(userId: number): Promise<User>;
+    updateProfile(userId: number, updateUserDto: UpdateUserDto): Promise<User>;
+    getAddresses(userId: number): Promise<Address[]>;
+    createAddress(userId: number, createAddressDto: CreateAddressDto): Promise<Address>;
+    getAddress(userId: number, addressId: number): Promise<Address>;
+    updateAddress(userId: number, addressId: number, updateAddressDto: UpdateAddressDto): Promise<Address>;
+    deleteAddress(userId: number, addressId: number): Promise<void>;
 }

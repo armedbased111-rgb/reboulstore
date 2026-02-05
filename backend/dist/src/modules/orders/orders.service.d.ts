@@ -30,15 +30,15 @@ export declare class OrdersService {
     constructor(orderRepository: Repository<Order>, cartRepository: Repository<Cart>, cartItemRepository: Repository<CartItem>, variantRepository: Repository<Variant>, userRepository: Repository<User>, stockService: StockService, emailService: EmailService, configService: ConfigService, couponsService: CouponsService, notificationsGateway: NotificationsGateway, smsService: SmsService);
     create(createOrderDto: CreateOrderDto): Promise<OrderResponseDto>;
     private checkOrderAccess;
-    findOneEntity(id: string, userId?: string): Promise<Order>;
-    findOne(id: string, userId?: string): Promise<OrderResponseDto>;
+    findOneEntity(id: number, userId?: number): Promise<Order>;
+    findOne(id: number, userId?: number): Promise<OrderResponseDto>;
     findAll(): Promise<OrderResponseDto[]>;
-    updateStatus(id: string, updateStatusDto: UpdateOrderStatusDto): Promise<OrderResponseDto>;
-    findByUser(userId: string): Promise<OrderResponseDto[]>;
-    cancel(id: string, userId: string): Promise<OrderResponseDto>;
-    refund(id: string, userId: string): Promise<OrderResponseDto>;
+    updateStatus(id: number, updateStatusDto: UpdateOrderStatusDto): Promise<OrderResponseDto>;
+    findByUser(userId: number): Promise<OrderResponseDto[]>;
+    cancel(id: number, userId: number): Promise<OrderResponseDto>;
+    refund(id: number, userId: number): Promise<OrderResponseDto>;
     createFromStripeCheckout(items: Array<{
-        variantId: string;
+        variantId: number;
         quantity: number;
     }>, userId: string | null, paymentIntentId: string, customerEmail: string, customerName?: string, shippingAddress?: {
         firstName: string;
@@ -56,9 +56,9 @@ export declare class OrdersService {
         postalCode: string;
         country: string;
         phone?: string;
-    } | null, amountTotal?: number | null, couponId?: string | null, discountAmount?: number): Promise<OrderResponseDto>;
-    capturePayment(orderId: string): Promise<OrderResponseDto>;
-    applyCoupon(code: string, cartId: string): Promise<{
+    } | null, amountTotal?: number | null, couponId?: number | null, discountAmount?: number): Promise<OrderResponseDto>;
+    capturePayment(orderId: number): Promise<OrderResponseDto>;
+    applyCoupon(code: string, cartId: number): Promise<{
         code: string;
         discountAmount: number;
         totalBeforeDiscount: number;

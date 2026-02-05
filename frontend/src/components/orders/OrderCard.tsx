@@ -78,7 +78,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         <div className="flex flex-col gap-[8px] flex-1 pb-[16px]">
           <div className="flex gap-[16px] items-center w-full">
             <h3 className="font-[Geist] font-medium text-[18px] leading-[28px] tracking-[-0.45px] uppercase text-black">
-              COMMANDE #{order.id.slice(0, 8).toUpperCase()}
+              COMMANDE #{String(order.id)}
             </h3>
             <span className={`px-[8px] py-[4px] rounded-[4px] font-[Geist] font-medium text-[12px] leading-[16px] ${getStatusColor(order.status)}`}>
               {getStatusLabel(order.status)}

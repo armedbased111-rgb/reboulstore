@@ -6,8 +6,8 @@ export declare class ShopsController {
     constructor(shopsService: ShopsService);
     create(createShopDto: CreateShopDto): Promise<import("../../entities/shop.entity").Shop>;
     findAll(): Promise<import("../../entities/shop.entity").Shop[]>;
-    findOne(id: string): Promise<import("../../entities/shop.entity").Shop>;
+    findOne(id: number): Promise<import("../../entities/shop.entity").Shop>;
     findBySlug(slug: string): Promise<import("../../entities/shop.entity").Shop>;
-    update(id: string, updateShopDto: UpdateShopDto): Promise<import("../../entities/shop.entity").Shop>;
-    remove(id: string): Promise<void>;
+    update(id: number, updateShopDto: UpdateShopDto): Promise<import("../../entities/shop.entity").Shop>;
+    remove(id: number): Promise<void>;
 }

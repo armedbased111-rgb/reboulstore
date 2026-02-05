@@ -30,7 +30,7 @@ export class ReboulOrdersService {
     limit: number = 20,
     filters?: {
       status?: OrderStatus;
-      userId?: string;
+      userId?: number | string;
       startDate?: Date;
       endDate?: Date;
     },
@@ -42,8 +42,8 @@ export class ReboulOrdersService {
       where.status = filters.status;
     }
 
-    if (filters?.userId) {
-      where.userId = filters.userId;
+    if (filters?.userId != null) {
+      where.userId = Number(filters.userId);
     }
 
     if (filters?.startDate || filters?.endDate) {
@@ -73,9 +73,10 @@ export class ReboulOrdersService {
   /**
    * Récupérer une commande Reboul par ID
    */
-  async findOne(id: string) {
+  async findOne(id: number | string) {
+    const numId = Number(id);
     const order = await this.orderRepository.findOne({
-      where: { id },
+      where: { id: numId },
       relations: ['user', 'cart', 'cart.items', 'cart.items.variant', 'cart.items.variant.product'],
     });
 
@@ -89,7 +90,7 @@ export class ReboulOrdersService {
   /**
    * Changer le statut d'une commande Reboul
    */
-  async updateStatus(id: string, status: OrderStatus) {
+  async updateStatus(id: number | string, status: OrderStatus) {
     const order = await this.findOne(id);
 
     // Validation des transitions de statut

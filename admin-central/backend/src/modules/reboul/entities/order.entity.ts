@@ -14,7 +14,7 @@ export enum OrderStatus {
   PENDING = 'pending',
   PAID = 'paid',
   PROCESSING = 'processing',
-  CONFIRMED = 'confirmed', // @deprecated - Utiliser PAID ou PROCESSING à la place
+  CONFIRMED = 'confirmed',
   SHIPPED = 'shipped',
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled',
@@ -23,11 +23,11 @@ export enum OrderStatus {
 
 @Entity('orders')
 export class Order {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid', nullable: true })
-  cartId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'cart_id' })
+  cartId: number | null;
 
   @Column({
     type: 'enum',
@@ -39,80 +39,58 @@ export class Order {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', name: 'customer_info' })
   customerInfo: {
     name: string;
     email: string;
     phone?: string;
-    address: {
-      street: string;
-      city: string;
-      postalCode: string;
-      country: string;
-    };
+    address: { street: string; city: string; postalCode: string; country: string };
   };
 
   @ManyToOne(() => Cart)
-  @JoinColumn({ name: 'cartId' })
+  @JoinColumn({ name: 'cart_id' })
   cart: Cart;
 
-  @Column({ nullable: true })
-  userId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'user_id' })
+  userId: number | null;
 
   @ManyToOne(() => User, (user) => user.orders, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'jsonb', nullable: true })
-  shippingAddress: {
-    firstName: string;
-    lastName: string;
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    phone?: string;
-  } | null;
+  @Column({ type: 'jsonb', nullable: true, name: 'shipping_address' })
+  shippingAddress: Record<string, unknown> | null;
 
-  @Column({ type: 'jsonb', nullable: true })
-  billingAddress: {
-    firstName: string;
-    lastName: string;
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    phone?: string;
-  } | null;
+  @Column({ type: 'jsonb', nullable: true, name: 'billing_address' })
+  billingAddress: Record<string, unknown> | null;
 
-  // Paiement Stripe
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'payment_intent_id' })
   paymentIntentId: string;
 
-  // Items de la commande (stockés pour les commandes depuis Stripe Checkout sans cart)
   @Column({ type: 'jsonb', nullable: true })
-  items: Array<{
-    variantId: string;
-    quantity: number;
-  }> | null;
+  items: Array<{ variantId: number; quantity: number }> | null;
 
-  // Suivi colis
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'tracking_number' })
   trackingNumber: string;
 
-  // Dates de suivi
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'int', nullable: true, name: 'coupon_id' })
+  couponId: number | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, name: 'discount_amount' })
+  discountAmount: number | null;
+
+  @Column({ type: 'timestamp', nullable: true, name: 'paid_at' })
   paidAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'shipped_at' })
   shippedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'delivered_at' })
   deliveredAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

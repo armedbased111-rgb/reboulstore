@@ -92,7 +92,7 @@ export class NotificationsGateway
    * Émet une notification pour une nouvelle commande créée (admin uniquement)
    */
   notifyOrderCreated(order: {
-    id: string;
+    id: number;
     orderNumber: string;
     total: number;
     customerInfo: {
@@ -115,10 +115,10 @@ export class NotificationsGateway
    * Émet une notification pour un changement de statut de commande (user spécifique)
    */
   notifyOrderStatusChanged(order: {
-    id: string;
+    id: number;
     orderNumber: string;
     status: string;
-    userId: string;
+    userId: number;
   }) {
     const userRoom = `user:${order.userId}`;
     this.server.to(userRoom).emit('order.status.changed', {
@@ -134,9 +134,9 @@ export class NotificationsGateway
    * Émet une notification pour un produit en rupture de stock (admin uniquement)
    */
   notifyProductStockLow(product: {
-    id: string;
+    id: number;
     name: string;
-    variantId?: string;
+    variantId?: number;
     variantName?: string;
     stock: number;
   }) {

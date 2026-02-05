@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
@@ -33,13 +34,13 @@ export class CollectionsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.collectionsService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCollectionDto: UpdateCollectionDto,
   ) {
     return this.collectionsService.update(id, updateCollectionDto);
@@ -47,19 +48,19 @@ export class CollectionsController {
 
   @Post(':id/activate')
   @HttpCode(HttpStatus.OK)
-  activate(@Param('id') id: string) {
+  activate(@Param('id', ParseIntPipe) id: number) {
     return this.collectionsService.activate(id);
   }
 
   @Post(':id/archive')
   @HttpCode(HttpStatus.OK)
-  archive(@Param('id') id: string) {
+  archive(@Param('id', ParseIntPipe) id: number) {
     return this.collectionsService.archive(id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.collectionsService.remove(id);
   }
 }

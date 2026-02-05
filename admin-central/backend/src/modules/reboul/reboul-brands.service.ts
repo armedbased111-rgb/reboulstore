@@ -72,9 +72,10 @@ export class ReboulBrandsService {
   /**
    * Récupérer une marque Reboul par ID
    */
-  async findOne(id: string) {
+  async findOne(id: number | string) {
+    const numId = Number(id);
     const brand = await this.brandRepository.findOne({
-      where: { id },
+      where: { id: numId },
       relations: ['products'],
     });
 
@@ -82,9 +83,8 @@ export class ReboulBrandsService {
       throw new NotFoundException(`Marque avec l'ID ${id} non trouvée`);
     }
 
-    // Compter le nombre de produits
     const productsCount = await this.productRepository.count({
-      where: { brandId: id },
+      where: { brandId: numId },
     });
 
     return {
@@ -158,12 +158,11 @@ export class ReboulBrandsService {
   /**
    * Supprimer une marque Reboul
    */
-  async remove(id: string) {
+  async remove(id: number | string) {
     const brand = await this.findOne(id);
-
-    // Vérifier qu'il n'y a pas de produits associés
+    const numId = Number(id);
     const productsCount = await this.productRepository.count({
-      where: { brandId: id },
+      where: { brandId: numId },
     });
 
     if (productsCount > 0) {

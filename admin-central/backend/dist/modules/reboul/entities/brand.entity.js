@@ -28,8 +28,8 @@ let Brand = class Brand {
 };
 exports.Brand = Brand;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Brand.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
@@ -44,23 +44,23 @@ __decorate([
     __metadata("design:type", Object)
 ], Brand.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'logo_url' }),
     __metadata("design:type", Object)
 ], Brand.prototype, "logoUrl", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'mega_menu_image_1' }),
     __metadata("design:type", Object)
 ], Brand.prototype, "megaMenuImage1", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'mega_menu_image_2' }),
     __metadata("design:type", Object)
 ], Brand.prototype, "megaMenuImage2", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'mega_menu_video_1' }),
     __metadata("design:type", Object)
 ], Brand.prototype, "megaMenuVideo1", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'mega_menu_video_2' }),
     __metadata("design:type", Object)
 ], Brand.prototype, "megaMenuVideo2", void 0);
 __decorate([
@@ -68,11 +68,11 @@ __decorate([
     __metadata("design:type", Array)
 ], Brand.prototype, "products", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Brand.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Brand.prototype, "updatedAt", void 0);
 exports.Brand = Brand = __decorate([

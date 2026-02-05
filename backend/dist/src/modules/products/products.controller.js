@@ -119,49 +119,49 @@ let ProductsController = class ProductsController {
 exports.ProductsController = ProductsController;
 __decorate([
     (0, common_1.Get)(':id/images'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findImagesByProduct", null);
 __decorate([
     (0, common_1.Post)(':id/images'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', multer_config_1.multerConfig)),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.UploadedFile)()),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "createImage", null);
 __decorate([
     (0, common_1.Post)(':id/images/bulk'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', 7, multer_config_1.multerConfig)),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.UploadedFiles)()),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "createImagesBulk", null);
 __decorate([
     (0, common_1.Delete)(':productId/images/:imageId'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
-    __param(0, (0, common_1.Param)('productId')),
-    __param(1, (0, common_1.Param)('imageId')),
+    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('imageId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "deleteImage", null);
 __decorate([
     (0, common_1.Patch)(':productId/images/:imageId/order'),
-    __param(0, (0, common_1.Param)('productId')),
-    __param(1, (0, common_1.Param)('imageId')),
+    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('imageId', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, update_image_order_dto_1.UpdateImageOrderDto]),
+    __metadata("design:paramtypes", [Number, Number, update_image_order_dto_1.UpdateImageOrderDto]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "updateImageOrder", null);
 __decorate([
@@ -181,75 +181,75 @@ __decorate([
 ], ProductsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id/variants'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findVariantsByProduct", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Get)('category/:categoryId'),
-    __param(0, (0, common_1.Param)('categoryId')),
+    __param(0, (0, common_1.Param)('categoryId', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, product_query_dto_1.ProductQueryDto]),
+    __metadata("design:paramtypes", [Number, product_query_dto_1.ProductQueryDto]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findByCategory", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_product_dto_1.UpdateProductDto]),
+    __metadata("design:paramtypes", [Number, update_product_dto_1.UpdateProductDto]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Get)(':productId/variants/:variantId'),
-    __param(0, (0, common_1.Param)('productId')),
-    __param(1, (0, common_1.Param)('variantId')),
+    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('variantId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findVariantById", null);
 __decorate([
     (0, common_1.Post)(':id/variants'),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_variant_dto_1.CreateVariantDto]),
+    __metadata("design:paramtypes", [Number, create_variant_dto_1.CreateVariantDto]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "createVariant", null);
 __decorate([
     (0, common_1.Patch)(':productId/variants/:variantId'),
-    __param(0, (0, common_1.Param)('productId')),
-    __param(1, (0, common_1.Param)('variantId')),
+    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('variantId', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, update_variant_dto_1.UpdateVariantDto]),
+    __metadata("design:paramtypes", [Number, Number, update_variant_dto_1.UpdateVariantDto]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "updateVariant", null);
 __decorate([
     (0, common_1.Get)(':productId/variants/:variantId/stock'),
-    __param(0, (0, common_1.Param)('productId')),
-    __param(1, (0, common_1.Param)('variantId')),
+    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('variantId', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Query)('quantity')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [Number, Number, String]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "checkStock", null);
 exports.ProductsController = ProductsController = __decorate([

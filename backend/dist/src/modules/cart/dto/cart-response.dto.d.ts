@@ -1,15 +1,15 @@
 export declare class CartItemResponseDto {
-    id: string;
-    variantId: string;
+    id: number;
+    variantId: number;
     quantity: number;
     variant: {
-        id: string;
+        id: number;
         color: string;
         size: string;
         stock: number;
         sku: string;
         product: {
-            id: string;
+            id: number;
             name: string;
             price: string;
             images?: Array<{
@@ -21,7 +21,7 @@ export declare class CartItemResponseDto {
     createdAt: Date;
 }
 export declare class CartResponseDto {
-    id: string;
+    id: number;
     sessionId: string;
     items: CartItemResponseDto[];
     total: number;

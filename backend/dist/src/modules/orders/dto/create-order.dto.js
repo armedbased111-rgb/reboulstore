@@ -74,7 +74,7 @@ exports.CreateOrderDto = CreateOrderDto;
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateOrderDto.prototype, "cartId", void 0);
 __decorate([
     (0, class_validator_1.IsObject)(),

@@ -10,16 +10,16 @@ import { Product } from './product.entity';
 
 @Entity('images')
 export class Image {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid' })
-  productId: string;
+  @Column({ type: 'int', name: 'product_id' })
+  productId: number;
 
   @Column({ type: 'varchar', length: 500 })
   url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'public_id' })
   publicId: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -29,9 +29,9 @@ export class Image {
   order: number;
 
   @ManyToOne(() => Product, (product) => product.images)
-  @JoinColumn({ name: 'productId' })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }

@@ -36,7 +36,7 @@ export class InvoiceService {
           .fontSize(10)
           .font('Helvetica')
           .text(
-            `Numéro de commande: ${order.id.slice(0, 8).toUpperCase()}`,
+            `Numéro de commande: ${String(order.id)}`,
             50,
             150,
           )

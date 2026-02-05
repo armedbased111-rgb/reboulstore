@@ -3,7 +3,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsNumber,
-  IsUUID,
+  IsInt,
   Min,
   IsArray,
 } from 'class-validator';
@@ -21,21 +21,21 @@ export class CreateProductDto {
   @Min(0)
   price: number;
 
-  @IsUUID()
+  @IsInt()
   @IsNotEmpty()
-  categoryId: string;
+  categoryId: number;
 
-  @IsUUID()
+  @IsInt()
   @IsOptional()
-  shopId?: string;
+  shopId?: number;
 
-  @IsUUID()
+  @IsInt()
   @IsOptional()
-  brandId?: string;
+  brandId?: number;
 
-  @IsUUID()
+  @IsInt()
   @IsOptional()
-  collectionId?: string; // Si non fourni, sera assigné à la collection active
+  collectionId?: number;
 
   // Informations spécifiques au produit
   @IsString()

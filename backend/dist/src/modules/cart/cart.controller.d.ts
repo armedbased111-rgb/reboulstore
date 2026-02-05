@@ -6,8 +6,8 @@ export declare class CartController {
     constructor(cartService: CartService);
     getCart(sessionIdHeader?: string, sessionIdQuery?: string): Promise<import("./dto/cart-response.dto").CartResponseDto>;
     addItem(addToCartDto: AddToCartDto, sessionIdHeader?: string, sessionIdQuery?: string): Promise<import("../../entities/cart-item.entity").CartItem>;
-    updateItem(itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<import("../../entities/cart-item.entity").CartItem>;
-    removeItem(itemId: string): Promise<void>;
+    updateItem(itemId: number, updateCartItemDto: UpdateCartItemDto): Promise<import("../../entities/cart-item.entity").CartItem>;
+    removeItem(itemId: number): Promise<void>;
     clear(sessionIdHeader?: string, sessionIdQuery?: string): Promise<void>;
     private generateSessionId;
 }

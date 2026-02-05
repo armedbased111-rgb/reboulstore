@@ -20,11 +20,10 @@ export default function CreateProductPage() {
     setError(null);
 
     try {
-      // Nettoyer les données : ne pas envoyer de chaînes vides pour les UUIDs
       const cleanData = {
         ...data,
-        categoryId: data.categoryId && data.categoryId.trim() !== '' ? data.categoryId : undefined,
-        brandId: data.brandId && data.brandId.trim() !== '' ? data.brandId : undefined,
+        categoryId: data.categoryId != null && data.categoryId !== '' ? data.categoryId : undefined,
+        brandId: data.brandId != null && data.brandId !== '' ? data.brandId : undefined,
       };
       
       await reboulProductsService.createProduct(cleanData);

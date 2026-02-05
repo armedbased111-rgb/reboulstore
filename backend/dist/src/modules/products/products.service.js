@@ -67,12 +67,14 @@ let ProductsService = class ProductsService {
             collectionId: activeCollection.id,
         };
         if (category) {
-            where.categoryId = category;
+            const categoryId = typeof category === 'string' ? parseInt(category, 10) : category;
+            if (!isNaN(categoryId))
+                where.categoryId = categoryId;
         }
         if (brand) {
-            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand);
-            if (isUUID) {
-                where.brandId = brand;
+            const brandIdNum = typeof brand === 'string' ? parseInt(brand, 10) : brand;
+            if (!isNaN(brandIdNum)) {
+                where.brandId = brandIdNum;
             }
             else {
                 const brandEntity = await this.brandRepository.findOne({

@@ -14,30 +14,30 @@ import { UpdateVariantDto } from './dto/update-variant.dto';
 export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
-    findImagesByProduct(id: string): Promise<import("../../entities/image.entity").Image[]>;
-    createImage(productId: string, file: MulterFile | undefined, body: any): Promise<import("../../entities/image.entity").Image>;
-    createImagesBulk(productId: string, files: MulterFile[] | undefined, body: any): Promise<import("../../entities/image.entity").Image[]>;
-    deleteImage(productId: string, imageId: string): Promise<void>;
-    updateImageOrder(productId: string, imageId: string, updateOrderDto: UpdateImageOrderDto): Promise<import("../../entities/image.entity").Image>;
+    findImagesByProduct(id: number): Promise<import("../../entities/image.entity").Image[]>;
+    createImage(productId: number, file: MulterFile | undefined, body: any): Promise<import("../../entities/image.entity").Image>;
+    createImagesBulk(productId: number, files: MulterFile[] | undefined, body: any): Promise<import("../../entities/image.entity").Image[]>;
+    deleteImage(productId: number, imageId: number): Promise<void>;
+    updateImageOrder(productId: number, imageId: number, updateOrderDto: UpdateImageOrderDto): Promise<import("../../entities/image.entity").Image>;
     create(createProductDto: CreateProductDto): Promise<import("../../entities/product.entity").Product>;
     findAll(query: ProductQueryDto): Promise<{}>;
-    findVariantsByProduct(id: string): Promise<import("../../entities/variant.entity").Variant[]>;
-    findOne(id: string): Promise<import("../../entities/product.entity").Product>;
-    findByCategory(categoryId: string, query: ProductQueryDto): Promise<{
+    findVariantsByProduct(id: number): Promise<import("../../entities/variant.entity").Variant[]>;
+    findOne(id: number): Promise<import("../../entities/product.entity").Product>;
+    findByCategory(categoryId: number, query: ProductQueryDto): Promise<{
         products: import("../../entities/product.entity").Product[];
         total: number;
         page: number;
         limit: number;
         totalPages: number;
     }>;
-    update(id: string, updateProductDto: UpdateProductDto): Promise<import("../../entities/product.entity").Product>;
-    remove(id: string): Promise<void>;
-    findVariantById(productId: string, variantId: string): Promise<import("../../entities/variant.entity").Variant>;
-    createVariant(productId: string, createVariantDto: CreateVariantDto): Promise<import("../../entities/variant.entity").Variant>;
-    updateVariant(productId: string, variantId: string, updateVariantDto: UpdateVariantDto): Promise<import("../../entities/variant.entity").Variant>;
-    checkStock(productId: string, variantId: string, quantity: string): Promise<{
+    update(id: number, updateProductDto: UpdateProductDto): Promise<import("../../entities/product.entity").Product>;
+    remove(id: number): Promise<void>;
+    findVariantById(productId: number, variantId: number): Promise<import("../../entities/variant.entity").Variant>;
+    createVariant(productId: number, createVariantDto: CreateVariantDto): Promise<import("../../entities/variant.entity").Variant>;
+    updateVariant(productId: number, variantId: number, updateVariantDto: UpdateVariantDto): Promise<import("../../entities/variant.entity").Variant>;
+    checkStock(productId: number, variantId: number, quantity: string): Promise<{
         available: boolean;
-        variantId: string;
+        variantId: number;
         currentStock: number;
         requestedQuantity: number;
     }>;

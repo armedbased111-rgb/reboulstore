@@ -13,8 +13,8 @@ export declare class CartService {
     getOrCreate(sessionId: string): Promise<Cart>;
     findOne(sessionId: string): Promise<CartResponseDto>;
     addItem(sessionId: string, addToCartDto: AddToCartDto): Promise<CartItem>;
-    updateItem(itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<CartItem>;
-    removeItem(itemId: string): Promise<void>;
+    updateItem(itemId: number, updateCartItemDto: UpdateCartItemDto): Promise<CartItem>;
+    removeItem(itemId: number): Promise<void>;
     clear(sessionId: string): Promise<void>;
-    calculateTotal(cartId: string): Promise<number>;
+    calculateTotal(cartId: number): Promise<number>;
 }

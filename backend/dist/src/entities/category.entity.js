@@ -26,8 +26,8 @@ let Category = class Category {
 };
 exports.Category = Category;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Category.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
@@ -46,23 +46,23 @@ __decorate([
     __metadata("design:type", Array)
 ], Category.prototype, "products", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'image_url' }),
     __metadata("design:type", Object)
 ], Category.prototype, "imageUrl", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 500, nullable: true, name: 'video_url' }),
     __metadata("design:type", Object)
 ], Category.prototype, "videoUrl", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, name: 'size_chart' }),
     __metadata("design:type", Object)
 ], Category.prototype, "sizeChart", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Category.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Category.prototype, "updatedAt", void 0);
 exports.Category = Category = __decorate([

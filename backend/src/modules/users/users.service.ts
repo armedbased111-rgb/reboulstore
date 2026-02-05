@@ -21,7 +21,7 @@ export class UsersService {
     private addressRepository: Repository<Address>,
   ) {}
 
-  async findOne(userId: string): Promise<User> {
+  async findOne(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['addresses'],
@@ -34,7 +34,7 @@ export class UsersService {
 
   // Mettre à jour le profil
   async updateProfile(
-    userId: string,
+    userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
     const user = await this.findOne(userId);
@@ -60,7 +60,7 @@ export class UsersService {
 
   // === GESTION ADRESSES ===
 
-  async getAddresses(userId: string): Promise<Address[]> {
+  async getAddresses(userId: number): Promise<Address[]> {
     return this.addressRepository.find({
       where: { userId },
       order: { isDefault: 'DESC', createdAt: 'DESC' },
@@ -69,7 +69,7 @@ export class UsersService {
 
   // Créer une adresse
   async createAddress(
-    userId: string,
+    userId: number,
     createAddressDto: CreateAddressDto,
   ): Promise<Address> {
     // Si isDefault = true, retirer le flag des autres adresses
@@ -88,7 +88,7 @@ export class UsersService {
     return this.addressRepository.save(address);
   }
 
-  async getAddress(userId: string, addressId: string): Promise<Address> {
+  async getAddress(userId: number, addressId: number): Promise<Address> {
     const address = await this.addressRepository.findOne({
       where: { id: addressId, userId },
     });
@@ -100,8 +100,8 @@ export class UsersService {
 
   // Mettre à jour une adresse
   async updateAddress(
-    userId: string,
-    addressId: string,
+    userId: number,
+    addressId: number,
     updateAddressDto: UpdateAddressDto,
   ): Promise<Address> {
     const address = await this.getAddress(userId, addressId);
@@ -119,7 +119,7 @@ export class UsersService {
   }
 
   // Supprimer une adresse
-  async deleteAddress(userId: string, addressId: string): Promise<void> {
+  async deleteAddress(userId: number, addressId: number): Promise<void> {
     const address = await this.getAddress(userId, addressId);
     await this.addressRepository.remove(address);
   }

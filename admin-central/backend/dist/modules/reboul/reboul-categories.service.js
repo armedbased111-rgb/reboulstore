@@ -16,6 +16,7 @@ exports.ReboulCategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const typeorm_3 = require("typeorm");
 const category_entity_1 = require("./entities/category.entity");
 const product_entity_1 = require("./entities/product.entity");
 let ReboulCategoriesService = class ReboulCategoriesService {
@@ -56,15 +57,16 @@ let ReboulCategoriesService = class ReboulCategoriesService {
         };
     }
     async findOne(id) {
+        const numId = Number(id);
         const category = await this.categoryRepository.findOne({
-            where: { id },
+            where: { id: numId },
             relations: ['products'],
         });
         if (!category) {
             throw new common_1.NotFoundException(`Catégorie avec l'ID ${id} non trouvée`);
         }
         const productsCount = await this.productRepository.count({
-            where: { categoryId: id },
+            where: { categoryId: numId },
         });
         return {
             ...category,
@@ -72,24 +74,41 @@ let ReboulCategoriesService = class ReboulCategoriesService {
         };
     }
     async create(categoryData) {
-        if (categoryData.slug) {
+        const slugProvided = categoryData.slug?.trim();
+        if (slugProvided) {
             const existing = await this.categoryRepository.findOne({
-                where: { slug: categoryData.slug },
+                where: { slug: slugProvided },
             });
             if (existing) {
-                throw new common_1.BadRequestException(`Une catégorie avec le slug "${categoryData.slug}" existe déjà`);
+                throw new common_1.BadRequestException(`Une catégorie avec le slug "${slugProvided}" existe déjà`);
             }
         }
-        if (!categoryData.slug && categoryData.name) {
+        if (!slugProvided) {
             categoryData.slug = categoryData.name
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
+                ? categoryData.name
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '') || undefined
+                : undefined;
+            if (!categoryData.slug)
+                categoryData.slug = `category-${Date.now()}`;
+        }
+        else {
+            categoryData.slug = slugProvided;
         }
         const category = this.categoryRepository.create(categoryData);
-        return this.categoryRepository.save(category);
+        try {
+            return await this.categoryRepository.save(category);
+        }
+        catch (err) {
+            const code = err instanceof typeorm_3.QueryFailedError ? err.driverError?.code : err?.code;
+            if (code === '23505') {
+                throw new common_1.BadRequestException('Une catégorie avec ce nom ou ce slug existe déjà.');
+            }
+            throw err;
+        }
     }
     async update(id, updateData) {
         const category = await this.findOne(id);
@@ -114,8 +133,9 @@ let ReboulCategoriesService = class ReboulCategoriesService {
     }
     async remove(id) {
         const category = await this.findOne(id);
+        const numId = Number(id);
         const productsCount = await this.productRepository.count({
-            where: { categoryId: id },
+            where: { categoryId: numId },
         });
         if (productsCount > 0) {
             throw new common_1.BadRequestException(`Impossible de supprimer la catégorie : ${productsCount} produit(s) associé(s)`);

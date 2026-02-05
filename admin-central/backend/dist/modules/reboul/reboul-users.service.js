@@ -54,8 +54,9 @@ let ReboulUsersService = class ReboulUsersService {
         };
     }
     async findOne(id) {
+        const numId = Number(id);
         const user = await this.userRepository.findOne({
-            where: { id },
+            where: { id: numId },
             relations: ['addresses', 'orders'],
         });
         if (!user) {
@@ -74,11 +75,12 @@ let ReboulUsersService = class ReboulUsersService {
     }
     async remove(id) {
         const user = await this.findOne(id);
+        const numId = Number(id);
         const activeOrders = await this.orderRepository.count({
             where: [
-                { userId: id, status: order_entity_1.OrderStatus.PENDING },
-                { userId: id, status: order_entity_1.OrderStatus.PAID },
-                { userId: id, status: order_entity_1.OrderStatus.PROCESSING },
+                { userId: numId, status: order_entity_1.OrderStatus.PENDING },
+                { userId: numId, status: order_entity_1.OrderStatus.PAID },
+                { userId: numId, status: order_entity_1.OrderStatus.PROCESSING },
             ],
         });
         if (activeOrders > 0) {

@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class SubscribeStockNotificationDto {
   @IsEmail()
@@ -9,7 +9,7 @@ export class SubscribeStockNotificationDto {
   phone?: string;
 
   @IsOptional()
-  @IsUUID()
-  variantId?: string;
+  @IsInt()
+  variantId?: number;
 }
 

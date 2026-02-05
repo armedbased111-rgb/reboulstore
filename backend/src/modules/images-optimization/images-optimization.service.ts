@@ -12,7 +12,7 @@ export interface OptimizationStats {
   skipped: number;
   errors: number;
   details: {
-    optimized: string[];
+    optimized: number[];
     skipped: string[];
     errors: string[];
   };

@@ -34,27 +34,28 @@ let OrderEmail = class OrderEmail {
 };
 exports.OrderEmail = OrderEmail;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], OrderEmail.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'order_id' }),
+    __metadata("design:type", Number)
 ], OrderEmail.prototype, "orderId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => order_entity_1.Order, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'orderId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'order_id' }),
     __metadata("design:type", order_entity_1.Order)
 ], OrderEmail.prototype, "order", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
         enum: EmailType,
+        name: 'email_type',
     }),
     __metadata("design:type", String)
 ], OrderEmail.prototype, "emailType", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ name: 'recipient_email' }),
     __metadata("design:type", String)
 ], OrderEmail.prototype, "recipientEmail", void 0);
 __decorate([
@@ -66,15 +67,15 @@ __decorate([
     __metadata("design:type", Boolean)
 ], OrderEmail.prototype, "sent", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true, name: 'error_message' }),
     __metadata("design:type", Object)
 ], OrderEmail.prototype, "errorMessage", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true, name: 'sent_at' }),
     __metadata("design:type", Object)
 ], OrderEmail.prototype, "sentAt", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], OrderEmail.prototype, "createdAt", void 0);
 exports.OrderEmail = OrderEmail = __decorate([

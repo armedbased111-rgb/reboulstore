@@ -11,7 +11,7 @@ export interface SizeChartEntry {
 }
 
 export interface Shop {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   description?: string;
@@ -32,7 +32,7 @@ export interface Shop {
 }
 
 export interface Brand {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   description?: string;
@@ -46,7 +46,7 @@ export interface Brand {
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   description?: string;
@@ -58,15 +58,15 @@ export interface Category {
 }
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
-  categoryId: string;
+  categoryId: number;
   category?: Category;
-  shopId?: string;
+  shopId?: number;
   shop?: Shop;
-  brandId?: string;
+  brandId?: number;
   brand?: Brand;
   images?: Image[];
   variants?: Variant[];
@@ -81,8 +81,8 @@ export interface Product {
 }
 
 export interface Image {
-  id: string;
-  productId: string;
+  id: number;
+  productId: number;
   url: string;
   alt: string;
   order: number;
@@ -90,8 +90,8 @@ export interface Image {
 }
 
 export interface Variant {
-  id: string;
-  productId: string;
+  id: number;
+  productId: number;
   color: string;
   size: string;
   stock: number;
@@ -101,7 +101,7 @@ export interface Variant {
 }
 
 export interface Cart {
-  id: string;
+  id: number;
   sessionId: string;
   items: CartItem[];
   total: number;
@@ -110,21 +110,21 @@ export interface Cart {
 }
 
 export interface CartItem {
-  id: string;
-  cartId: string;
-  variantId: string;
+  id: number;
+  cartId: number;
+  variantId: number;
   quantity: number;
   variant?: Variant & { product?: Product };
   createdAt: string;
 }
 
 export interface Order {
-  id: string;
-  cartId: string | null;
+  id: number;
+  cartId: number | null;
   status: OrderStatus;
   total: number;
   customerInfo: CustomerInfo;
-  userId?: string | null;
+  userId?: number | null;
   shippingAddress?: {
     firstName: string;
     lastName: string;
@@ -145,7 +145,7 @@ export interface Order {
   } | null;
   paymentIntentId?: string | null;
   items?: Array<{
-    variantId: string;
+    variantId: number;
     quantity: number;
   }> | null;
   trackingNumber?: string | null;

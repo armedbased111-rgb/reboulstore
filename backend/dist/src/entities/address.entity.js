@@ -27,16 +27,16 @@ let Address = class Address {
 };
 exports.Address = Address;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Address.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ name: 'user_id' }),
+    __metadata("design:type", Number)
 ], Address.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.addresses, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
     __metadata("design:type", user_entity_1.User)
 ], Address.prototype, "user", void 0);
 __decorate([
@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], Address.prototype, "city", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ name: 'postal_code' }),
     __metadata("design:type", String)
 ], Address.prototype, "postalCode", void 0);
 __decorate([
@@ -56,19 +56,19 @@ __decorate([
     __metadata("design:type", String)
 ], Address.prototype, "country", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)({ nullable: true, name: 'additional_info' }),
     __metadata("design:type", String)
 ], Address.prototype, "additionalInfo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: false }),
+    (0, typeorm_1.Column)({ default: false, name: 'is_default' }),
     __metadata("design:type", Boolean)
 ], Address.prototype, "isDefault", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Address.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Address.prototype, "updatedAt", void 0);
 exports.Address = Address = __decorate([

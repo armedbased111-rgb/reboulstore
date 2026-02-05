@@ -56,15 +56,16 @@ let ReboulBrandsService = class ReboulBrandsService {
         };
     }
     async findOne(id) {
+        const numId = Number(id);
         const brand = await this.brandRepository.findOne({
-            where: { id },
+            where: { id: numId },
             relations: ['products'],
         });
         if (!brand) {
             throw new common_1.NotFoundException(`Marque avec l'ID ${id} non trouvée`);
         }
         const productsCount = await this.productRepository.count({
-            where: { brandId: id },
+            where: { brandId: numId },
         });
         return {
             ...brand,
@@ -114,8 +115,9 @@ let ReboulBrandsService = class ReboulBrandsService {
     }
     async remove(id) {
         const brand = await this.findOne(id);
+        const numId = Number(id);
         const productsCount = await this.productRepository.count({
-            where: { brandId: id },
+            where: { brandId: numId },
         });
         if (productsCount > 0) {
             throw new common_1.BadRequestException(`Impossible de supprimer la marque : ${productsCount} produit(s) associé(s)`);

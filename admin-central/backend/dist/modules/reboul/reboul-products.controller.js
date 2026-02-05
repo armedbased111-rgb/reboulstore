@@ -46,6 +46,12 @@ let ReboulProductsController = class ReboulProductsController {
     async findOne(id) {
         return this.productsService.findOne(id);
     }
+    async importFromPaste(body) {
+        if (!body?.pastedText || typeof body.pastedText !== 'string') {
+            throw new common_1.BadRequestException('pastedText requis');
+        }
+        return this.productsService.importFromPaste(body.pastedText);
+    }
     async create(createProductDto) {
         const { images, variants, ...productData } = createProductDto;
         if (images || variants) {
@@ -112,6 +118,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ReboulProductsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)('import-from-paste'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ReboulProductsController.prototype, "importFromPaste", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

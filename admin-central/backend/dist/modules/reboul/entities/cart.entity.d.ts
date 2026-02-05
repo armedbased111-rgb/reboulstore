@@ -1,6 +1,6 @@
 import { CartItem } from './cart-item.entity';
 export declare class Cart {
-    id: string;
+    id: number;
     sessionId: string;
     items: CartItem[];
     createdAt: Date;

@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 
 export class AddToCartDto {
   @IsUUID()
-  variantId: string;
+  variantId: number;
 
   @Type(() => Number)
   @IsNumber()

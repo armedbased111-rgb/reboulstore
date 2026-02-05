@@ -31,6 +31,8 @@ import { ReboulSettingsService } from './reboul-settings.service';
 import { ReboulSettingsController } from './reboul-settings.controller';
 import { ReboulCouponsService } from './reboul-coupons.service';
 import { ReboulCouponsController } from './reboul-coupons.controller';
+import { ReboulImportService } from './reboul-import.service';
+import { ReboulImportController } from './reboul-import.controller';
 
 /**
  * Module Reboul pour l'Admin Centrale
@@ -74,6 +76,7 @@ import { ReboulCouponsController } from './reboul-coupons.controller';
     ReboulCollectionsService, // ✅ Phase 24.4 - Service collections créé
     ReboulSettingsService, // ✅ Phase 17.8 - Service settings créé
     ReboulCouponsService, // ✅ Phase 18.4 - Service coupons créé
+    ReboulImportService, // 24.5bis - Import collection CSV
   ],
   controllers: [
     ReboulProductsController, // ✅ Phase 16 - Controller produits créé
@@ -85,6 +88,7 @@ import { ReboulCouponsController } from './reboul-coupons.controller';
     ReboulCollectionsController, // ✅ Phase 24.4 - Controller collections créé
     ReboulSettingsController, // ✅ Phase 17.8 - Controller settings créé
     ReboulCouponsController, // ✅ Phase 18.4 - Controller coupons créé
+    ReboulImportController, // 24.5bis - Import collection CSV
   ],
   exports: [
     // Exporter les services pour utilisation dans d'autres modules si besoin

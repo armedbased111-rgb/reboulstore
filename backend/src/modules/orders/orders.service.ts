@@ -91,7 +91,7 @@ export class OrdersService {
 
     // Valider et appliquer le coupon si fourni
     let discountAmount = 0;
-    let couponId: string | null = null;
+    let couponId: number | null = null;
 
     if (createOrderDto.couponCode) {
       const validation = await this.couponsService.validateCoupon(
@@ -149,7 +149,7 @@ export class OrdersService {
     if (orderResponse) {
       try {
         // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
-        const orderNumber = `ORD-${orderResponse.id.substring(0, 8).toUpperCase()}`;
+        const orderNumber = `ORD-${String(orderResponse.id)}`;
         
         // Extraire firstName et lastName depuis customerInfo.name
         const customerName = orderResponse.customerInfo?.name || 'Client';
@@ -180,7 +180,7 @@ export class OrdersService {
   /**
    * Vérifie que l'utilisateur peut accéder à la commande (propriétaire ou admin)
    */
-  private async checkOrderAccess(order: Order, userId: string): Promise<void> {
+  private async checkOrderAccess(order: Order, userId: number): Promise<void> {
     // Si pas de userId, pas de vérification (route publique, déconseillé)
     if (!userId) {
       return;
@@ -210,7 +210,7 @@ export class OrdersService {
   /**
    * Récupère l'entité Order complète avec toutes les relations (pour génération PDF)
    */
-  async findOneEntity(id: string, userId?: string): Promise<Order> {
+  async findOneEntity(id: number, userId?: number): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: [
@@ -239,7 +239,7 @@ export class OrdersService {
    * @param id - ID de la commande
    * @param userId - ID de l'utilisateur (optionnel, pour vérification de sécurité)
    */
-  async findOne(id: string, userId?: string): Promise<OrderResponseDto> {
+  async findOne(id: number, userId?: number): Promise<OrderResponseDto> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: [
@@ -357,7 +357,7 @@ export class OrdersService {
    * - CANCELLED/REFUNDED : incrémente le stock (si la commande était payée)
    */
   async updateStatus(
-    id: string,
+    id: number,
     updateStatusDto: UpdateOrderStatusDto,
   ): Promise<OrderResponseDto> {
     const order = await this.orderRepository.findOne({
@@ -415,7 +415,7 @@ export class OrdersService {
       // Notifier l'utilisateur via WebSocket du changement de statut
       if (orderWithRelations.userId) {
         // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
-        const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+        const orderNumber = `ORD-${String(orderWithRelations.id)}`;
         
         this.notificationsGateway.notifyOrderStatusChanged({
           id: orderWithRelations.id,
@@ -433,7 +433,7 @@ export class OrdersService {
         const phoneNumber = orderWithRelations.customerInfo?.phone || orderWithRelations.user?.phone;
         if (phoneNumber) {
           try {
-            const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+            const orderNumber = `ORD-${String(orderWithRelations.id)}`;
             await this.smsService.sendOrderShippedSMS(
               phoneNumber,
               orderNumber,
@@ -460,7 +460,7 @@ export class OrdersService {
   /**
    * Récupère les commandes d'un utilisateur
    */
-  async findByUser(userId: string): Promise<OrderResponseDto[]> {
+  async findByUser(userId: number): Promise<OrderResponseDto[]> {
     const orders = await this.orderRepository.find({
       where: { userId },
       relations: [
@@ -515,7 +515,7 @@ export class OrdersService {
    * @param id - ID de la commande
    * @param userId - ID de l'utilisateur (pour vérification de sécurité)
    */
-  async cancel(id: string, userId: string): Promise<OrderResponseDto> {
+  async cancel(id: number, userId: number): Promise<OrderResponseDto> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -567,7 +567,7 @@ export class OrdersService {
    * @param id - ID de la commande
    * @param userId - ID de l'utilisateur (pour vérification de sécurité)
    */
-  async refund(id: string, userId: string): Promise<OrderResponseDto> {
+  async refund(id: number, userId: number): Promise<OrderResponseDto> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -614,8 +614,8 @@ export class OrdersService {
    * Avec capture manuelle, la commande est créée en PENDING (pas PAID)
    */
   async createFromStripeCheckout(
-    items: Array<{ variantId: string; quantity: number }>,
-    userId: string | null, // Peut être null pour guest checkout
+    items: Array<{ variantId: number; quantity: number }>,
+    userId: string | null, // Peut être null pour guest checkout (string depuis metadata)
     paymentIntentId: string,
     customerEmail: string,
     customerName?: string,
@@ -638,7 +638,7 @@ export class OrdersService {
       phone?: string;
     } | null,
     amountTotal?: number | null, // Montant total depuis Stripe (pour validation)
-    couponId?: string | null, // ID du coupon appliqué
+    couponId?: number | null, // ID du coupon appliqué
     discountAmount?: number, // Montant de la réduction
   ): Promise<OrderResponseDto> {
     const variantIds = items.map((item) => item.variantId);
@@ -682,8 +682,9 @@ export class OrdersService {
       }
     }
 
-    const user = userId
-      ? await this.userRepository.findOne({ where: { id: userId } })
+    const userIdNum = userId ? parseInt(userId, 10) : null;
+    const user = userIdNum
+      ? await this.userRepository.findOne({ where: { id: userIdNum } })
       : null;
 
     // Construire customerInfo depuis les adresses
@@ -700,7 +701,7 @@ export class OrdersService {
     // Tout cela se fera quand l'admin capturera le paiement
     const newOrder = new Order();
     newOrder.cartId = null;
-    newOrder.userId = userId; // Peut être null pour guest checkout
+    newOrder.userId = userIdNum; // Peut être null pour guest checkout
     newOrder.status = OrderStatus.PENDING;
     newOrder.total = total;
     newOrder.paymentIntentId = paymentIntentId;
@@ -766,7 +767,7 @@ export class OrdersService {
    * Si stock OK : capture le paiement, passe à PAID, décrémente stock, envoie email
    * Si stock KO : annule le PaymentIntent, passe à CANCELLED
    */
-  async capturePayment(orderId: string): Promise<OrderResponseDto> {
+  async capturePayment(orderId: number): Promise<OrderResponseDto> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['cart', 'cart.items', 'cart.items.variant'],
@@ -790,7 +791,7 @@ export class OrdersService {
       );
     }
 
-    let items: Array<{ variantId: string; quantity: number }> = [];
+    let items: Array<{ variantId: number; quantity: number }> = [];
 
     if (order.cart && order.cart.items) {
       // Si on a un cart, utiliser ses items
@@ -910,7 +911,7 @@ export class OrdersService {
    * @param code - Code promo à valider
    * @param cartId - ID du panier
    */
-  async applyCoupon(code: string, cartId: string) {
+  async applyCoupon(code: string, cartId: number) {
     const cart = await this.cartRepository.findOne({
       where: { id: cartId },
       relations: ['items', 'items.variant', 'items.variant.product'],

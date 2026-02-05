@@ -1,6 +1,6 @@
 import { Product } from './product.entity';
 export declare class Brand {
-    id: string;
+    id: number;
     name: string;
     slug: string;
     description: string | null;

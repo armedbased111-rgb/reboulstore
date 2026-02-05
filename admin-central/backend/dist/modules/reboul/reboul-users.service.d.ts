@@ -10,7 +10,7 @@ export declare class ReboulUsersService {
         search?: string;
     }): Promise<{
         data: {
-            id: string;
+            id: number;
             email: string;
             firstName: string;
             lastName: string;
@@ -27,8 +27,8 @@ export declare class ReboulUsersService {
         limit: number;
         totalPages: number;
     }>;
-    findOne(id: string): Promise<{
-        id: string;
+    findOne(id: number | string): Promise<{
+        id: number;
         email: string;
         firstName: string;
         lastName: string;
@@ -40,8 +40,8 @@ export declare class ReboulUsersService {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    updateRole(id: string, role: UserRole): Promise<{
-        id: string;
+    updateRole(id: number | string, role: UserRole): Promise<{
+        id: number;
         email: string;
         firstName: string;
         lastName: string;
@@ -53,7 +53,7 @@ export declare class ReboulUsersService {
         createdAt: Date;
         updatedAt: Date;
     } & User>;
-    remove(id: string): Promise<{
+    remove(id: number | string): Promise<{
         message: string;
     }>;
     getStats(): Promise<{

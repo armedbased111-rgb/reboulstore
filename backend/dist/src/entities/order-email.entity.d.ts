@@ -7,8 +7,8 @@ export declare enum EmailType {
     ORDER_CANCELLED = "order_cancelled"
 }
 export declare class OrderEmail {
-    id: string;
-    orderId: string;
+    id: number;
+    orderId: number;
     order: Order;
     emailType: EmailType;
     recipientEmail: string;

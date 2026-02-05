@@ -115,7 +115,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
         const orderResponse = await this.findOne(savedOrder.id);
         if (orderResponse) {
             try {
-                const orderNumber = `ORD-${orderResponse.id.substring(0, 8).toUpperCase()}`;
+                const orderNumber = `ORD-${String(orderResponse.id)}`;
                 const customerName = orderResponse.customerInfo?.name || 'Client';
                 const nameParts = customerName.split(' ');
                 const firstName = nameParts[0] || 'Client';
@@ -308,7 +308,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
         });
         if (orderWithRelations) {
             if (orderWithRelations.userId) {
-                const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+                const orderNumber = `ORD-${String(orderWithRelations.id)}`;
                 this.notificationsGateway.notifyOrderStatusChanged({
                     id: orderWithRelations.id,
                     orderNumber,
@@ -321,7 +321,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
                 const phoneNumber = orderWithRelations.customerInfo?.phone || orderWithRelations.user?.phone;
                 if (phoneNumber) {
                     try {
-                        const orderNumber = `ORD-${orderWithRelations.id.substring(0, 8).toUpperCase()}`;
+                        const orderNumber = `ORD-${String(orderWithRelations.id)}`;
                         await this.smsService.sendOrderShippedSMS(phoneNumber, orderNumber, orderWithRelations.trackingNumber || undefined, undefined);
                     }
                     catch (error) {
@@ -468,8 +468,9 @@ let OrdersService = OrdersService_1 = class OrdersService {
                 throw new common_1.BadRequestException(`Total mismatch: calculated ${calculatedTotal}, Stripe ${stripeTotal}`);
             }
         }
-        const user = userId
-            ? await this.userRepository.findOne({ where: { id: userId } })
+        const userIdNum = userId ? parseInt(userId, 10) : null;
+        const user = userIdNum
+            ? await this.userRepository.findOne({ where: { id: userIdNum } })
             : null;
         const customerInfoName = customerName ||
             (shippingAddress
@@ -479,7 +480,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
             customerEmail;
         const newOrder = new order_entity_1.Order();
         newOrder.cartId = null;
-        newOrder.userId = userId;
+        newOrder.userId = userIdNum;
         newOrder.status = order_entity_1.OrderStatus.PENDING;
         newOrder.total = total;
         newOrder.paymentIntentId = paymentIntentId;

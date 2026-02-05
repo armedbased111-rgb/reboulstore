@@ -40,6 +40,8 @@ const reboul_settings_service_1 = require("./reboul-settings.service");
 const reboul_settings_controller_1 = require("./reboul-settings.controller");
 const reboul_coupons_service_1 = require("./reboul-coupons.service");
 const reboul_coupons_controller_1 = require("./reboul-coupons.controller");
+const reboul_import_service_1 = require("./reboul-import.service");
+const reboul_import_controller_1 = require("./reboul-import.controller");
 let ReboulModule = class ReboulModule {
 };
 exports.ReboulModule = ReboulModule;
@@ -72,6 +74,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_collections_service_1.ReboulCollectionsService,
             reboul_settings_service_1.ReboulSettingsService,
             reboul_coupons_service_1.ReboulCouponsService,
+            reboul_import_service_1.ReboulImportService,
         ],
         controllers: [
             reboul_products_controller_1.ReboulProductsController,
@@ -83,6 +86,7 @@ exports.ReboulModule = ReboulModule = __decorate([
             reboul_collections_controller_1.ReboulCollectionsController,
             reboul_settings_controller_1.ReboulSettingsController,
             reboul_coupons_controller_1.ReboulCouponsController,
+            reboul_import_controller_1.ReboulImportController,
         ],
         exports: [],
     })

@@ -40,11 +40,11 @@ let ReboulProductsService = class ReboulProductsService {
     async findAll(page = 1, limit = 20, filters) {
         const skip = (page - 1) * limit;
         const where = {};
-        if (filters?.categoryId) {
-            where.categoryId = filters.categoryId;
+        if (filters?.categoryId != null) {
+            where.categoryId = Number(filters.categoryId);
         }
-        if (filters?.brandId) {
-            where.brandId = filters.brandId;
+        if (filters?.brandId != null) {
+            where.brandId = Number(filters.brandId);
         }
         if (filters?.search) {
             where.name = (0, typeorm_2.ILike)(`%${filters.search}%`);
@@ -68,8 +68,9 @@ let ReboulProductsService = class ReboulProductsService {
         };
     }
     async findOne(id) {
+        const numId = Number(id);
         const product = await this.productRepository.findOne({
-            where: { id },
+            where: { id: numId },
             relations: ['category', 'brand', 'images', 'variants'],
         });
         if (!product) {
@@ -166,8 +167,9 @@ let ReboulProductsService = class ReboulProductsService {
     }
     async removeImage(productId, imageId) {
         const product = await this.findOne(productId);
+        const numImageId = Number(imageId);
         const image = await this.imageRepository.findOne({
-            where: { id: imageId, productId: product.id },
+            where: { id: numImageId, productId: product.id },
         });
         if (!image) {
             throw new common_1.NotFoundException(`Image avec l'ID ${imageId} non trouvée pour ce produit`);
@@ -177,8 +179,8 @@ let ReboulProductsService = class ReboulProductsService {
     }
     async updateImagesOrder(productId, images) {
         const product = await this.findOne(productId);
-        await Promise.all(images.map((img) => this.imageRepository.update({ id: img.id, productId: product.id }, { order: img.order })));
-        return this.findOne(productId);
+        await Promise.all(images.map((img) => this.imageRepository.update({ id: Number(img.id), productId: product.id }, { order: img.order })));
+        return this.findOne(product.id);
     }
     async createWithImages(productData, images, variants) {
         const product = await this.create(productData);
@@ -186,7 +188,7 @@ let ReboulProductsService = class ReboulProductsService {
             await Promise.all(images.map((img) => this.addImage(product.id, img)));
         }
         if (variants && variants.length > 0) {
-            await Promise.all(variants.map((variant) => {
+            for (const variant of variants) {
                 const variantEntity = this.variantRepository.create({
                     productId: product.id,
                     color: variant.color,
@@ -194,8 +196,8 @@ let ReboulProductsService = class ReboulProductsService {
                     stock: variant.stock,
                     sku: variant.sku,
                 });
-                return this.variantRepository.save(variantEntity);
-            }));
+                await this.variantRepository.save(variantEntity);
+            }
         }
         return this.findOne(product.id);
     }
@@ -204,14 +206,14 @@ let ReboulProductsService = class ReboulProductsService {
         const product = await this.findOne(id);
         if (images !== undefined) {
             const existingImages = product.images || [];
-            const newImageIds = images.filter((img) => img.id).map((img) => img.id);
+            const newImageIds = images.filter((img) => img.id != null).map((img) => Number(img.id));
             const imagesToDelete = existingImages.filter((img) => !newImageIds.includes(img.id));
             if (imagesToDelete.length > 0) {
                 await Promise.all(imagesToDelete.map((img) => this.imageRepository.remove(img)));
             }
             await Promise.all(images.map(async (img) => {
-                if (img.id) {
-                    await this.imageRepository.update({ id: img.id, productId: product.id }, { url: img.url, publicId: img.publicId || null, alt: img.alt || null, order: img.order });
+                if (img.id != null) {
+                    await this.imageRepository.update({ id: Number(img.id), productId: product.id }, { url: img.url, publicId: img.publicId || null, alt: img.alt || null, order: img.order });
                 }
                 else {
                     await this.addImage(product.id, img);
@@ -220,15 +222,15 @@ let ReboulProductsService = class ReboulProductsService {
         }
         if (variants !== undefined) {
             const existingVariants = product.variants || [];
-            const newVariantIds = variants.filter((v) => v.id).map((v) => v.id);
+            const newVariantIds = variants.filter((v) => v.id != null).map((v) => Number(v.id));
             const variantsToDelete = existingVariants.filter((v) => !newVariantIds.includes(v.id));
             if (variantsToDelete.length > 0) {
                 await Promise.all(variantsToDelete.map((v) => this.variantRepository.remove(v)));
             }
             await Promise.all(variants.map(async (variant) => {
-                if (variant.id) {
+                if (variant.id != null) {
                     const existingVariant = await this.variantRepository.findOne({
-                        where: { id: variant.id, productId: product.id },
+                        where: { id: Number(variant.id), productId: product.id },
                     });
                     if (existingVariant) {
                         existingVariant.color = variant.color;
@@ -250,7 +252,112 @@ let ReboulProductsService = class ReboulProductsService {
                 }
             }));
         }
-        return this.findOne(id);
+        return this.findOne(product.id);
+    }
+    async importFromPaste(pastedText) {
+        const errors = [];
+        let created = 0;
+        const lines = pastedText
+            .split(/\r?\n/)
+            .map((l) => l.trim())
+            .filter(Boolean);
+        if (lines.length === 0) {
+            throw new common_1.BadRequestException('Aucune ligne à importer.');
+        }
+        const detectDelimiter = (line) => {
+            if (line.includes('\t'))
+                return '\t';
+            if (line.includes(';'))
+                return ';';
+            return ',';
+        };
+        const delimiter = detectDelimiter(lines[0]);
+        const splitRow = (line) => line.split(delimiter).map((c) => c.trim());
+        const headerRow = splitRow(lines[0]).map((c) => c.toLowerCase());
+        const iMarque = headerRow.findIndex((h) => /marque/i.test(h));
+        const iGenre = headerRow.findIndex((h) => /genre/i.test(h));
+        const iRef = headerRow.findIndex((h) => /reference|référence/i.test(h));
+        const iStock = headerRow.findIndex((h) => /stock/i.test(h));
+        const hasHeader = [iMarque, iGenre, iRef, iStock].some((i) => i >= 0);
+        const dataStart = hasHeader && lines.length > 1 ? 1 : 0;
+        const col = (row, i, fallback) => (i >= 0 ? row[i] : row[fallback])?.trim() ?? '';
+        const getMarque = (row) => col(row, iMarque, 0);
+        const getGenre = (row) => col(row, iGenre, 1);
+        const getRef = (row) => col(row, iRef, 2);
+        const getStock = (row) => col(row, iStock, 3);
+        const activeCollection = await this.collectionRepository.findOne({ where: { isActive: true } });
+        if (!activeCollection) {
+            throw new common_1.BadRequestException('Aucune collection active. Activez une collection dans Admin > Collections.');
+        }
+        for (let r = dataStart; r < lines.length; r++) {
+            const row = splitRow(lines[r]);
+            const marque = getMarque(row);
+            const genre = getGenre(row);
+            const reference = getRef(row);
+            const stockStr = getStock(row);
+            if (!reference) {
+                errors.push({ row: r + 1, message: 'Reference manquante' });
+                continue;
+            }
+            const stock = parseInt(stockStr, 10);
+            if (isNaN(stock) || stock < 0) {
+                errors.push({ row: r + 1, message: `Stock invalide: ${stockStr}` });
+                continue;
+            }
+            let categoryId;
+            if (genre) {
+                const cat = await this.categoryRepository.findOne({
+                    where: { name: (0, typeorm_2.ILike)(genre) },
+                });
+                if (!cat) {
+                    errors.push({ row: r + 1, message: `Catégorie non trouvée: "${genre}"` });
+                    continue;
+                }
+                categoryId = cat.id;
+            }
+            else {
+                errors.push({ row: r + 1, message: 'Genre (catégorie) manquant' });
+                continue;
+            }
+            let brandId = null;
+            if (marque) {
+                const brand = await this.brandRepository.findOne({
+                    where: { name: (0, typeorm_2.ILike)(marque) },
+                });
+                if (brand)
+                    brandId = brand.id;
+            }
+            const size = reference.split(/[- ]/).pop() || reference;
+            const sku = reference;
+            const existingSku = await this.variantRepository.findOne({ where: { sku } });
+            if (existingSku) {
+                errors.push({ row: r + 1, message: `SKU déjà existant: ${sku}` });
+                continue;
+            }
+            try {
+                const product = await this.create({
+                    name: reference,
+                    price: 0,
+                    categoryId,
+                    brandId,
+                    collectionId: activeCollection.id,
+                    reference,
+                });
+                const variantEntity = this.variantRepository.create({
+                    productId: product.id,
+                    color: '—',
+                    size,
+                    stock,
+                    sku,
+                });
+                await this.variantRepository.save(variantEntity);
+                created++;
+            }
+            catch (e) {
+                errors.push({ row: r + 1, message: e?.message || 'Erreur création produit' });
+            }
+        }
+        return { created, errors };
     }
 };
 exports.ReboulProductsService = ReboulProductsService;

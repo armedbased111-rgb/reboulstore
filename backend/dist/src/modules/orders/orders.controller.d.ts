@@ -19,7 +19,7 @@ export declare class OrdersController {
     }>;
     findMyOrders(req: any): Promise<import("./dto/order-response.dto").OrderResponseDto[]>;
     findAll(): Promise<import("./dto/order-response.dto").OrderResponseDto[]>;
-    findOne(id: string, req: any): Promise<import("./dto/order-response.dto").OrderResponseDto>;
+    findOne(id: number, req: any): Promise<import("./dto/order-response.dto").OrderResponseDto>;
     testEmail(body: {
         type: string;
         email: string;
@@ -37,8 +37,8 @@ export declare class OrdersController {
         stack: any;
         message?: undefined;
     }>;
-    cancel(id: string, req: any): Promise<import("./dto/order-response.dto").OrderResponseDto>;
-    updateStatus(id: string, updateStatusDto: UpdateOrderStatusDto): Promise<import("./dto/order-response.dto").OrderResponseDto>;
-    downloadInvoice(id: string, req: any, res: Response): Promise<void>;
-    capturePayment(id: string): Promise<import("./dto/order-response.dto").OrderResponseDto>;
+    cancel(id: number, req: any): Promise<import("./dto/order-response.dto").OrderResponseDto>;
+    updateStatus(id: number, updateStatusDto: UpdateOrderStatusDto): Promise<import("./dto/order-response.dto").OrderResponseDto>;
+    downloadInvoice(id: number, req: any, res: Response): Promise<void>;
+    capturePayment(id: number): Promise<import("./dto/order-response.dto").OrderResponseDto>;
 }

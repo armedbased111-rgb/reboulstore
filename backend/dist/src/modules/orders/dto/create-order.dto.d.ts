@@ -11,7 +11,7 @@ declare class CustomerInfoDto {
     address: AddressDto;
 }
 export declare class CreateOrderDto {
-    cartId: string;
+    cartId: number;
     customerInfo: CustomerInfoDto;
     couponCode?: string;
 }

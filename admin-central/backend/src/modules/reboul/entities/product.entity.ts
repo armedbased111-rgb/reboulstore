@@ -17,8 +17,8 @@ import { Collection } from './collection.entity';
 
 @Entity('products')
 export class Product {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -32,32 +32,32 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'uuid' })
-  categoryId: string;
+  @Column({ type: 'int', name: 'category_id' })
+  categoryId: number;
 
   @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn({ name: 'categoryId' })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column({ type: 'uuid', nullable: true })
-  shopId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'shop_id' })
+  shopId: number | null;
 
   @ManyToOne(() => Shop, (shop) => shop.products)
-  @JoinColumn({ name: 'shopId' })
+  @JoinColumn({ name: 'shop_id' })
   shop: Shop | null;
 
-  @Column({ type: 'uuid', nullable: true })
-  brandId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'brand_id' })
+  brandId: number | null;
 
   @ManyToOne(() => Brand, (brand) => brand.products)
-  @JoinColumn({ name: 'brandId' })
+  @JoinColumn({ name: 'brand_id' })
   brand: Brand | null;
 
-  @Column({ type: 'uuid', nullable: true })
-  collectionId: string | null;
+  @Column({ type: 'int', nullable: true, name: 'collection_id' })
+  collectionId: number | null;
 
   @ManyToOne(() => Collection, (collection) => collection.products)
-  @JoinColumn({ name: 'collectionId' })
+  @JoinColumn({ name: 'collection_id' })
   collection: Collection | null;
 
   @OneToMany(() => Image, (image) => image.product)
@@ -66,23 +66,23 @@ export class Product {
   @OneToMany(() => Variant, (variant) => variant.product)
   variants: Variant[];
 
-  /**
-   * Informations spécifiques au produit
-   */
+  @Column({ type: 'text', nullable: true, name: 'variants' })
+  variantsData: string | null;
+
   @Column({ type: 'text', nullable: true })
   materials: string | null; // Ex: "100% Cotton"
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true, name: 'care_instructions' })
   careInstructions: string | null; // Ex: "Machine wash cold"
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true, name: 'made_in' })
   madeIn: string | null; // Ex: "France"
 
   /**
    * Size chart custom pour ce produit (override celui de la catégorie)
    * Si null, le produit utilise le size chart de sa catégorie
    */
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true, name: 'custom_size_chart' })
   customSizeChart: Array<{
     size: string;
     chest?: number;
@@ -91,9 +91,9 @@ export class Product {
     hip?: number;
   }> | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

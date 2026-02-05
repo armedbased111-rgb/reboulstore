@@ -46,8 +46,14 @@ export default function CreateCategoryPage() {
       
       await reboulCategoriesService.createCategory(dataToSend);
       navigate('/admin/reboul/categories');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la création de la catégorie');
+    } catch (err: unknown) {
+      let msg = 'Erreur lors de la création de la catégorie';
+      if (err && typeof err === 'object' && 'response' in err) {
+        const data = (err as { response?: { data?: { message?: string | string[] } } }).response?.data;
+        const m = data?.message;
+        msg = Array.isArray(m) ? m.join(', ') : (m ?? msg);
+      } else if (err instanceof Error) msg = err.message;
+      setError(msg);
       setIsLoading(false);
     }
   };

@@ -22,14 +22,14 @@ export class ReboulStocksService {
    * Récupérer tous les stocks Reboul avec filtres
    */
   async findAll(filters?: {
-    lowStock?: boolean; // Stock ≤ 5
-    outOfStock?: boolean; // Stock = 0
-    productId?: string;
+    lowStock?: boolean;
+    outOfStock?: boolean;
+    productId?: number | string;
   }) {
     const where: FindOptionsWhere<Variant> = {};
 
-    if (filters?.productId) {
-      where.productId = filters.productId;
+    if (filters?.productId != null) {
+      where.productId = Number(filters.productId);
     }
 
     if (filters?.outOfStock) {
@@ -50,9 +50,10 @@ export class ReboulStocksService {
   /**
    * Récupérer le stock d'un variant spécifique
    */
-  async findOne(variantId: string) {
+  async findOne(variantId: number | string) {
+    const numId = Number(variantId);
     const variant = await this.variantRepository.findOne({
-      where: { id: variantId },
+      where: { id: numId },
       relations: ['product'],
     });
 
@@ -66,7 +67,7 @@ export class ReboulStocksService {
   /**
    * Mettre à jour le stock d'un variant
    */
-  async updateStock(variantId: string, stock: number) {
+  async updateStock(variantId: number | string, stock: number) {
     if (stock < 0) {
       throw new Error('Le stock ne peut pas être négatif');
     }

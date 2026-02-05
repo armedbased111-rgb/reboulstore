@@ -6,7 +6,7 @@ export declare enum UserRole {
     SUPER_ADMIN = "SUPER_ADMIN"
 }
 export declare class User {
-    id: string;
+    id: number;
     email: string;
     password?: string;
     firstName: string;

@@ -12,9 +12,9 @@ export declare class StockService {
     private notificationsGateway;
     private readonly STOCK_LOW_THRESHOLD;
     constructor(variantRepository: Repository<Variant>, orderRepository: Repository<Order>, cartItemRepository: Repository<CartItem>, productRepository: Repository<Product>, notificationsGateway: NotificationsGateway);
-    checkStockAvailability(variantId: string, quantity: number): Promise<Variant>;
-    decrementStock(variantId: string, quantity: number): Promise<Variant>;
-    incrementStock(variantId: string, quantity: number): Promise<Variant>;
-    decrementStockForOrder(orderId: string): Promise<void>;
-    incrementStockForOrder(orderId: string): Promise<void>;
+    checkStockAvailability(variantId: number, quantity: number): Promise<Variant>;
+    decrementStock(variantId: number, quantity: number): Promise<Variant>;
+    incrementStock(variantId: number, quantity: number): Promise<Variant>;
+    decrementStockForOrder(orderId: number): Promise<void>;
+    incrementStockForOrder(orderId: number): Promise<void>;
 }

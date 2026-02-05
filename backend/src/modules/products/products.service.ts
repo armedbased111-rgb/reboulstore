@@ -94,21 +94,19 @@ export class ProductsService {
 
     // Filtre par catégorie
     if (category) {
-      where.categoryId = category;
+      const categoryId = typeof category === 'string' ? parseInt(category, 10) : category;
+      if (!isNaN(categoryId)) where.categoryId = categoryId;
     }
 
-    // Filtre par marque (accepte UUID ou slug)
+    // Filtre par marque (accepte id ou slug)
     if (brand) {
-      // Vérifier si c'est un UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand);
-      
-      if (isUUID) {
-        // C'est un UUID, utiliser directement
-      where.brandId = brand;
+      const brandIdNum = typeof brand === 'string' ? parseInt(brand, 10) : brand;
+      if (!isNaN(brandIdNum)) {
+        where.brandId = brandIdNum;
       } else {
         // C'est un slug, chercher la marque par slug
         const brandEntity = await this.brandRepository.findOne({
-          where: { slug: brand },
+          where: { slug: brand as string },
         });
         
         if (brandEntity) {
@@ -153,7 +151,7 @@ export class ProductsService {
     };
   }
 
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: number): Promise<Product> {
     const cacheKey = `product:${id}`;
     
     // Vérifier le cache
@@ -177,7 +175,7 @@ export class ProductsService {
     return product;
   }
 
-  async findByCategory(categoryId: string, query: ProductQueryDto) {
+  async findByCategory(categoryId: number, query: ProductQueryDto) {
     const {
       minPrice,
       maxPrice,
@@ -284,7 +282,7 @@ export class ProductsService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const product = await this.findOne(id);
@@ -325,7 +323,7 @@ export class ProductsService {
     return savedProduct;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);
     
@@ -334,7 +332,7 @@ export class ProductsService {
     // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
   }
 
-  async findVariantsByProduct(productId: string): Promise<Variant[]> {
+  async findVariantsByProduct(productId: number): Promise<Variant[]> {
     // Vérifier que le produit existe
     await this.findOne(productId);
 
@@ -344,7 +342,7 @@ export class ProductsService {
     });
   }
 
-  async findVariantById(id: string): Promise<Variant> {
+  async findVariantById(id: number): Promise<Variant> {
     const variant = await this.variantRepository.findOne({
       where: { id },
       relations: ['product'],
@@ -358,7 +356,7 @@ export class ProductsService {
   }
 
   async createVariant(
-    productId: string,
+    productId: number,
     createVariantDto: CreateVariantDto,
   ): Promise<Variant> {
     // Vérifier que le produit existe
@@ -383,7 +381,7 @@ export class ProductsService {
   }
 
   async updateVariant(
-    id: string,
+    id: number,
     updateVariantDto: UpdateVariantDto,
   ): Promise<Variant> {
     const variant = await this.findVariantById(id);
@@ -405,11 +403,11 @@ export class ProductsService {
   }
 
   async checkStock(
-    variantId: string,
+    variantId: number,
     quantity: number,
   ): Promise<{
     available: boolean;
-    variantId: string;
+    variantId: number;
     currentStock: number;
     requestedQuantity: number;
   }> {
@@ -422,7 +420,7 @@ export class ProductsService {
     };
   }
 
-  async updateStock(variantId: string, quantity: number): Promise<Variant> {
+  async updateStock(variantId: number, quantity: number): Promise<Variant> {
     const variant = await this.findVariantById(variantId);
 
     if (variant.stock + quantity < 0) {
@@ -433,7 +431,7 @@ export class ProductsService {
     return this.variantRepository.save(variant);
   }
 
-  async findImagesByProduct(productId: string): Promise<Image[]> {
+  async findImagesByProduct(productId: number): Promise<Image[]> {
     // Vérifier que le produit existe
     await this.findOne(productId);
 
@@ -444,7 +442,7 @@ export class ProductsService {
   }
 
   async createImage(
-    productId: string,
+    productId: number,
     file: MulterFile,
     createImageDto: CreateImageDto,
   ): Promise<Image> {
@@ -482,7 +480,7 @@ export class ProductsService {
   }
 
   async createImagesBulk(
-    productId: string,
+    productId: number,
     files: MulterFile[],
     createImageDtos: CreateImageDto[],
   ): Promise<Image[]> {
@@ -552,7 +550,7 @@ export class ProductsService {
     return createdImages;
   }
 
-  async deleteImage(id: string): Promise<void> {
+  async deleteImage(id: number): Promise<void> {
     const image = await this.imageRepository.findOne({
       where: { id },
     });
@@ -571,7 +569,7 @@ export class ProductsService {
   }
 
   async updateImageOrder(
-    id: string,
+    id: number,
     updateOrderDto: UpdateImageOrderDto,
   ): Promise<Image> {
     const image = await this.imageRepository.findOne({

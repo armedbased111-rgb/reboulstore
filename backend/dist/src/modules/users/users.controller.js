@@ -81,26 +81,26 @@ __decorate([
 __decorate([
     (0, common_1.Get)('me/addresses/:id'),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAddress", null);
 __decorate([
     (0, common_1.Patch)('me/addresses/:id'),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, update_address_dto_1.UpdateAddressDto]),
+    __metadata("design:paramtypes", [Object, Number, update_address_dto_1.UpdateAddressDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateAddress", null);
 __decorate([
     (0, common_1.Delete)('me/addresses/:id'),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteAddress", null);
 exports.UsersController = UsersController = __decorate([

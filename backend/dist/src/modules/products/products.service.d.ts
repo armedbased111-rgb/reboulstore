@@ -31,8 +31,8 @@ export declare class ProductsService {
     private cacheManager;
     constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>, variantRepository: Repository<Variant>, imageRepository: Repository<Image>, collectionRepository: Repository<Collection>, brandRepository: Repository<Brand>, cloudinaryService: CloudinaryService, cacheManager: Cache);
     findAll(query: ProductQueryDto): Promise<{}>;
-    findOne(id: string): Promise<Product>;
-    findByCategory(categoryId: string, query: ProductQueryDto): Promise<{
+    findOne(id: number): Promise<Product>;
+    findByCategory(categoryId: number, query: ProductQueryDto): Promise<{
         products: Product[];
         total: number;
         page: number;
@@ -40,23 +40,23 @@ export declare class ProductsService {
         totalPages: number;
     }>;
     create(createProductDto: CreateProductDto): Promise<Product>;
-    update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
-    remove(id: string): Promise<void>;
-    findVariantsByProduct(productId: string): Promise<Variant[]>;
-    findVariantById(id: string): Promise<Variant>;
-    createVariant(productId: string, createVariantDto: CreateVariantDto): Promise<Variant>;
-    updateVariant(id: string, updateVariantDto: UpdateVariantDto): Promise<Variant>;
-    checkStock(variantId: string, quantity: number): Promise<{
+    update(id: number, updateProductDto: UpdateProductDto): Promise<Product>;
+    remove(id: number): Promise<void>;
+    findVariantsByProduct(productId: number): Promise<Variant[]>;
+    findVariantById(id: number): Promise<Variant>;
+    createVariant(productId: number, createVariantDto: CreateVariantDto): Promise<Variant>;
+    updateVariant(id: number, updateVariantDto: UpdateVariantDto): Promise<Variant>;
+    checkStock(variantId: number, quantity: number): Promise<{
         available: boolean;
-        variantId: string;
+        variantId: number;
         currentStock: number;
         requestedQuantity: number;
     }>;
-    updateStock(variantId: string, quantity: number): Promise<Variant>;
-    findImagesByProduct(productId: string): Promise<Image[]>;
-    createImage(productId: string, file: MulterFile, createImageDto: CreateImageDto): Promise<Image>;
-    createImagesBulk(productId: string, files: MulterFile[], createImageDtos: CreateImageDto[]): Promise<Image[]>;
-    deleteImage(id: string): Promise<void>;
-    updateImageOrder(id: string, updateOrderDto: UpdateImageOrderDto): Promise<Image>;
+    updateStock(variantId: number, quantity: number): Promise<Variant>;
+    findImagesByProduct(productId: number): Promise<Image[]>;
+    createImage(productId: number, file: MulterFile, createImageDto: CreateImageDto): Promise<Image>;
+    createImagesBulk(productId: number, files: MulterFile[], createImageDtos: CreateImageDto[]): Promise<Image[]>;
+    deleteImage(id: number): Promise<void>;
+    updateImageOrder(id: number, updateOrderDto: UpdateImageOrderDto): Promise<Image>;
 }
 export {};

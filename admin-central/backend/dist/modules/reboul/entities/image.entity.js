@@ -24,19 +24,19 @@ let Image = class Image {
 };
 exports.Image = Image;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Image.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'product_id' }),
+    __metadata("design:type", Number)
 ], Image.prototype, "productId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 500 }),
     __metadata("design:type", String)
 ], Image.prototype, "url", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true, name: 'public_id' }),
     __metadata("design:type", Object)
 ], Image.prototype, "publicId", void 0);
 __decorate([
@@ -49,11 +49,11 @@ __decorate([
 ], Image.prototype, "order", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => product_entity_1.Product, (product) => product.images),
-    (0, typeorm_1.JoinColumn)({ name: 'productId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.Product)
 ], Image.prototype, "product", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Image.prototype, "createdAt", void 0);
 exports.Image = Image = __decorate([

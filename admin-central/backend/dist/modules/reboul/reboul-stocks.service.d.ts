@@ -8,10 +8,10 @@ export declare class ReboulStocksService {
     findAll(filters?: {
         lowStock?: boolean;
         outOfStock?: boolean;
-        productId?: string;
+        productId?: number | string;
     }): Promise<Variant[]>;
-    findOne(variantId: string): Promise<Variant>;
-    updateStock(variantId: string, stock: number): Promise<Variant>;
+    findOne(variantId: number | string): Promise<Variant>;
+    updateStock(variantId: number | string, stock: number): Promise<Variant>;
     getStats(): Promise<{
         total: number;
         inStock: number;

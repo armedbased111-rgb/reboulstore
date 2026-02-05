@@ -10,16 +10,16 @@ import { Product } from './product.entity';
 
 @Entity('collections')
 export class Collection {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 100, unique: true })
   name: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'display_name' })
   displayName: string | null;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: false, name: 'is_active' })
   isActive: boolean;
 
   @Column({ type: 'text', nullable: true })
@@ -28,10 +28,10 @@ export class Collection {
   @OneToMany(() => Product, (product) => product.collection)
   products: Product[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
 

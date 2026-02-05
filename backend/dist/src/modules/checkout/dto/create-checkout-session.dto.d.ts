@@ -1,5 +1,5 @@
 declare class CheckoutItemDto {
-    variantId: string;
+    variantId: number;
     quantity: number;
 }
 export declare class CreateCheckoutSessionDto {

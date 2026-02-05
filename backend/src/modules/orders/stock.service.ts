@@ -36,7 +36,7 @@ export class StockService {
    * @throws BadRequestException si le stock est insuffisant
    */
   async checkStockAvailability(
-    variantId: string,
+    variantId: number,
     quantity: number,
   ): Promise<Variant> {
     const variant = await this.variantRepository.findOne({
@@ -64,7 +64,7 @@ export class StockService {
    * @throws NotFoundException si la variante n'existe pas
    * @throws BadRequestException si le stock est insuffisant
    */
-  async decrementStock(variantId: string, quantity: number): Promise<Variant> {
+  async decrementStock(variantId: number, quantity: number): Promise<Variant> {
     const variant = await this.checkStockAvailability(variantId, quantity);
 
     variant.stock -= quantity;
@@ -97,7 +97,7 @@ export class StockService {
    * @returns La variante mise à jour
    * @throws NotFoundException si la variante n'existe pas
    */
-  async incrementStock(variantId: string, quantity: number): Promise<Variant> {
+  async incrementStock(variantId: number, quantity: number): Promise<Variant> {
     const variant = await this.variantRepository.findOne({
       where: { id: variantId },
     });
@@ -117,7 +117,7 @@ export class StockService {
    * @param orderId - ID de la commande
    * @throws NotFoundException si la commande n'existe pas
    */
-  async decrementStockForOrder(orderId: string): Promise<void> {
+  async decrementStockForOrder(orderId: number): Promise<void> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['cart', 'cart.items'],
@@ -154,7 +154,7 @@ export class StockService {
    * @param orderId - ID de la commande
    * @throws NotFoundException si la commande n'existe pas
    */
-  async incrementStockForOrder(orderId: string): Promise<void> {
+  async incrementStockForOrder(orderId: number): Promise<void> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['cart', 'cart.items'],

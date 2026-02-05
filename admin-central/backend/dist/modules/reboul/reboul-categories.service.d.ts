@@ -10,7 +10,7 @@ export declare class ReboulCategoriesService {
     }): Promise<{
         data: {
             productsCount: number;
-            id: string;
+            id: number;
             name: string;
             slug: string;
             description: string | null;
@@ -32,9 +32,9 @@ export declare class ReboulCategoriesService {
         limit: number;
         totalPages: number;
     }>;
-    findOne(id: string): Promise<{
+    findOne(id: number | string): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -54,7 +54,7 @@ export declare class ReboulCategoriesService {
     create(categoryData: Partial<Category>): Promise<Category>;
     update(id: string, updateData: Partial<Category>): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -71,7 +71,7 @@ export declare class ReboulCategoriesService {
         createdAt: Date;
         updatedAt: Date;
     } & Category>;
-    remove(id: string): Promise<{
+    remove(id: number | string): Promise<{
         message: string;
     }>;
 }

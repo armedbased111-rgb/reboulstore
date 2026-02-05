@@ -2,11 +2,11 @@ import { Order, OrderStatus } from '../../../entities/order.entity';
 import { Cart } from '../../../entities/cart.entity';
 
 export class OrderResponseDto {
-  id: string;
-  cartId: string | null;
+  id: number;
+  cartId: number | null;
   status: OrderStatus;
   total: number;
-  couponId?: string | null;
+  couponId?: number | null;
   discountAmount?: number | null;
   customerInfo: {
     name: string;
@@ -20,19 +20,19 @@ export class OrderResponseDto {
     };
   };
   cart?: {
-    id: string;
+    id: number;
     sessionId: string;
     items: Array<{
-      id: string;
-      variantId: string;
+      id: number;
+      variantId: number;
       quantity: number;
       variant: {
-        id: string;
+        id: number;
         color: string;
         size: string;
         sku: string;
         product: {
-          id: string;
+          id: number;
           name: string;
           price: string;
         };

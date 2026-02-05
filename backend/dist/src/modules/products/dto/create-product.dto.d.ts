@@ -2,10 +2,10 @@ export declare class CreateProductDto {
     name: string;
     description?: string;
     price: number;
-    categoryId: string;
-    shopId?: string;
-    brandId?: string;
-    collectionId?: string;
+    categoryId: number;
+    shopId?: number;
+    brandId?: number;
+    collectionId?: number;
     materials?: string;
     careInstructions?: string;
     madeIn?: string;

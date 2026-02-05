@@ -2,7 +2,7 @@
 
 **Version** : 4.3  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 05/01/2026 à 20:50
+**Dernière mise à jour** : 30/01/2026
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -2372,7 +2372,7 @@ docker compose up backend frontend
 
 **📅 Date cible** : Février 2025 (sortie officielle)
 
-**📋 Statut** : 🟢 **EN COURS** - 24.1 ✅, 24.2 ✅, 24.4 ✅ terminées. Reste : 24.3, 24.5bis, 24.6, 24.7, 24.8, 24.9
+**📋 Statut** : 🟢 **EN COURS** - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ terminées. Reste : 24.3, 24.6, 24.7, 24.8, 24.9
 
 **📅 Après Phase 24** : Phase 25 (Finalisation Avant Lancement) - Recherche, Home, SEO, Tests, Performance
 
@@ -2384,13 +2384,13 @@ docker compose up backend frontend
 3. ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
 4. ✅ **24.4** Système Rotation Collections - **TERMINÉ**
 5. ⚠️ **24.5** Intégration AS400 - **EN SUSPENS** (approche manuelle adoptée)
-6. ⏳ **24.5bis** Import Manuel Collections via Tables/CSV - **À FAIRE** (priorité haute)
+6. ✅ **24.5bis** Import Manuel Collections via Tables/CSV - **TERMINÉ** (fonctionnel, tests OK ; import Stone à finaliser)
 7. ⏳ **24.6** Amélioration Processus Stocks - **À FAIRE** (gestion manuelle + alertes réassort)
 8. ⏳ **24.7** Workflow Images Produits - **PRESQUE TERMINÉ** (peut être fait en parallèle)
 9. ⏳ **24.8** Workflow Ajout Continu Produits - **À FAIRE** (entrée manuelle continue)
 10. ⏳ **24.9** Checklist Finale - Validation Collection - **À FAIRE** (en dernier)
 
-**📊 Progression Phase 24** : 3/10 sous-phases terminées (30%)
+**📊 Progression Phase 24** : 4/10 sous-phases terminées (40%)
 
 **Dépendances clés** :
 - 24.4 (Rotation Collections) ✅ **TERMINÉ** → **AVANT** 24.5bis (Import Manuel)
@@ -2644,46 +2644,49 @@ docker compose up backend frontend
   - [ ] Rapport post-import (statistiques)
   - [ ] Vérification données importées (échantillonnage)
 
-### 24.5bis Import Manuel Collections via Tables/CSV
+### 24.5bis Import Manuel Collections via Tables/CSV ✅
 
 **Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via entrée manuelle dans l'Admin
 
+**📊 Statut** : **Fonctionnel** (tests OK ; import complet Stone à finaliser par l'utilisateur)
+
 **📊 Informations** : Collections reçues une à une sous forme de table, entrée manuelle des données une à une
 
-- [ ] **Préparation format données** :
-  - [ ] Définir format table/CSV attendu (colonnes, structure)
-  - [ ] Créer template Excel/CSV pour faciliter la préparation des données
-  - [ ] Documenter mapping colonnes table → notre structure DB
+- [x] **Préparation format données** :
+  - [x] Définir format table/CSV attendu (colonnes, structure)
+  - [x] Créer template Excel/CSV pour faciliter la préparation des données
+  - [x] Documenter mapping colonnes table → notre structure DB
 
-- [ ] **Interface Admin - Import Collection** :
-  - [ ] Créer page Admin pour import collection (upload fichier CSV/Excel)
-  - [ ] Parser fichier CSV/Excel (validation format)
-  - [ ] Prévisualisation données avant import
-  - [ ] Validation données (champs requis, formats, contraintes)
-  - [ ] Gestion erreurs (afficher lignes avec erreurs)
+- [x] **Interface Admin - Import Collection** :
+  - [x] Créer page Admin pour import collection (upload fichier CSV/Excel)
+  - [x] Parser fichier CSV/Excel (validation format, délimiteur ; ou ,)
+  - [x] Prévisualisation données avant import
+  - [x] Validation données (champs requis, formats, contraintes)
+  - [x] Gestion erreurs (afficher lignes avec erreurs)
 
-- [ ] **Processus import** :
-  - [ ] Créer produits depuis données table (avec vérification doublons)
-  - [ ] **Assigner collection active** aux produits importés (dépend de 24.4 ✅)
-  - [ ] Créer variants avec stocks (taille, couleur, stock)
-  - [ ] Gérer création/association marques et catégories
+- [x] **Processus import** :
+  - [x] Créer produits depuis données table (regroupement par référence de base, pas par nom seul)
+  - [x] **Assigner collection active** aux produits importés (dépend de 24.4 ✅)
+  - [x] Créer variants avec stocks (taille, couleur, stock) — ordre trié (tailles numériques puis lettres)
+  - [x] Référence produit sans taille (ref base uniquement)
+  - [x] Gérer création/association marques et catégories
   - [ ] Gérer images (association après upload - voir 24.7)
 
-- [ ] **Workflow entrée manuelle** :
-  - [ ] Guide étape par étape pour entrer une collection
-  - [ ] Processus validation avant publication
-  - [ ] Checklist qualité données avant import
+- [x] **Workflow entrée manuelle** :
+  - [x] Processus validation avant publication
+  - [ ] Guide étape par étape pour entrer une collection (optionnel)
+  - [ ] Checklist qualité données avant import (optionnel)
 
-- [ ] **Documentation** :
-  - [ ] Documenter workflow import manuel
-  - [ ] Créer guide utilisation Admin pour import
-  - [ ] Template Excel/CSV avec exemples
+- [x] **Documentation** :
+  - [x] Documenter workflow import manuel
+  - [x] Template Excel/CSV avec exemples
+  - [ ] Créer guide utilisation Admin pour import (optionnel)
 
-- [ ] **Validation** :
-  - [ ] Tester import collection complète
-  - [ ] Vérifier produits créés correctement
-  - [ ] Vérifier variants et stocks
-  - [ ] Vérifier association marques/catégories
+- [x] **Validation** :
+  - [x] Tester import collection complète (Stone Island : 5 ref, 39 variants — OK)
+  - [x] Vérifier produits créés correctement (réf sans taille, 1 produit par ref)
+  - [x] Vérifier variants et stocks (ordre tailles correct)
+  - [x] Vérifier association marques/catégories
 
 ### 24.6 Amélioration Processus Stocks - Gestion Manuelle
 
@@ -3118,7 +3121,7 @@ docker compose up backend frontend
   - ✅ 24.1 Documentation & Contexte (terminé)
   - ✅ 24.2 Insertion Marques avec Logos (terminé)
   - ✅ 24.4 Système Rotation Collections (terminé)
-  - ⏳ 24.3, 24.5bis, 24.6, 24.7, 24.8, 24.9 (en cours)
+  - ⏳ 24.3, 24.6, 24.7, 24.8, 24.9 (en cours)
 - **Phase 25** : Finalisation Avant Lancement ⏳ À FAIRE
   - 🔴 25.1 Recherche Produits (CRITICAL)
   - 🔴 25.2 Page Home Complète (CRITICAL)
@@ -3137,7 +3140,7 @@ docker compose up backend frontend
   - ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
   - ✅ **24.4** Système Rotation Collections (terminé)
   - ⚠️ **24.5** Intégration AS400 (EN SUSPENS - approche manuelle adoptée)
-  - ⏳ **24.5bis** Import Manuel Collections via Tables/CSV (à créer)
+  - ✅ **24.5bis** Import Manuel Collections via Tables/CSV (fonctionnel)
   - ⏳ **24.6** Amélioration Processus Stocks (gestion manuelle + alertes réassort)
   - ⏳ **24.7** Workflow Images Produits (presque terminé)
   - ⏳ **24.8** Workflow Ajout Continu Produits (entrée manuelle continue)

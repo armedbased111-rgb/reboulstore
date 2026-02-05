@@ -32,17 +32,16 @@
               "state": {
                 "file": "obsidian-vault/Canvas/Workflow-Deploy.canvas",
                 "viewState": {
-                  "x": 532.7306521400594,
-                  "y": 971.3598521502477,
-                  "zoom": -0.50337134660382
+                  "x": 593.9374496349312,
+                  "y": 794.5402149428396,
+                  "zoom": -0.8703923565258476
                 }
               },
               "icon": "lucide-layout-dashboard",
               "title": "Workflow-Deploy"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -204,19 +203,29 @@
       "bases:Create new base": false
     }
   },
-  "active": "788432563014b5e7",
+  "active": "3e0655cdde2bb3a8",
   "lastOpenFiles": [
-    "frontend/dist/assets/index-Dy94GrnI.js",
-    "frontend/dist/assets/index-87Sp_BI5.js",
-    "admin-central/backend/dist/tsconfig.tsbuildinfo",
-    "admin-central/backend/dist/main.d.ts",
-    "admin-central/backend/dist/main.js",
-    "admin-central/backend/dist/main.js.map",
-    "admin-central/backend/dist/app.module.d.ts",
-    "admin-central/backend/dist/app.module.js",
-    "admin-central/backend/dist/app.module.js.map",
-    "admin-central/backend/dist/modules/cloudinary/cloudinary.module.d.ts",
-    "admin-central/backend/dist/modules/cloudinary/cloudinary.module.js",
+    "docs/import-collection-template.csv",
+    "admin-central/frontend/dist/assets/index-BdFGt_4z.js",
+    "admin-central/frontend/dist/assets/index-B9NTbTsG.css",
+    "admin-central/frontend/src/services/reboul-import.service.ts",
+    "backend/dist/templates/emails/stock-available.hbs",
+    "backend/dist/templates/emails/shipping-notification.hbs",
+    "backend/dist/templates/emails/registration-confirmation.hbs",
+    "backend/dist/templates/emails/order-received.hbs",
+    "backend/dist/templates/emails/order-delivered.hbs",
+    "backend/dist/templates/emails/order-confirmation.hbs",
+    "backend/dist/templates/emails/order-cancelled.hbs",
+    "admin-central/backend/node_modules/proxy-from-env/README.md",
+    "admin-central/backend/node_modules/axios/lib/helpers/README.md",
+    "admin-central/backend/node_modules/axios/lib/env/README.md",
+    "admin-central/backend/node_modules/axios/lib/core/README.md",
+    "admin-central/backend/node_modules/axios/lib/adapters/README.md",
+    "admin-central/backend/node_modules/axios/README.md",
+    "admin-central/backend/node_modules/axios/MIGRATION_GUIDE.md",
+    "admin-central/backend/node_modules/axios/CHANGELOG.md",
+    "admin-central/backend/node_modules/follow-redirects/README.md",
+    "admin-central/backend/node_modules/csv-parse/README.md",
     "obsidian-vault/Canvas/Workflow-CLI.canvas",
     "obsidian-vault/Canvas/Workflow-Deploy.canvas",
     "obsidian-vault/Canvas/Regle-Deploiement.canvas",
@@ -245,16 +254,6 @@
     "backend/node_modules/engine.io/node_modules/mime-types/README.md",
     "backend/node_modules/engine.io/node_modules/mime-types/HISTORY.md",
     "backend/node_modules/engine.io/node_modules/mime-db/README.md",
-    "backend/node_modules/engine.io/node_modules/mime-db/HISTORY.md",
-    "backend/node_modules/engine.io/node_modules/accepts/HISTORY.md",
-    "backend/node_modules/engine.io/node_modules/accepts/README.md",
-    "backend/node_modules/engine.io/README.md",
-    "backend/node_modules/@socket.io/component-emitter/Readme.md",
-    "backend/node_modules/cache-manager-redis-store/node_modules/@redis/search/README.md",
-    "backend/node_modules/cache-manager-redis-store/node_modules/@redis/time-series/README.md",
-    "backend/node_modules/cache-manager-redis-store/node_modules/@redis/client/README.md",
-    "backend/node_modules/cache-manager-redis-store/node_modules/@redis/json/README.md",
-    "backend/node_modules/cache-manager-redis-store/node_modules/@redis/graph/README.md",
     "obsidian-vault/Canvas/Regle-Database.canvas",
     "obsidian-vault/Canvas/Workflow-Database-Securite.canvas",
     "obsidian-vault/Canvas/Architecture.canvas",

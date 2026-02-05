@@ -72,4 +72,15 @@ export const reboulProductsService = {
   async deleteProduct(id: string): Promise<void> {
     await api.delete(`/admin/reboul/products/${id}`);
   },
+
+  /**
+   * Importer des produits depuis un tableau collé (Marque, Genre, Reference, Stock).
+   */
+  async importFromPaste(pastedText: string): Promise<{ created: number; errors: { row: number; message: string }[] }> {
+    const response = await api.post<{ created: number; errors: { row: number; message: string }[] }>(
+      '/admin/reboul/products/import-from-paste',
+      { pastedText },
+    );
+    return response.data;
+  },
 };

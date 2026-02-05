@@ -7,7 +7,7 @@ export declare class ReboulOrdersService {
     constructor(orderRepository: Repository<Order>, userRepository: Repository<User>);
     findAll(page?: number, limit?: number, filters?: {
         status?: OrderStatus;
-        userId?: string;
+        userId?: number | string;
         startDate?: Date;
         endDate?: Date;
     }): Promise<{
@@ -17,8 +17,8 @@ export declare class ReboulOrdersService {
         limit: number;
         totalPages: number;
     }>;
-    findOne(id: string): Promise<Order>;
-    updateStatus(id: string, status: OrderStatus): Promise<Order>;
+    findOne(id: number | string): Promise<Order>;
+    updateStatus(id: number | string, status: OrderStatus): Promise<Order>;
     addTracking(id: string, trackingNumber: string): Promise<Order>;
     getStats(): Promise<{
         total: number;

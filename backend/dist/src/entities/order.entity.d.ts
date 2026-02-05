@@ -11,8 +11,8 @@ export declare enum OrderStatus {
     REFUNDED = "refunded"
 }
 export declare class Order {
-    id: string;
-    cartId: string | null;
+    id: number;
+    cartId: number | null;
     status: OrderStatus;
     total: number;
     customerInfo: {
@@ -27,7 +27,7 @@ export declare class Order {
         };
     };
     cart: Cart;
-    userId: string | null;
+    userId: number | null;
     user: User;
     shippingAddress: {
         firstName: string;
@@ -49,11 +49,11 @@ export declare class Order {
     } | null;
     paymentIntentId: string;
     items: Array<{
-        variantId: string;
+        variantId: number;
         quantity: number;
     }> | null;
     trackingNumber: string;
-    couponId: string | null;
+    couponId: number | null;
     discountAmount: number | null;
     paidAt: Date;
     shippedAt: Date;

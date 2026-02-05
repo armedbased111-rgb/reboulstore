@@ -7,7 +7,7 @@ export declare class ReboulBrandsController {
     findAll(page: number, limit: number, search?: string): Promise<{
         data: {
             productsCount: number;
-            id: string;
+            id: number;
             name: string;
             slug: string;
             description: string | null;
@@ -27,7 +27,7 @@ export declare class ReboulBrandsController {
     }>;
     findOne(id: string): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -43,7 +43,7 @@ export declare class ReboulBrandsController {
     create(createBrandDto: CreateBrandDto): Promise<import("./entities/brand.entity").Brand>;
     update(id: string, updateBrandDto: UpdateBrandDto): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;

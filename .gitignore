@@ -25,3 +25,5 @@ docs/stripe/STRIPE_LIVE_KEY.md
 
 # Factures (personnel, ne jamais commiter)
 factures/
+export-facture.sh
+facture-template.html

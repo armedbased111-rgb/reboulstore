@@ -9,6 +9,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import ProductsPage from './pages/admin/reboul/products/ProductsPage';
 import CreateProductPage from './pages/admin/reboul/products/CreateProductPage';
 import EditProductPage from './pages/admin/reboul/products/EditProductPage';
+import ImportCollectionPage from './pages/admin/reboul/products/ImportCollectionPage';
 import OrdersPage from './pages/admin/reboul/orders/OrdersPage';
 import OrderDetailPage from './pages/admin/reboul/orders/OrderDetailPage';
 import UsersPage from './pages/admin/reboul/users/UsersPage';
@@ -51,6 +52,14 @@ function AppRouter() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reboul/products/import"
+          element={
+            <ProtectedRoute>
+              <ImportCollectionPage />
             </ProtectedRoute>
           }
         />

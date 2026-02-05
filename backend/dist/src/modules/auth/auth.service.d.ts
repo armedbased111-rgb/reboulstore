@@ -19,7 +19,7 @@ export declare class AuthService {
         user: User;
         access_token: string;
     }>;
-    validateUser(userId: string): Promise<User>;
+    validateUser(userId: number | string): Promise<User>;
     requestPasswordResetBySMS(phoneNumber: string): Promise<string>;
     resetPasswordByToken(token: string, newPassword: string): Promise<void>;
 }

@@ -24,16 +24,16 @@ let CartItem = class CartItem {
 };
 exports.CartItem = CartItem;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], CartItem.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'cart_id' }),
+    __metadata("design:type", Number)
 ], CartItem.prototype, "cartId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'variant_id' }),
+    __metadata("design:type", Number)
 ], CartItem.prototype, "variantId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'int', default: 1 }),
@@ -41,16 +41,16 @@ __decorate([
 ], CartItem.prototype, "quantity", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => cart_entity_1.Cart, (cart) => cart.items),
-    (0, typeorm_1.JoinColumn)({ name: 'cartId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'cart_id' }),
     __metadata("design:type", cart_entity_1.Cart)
 ], CartItem.prototype, "cart", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => variant_entity_1.Variant),
-    (0, typeorm_1.JoinColumn)({ name: 'variantId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'variant_id' }),
     __metadata("design:type", variant_entity_1.Variant)
 ], CartItem.prototype, "variant", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], CartItem.prototype, "createdAt", void 0);
 exports.CartItem = CartItem = __decorate([

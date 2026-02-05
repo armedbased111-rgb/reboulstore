@@ -25,12 +25,12 @@ let Variant = class Variant {
 };
 exports.Variant = Variant;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Variant.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.Column)({ type: 'int', name: 'product_id' }),
+    __metadata("design:type", Number)
 ], Variant.prototype, "productId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100 }),
@@ -50,15 +50,15 @@ __decorate([
 ], Variant.prototype, "sku", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => product_entity_1.Product, (product) => product.variants),
-    (0, typeorm_1.JoinColumn)({ name: 'productId' }),
+    (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.Product)
 ], Variant.prototype, "product", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Variant.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Variant.prototype, "updatedAt", void 0);
 exports.Variant = Variant = __decorate([

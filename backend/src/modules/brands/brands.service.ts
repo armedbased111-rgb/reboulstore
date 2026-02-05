@@ -18,7 +18,7 @@ export class BrandsService {
     });
   }
 
-  async findOne(id: string): Promise<Brand> {
+  async findOne(id: number): Promise<Brand> {
     const brand = await this.brandRepository.findOne({
       where: { id },
     });
@@ -47,13 +47,13 @@ export class BrandsService {
     return this.brandRepository.save(brand);
   }
 
-  async update(id: string, updateBrandDto: UpdateBrandDto): Promise<Brand> {
+  async update(id: number, updateBrandDto: UpdateBrandDto): Promise<Brand> {
     const brand = await this.findOne(id);
     Object.assign(brand, updateBrandDto);
     return this.brandRepository.save(brand);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const brand = await this.findOne(id);
     await this.brandRepository.remove(brand);
   }

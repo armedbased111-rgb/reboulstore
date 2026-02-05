@@ -11,14 +11,14 @@ import { User } from './user.entity';
 
 @Entity('addresses')
 export class Address {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
-  userId: string;
+  @Column({ name: 'user_id' })
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.addresses, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column()
@@ -27,21 +27,21 @@ export class Address {
   @Column()
   city: string;
 
-  @Column()
+  @Column({ name: 'postal_code' })
   postalCode: string;
 
   @Column({ default: 'France' })
   country: string;
 
-  @Column({ nullable: true })
-  additionalInfo: string; // Complément d'adresse (bâtiment, étage, etc.)
+  @Column({ nullable: true, name: 'additional_info' })
+  additionalInfo: string;
 
-  @Column({ default: false })
-  isDefault: boolean; // Adresse par défaut
+  @Column({ default: false, name: 'is_default' })
+  isDefault: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

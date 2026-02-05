@@ -2,17 +2,17 @@ import { Cart } from '../../../entities/cart.entity';
 import { CartItem } from '../../../entities/cart-item.entity';
 
 export class CartItemResponseDto {
-  id: string;
-  variantId: string;
+  id: number;
+  variantId: number;
   quantity: number;
   variant: {
-    id: string;
+    id: number;
     color: string;
     size: string;
     stock: number;
     sku: string;
     product: {
-      id: string;
+      id: number;
       name: string;
       price: string;
       images?: Array<{ url: string; alt: string | null }>;
@@ -22,7 +22,7 @@ export class CartItemResponseDto {
 }
 
 export class CartResponseDto {
-  id: string;
+  id: number;
   sessionId: string;
   items: CartItemResponseDto[];
   total: number;

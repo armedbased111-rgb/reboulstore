@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ShopsService } from './shops.service';
 import { CreateShopDto } from './dto/create-shop.dto';
@@ -29,7 +30,7 @@ export class ShopsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.shopsService.findOne(id);
   }
 
@@ -39,13 +40,13 @@ export class ShopsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateShopDto: UpdateShopDto) {
     return this.shopsService.update(id, updateShopDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.shopsService.remove(id);
   }
 }

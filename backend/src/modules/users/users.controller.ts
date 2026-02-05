@@ -8,6 +8,7 @@ import {
   Param,
   UseGuards,
   Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -48,14 +49,14 @@ export class UsersController {
   }
 
   @Get('me/addresses/:id')
-  async getAddress(@Request() req, @Param('id') addressId: string) {
+  async getAddress(@Request() req, @Param('id', ParseIntPipe) addressId: number) {
     return this.usersService.getAddress(req.user.id, addressId);
   }
 
   @Patch('me/addresses/:id')
   async updateAddress(
     @Request() req,
-    @Param('id') addressId: string,
+    @Param('id', ParseIntPipe) addressId: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
     return this.usersService.updateAddress(
@@ -66,7 +67,7 @@ export class UsersController {
   }
 
   @Delete('me/addresses/:id')
-  async deleteAddress(@Request() req, @Param('id') addressId: string) {
+  async deleteAddress(@Request() req, @Param('id', ParseIntPipe) addressId: number) {
     await this.usersService.deleteAddress(req.user.id, addressId);
     return { message: 'Address deleted successfully' };
   }

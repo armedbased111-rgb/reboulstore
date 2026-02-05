@@ -10,18 +10,18 @@ import { CartItem } from './cart-item.entity';
 
 @Entity('carts')
 export class Cart {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, name: 'session_id' })
   sessionId: string;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
   items: CartItem[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

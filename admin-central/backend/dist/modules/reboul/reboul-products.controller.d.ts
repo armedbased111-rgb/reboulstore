@@ -17,6 +17,15 @@ export declare class ReboulProductsController {
         outOfStock: number;
     }>;
     findOne(id: string): Promise<import("./entities/product.entity").Product>;
+    importFromPaste(body: {
+        pastedText: string;
+    }): Promise<{
+        created: number;
+        errors: {
+            row: number;
+            message: string;
+        }[];
+    }>;
     create(createProductDto: any): Promise<import("./entities/product.entity").Product>;
     update(id: string, updateProductDto: any): Promise<import("./entities/product.entity").Product>;
     addImage(productId: string, imageData: {

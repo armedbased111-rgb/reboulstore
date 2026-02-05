@@ -27,8 +27,8 @@ let ReboulStocksService = class ReboulStocksService {
     }
     async findAll(filters) {
         const where = {};
-        if (filters?.productId) {
-            where.productId = filters.productId;
+        if (filters?.productId != null) {
+            where.productId = Number(filters.productId);
         }
         if (filters?.outOfStock) {
             where.stock = 0;
@@ -44,8 +44,9 @@ let ReboulStocksService = class ReboulStocksService {
         return variants;
     }
     async findOne(variantId) {
+        const numId = Number(variantId);
         const variant = await this.variantRepository.findOne({
-            where: { id: variantId },
+            where: { id: numId },
             relations: ['product'],
         });
         if (!variant) {

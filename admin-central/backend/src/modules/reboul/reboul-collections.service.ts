@@ -60,9 +60,10 @@ export class ReboulCollectionsService {
   /**
    * Récupérer une collection par ID
    */
-  async findOne(id: string): Promise<Collection> {
+  async findOne(id: number | string): Promise<Collection> {
+    const numId = Number(id);
     const collection = await this.collectionRepository.findOne({
-      where: { id },
+      where: { id: numId },
       relations: ['products'],
     });
 
@@ -117,7 +118,7 @@ export class ReboulCollectionsService {
    * Mettre à jour une collection
    */
   async update(
-    id: string,
+    id: number | string,
     data: {
       name?: string;
       displayName?: string;
@@ -151,7 +152,7 @@ export class ReboulCollectionsService {
   /**
    * Activer une collection (désactive automatiquement les autres)
    */
-  async activate(id: string): Promise<Collection> {
+  async activate(id: number | string): Promise<Collection> {
     const collection = await this.findOne(id);
 
     // Désactiver toutes les autres collections
@@ -165,7 +166,7 @@ export class ReboulCollectionsService {
   /**
    * Archiver une collection (désactiver)
    */
-  async archive(id: string): Promise<Collection> {
+  async archive(id: number | string): Promise<Collection> {
     const collection = await this.findOne(id);
 
     // Si c'est la collection active, on ne peut pas l'archiver directement
@@ -183,7 +184,7 @@ export class ReboulCollectionsService {
   /**
    * Supprimer une collection
    */
-  async remove(id: string): Promise<void> {
+  async remove(id: number | string): Promise<void> {
     const collection = await this.findOne(id);
 
     // Ne pas permettre de supprimer la collection active

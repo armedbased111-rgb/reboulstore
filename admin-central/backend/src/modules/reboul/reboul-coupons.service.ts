@@ -31,9 +31,10 @@ export class ReboulCouponsService {
   /**
    * Récupère un coupon par son ID
    */
-  async findOne(id: string) {
+  async findOne(id: number | string) {
+    const numId = Number(id);
     const coupon = await this.couponRepository.findOne({
-      where: { id },
+      where: { id: numId },
     });
 
     if (!coupon) {
@@ -77,7 +78,7 @@ export class ReboulCouponsService {
   /**
    * Met à jour un coupon
    */
-  async update(id: string, data: Partial<{
+  async update(id: number | string, data: Partial<{
     code: string;
     discountType: DiscountType;
     discountValue: number;
@@ -110,7 +111,7 @@ export class ReboulCouponsService {
   /**
    * Supprime un coupon
    */
-  async remove(id: string) {
+  async remove(id: number | string) {
     const coupon = await this.findOne(id);
     await this.couponRepository.remove(coupon);
   }

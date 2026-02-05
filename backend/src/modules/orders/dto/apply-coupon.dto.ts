@@ -7,6 +7,6 @@ export class ApplyCouponDto {
 
   @IsUUID()
   @IsNotEmpty()
-  cartId: string;
+  cartId: number;
 }
 

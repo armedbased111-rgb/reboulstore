@@ -9,9 +9,9 @@ export declare class UsersController {
     updateProfile(req: any, updateUserDto: UpdateUserDto): Promise<import("../../entities/user.entity").User>;
     getAddresses(req: any): Promise<import("../../entities/address.entity").Address[]>;
     createAddress(req: any, createAddressDto: CreateAddressDto): Promise<import("../../entities/address.entity").Address>;
-    getAddress(req: any, addressId: string): Promise<import("../../entities/address.entity").Address>;
-    updateAddress(req: any, addressId: string, updateAddressDto: UpdateAddressDto): Promise<import("../../entities/address.entity").Address>;
-    deleteAddress(req: any, addressId: string): Promise<{
+    getAddress(req: any, addressId: number): Promise<import("../../entities/address.entity").Address>;
+    updateAddress(req: any, addressId: number, updateAddressDto: UpdateAddressDto): Promise<import("../../entities/address.entity").Address>;
+    deleteAddress(req: any, addressId: number): Promise<{
         message: string;
     }>;
 }

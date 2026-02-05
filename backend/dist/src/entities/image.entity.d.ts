@@ -1,7 +1,7 @@
 import { Product } from './product.entity';
 export declare class Image {
-    id: string;
-    productId: string;
+    id: number;
+    productId: number;
     url: string;
     publicId: string | null;
     alt: string | null;

@@ -76,7 +76,7 @@ let OrdersController = class OrdersController {
             const pdfBuffer = await this.invoiceService.generateInvoicePDF(order);
             res.set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename=facture-${order.id.slice(0, 8)}.pdf`,
+                'Content-Disposition': `attachment; filename=facture-${order.id}.pdf`,
                 'Content-Length': pdfBuffer.length,
             });
             res.send(pdfBuffer);
@@ -126,10 +126,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findOne", null);
 __decorate([
@@ -144,37 +144,37 @@ __decorate([
     (0, common_1.Patch)(':id/cancel'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "cancel", null);
 __decorate([
     (0, common_1.Patch)(':id/status'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_order_status_dto_1.UpdateOrderStatusDto]),
+    __metadata("design:paramtypes", [Number, update_order_status_dto_1.UpdateOrderStatusDto]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
 __decorate([
     (0, common_1.Get)(':id/invoice'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Request)()),
     __param(2, (0, common_1.Res)({ passthrough: false })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "downloadInvoice", null);
 __decorate([
     (0, common_1.Post)(':id/capture'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "capturePayment", null);
 exports.OrdersController = OrdersController = __decorate([

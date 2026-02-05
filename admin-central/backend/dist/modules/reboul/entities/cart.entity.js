@@ -21,11 +21,11 @@ let Cart = class Cart {
 };
 exports.Cart = Cart;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Cart.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, name: 'session_id' }),
     __metadata("design:type", String)
 ], Cart.prototype, "sessionId", void 0);
 __decorate([
@@ -33,11 +33,11 @@ __decorate([
     __metadata("design:type", Array)
 ], Cart.prototype, "items", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Cart.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Cart.prototype, "updatedAt", void 0);
 exports.Cart = Cart = __decorate([

@@ -7,7 +7,7 @@ export declare class ReboulCategoriesController {
     findAll(page: number, limit: number, search?: string): Promise<{
         data: {
             productsCount: number;
-            id: string;
+            id: number;
             name: string;
             slug: string;
             description: string | null;
@@ -31,7 +31,7 @@ export declare class ReboulCategoriesController {
     }>;
     findOne(id: string): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -51,7 +51,7 @@ export declare class ReboulCategoriesController {
     create(createCategoryDto: CreateCategoryDto): Promise<import("./entities/category.entity").Category>;
     update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;

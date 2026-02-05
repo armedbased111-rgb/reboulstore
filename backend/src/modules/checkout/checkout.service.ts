@@ -106,7 +106,7 @@ export class CheckoutService {
     }, 0);
 
     // Valider et calculer la réduction du coupon
-    let couponId: string | null = null;
+    let couponId: number | null = null;
     let discountAmount = 0;
     let totalDiscountPercentage = 0;
 
@@ -247,7 +247,7 @@ export class CheckoutService {
         subtotal: subtotal.toString(),
         total: total.toString(),
         discountAmount: discountAmount.toString(),
-        couponId: couponId || '',
+        couponId: couponId != null ? String(couponId) : '',
         couponCode: dto.couponCode || '',
         itemCount: dto.items.length.toString(),
         // Stocker les items comme JSON string dans metadata
@@ -373,7 +373,7 @@ export class CheckoutService {
 
       // Parser les items
       const items = JSON.parse(itemsJson) as Array<{
-        variantId: string;
+        variantId: number;
         quantity: number;
       }>;
 
@@ -449,7 +449,9 @@ export class CheckoutService {
         ? session.amount_total / 100
         : null;
 
-      const couponId = session.metadata?.couponId || null;
+      const couponId = session.metadata?.couponId
+        ? parseInt(session.metadata.couponId, 10)
+        : null;
       const couponCode = session.metadata?.couponCode || null;
       const discountAmount = session.metadata?.discountAmount
         ? parseFloat(session.metadata.discountAmount)

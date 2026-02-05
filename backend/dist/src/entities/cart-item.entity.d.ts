@@ -1,9 +1,9 @@
 import { Cart } from './cart.entity';
 import { Variant } from './variant.entity';
 export declare class CartItem {
-    id: string;
-    cartId: string;
-    variantId: string;
+    id: number;
+    cartId: number;
+    variantId: number;
     quantity: number;
     cart: Cart;
     variant: Variant;

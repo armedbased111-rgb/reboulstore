@@ -18,23 +18,24 @@ export enum EmailType {
 
 @Entity('order_emails')
 export class OrderEmail {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid' })
-  orderId: string;
+  @Column({ type: 'int', name: 'order_id' })
+  orderId: number;
 
   @ManyToOne(() => Order, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'orderId' })
+  @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @Column({
     type: 'enum',
     enum: EmailType,
+    name: 'email_type',
   })
   emailType: EmailType;
 
-  @Column()
+  @Column({ name: 'recipient_email' })
   recipientEmail: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -43,12 +44,12 @@ export class OrderEmail {
   @Column({ type: 'boolean', default: true })
   sent: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true, name: 'error_message' })
   errorMessage: string | null;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'sent_at' })
   sentAt: Date | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }

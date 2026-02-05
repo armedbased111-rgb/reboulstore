@@ -18,12 +18,12 @@ export declare class EmailService {
     sendOrderCancelled(order: Order): Promise<void>;
     private persistEmail;
     sendStockAvailableNotification(email: string, product: {
-        id: string;
+        id: number;
         name: string;
         slug: string;
         imageUrl?: string | null;
     }, variant?: {
-        id: string;
+        id: number;
         color?: string;
         size?: string;
     }): Promise<void>;

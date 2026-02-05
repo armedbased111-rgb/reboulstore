@@ -12,7 +12,7 @@ import { Type } from 'class-transformer';
 class CheckoutItemDto {
   @IsString()
   @IsNotEmpty()
-  variantId: string;
+  variantId: number;
 
   @IsInt()
   @Min(1)

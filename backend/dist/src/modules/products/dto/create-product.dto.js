@@ -41,24 +41,24 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "price", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateProductDto.prototype, "categoryId", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateProductDto.prototype, "shopId", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateProductDto.prototype, "brandId", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateProductDto.prototype, "collectionId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),

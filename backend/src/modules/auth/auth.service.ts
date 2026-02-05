@@ -112,8 +112,9 @@ export class AuthService {
     return { user, access_token };
   }
 
-  async validateUser(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+  async validateUser(userId: number | string): Promise<User> {
+    const id = typeof userId === 'string' ? parseInt(userId, 10) : userId;
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new UnauthorizedException('User not found');
     }

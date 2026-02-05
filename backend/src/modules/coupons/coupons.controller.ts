@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
 import { CreateCouponDto } from './dto/create-coupon.dto';
@@ -50,7 +51,7 @@ export class CouponsController {
    * Récupère un coupon par son ID
    */
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.couponsService.findOne(id);
   }
 
@@ -59,7 +60,7 @@ export class CouponsController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateCouponDto: UpdateCouponDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateCouponDto: UpdateCouponDto) {
     return this.couponsService.update(id, updateCouponDto);
   }
 
@@ -69,7 +70,7 @@ export class CouponsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.couponsService.remove(id);
   }
 }

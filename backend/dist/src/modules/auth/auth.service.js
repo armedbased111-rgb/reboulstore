@@ -120,7 +120,8 @@ let AuthService = class AuthService {
         return { user, access_token };
     }
     async validateUser(userId) {
-        const user = await this.userRepository.findOne({ where: { id: userId } });
+        const id = typeof userId === 'string' ? parseInt(userId, 10) : userId;
+        const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new common_1.UnauthorizedException('User not found');
         }

@@ -1255,21 +1255,111 @@ def restore_backup_cmd(backup_file, local, container, db_name, db_user, yes):
 def delete_backup_cmd(backup_file, yes):
     """🗑️  Supprimer un backup"""
     from utils.backup_helper import delete_backup
-    
+
     if not yes:
         confirm = click.confirm(f"Supprimer le backup {backup_file} ?")
         if not confirm:
             console.print("[yellow]Suppression annulée[/yellow]")
             return
-    
+
     console.print(f"[cyan]🗑️  Suppression du backup...[/cyan]\n")
-    
+
     success, message = delete_backup(backup_file)
-    
+
     if success:
         console.print(f"[green]✅ {message}[/green]")
     else:
         console.print(f"[red]❌ {message}[/red]")
+
+
+@db.command('wipe-products')
+@click.option('--server', is_flag=True, help='Exécuter sur le serveur VPS (SSH)')
+@click.option('--no-backup', is_flag=True, help='Ne pas faire de backup avant (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Confirmer sans demander')
+def wipe_products_cmd(server, no_backup, yes):
+    """🗑️  Vider les tables produits, variants, images, collections (ordre FK respecté)"""
+    from pathlib import Path
+    import subprocess
+
+    project_root = Path(__file__).resolve().parent.parent
+    script_path = project_root / 'scripts' / 'wipe-products-collections.sql'
+    if not script_path.exists():
+        console.print(f"[red]❌ Script introuvable: {script_path}[/red]")
+        return
+
+    if not yes:
+        console.print("[yellow]⚠️  Ceci va TRUNCATER : cart_items, stock_notifications, images, variants, products, collections.[/yellow]")
+        if not click.confirm("Continuer ?"):
+            console.print("[yellow]Annulé.[/yellow]")
+            return
+
+    if not no_backup:
+        if server:
+            console.print("[cyan]💾 Backup avant purge (serveur)...[/cyan]")
+            from utils.server_helper import ssh_exec, SERVER_CONFIG
+            from datetime import datetime
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            project_dir = SERVER_CONFIG['project_path']
+            backup_dir = f"{project_dir}/backups"
+            backup_cmd = (
+                f"cd {project_dir} && mkdir -p {backup_dir} && "
+                f"docker exec reboulstore-postgres-prod pg_dump -U reboulstore -d reboulstore_db | gzip > {backup_dir}/reboulstore_db_{timestamp}.sql.gz && "
+                f"echo 'Backup créé'"
+            )
+            stdout, stderr = ssh_exec(backup_cmd)
+            if 'Backup créé' not in (stdout or ''):
+                console.print(f"[red]❌ Échec backup: {stderr or stdout}[/red]")
+                return
+            console.print("[green]✅ Backup serveur créé[/green]")
+        else:
+            console.print("[yellow]💡 Pour un backup avant purge (DB sur VPS) : ./rcli db backup --server[/yellow]")
+
+    if server:
+        from utils.server_helper import SERVER_CONFIG
+        ssh_target = f"{SERVER_CONFIG['user']}@{SERVER_CONFIG['host']}"
+        remote_cmd = "docker exec -i reboulstore-postgres-prod psql -U reboulstore -d reboulstore_db"
+        ssh_cmd = [
+            'ssh', '-o', 'ConnectTimeout=10', '-o', 'StrictHostKeyChecking=no',
+            '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=ERROR',
+            ssh_target, remote_cmd,
+        ]
+        with open(script_path) as f:
+            result = subprocess.run(ssh_cmd, stdin=f, capture_output=True, text=True, timeout=60)
+        if result.returncode != 0:
+            console.print(f"[red]❌ Erreur: {result.stderr or result.stdout}[/red]")
+            return
+        console.print("[green]✅ Tables produits/variants/images/collections vidées (serveur)[/green]")
+    else:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(project_root / '.env')
+            import os
+            host = os.getenv('DB_HOST', 'localhost')
+            if host == 'host.docker.internal':
+                host = 'localhost'
+            port = os.getenv('DB_PORT', '5433' if host == 'localhost' else '5432')
+            user = os.getenv('DB_USERNAME', 'reboulstore')
+            dbname = os.getenv('DB_DATABASE', 'reboulstore_db')
+            password = os.getenv('DB_PASSWORD', '')
+            env = os.environ.copy()
+            if password:
+                env['PGPASSWORD'] = password
+            result = subprocess.run(
+                ['psql', '-h', host, '-p', str(port), '-U', user, '-d', dbname, '-f', str(script_path)],
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            if result.returncode != 0:
+                console.print(f"[red]❌ Erreur psql: {result.stderr or result.stdout}[/red]")
+                return
+            console.print("[green]✅ Tables produits/variants/images/collections vidées[/green]")
+        except FileNotFoundError:
+            console.print("[red]❌ psql non trouvé. Lancez le wipe sur le serveur : ./rcli db wipe-products --server -y[/red]")
+        except Exception as e:
+            console.print(f"[red]❌ {e}[/red]")
+
 
 @cli.group()
 def test():

@@ -31,7 +31,7 @@ let InvoiceService = class InvoiceService {
                 doc
                     .fontSize(10)
                     .font('Helvetica')
-                    .text(`Numéro de commande: ${order.id.slice(0, 8).toUpperCase()}`, 50, 150)
+                    .text(`Numéro de commande: ${String(order.id)}`, 50, 150)
                     .text(`Date: ${new Date(order.createdAt).toLocaleDateString('fr-FR')}`, 50, 165)
                     .text(`Statut: ${this.getStatusLabel(order.status)}`, 50, 180);
                 doc.fontSize(12).font('Helvetica-Bold').text('LIVRAISON', 50, 220);

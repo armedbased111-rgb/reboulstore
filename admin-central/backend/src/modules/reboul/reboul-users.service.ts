@@ -70,9 +70,10 @@ export class ReboulUsersService {
   /**
    * Récupérer un utilisateur Reboul par ID
    */
-  async findOne(id: string) {
+  async findOne(id: number | string) {
+    const numId = Number(id);
     const user = await this.userRepository.findOne({
-      where: { id },
+      where: { id: numId },
       relations: ['addresses', 'orders'],
     });
 
@@ -88,7 +89,7 @@ export class ReboulUsersService {
   /**
    * Changer le rôle d'un utilisateur Reboul
    */
-  async updateRole(id: string, role: UserRole) {
+  async updateRole(id: number | string, role: UserRole) {
     const user = await this.findOne(id);
 
     // Validation : ne pas permettre de changer le rôle en SUPER_ADMIN depuis l'admin normale
@@ -106,15 +107,14 @@ export class ReboulUsersService {
   /**
    * Supprimer un utilisateur Reboul
    */
-  async remove(id: string) {
+  async remove(id: number | string) {
     const user = await this.findOne(id);
-
-    // Vérifier qu'il n'y a pas de commandes en cours
+    const numId = Number(id);
     const activeOrders = await this.orderRepository.count({
       where: [
-        { userId: id, status: OrderStatus.PENDING },
-        { userId: id, status: OrderStatus.PAID },
-        { userId: id, status: OrderStatus.PROCESSING },
+        { userId: numId, status: OrderStatus.PENDING },
+        { userId: numId, status: OrderStatus.PAID },
+        { userId: numId, status: OrderStatus.PROCESSING },
       ],
     });
 

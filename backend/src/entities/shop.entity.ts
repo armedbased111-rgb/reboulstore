@@ -15,8 +15,8 @@ import { Product } from './product.entity';
  */
 @Entity('shops')
 export class Shop {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -31,7 +31,7 @@ export class Shop {
    * Politique de livraison du shop
    * Structure JSON avec infos globales de livraison
    */
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true, name: 'shipping_policy' })
   shippingPolicy: {
     freeShippingThreshold?: number; // Ex: 50 (€50)
     deliveryTime?: string; // Ex: "3-5 business days"
@@ -44,7 +44,7 @@ export class Shop {
    * Politique de retour du shop
    * Structure JSON avec infos globales de retour
    */
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true, name: 'return_policy' })
   returnPolicy: {
     returnWindow?: number; // Ex: 30 (jours)
     returnShippingFree?: boolean;
@@ -54,9 +54,9 @@ export class Shop {
   @OneToMany(() => Product, (product) => product.shop)
   products: Product[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

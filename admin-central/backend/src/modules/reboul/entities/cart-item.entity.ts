@@ -11,26 +11,26 @@ import { Variant } from './variant.entity';
 
 @Entity('cart_items')
 export class CartItem {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid' })
-  cartId: string;
+  @Column({ type: 'int', name: 'cart_id' })
+  cartId: number;
 
-  @Column({ type: 'uuid' })
-  variantId: string;
+  @Column({ type: 'int', name: 'variant_id' })
+  variantId: number;
 
   @Column({ type: 'int', default: 1 })
   quantity: number;
 
   @ManyToOne(() => Cart, (cart) => cart.items)
-  @JoinColumn({ name: 'cartId' })
+  @JoinColumn({ name: 'cart_id' })
   cart: Cart;
 
   @ManyToOne(() => Variant)
-  @JoinColumn({ name: 'variantId' })
+  @JoinColumn({ name: 'variant_id' })
   variant: Variant;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }

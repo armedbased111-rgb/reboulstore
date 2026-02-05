@@ -1,7 +1,7 @@
 import { DiscountType } from '../../../entities/coupon.entity';
 
 export class CouponResponseDto {
-  id: string;
+  id: number;
   code: string;
   discountType: DiscountType;
   discountValue: number;

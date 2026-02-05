@@ -52,7 +52,7 @@ let EmailService = EmailService_1 = class EmailService {
         }
     }
     async sendOrderReceived(order) {
-        const subject = `Commande reçue #${order.id.substring(0, 8)}`;
+        const subject = `Commande reçue #${String(order.id)}`;
         try {
             const customerEmail = order.customerInfo?.email || order.user?.email || '';
             if (!customerEmail) {
@@ -65,7 +65,7 @@ let EmailService = EmailService_1 = class EmailService {
                 template: 'order-received',
                 context: {
                     customerName: order.customerInfo?.name || 'Client',
-                    orderId: order.id.substring(0, 8),
+                    orderId: String(order.id),
                     orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
                     total: parseFloat(order.total.toString()).toFixed(2),
                     orderUrl: `${this.frontendUrl}/orders/${order.id}`,
@@ -81,7 +81,7 @@ let EmailService = EmailService_1 = class EmailService {
         }
     }
     async sendOrderConfirmation(order) {
-        const subject = `Confirmation de commande #${order.id.substring(0, 8)}`;
+        const subject = `Confirmation de commande #${String(order.id)}`;
         try {
             const customerEmail = order.customerInfo?.email || order.user?.email || '';
             if (!customerEmail) {
@@ -94,7 +94,7 @@ let EmailService = EmailService_1 = class EmailService {
                 template: 'order-confirmation',
                 context: {
                     customerName: order.customerInfo?.name || 'Client',
-                    orderId: order.id.substring(0, 8),
+                    orderId: String(order.id),
                     orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
                     total: parseFloat(order.total.toString()).toFixed(2),
                     status: this.getStatusLabel(order.status),
@@ -110,7 +110,7 @@ let EmailService = EmailService_1 = class EmailService {
         }
     }
     async sendShippingNotification(order) {
-        const subject = `Votre commande #${order.id.substring(0, 8)} a été expédiée`;
+        const subject = `Votre commande #${String(order.id)} a été expédiée`;
         try {
             const customerEmail = order.customerInfo?.email || order.user?.email || '';
             if (!customerEmail) {
@@ -123,7 +123,7 @@ let EmailService = EmailService_1 = class EmailService {
                 template: 'shipping-notification',
                 context: {
                     customerName: order.customerInfo?.name || 'Client',
-                    orderId: order.id.substring(0, 8),
+                    orderId: String(order.id),
                     trackingNumber: order.trackingNumber || null,
                     orderUrl: `${this.frontendUrl}/orders/${order.id}`,
                     currentYear: new Date().getFullYear(),
@@ -137,7 +137,7 @@ let EmailService = EmailService_1 = class EmailService {
         }
     }
     async sendOrderDelivered(order) {
-        const subject = `Votre commande #${order.id.substring(0, 8)} a été livrée`;
+        const subject = `Votre commande #${String(order.id)} a été livrée`;
         try {
             const customerEmail = order.customerInfo?.email || order.user?.email || '';
             if (!customerEmail) {
@@ -150,7 +150,7 @@ let EmailService = EmailService_1 = class EmailService {
                 template: 'order-delivered',
                 context: {
                     customerName: order.customerInfo?.name || 'Client',
-                    orderId: order.id.substring(0, 8),
+                    orderId: String(order.id),
                     orderUrl: `${this.frontendUrl}/orders/${order.id}`,
                     frontendUrl: this.frontendUrl,
                     currentYear: new Date().getFullYear(),
@@ -164,7 +164,7 @@ let EmailService = EmailService_1 = class EmailService {
         }
     }
     async sendOrderCancelled(order) {
-        const subject = `Commande #${order.id.substring(0, 8)} annulée`;
+        const subject = `Commande #${String(order.id)} annulée`;
         try {
             const customerEmail = order.customerInfo?.email || order.user?.email || '';
             if (!customerEmail) {
@@ -180,7 +180,7 @@ let EmailService = EmailService_1 = class EmailService {
                 template: 'order-cancelled',
                 context: {
                     customerName: order.customerInfo?.name || 'Client',
-                    orderId: order.id.substring(0, 8),
+                    orderId: String(order.id),
                     cancellationDate: new Date().toLocaleDateString('fr-FR'),
                     refundAmount,
                     frontendUrl: this.frontendUrl,

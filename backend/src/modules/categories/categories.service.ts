@@ -34,7 +34,7 @@ export class CategoriesService {
     return categories;
   }
 
-  async findOne(id: string): Promise<Category> {
+  async findOne(id: number): Promise<Category> {
     const cacheKey = `category:${id}`;
     
     // Vérifier le cache
@@ -91,7 +91,7 @@ export class CategoriesService {
   }
 
   async update(
-    id: string,
+    id: number,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
     const category = await this.findOne(id);
@@ -108,7 +108,7 @@ export class CategoriesService {
     return savedCategory;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     const category = await this.findOne(id);
     await this.categoryRepository.remove(category);
     

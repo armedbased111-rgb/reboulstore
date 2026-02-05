@@ -10,7 +10,7 @@ export declare class ReboulBrandsService {
     }): Promise<{
         data: {
             productsCount: number;
-            id: string;
+            id: number;
             name: string;
             slug: string;
             description: string | null;
@@ -28,9 +28,9 @@ export declare class ReboulBrandsService {
         limit: number;
         totalPages: number;
     }>;
-    findOne(id: string): Promise<{
+    findOne(id: number | string): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -46,7 +46,7 @@ export declare class ReboulBrandsService {
     create(brandData: Partial<Brand>): Promise<Brand>;
     update(id: string, updateData: Partial<Brand>): Promise<{
         productsCount: number;
-        id: string;
+        id: number;
         name: string;
         slug: string;
         description: string | null;
@@ -59,11 +59,11 @@ export declare class ReboulBrandsService {
         createdAt: Date;
         updatedAt: Date;
     } & Brand>;
-    remove(id: string): Promise<{
+    remove(id: number | string): Promise<{
         message: string;
     }>;
     getStats(): Promise<{
-        brandId: string;
+        brandId: number;
         brandName: string;
         productsCount: number;
     }[]>;

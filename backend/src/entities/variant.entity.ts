@@ -11,11 +11,11 @@ import { Product } from './product.entity';
 
 @Entity('variants')
 export class Variant {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: 'uuid' })
-  productId: string;
+  @Column({ type: 'int', name: 'product_id' })
+  productId: number;
 
   @Column({ type: 'varchar', length: 100 })
   color: string;
@@ -30,12 +30,12 @@ export class Variant {
   sku: string;
 
   @ManyToOne(() => Product, (product) => product.variants)
-  @JoinColumn({ name: 'productId' })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

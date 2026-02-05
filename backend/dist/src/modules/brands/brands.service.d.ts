@@ -6,9 +6,9 @@ export declare class BrandsService {
     private brandRepository;
     constructor(brandRepository: Repository<Brand>);
     findAll(): Promise<Brand[]>;
-    findOne(id: string): Promise<Brand>;
+    findOne(id: number): Promise<Brand>;
     findBySlug(slug: string): Promise<Brand>;
     create(createBrandDto: CreateBrandDto): Promise<Brand>;
-    update(id: string, updateBrandDto: UpdateBrandDto): Promise<Brand>;
-    remove(id: string): Promise<void>;
+    update(id: number, updateBrandDto: UpdateBrandDto): Promise<Brand>;
+    remove(id: number): Promise<void>;
 }

@@ -13,7 +13,7 @@ const getReboulDatabaseConfig = (configService) => ({
         __dirname + '/../modules/reboul/**/*.entity{.ts,.js}',
         __dirname + '/../shared/**/*.entity{.ts,.js}',
     ],
-    synchronize: configService.get('NODE_ENV') === 'development',
+    synchronize: false,
     logging: configService.get('NODE_ENV') === 'development',
     autoLoadEntities: true,
 });

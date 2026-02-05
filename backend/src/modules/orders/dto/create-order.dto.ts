@@ -49,7 +49,7 @@ class CustomerInfoDto {
 export class CreateOrderDto {
   @IsUUID()
   @IsNotEmpty()
-  cartId: string;
+  cartId: number;
 
   @IsObject()
   @ValidateNested()

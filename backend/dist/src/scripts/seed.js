@@ -443,7 +443,7 @@ async function seed() {
                         const brandSlugPrefix = brand.slug.substring(0, 5).toUpperCase().replace(/[^A-Z0-9]/g, '');
                         const productTypePrefix = defaultProductType.name.substring(0, 3).toUpperCase();
                         const colorPrefix = defaultProductType.color.substring(0, 3).toUpperCase();
-                        const productIdShort = savedProduct.id.substring(0, 8).toUpperCase();
+                        const productIdShort = String(savedProduct.id).padStart(8, '0');
                         const sku = `${productTypePrefix}-${colorPrefix}-${size}-${brandSlugPrefix}-${productIdShort}`;
                         const variant = variantRepository.create({
                             productId: savedProduct.id,
