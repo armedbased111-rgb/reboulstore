@@ -88,7 +88,7 @@ export const FeaturedProducts = ({
   const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   // État pour stocker l'ID de la catégorie (récupéré depuis le slug)
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
@@ -102,7 +102,7 @@ export const FeaturedProducts = ({
       getCategoryBySlug(categorySlug)
         .then((category: Category) => {
           console.log('✅ FeaturedProducts: Catégorie trouvée:', category);
-          if (category && category.id) {
+            if (category && category.id != null) {
             setCategoryId(category.id);
           } else {
             console.warn('⚠️ FeaturedProducts: Catégorie trouvée mais sans ID:', category);
@@ -122,8 +122,8 @@ export const FeaturedProducts = ({
 
   // Si categoryId est disponible, récupérer les produits de la catégorie
   const query = useMemo(() => {
-    if (categoryId) {
-      return { category: categoryId, limit };
+    if (categoryId != null) {
+      return { category: String(categoryId), limit };
     }
     return undefined;
   }, [categoryId, limit]);

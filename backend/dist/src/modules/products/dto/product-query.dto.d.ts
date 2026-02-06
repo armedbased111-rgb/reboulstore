@@ -1,5 +1,5 @@
 export declare class ProductQueryDto {
-    category?: string;
+    category?: number;
     brand?: string;
     minPrice?: number;
     maxPrice?: number;

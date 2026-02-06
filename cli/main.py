@@ -6,6 +6,7 @@ Automatise les tâches répétitives et améliore le contexte pour Cursor
 
 import click
 import re
+import json
 from typing import Dict
 from rich.console import Console
 from rich.table import Table
@@ -1014,6 +1015,1225 @@ def generate_db(type, name, entity, entities, cloudinary):
         file = db_manager.generate_seed(name, entities_list, cloudinary)
         console.print(f"[green]✅ Script de seed créé: {file}[/green]")
         console.print(f"[yellow]💡 Exécuter avec: ts-node {file}[/yellow]")
+
+def _run_db_query(sql: str):
+    """
+    Exécuter une requête SQL en lecture seule sur la base Reboul (VPS).
+    Retourne une liste de lignes, chaque ligne étant une liste de colonnes (strings).
+    """
+    from utils.server_helper import ssh_exec, SERVER_CONFIG
+
+    # Format TSV simple pour parsing côté Python
+    safe_sql = sql.replace('"', '\\"')
+    project_dir = SERVER_CONFIG['project_path']
+    remote_cmd = (
+        f"cd {project_dir} && "
+        f"docker exec reboulstore-postgres-prod "
+        f"psql -U reboulstore -d reboulstore_db -t -A -F '|' -c \"{safe_sql}\""
+    )
+
+    stdout, stderr = ssh_exec(remote_cmd)
+
+    if stderr and stderr.strip():
+        raise RuntimeError(stderr.strip())
+
+    lines = [line.strip() for line in (stdout or "").splitlines() if line.strip()]
+    rows = [line.split("|") for line in lines]
+    return rows
+
+
+def _exec_db_sql(sql: str):
+    """
+    Exécuter une requête SQL (UPDATE/INSERT/DELETE) sur la base Reboul (VPS).
+    """
+    from utils.server_helper import ssh_exec, SERVER_CONFIG
+
+    safe_sql = sql.replace('"', '\\"')
+    project_dir = SERVER_CONFIG['project_path']
+    remote_cmd = (
+        f"cd {project_dir} && "
+        f"docker exec reboulstore-postgres-prod "
+        f"psql -U reboulstore -d reboulstore_db -c \"{safe_sql}\""
+    )
+
+    stdout, stderr, code = ssh_exec(remote_cmd, return_code=True)
+    if code != 0:
+        raise RuntimeError(stderr.strip() or stdout.strip() or f"psql exit code {code}")
+
+
+def _create_server_backup():
+    """
+    Créer un backup rapide sur le VPS avant une modification DB.
+    Utilise la même logique que les autres backups (pg_dump + gzip).
+    """
+    from utils.server_helper import ssh_exec, SERVER_CONFIG
+    from datetime import datetime
+
+    project_dir = SERVER_CONFIG['project_path']
+    backup_dir = f"{project_dir}/backups"
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_file = f"{backup_dir}/reboulstore_db_{timestamp}.sql"
+
+    backup_cmd = (
+        f"cd {project_dir} && "
+        f"mkdir -p {backup_dir} && "
+        f"docker exec reboulstore-postgres-prod pg_dump -U reboulstore -d reboulstore_db > \"{backup_file}\" && "
+        f"gzip \"{backup_file}\" && "
+        f"echo 'Backup créé: {backup_file}.gz'"
+    )
+
+    stdout, stderr, code = ssh_exec(backup_cmd, return_code=True)
+    if code != 0 or 'Backup créé:' not in (stdout or ''):
+        raise RuntimeError(stderr.strip() or stdout.strip() or "Échec backup serveur")
+
+    console.print("[green]💾 Backup serveur créé avant modification DB[/green]")
+
+
+@db.command('product-find')
+@click.option('--ref', 'reference', type=str, help='Référence produit (sans taille)')
+@click.option('--id', 'product_id', type=int, help='ID numérique du produit')
+@click.option('--sku', type=str, help='SKU de variant (optionnel)')
+@click.option('--json', 'as_json', is_flag=True, help='Sortie JSON')
+def db_product_find(reference, product_id, sku, as_json):
+    """🔍 Inspecter un produit (lecture seule sur VPS)"""
+    if not reference and not product_id and not sku:
+        console.print("[red]❌ Spécifiez au moins --ref, --id ou --sku[/red]")
+        return
+    # Priorité à la référence produit, puis id, puis sku
+    if reference:
+        ref_esc = reference.replace("'", "''")
+        where = f"p.reference = '{ref_esc}'"
+    elif product_id:
+        where = f"p.id = {product_id}"
+    else:
+        # Recherche par SKU de variant
+        sku_esc = sku.replace("'", "''")
+        where = (
+            f"EXISTS (SELECT 1 FROM variants v WHERE v.product_id = p.id AND v.sku = '{sku_esc}')"
+        )
+
+    sql = (
+        "SELECT p.id, p.name, p.reference, p.price, "
+        "p.category_id, p.brand_id, p.collection_id "
+        "FROM products p "
+        f"WHERE {where} "
+        "ORDER BY p.id "
+        "LIMIT 20;"
+    )
+
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la requête: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun produit trouvé[/yellow]")
+        return
+
+    if as_json:
+        result = [
+            {
+                "id": int(r[0]),
+                "name": r[1],
+                "reference": r[2],
+                "price": float(r[3]) if r[3] else 0,
+                "category_id": int(r[4]) if r[4] else None,
+                "brand_id": int(r[5]) if r[5] else None,
+                "collection_id": int(r[6]) if r[6] else None,
+            }
+            for r in rows
+        ]
+        console.print_json(json.dumps(result, ensure_ascii=False))
+        return
+
+    table = Table(title="Produits")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Nom", style="green")
+    table.add_column("Ref", style="yellow")
+    table.add_column("Prix", style="magenta", justify="right")
+    table.add_column("Cat.", justify="right")
+    table.add_column("Marque", justify="right")
+    table.add_column("Coll.", justify="right")
+
+    for r in rows:
+        table.add_row(
+            r[0],
+            r[1],
+            r[2] or "",
+            r[3] or "",
+            r[4] or "",
+            r[5] or "",
+            r[6] or "",
+        )
+
+    console.print(table)
+
+
+@db.command('product-list')
+@click.option('--brand', type=str, help='Nom de la marque (ex: "Stone Island")')
+@click.option('--collection', type=str, help='Nom de la collection (optionnel)')
+@click.option('--limit', type=int, default=100, show_default=True, help='Nombre max de produits')
+@click.option('--json', 'as_json', is_flag=True, help='Sortie JSON')
+def db_product_list(brand, collection, limit, as_json):
+    """🔍 Lister des produits par marque / collection (lecture seule sur VPS)"""
+    if not brand and not collection:
+        console.print("[red]❌ Spécifiez au moins --brand ou --collection[/red]")
+        return
+
+    where_clauses = []
+
+    if brand:
+        brand_esc = brand.replace("'", "''")
+        where_clauses.append(f"b.name ILIKE '%{brand_esc}%'")
+
+    if collection:
+        coll_esc = collection.replace("'", "''")
+        where_clauses.append(f"c.name ILIKE '%{coll_esc}%'")
+
+    where_sql = " AND ".join(where_clauses)
+
+    sql = (
+        "SELECT p.id, p.name, p.reference, p.price, "
+        "COALESCE(b.name, '') AS brand_name, "
+        "COALESCE(c.name, '') AS collection_name, "
+        "COUNT(v.id) AS variants_count "
+        "FROM products p "
+        "LEFT JOIN brands b ON b.id = p.brand_id "
+        "LEFT JOIN collections c ON c.id = p.collection_id "
+        "LEFT JOIN variants v ON v.product_id = p.id "
+        f"WHERE {where_sql} "
+        "GROUP BY p.id, p.name, p.reference, p.price, b.name, c.name "
+        "ORDER BY p.id "
+        f"LIMIT {max(1, min(limit, 500))};"
+    )
+
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la requête: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun produit trouvé pour ces critères[/yellow]")
+        return
+
+    product_ids = [int(r[0]) for r in rows if len(r) >= 7]
+    ids_sql = ",".join(str(i) for i in product_ids)
+    variants_sql = (
+        "SELECT product_id, color, size, stock "
+        f"FROM variants WHERE product_id IN ({ids_sql}) ORDER BY product_id, color, size;"
+    )
+    try:
+        variant_rows = _run_db_query(variants_sql)
+    except Exception as e:
+        variant_rows = []
+    by_product: Dict[int, Dict[str, Dict]] = {}
+    for v in variant_rows:
+        if len(v) < 4:
+            continue
+        pid, color, size, stock_str = int(v[0]), v[1], v[2], v[3]
+        try:
+            stock_val = int(stock_str) if stock_str else 0
+        except ValueError:
+            stock_val = 0
+        if pid not in by_product:
+            by_product[pid] = {}
+        if color not in by_product[pid]:
+            by_product[pid][color] = {"min_size": size, "max_size": size, "total_stock": stock_val}
+        else:
+            info = by_product[pid][color]
+            if size < info["min_size"]:
+                info["min_size"] = size
+            if size > info["max_size"]:
+                info["max_size"] = size
+            info["total_stock"] += stock_val
+
+    def _format_summary(pid: int) -> str:
+        if pid not in by_product:
+            return ""
+        parts_out = []
+        for color, info in by_product[pid].items():
+            mn, mx, tot = info["min_size"], info["max_size"], info["total_stock"]
+            if mn == mx:
+                parts_out.append(f"{color} {mn} ({tot})")
+            else:
+                parts_out.append(f"{color} {mn}->{mx} ({tot})")
+        return " | ".join(parts_out)
+
+    if as_json:
+        result = []
+        for r in rows:
+            if len(r) < 7:
+                continue
+            pid = int(r[0])
+            result.append(
+                {
+                    "id": pid,
+                    "name": r[1],
+                    "reference": r[2],
+                    "price": float(r[3]) if r[3] else 0,
+                    "brand": r[4],
+                    "collection": r[5],
+                    "variants_count": int(r[6]) if r[6] else 0,
+                    "variants_summary": _format_summary(pid),
+                }
+            )
+        console.print_json(json.dumps(result, ensure_ascii=False))
+        return
+
+    title_parts = []
+    if brand:
+        title_parts.append(f"Marque ~ {brand}")
+    if collection:
+        title_parts.append(f"Collection ~ {collection}")
+    title = "Produits"
+    if title_parts:
+        title += " (" + ", ".join(title_parts) + ")"
+
+    table = Table(title=title)
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Nom", style="green")
+    table.add_column("Ref", style="yellow")
+    table.add_column("Prix", style="magenta", justify="right")
+    table.add_column("Marque")
+    table.add_column("Collection")
+    table.add_column("Variants", justify="right")
+    table.add_column("variants (summary)", overflow="fold", max_width=50)
+
+    for r in rows:
+        if len(r) < 7:
+            continue
+        pid = int(r[0])
+        summary = _format_summary(pid)
+        table.add_row(
+            r[0],
+            r[1],
+            r[2] or "",
+            r[3] or "",
+            r[4] or "",
+            r[5] or "",
+            r[6] or "0",
+            summary,
+        )
+
+    console.print(table)
+
+@db.command('variant-list')
+@click.option('--ref', 'reference', type=str, help='Référence produit (sans taille)')
+@click.option('--product-id', type=int, help='ID produit')
+@click.option('--json', 'as_json', is_flag=True, help='Sortie JSON')
+def db_variant_list(reference, product_id, as_json):
+    """🔍 Lister les variants d'un produit (lecture seule sur VPS)"""
+    # Résoudre product_id à partir de la référence si besoin
+    if not product_id and not reference:
+        console.print("[red]❌ Spécifiez --ref ou --product-id[/red]")
+        return
+
+    if not product_id and reference:
+        ref_esc = reference.replace("'", "''")
+        try:
+            rows = _run_db_query(
+                "SELECT id FROM products "
+                f"WHERE reference = '{ref_esc}' "
+                "ORDER BY id LIMIT 1;"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur lors de la recherche produit: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit trouvé pour cette référence[/yellow]")
+            return
+        product_id = int(rows[0][0])
+
+    sql = (
+        "SELECT v.id, v.sku, v.size, v.color, v.stock "
+        "FROM variants v "
+        f"WHERE v.product_id = {product_id} "
+        "ORDER BY v.id;"
+    )
+
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la requête: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant trouvé pour ce produit[/yellow]")
+        return
+
+    if as_json:
+        result = [
+            {
+                "id": int(r[0]),
+                "sku": r[1],
+                "size": r[2],
+                "color": r[3],
+                "stock": int(r[4]) if r[4] else 0,
+            }
+            for r in rows
+        ]
+        console.print_json(json.dumps(result, ensure_ascii=False))
+        return
+
+    table = Table(title=f"Variants produit {product_id}")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+
+    for r in rows:
+        table.add_row(
+            r[0],
+            r[1],
+            r[2] or "",
+            r[3] or "",
+            r[4] or "0",
+        )
+
+    console.print(table)
+    console.print("[dim]--- Édition[/dim]")
+    console.print("[dim]  • Stock (un variant)    : variant-set-stock --id <ID> --stock <n> [--yes][/dim]")
+    console.print("[dim]  • Stock (tous variants) : product-set-all-stock --ref <REF> --stock <n> [--yes][/dim]")
+    console.print("[dim]  • Couleur (tous)        : product-set-all-color --ref <REF> --color <COULEUR> [--yes][/dim]")
+    console.print("[dim]  • Taille                 : variant-set-size --id <ID> --size <TAILLE> [--yes][/dim]")
+    console.print("[dim]  • Couleur (un variant)  : variant-set-color --id <ID> --color <COULEUR> [--yes][/dim]")
+    console.print("[dim]  • Ajouter un variant    : variant-add --ref <REF> --sku <SKU> --size <S> --color <C> [--stock <n>] [--yes][/dim]")
+    console.print("[dim]  • Supprimer un variant  : variant-delete --id <ID> [--yes][/dim]")
+
+
+@db.command('check-sequences')
+def db_check_sequences():
+    """🔍 Vérifier l'état des séquences critiques (lecture seule)"""
+    queries = {
+        "carts_id_seq": (
+            "SELECT last_value, "
+            "(SELECT COALESCE(MAX(id),0) FROM carts) AS max_id "
+            "FROM carts_id_seq;"
+        ),
+        "orders_id_seq": (
+            "SELECT last_value, "
+            "(SELECT COALESCE(MAX(id),0) FROM orders) AS max_id "
+            "FROM orders_id_seq;"
+        ),
+        "products_id_seq": (
+            "SELECT last_value, "
+            "(SELECT COALESCE(MAX(id),0) FROM products) AS max_id "
+            "FROM products_id_seq;"
+        ),
+    }
+
+    table = Table(title="Séquences PostgreSQL (lecture seule)")
+    table.add_column("Séquence", style="cyan")
+    table.add_column("last_value", style="green", justify="right")
+    table.add_column("max(id)", style="yellow", justify="right")
+    table.add_column("État", style="magenta")
+
+    for name, sql in queries.items():
+        try:
+            rows = _run_db_query(sql)
+            if not rows:
+                table.add_row(name, "N/A", "N/A", "[red]Aucune donnée[/red]")
+                continue
+            last_val, max_id = rows[0]
+            status = "[green]OK[/green]"
+            if max_id and last_val and int(last_val) <= int(max_id):
+                status = "[yellow]⚠️ last_value <= max(id)[/yellow]"
+            table.add_row(name, last_val or "0", max_id or "0", status)
+        except Exception as e:
+            table.add_row(name, "ERR", "ERR", f"[red]{e}[/red]")
+
+    console.print(table)
+
+
+@db.command('order-list')
+@click.option('--last', type=int, default=20, help='Nombre de commandes (défaut 20)')
+@click.option('--json', 'as_json', is_flag=True)
+def db_order_list(last, as_json):
+    """🔍 Lister les dernières commandes (lecture seule)"""
+    limit = max(1, min(last, 200))
+    sql = (
+        "SELECT o.id, o.status, o.total, o.created_at, "
+        "o.customer_info->>'email' AS email "
+        "FROM orders o ORDER BY o.id DESC LIMIT %d;" % limit
+    )
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucune commande[/yellow]")
+        return
+    if as_json:
+        result = []
+        for r in rows:
+            if len(r) < 5:
+                continue
+            result.append({
+                "id": int(r[0]),
+                "status": r[1],
+                "total": float(r[2]) if r[2] else 0,
+                "created_at": r[3],
+                "email": r[4] or "",
+            })
+        console.print_json(json.dumps(result, ensure_ascii=False))
+        return
+    table = Table(title="Dernières commandes")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Statut", style="green")
+    table.add_column("Total", style="yellow", justify="right")
+    table.add_column("Créé", style="magenta")
+    table.add_column("Email")
+    for r in rows:
+        table.add_row(r[0], r[1] or "", r[2] or "", r[3] or "", (r[4] or "")[:30])
+    console.print(table)
+
+
+@db.command('order-detail')
+@click.option('--id', 'order_id', type=int, required=True)
+@click.option('--json', 'as_json', is_flag=True)
+def db_order_detail(order_id, as_json):
+    """🔍 Détail d'une commande (lecture seule)"""
+    sql = (
+        "SELECT id, status, total, customer_info, items, created_at "
+        "FROM orders WHERE id = %d;" % order_id
+    )
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Commande introuvable[/yellow]")
+        return
+    r = rows[0]
+    if as_json:
+        cust, items = r[3], r[4]
+        try:
+            cust = json.loads(cust) if isinstance(cust, str) and cust.strip() else (cust if cust else {})
+            items = json.loads(items) if isinstance(items, str) and items.strip() else (items if items else [])
+        except Exception:
+            pass
+        console.print_json(json.dumps({
+            "id": int(r[0]),
+            "status": r[1],
+            "total": float(r[2]) if r[2] else 0,
+            "customer_info": cust,
+            "items": items,
+            "created_at": r[5],
+        }, ensure_ascii=False))
+        return
+    table = Table(title="Commande %d" % order_id)
+    table.add_column("Champ", style="cyan")
+    table.add_column("Valeur", style="green")
+    table.add_row("id", str(r[0]))
+    table.add_row("status", str(r[1]))
+    table.add_row("total", str(r[2]))
+    table.add_row("customer_info", (str(r[3]) or "")[:60])
+    table.add_row("items", (str(r[4]) or "")[:60])
+    table.add_row("created_at", str(r[5]))
+    console.print(table)
+
+
+@db.command('cart-list')
+@click.option('--last', type=int, default=20, help='Nombre de paniers (défaut 20)')
+@click.option('--json', 'as_json', is_flag=True)
+def db_cart_list(last, as_json):
+    """🔍 Lister les derniers paniers (lecture seule, debug)"""
+    limit = max(1, min(last, 200))
+    sql = "SELECT id, session_id, created_at FROM carts ORDER BY id DESC LIMIT %d;" % limit
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucun panier[/yellow]")
+        return
+    if as_json:
+        result = [{"id": int(r[0]), "session_id": r[1], "created_at": r[2]} for r in rows]
+        console.print_json(json.dumps(result, ensure_ascii=False))
+        return
+    table = Table(title="Derniers paniers")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("session_id", style="green")
+    table.add_column("created_at", style="yellow")
+    for r in rows:
+        table.add_row(r[0], (r[1] or "")[:36], r[2] or "")
+    console.print(table)
+
+
+@db.command('export-csv')
+@click.option('--brand', type=str, default=None, help='Filtrer par nom de marque')
+@click.option('--collection', type=str, default=None, help='Filtrer par nom de collection')
+@click.option('--output', '-o', type=click.Path(), default=None, help='Fichier CSV de sortie (défaut: stdout)')
+def db_export_csv(brand, collection, output):
+    """📤 Export produits/variants en CSV (une ligne par variant) pour Excel / traitement externe"""
+    if not brand and not collection:
+        console.print("[red]❌ Indiquer au moins --brand ou --collection[/red]")
+        return
+    cond_parts = []
+    if brand:
+        cond_parts.append("b.name = '%s'" % str(brand).replace("'", "''"))
+    if collection:
+        cond_parts.append("c.name = '%s'" % str(collection).replace("'", "''"))
+    where_sql = " AND ".join(cond_parts)
+    sql = (
+        "SELECT p.reference, p.name, v.sku, v.size, v.color, v.stock "
+        "FROM products p "
+        "JOIN variants v ON v.product_id = p.id "
+        "JOIN brands b ON b.id = p.brand_id "
+        "JOIN collections c ON c.id = p.collection_id "
+        "WHERE " + where_sql + " ORDER BY p.reference, v.sku;"
+    )
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant trouvé[/yellow]")
+        return
+    import csv
+    import io
+    buf = io.StringIO()
+    w = csv.writer(buf, delimiter=";", lineterminator="\n")
+    w.writerow(["reference", "name", "sku", "size", "color", "stock"])
+    for r in rows:
+        w.writerow([(x or "").strip() for x in r])
+    csv_content = buf.getvalue()
+    if output:
+        with open(output, "w", encoding="utf-8", newline="") as f:
+            f.write(csv_content)
+        console.print(f"[green]✅ Exporté %d lignes → %s[/green]" % (len(rows), output))
+    else:
+        console.print(csv_content)
+
+
+@db.command('variant-set-stock')
+@click.option('--id', 'variant_id', type=int, required=True, help='ID du variant')
+@click.option('--stock', type=int, required=True, help='Nouveau stock')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup avant modification (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_variant_set_stock(variant_id, stock, no_backup, yes):
+    """✏️ Mettre à jour le stock d'un variant (VPS, avec backup)"""
+    if stock < 0:
+        console.print("[red]❌ Stock négatif interdit[/red]")
+        return
+
+    if not yes:
+        if not click.confirm(f"Mettre le stock du variant {variant_id} à {stock} ?"):
+            console.print("[yellow]Action annulée[/yellow]")
+            return
+
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return
+
+    try:
+        _exec_db_sql(f"UPDATE variants SET stock = {stock} WHERE id = {variant_id};")
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock "
+            "FROM variants v "
+            f"WHERE v.id = {variant_id};"
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la mise à jour: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant trouvé avec cet ID[/yellow]")
+        return
+
+    r = rows[0]
+    table = Table(title="Variant mis à jour")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+
+
+def _variant_confirm_and_backup(yes: bool, msg: str, no_backup: bool) -> bool:
+    if not yes and not click.confirm(msg):
+        console.print("[yellow]Action annulée[/yellow]")
+        return False
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return False
+    return True
+
+
+@db.command('variant-set-size')
+@click.option('--id', 'variant_id', type=int, required=True, help='ID du variant')
+@click.option('--size', type=str, required=True, help='Nouvelle taille')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_variant_set_size(variant_id, size, no_backup, yes):
+    """✏️ Changer la taille d'un variant (VPS, avec backup)"""
+    if not _variant_confirm_and_backup(
+        yes, f"Changer la taille du variant {variant_id} en « {size} » ?", no_backup
+    ):
+        return
+    esc = size.replace("'", "''")
+    try:
+        _exec_db_sql("UPDATE variants SET size = '%s' WHERE id = %d;" % (esc, variant_id))
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v WHERE v.id = %d;" % variant_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant trouvé[/yellow]")
+        return
+    r = rows[0]
+    table = Table(title="Variant mis à jour (taille)")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+
+
+@db.command('variant-set-color')
+@click.option('--id', 'variant_id', type=int, required=True, help='ID du variant')
+@click.option('--color', type=str, required=True, help='Nouvelle couleur')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_variant_set_color(variant_id, color, no_backup, yes):
+    """✏️ Changer la couleur d'un variant (VPS, avec backup)"""
+    if not _variant_confirm_and_backup(
+        yes, f"Changer la couleur du variant {variant_id} en « {color} » ?", no_backup
+    ):
+        return
+    esc = color.replace("'", "''")
+    try:
+        _exec_db_sql("UPDATE variants SET color = '%s' WHERE id = %d;" % (esc, variant_id))
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v WHERE v.id = %d;" % variant_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant trouvé[/yellow]")
+        return
+    r = rows[0]
+    table = Table(title="Variant mis à jour (couleur)")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+
+
+@db.command('variant-add')
+@click.option('--ref', 'reference', type=str, help='Référence produit')
+@click.option('--product-id', type=int, help='ID produit')
+@click.option('--sku', type=str, required=True, help='SKU unique du variant')
+@click.option('--size', type=str, required=True, help='Taille')
+@click.option('--color', type=str, required=True, help='Couleur')
+@click.option('--stock', type=int, default=0, help='Stock (défaut 0)')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_variant_add(reference, product_id, sku, size, color, stock, no_backup, yes):
+    """✏️ Ajouter un variant à un produit (VPS, avec backup)"""
+    if stock < 0:
+        console.print("[red]❌ Stock négatif interdit[/red]")
+        return
+    if not reference and not product_id:
+        console.print("[red]❌ Spécifiez --ref ou --product-id[/red]")
+        return
+    if reference and product_id:
+        console.print("[yellow]⚠️ Utilisez soit --ref, soit --product-id[/yellow]")
+        return
+    if reference:
+        ref_esc = reference.replace("'", "''")
+        try:
+            rows = _run_db_query(
+                "SELECT id FROM products WHERE reference = '" + ref_esc + "' ORDER BY id LIMIT 1;"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit pour cette référence[/yellow]")
+            return
+        product_id = int(rows[0][0])
+    if not _variant_confirm_and_backup(
+        yes, f"Ajouter variant {sku} (taille {size}, couleur {color}, stock {stock}) au produit {product_id} ?", no_backup
+    ):
+        return
+    sku_esc = sku.replace("'", "''")
+    size_esc = size.replace("'", "''")
+    color_esc = color.replace("'", "''")
+    try:
+        _exec_db_sql(
+            "INSERT INTO variants (product_id, sku, size, color, stock, created_at, updated_at) "
+            "VALUES (%d, '%s', '%s', '%s', %d, NOW(), NOW());" % (product_id, sku_esc, size_esc, color_esc, stock)
+        )
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v "
+            "WHERE v.product_id = %d ORDER BY v.id DESC LIMIT 1;" % product_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Variant créé mais lecture échouée[/yellow]")
+        return
+    r = rows[0]
+    table = Table(title="Variant ajouté")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+    console.print("[green]✅ Variant créé[/green]")
+
+
+@db.command('variant-delete')
+@click.option('--id', 'variant_id', type=int, required=True, help='ID du variant')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_variant_delete(variant_id, no_backup, yes):
+    """✏️ Supprimer un variant (VPS, avec backup)"""
+    try:
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v WHERE v.id = %d;" % variant_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        console.print("[yellow]⚠️ Aucun variant avec cet ID[/yellow]")
+        return
+    r = rows[0]
+    if not _variant_confirm_and_backup(
+        yes, f"Supprimer le variant {variant_id} ({r[1]}, {r[2]}, {r[3]}) ?", no_backup
+    ):
+        return
+    try:
+        _exec_db_sql("DELETE FROM variants WHERE id = %d;" % variant_id)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    console.print("[green]✅ Variant %d supprimé[/green]" % variant_id)
+
+
+@db.command('product-set-all-color')
+@click.option('--ref', 'reference', type=str, help='Référence produit (ex: L100001/V09A)')
+@click.option('--product-id', type=int, help='ID du produit')
+@click.option('--color', type=str, required=True, help='Couleur à appliquer à tous les variants')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_product_set_all_color(reference, product_id, color, no_backup, yes):
+    """✏️ Mettre la même couleur à tous les variants d'un produit (VPS, avec backup)"""
+    if not reference and not product_id:
+        console.print("[red]❌ Spécifiez --ref ou --product-id[/red]")
+        return
+    if reference and product_id:
+        console.print("[yellow]⚠️ Utilisez soit --ref, soit --product-id, pas les deux[/yellow]")
+        return
+    if reference:
+        ref_esc = reference.replace("'", "''")
+        try:
+            rows = _run_db_query(
+                "SELECT id FROM products WHERE reference = '" + ref_esc + "' ORDER BY id LIMIT 1;"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit pour cette référence[/yellow]")
+            return
+        product_id = int(rows[0][0])
+    try:
+        count_rows = _run_db_query(
+            "SELECT COUNT(*) FROM variants WHERE product_id = %d;" % product_id
+        )
+        count = int(count_rows[0][0]) if count_rows else 0
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if count == 0:
+        console.print("[yellow]⚠️ Aucun variant pour ce produit[/yellow]")
+        return
+    if not _variant_confirm_and_backup(
+        yes, f"Mettre la couleur « {color} » pour les {count} variant(s) du produit {product_id} ?", no_backup
+    ):
+        return
+    color_esc = color.replace("'", "''")
+    try:
+        _exec_db_sql("UPDATE variants SET color = '%s' WHERE product_id = %d;" % (color_esc, product_id))
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v "
+            "WHERE v.product_id = %d ORDER BY v.id;" % product_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    table = Table(title=f"Produit {product_id} — tous les variants en « {color} »")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    for r in rows:
+        table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+    console.print("[green]✅ %d variant(s) mis à jour[/green]" % len(rows))
+
+
+@db.command('product-set-all-stock')
+@click.option('--ref', 'reference', type=str, help='Référence produit (ex: L100001/V09A)')
+@click.option('--product-id', type=int, help='ID du produit')
+@click.option('--stock', type=int, required=True, help='Stock à appliquer à tous les variants')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup avant modification (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_product_set_all_stock(reference, product_id, stock, no_backup, yes):
+    """✏️ Mettre le même stock à tous les variants d'un produit (VPS, avec backup)"""
+    if stock < 0:
+        console.print("[red]❌ Stock négatif interdit[/red]")
+        return
+    if not reference and not product_id:
+        console.print("[red]❌ Spécifiez --ref ou --product-id[/red]")
+        return
+    if reference and product_id:
+        console.print("[yellow]⚠️ Utilisez soit --ref, soit --product-id, pas les deux[/yellow]")
+        return
+
+    if reference:
+        ref_esc = reference.replace("'", "''")
+        try:
+            rows = _run_db_query(
+                "SELECT id, name FROM products WHERE reference = '" + ref_esc + "' ORDER BY id LIMIT 1;"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit trouvé pour cette référence[/yellow]")
+            return
+        product_id = int(rows[0][0])
+        product_name = rows[0][1] or ""
+
+    try:
+        count_rows = _run_db_query(
+            "SELECT COUNT(*) FROM variants WHERE product_id = %d;" % product_id
+        )
+        count = int(count_rows[0][0]) if count_rows else 0
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if count == 0:
+        console.print("[yellow]⚠️ Aucun variant pour ce produit[/yellow]")
+        return
+
+    if not yes:
+        if not click.confirm(
+            f"Mettre le stock à {stock} pour les {count} variant(s) du produit {product_id} ?"
+        ):
+            console.print("[yellow]Action annulée[/yellow]")
+            return
+
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return
+
+    try:
+        _exec_db_sql("UPDATE variants SET stock = %d WHERE product_id = %d;" % (stock, product_id))
+        rows = _run_db_query(
+            "SELECT v.id, v.sku, v.size, v.color, v.stock FROM variants v "
+            "WHERE v.product_id = %d ORDER BY v.id;" % product_id
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la mise à jour: {e}[/red]")
+        return
+
+    table = Table(title=f"Produit {product_id} — tous les variants à stock {stock}")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("SKU", style="green")
+    table.add_column("Taille", style="yellow")
+    table.add_column("Couleur", style="magenta")
+    table.add_column("Stock", justify="right")
+    for r in rows:
+        table.add_row(r[0], r[1], r[2] or "", r[3] or "", r[4] or "0")
+    console.print(table)
+    console.print("[green]✅ %d variant(s) mis à jour[/green]" % len(rows))
+
+
+@db.command('product-set-active')
+@click.option('--id', 'product_id', type=int, required=True, help='ID du produit')
+@click.option('--active/--inactive', default=True, help='Activer ou désactiver le produit')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup avant modification (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_product_set_active(product_id, active, no_backup, yes):
+    """✏️ Activer / désactiver un produit (VPS, avec backup)"""
+    state_label = "activer" if active else "désactiver"
+
+    if not yes:
+        if not click.confirm(f"{state_label.capitalize()} le produit {product_id} ?"):
+            console.print("[yellow]Action annulée[/yellow]")
+            return
+
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return
+
+    try:
+        _exec_db_sql(
+            f"UPDATE products SET is_published = {'TRUE' if active else 'FALSE'} "
+            f"WHERE id = {product_id};"
+        )
+        rows = _run_db_query(
+            "SELECT id, name, reference, is_published "
+            "FROM products "
+            f"WHERE id = {product_id};"
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la mise à jour: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun produit trouvé avec cet ID[/yellow]")
+        return
+
+    r = rows[0]
+    table = Table(title="Produit mis à jour (is_published)")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Nom", style="green")
+    table.add_column("Ref", style="yellow")
+    table.add_column("Publié", style="magenta")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "")
+    console.print(table)
+
+
+@db.command('product-set-price')
+@click.option('--id', 'product_id', type=int, required=True, help='ID du produit')
+@click.option('--price', type=float, required=True, help='Nouveau prix (en EUR)')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup avant modification (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_product_set_price(product_id, price, no_backup, yes):
+    """✏️ Mettre à jour le prix d'un produit (VPS, avec backup)"""
+    if price < 0:
+        console.print("[red]❌ Prix négatif interdit[/red]")
+        return
+
+    if not yes:
+        if not click.confirm(f"Mettre le prix du produit {product_id} à {price:.2f} EUR ?"):
+            console.print("[yellow]Action annulée[/yellow]")
+            return
+
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return
+
+    try:
+        _exec_db_sql(
+            f"UPDATE products SET price = {price} "
+            f"WHERE id = {product_id};"
+        )
+        rows = _run_db_query(
+            "SELECT id, name, reference, price "
+            "FROM products "
+            f"WHERE id = {product_id};"
+        )
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la mise à jour: {e}[/red]")
+        return
+
+    if not rows:
+        console.print("[yellow]⚠️ Aucun produit trouvé avec cet ID[/yellow]")
+        return
+
+    r = rows[0]
+    table = Table(title="Produit mis à jour (price)")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Nom", style="green")
+    table.add_column("Ref", style="yellow")
+    table.add_column("Prix", style="magenta", justify="right")
+    table.add_row(r[0], r[1], r[2] or "", r[3] or "")
+    console.print(table)
+
+
+def _product_edit_string(product_id: int, field: str, value: str, label: str, no_backup: bool, yes: bool) -> bool:
+    if not yes and not click.confirm(f"Mettre {label} du produit {product_id} à « {value} » ?"):
+        console.print("[yellow]Action annulée[/yellow]")
+        return False
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué: {e}[/red]")
+            return False
+    esc = value.replace("'", "''")
+    _exec_db_sql("UPDATE products SET %s = '%s' WHERE id = %d;" % (field, esc, product_id))
+    return True
+
+
+@db.command('product-set-name')
+@click.option('--id', 'product_id', type=int, required=True)
+@click.option('--name', type=str, required=True)
+@click.option('--no-backup', is_flag=True)
+@click.option('--yes', '-y', is_flag=True)
+def db_product_set_name(product_id, name, no_backup, yes):
+    """✏️ Changer le nom d'un produit (VPS, avec backup)"""
+    if not _product_edit_string(product_id, "name", name, "le nom", no_backup, yes):
+        return
+    rows = _run_db_query("SELECT id, name, reference FROM products WHERE id = %d;" % product_id)
+    if rows:
+        r = rows[0]
+        table = Table(title="Produit mis à jour (name)")
+        table.add_column("ID", style="cyan", justify="right")
+        table.add_column("Nom", style="green")
+        table.add_column("Ref", style="yellow")
+        table.add_row(r[0], r[1], r[2] or "")
+        console.print(table)
+
+
+@db.command('product-set-ref')
+@click.option('--id', 'product_id', type=int, required=True)
+@click.option('--ref', 'reference', type=str, required=True)
+@click.option('--no-backup', is_flag=True)
+@click.option('--yes', '-y', is_flag=True)
+def db_product_set_ref(product_id, reference, no_backup, yes):
+    """✏️ Changer la référence d'un produit (VPS, avec backup)"""
+    if not _product_edit_string(product_id, "reference", reference, "la référence", no_backup, yes):
+        return
+    rows = _run_db_query("SELECT id, name, reference FROM products WHERE id = %d;" % product_id)
+    if rows:
+        r = rows[0]
+        table = Table(title="Produit mis à jour (reference)")
+        table.add_column("ID", style="cyan", justify="right")
+        table.add_column("Nom", style="green")
+        table.add_column("Ref", style="yellow")
+        table.add_row(r[0], r[1], r[2] or "")
+        console.print(table)
+
+
+@db.command('product-set-category')
+@click.option('--id', 'product_id', type=int, required=True)
+@click.option('--category-id', type=int, required=True)
+@click.option('--no-backup', is_flag=True)
+@click.option('--yes', '-y', is_flag=True)
+def db_product_set_category(product_id, category_id, no_backup, yes):
+    """✏️ Changer la catégorie d'un produit (VPS, avec backup)"""
+    if not yes and not click.confirm(f"Mettre la catégorie du produit {product_id} à {category_id} ?"):
+        console.print("[yellow]Action annulée[/yellow]")
+        return
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué: {e}[/red]")
+            return False
+    _exec_db_sql("UPDATE products SET category_id = %d WHERE id = %d;" % (category_id, product_id))
+    rows = _run_db_query(
+        "SELECT p.id, p.name, p.category_id, c.name FROM products p "
+        "LEFT JOIN categories c ON c.id = p.category_id WHERE p.id = %d;" % product_id
+    )
+    if rows:
+        r = rows[0]
+        table = Table(title="Produit mis à jour (category)")
+        table.add_column("ID", style="cyan", justify="right")
+        table.add_column("Nom", style="green")
+        table.add_column("category_id", justify="right")
+        table.add_column("Catégorie", style="yellow")
+        table.add_row(r[0], r[1], r[2] or "", r[3] or "")
+        console.print(table)
+
+
+@db.command('product-set-brand')
+@click.option('--id', 'product_id', type=int, required=True)
+@click.option('--brand-id', type=int, required=True)
+@click.option('--no-backup', is_flag=True)
+@click.option('--yes', '-y', is_flag=True)
+def db_product_set_brand(product_id, brand_id, no_backup, yes):
+    """✏️ Changer la marque d'un produit (VPS, avec backup)"""
+    if not yes and not click.confirm(f"Mettre la marque du produit {product_id} à {brand_id} ?"):
+        console.print("[yellow]Action annulée[/yellow]")
+        return
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué: {e}[/red]")
+            return
+    _exec_db_sql("UPDATE products SET brand_id = %d WHERE id = %d;" % (brand_id, product_id))
+    rows = _run_db_query(
+        "SELECT p.id, p.name, p.brand_id, b.name FROM products p "
+        "LEFT JOIN brands b ON b.id = p.brand_id WHERE p.id = %d;" % product_id
+    )
+    if rows:
+        r = rows[0]
+        table = Table(title="Produit mis à jour (brand)")
+        table.add_column("ID", style="cyan", justify="right")
+        table.add_column("Nom", style="green")
+        table.add_column("brand_id", justify="right")
+        table.add_column("Marque", style="yellow")
+        table.add_row(r[0], r[1], r[2] or "", r[3] or "")
+        console.print(table)
+
+
+@db.command('product-set-collection')
+@click.option('--id', 'product_id', type=int, required=True)
+@click.option('--collection-id', type=int, required=True)
+@click.option('--no-backup', is_flag=True)
+@click.option('--yes', '-y', is_flag=True)
+def db_product_set_collection(product_id, collection_id, no_backup, yes):
+    """✏️ Changer la collection d'un produit (VPS, avec backup)"""
+    if not yes and not click.confirm(f"Mettre la collection du produit {product_id} à {collection_id} ?"):
+        console.print("[yellow]Action annulée[/yellow]")
+        return
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué: {e}[/red]")
+            return
+    _exec_db_sql("UPDATE products SET collection_id = %d WHERE id = %d;" % (collection_id, product_id))
+    rows = _run_db_query(
+        "SELECT p.id, p.name, p.collection_id, c.name FROM products p "
+        "LEFT JOIN collections c ON c.id = p.collection_id WHERE p.id = %d;" % product_id
+    )
+    if rows:
+        r = rows[0]
+        table = Table(title="Produit mis à jour (collection)")
+        table.add_column("ID", style="cyan", justify="right")
+        table.add_column("Nom", style="green")
+        table.add_column("collection_id", justify="right")
+        table.add_column("Collection", style="yellow")
+        table.add_row(r[0], r[1], r[2] or "", r[3] or "")
+        console.print(table)
+
 
 @db.group()
 def seed():

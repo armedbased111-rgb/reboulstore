@@ -86,6 +86,15 @@ Le CLI Python est **100% fonctionnel** et prêt à être utilisé dans le workfl
 ./rcli db backup-list                 # Lister les backups
 ./rcli db backup-restore file.sql.gz  # Restaurer un backup
 ./rcli db backup-delete file.sql.gz   # Supprimer un backup
+
+# Inspection rapide produits / variants (Phase 24.6)
+./rcli db product-find --ref L100001/V09A          # Chercher un produit par référence
+./rcli db variant-list --product-id 123           # Lister les variants d'un produit
+./rcli db check-sequences                         # Vérifier l'état des séquences clés
+
+# Petites corrections manuelles (avec backup auto + --yes)
+./rcli db variant-set-stock --id 456 --stock 3 --yes
+./rcli db product-set-price --id 123 --price 199.90 --yes
 ```
 
 ### 📚 Documentation

@@ -53,7 +53,7 @@ export const OrderDetail = () => {
 
   const handleDownloadInvoice = async () => {
     try {
-      await downloadInvoice(order.id);
+      await downloadInvoice(order.id.toString());
     } catch (error) {
       console.error('Erreur lors du téléchargement de la facture:', error);
       alert('Erreur lors du téléchargement de la facture');
@@ -66,8 +66,8 @@ export const OrderDetail = () => {
       <div className="flex flex-col gap-6 lg:gap-0">
         {/* Header - Largeur 540px sur desktop comme Figma */}
         <div className="lg:w-[540px] mb-6 lg:mb-0">
-          <OrderDetailHeader 
-            orderId={order.id} 
+      <OrderDetailHeader 
+            orderId={order.id.toString()} 
             createdAt={order.createdAt} 
           />
         </div>

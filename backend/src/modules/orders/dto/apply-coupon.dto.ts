@@ -1,12 +1,14 @@
-import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ApplyCouponDto {
   @IsString()
   @IsNotEmpty()
   code: string;
 
-  @IsUUID()
-  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
   cartId: number;
 }
 

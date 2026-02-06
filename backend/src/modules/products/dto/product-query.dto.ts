@@ -1,7 +1,6 @@
 import {
   IsOptional,
   IsString,
-  IsUUID,
   IsNumber,
   Min,
   IsInt,
@@ -10,8 +9,10 @@ import { Type } from 'class-transformer';
 
 export class ProductQueryDto {
   @IsOptional()
-  @IsUUID()
-  category?: string;
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  category?: number;
 
   @IsOptional()
   @IsString()

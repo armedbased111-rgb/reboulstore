@@ -25,8 +25,8 @@ export const Search = () => {
   const query = searchParams.get('q') || '';
   
   // États pour les filtres
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -41,8 +41,8 @@ export const Search = () => {
   // Construire la query pour l'API
   const productQuery = {
     search: query,
-    category: selectedCategory || undefined,
-    brand: selectedBrand || undefined,
+    category: selectedCategory != null ? String(selectedCategory) : undefined,
+    brand: selectedBrand != null ? String(selectedBrand) : undefined,
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < 1000 ? priceRange[1] : undefined,
     page: currentPage,
@@ -135,12 +135,12 @@ export const Search = () => {
   }, [selectedCategory, selectedBrand, priceRange, selectedColors, selectedSizes, sortBy]);
 
   // Gérer les changements de filtres
-  const handleCategoryChange = (categoryId: string) => {
-    setSelectedCategory(categoryId === selectedCategory ? '' : categoryId);
+  const handleCategoryChange = (categoryId: number) => {
+    setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
   };
 
-  const handleBrandChange = (brandId: string) => {
-    setSelectedBrand(brandId === selectedBrand ? '' : brandId);
+  const handleBrandChange = (brandId: number) => {
+    setSelectedBrand(brandId === selectedBrand ? null : brandId);
   };
 
   const handleColorToggle = (color: string) => {
@@ -156,8 +156,8 @@ export const Search = () => {
   };
 
   const clearFilters = () => {
-    setSelectedCategory('');
-    setSelectedBrand('');
+    setSelectedCategory(null);
+    setSelectedBrand(null);
     setPriceRange([0, 1000]);
     setSelectedColors([]);
     setSelectedSizes([]);
@@ -166,8 +166,8 @@ export const Search = () => {
   };
 
   const hasActiveFilters =
-    selectedCategory ||
-    selectedBrand ||
+    selectedCategory != null ||
+    selectedBrand != null ||
     priceRange[0] > 0 ||
     priceRange[1] < 1000 ||
     selectedColors.length > 0 ||

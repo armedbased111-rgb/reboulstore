@@ -3,19 +3,19 @@ import { api } from './api';
 export interface SubscribeStockNotificationDto {
   email: string;
   phone?: string;
-  variantId?: string;
+  variantId?: number;
 }
 
 export interface StockNotificationResponse {
-  id: string;
-  productId: string;
-  variantId: string | null;
+  id: number;
+  productId: number;
+  variantId: number | null;
   email: string;
   phone: string | null;
   isNotified: boolean;
-  notifiedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
+  notifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CheckSubscriptionResponse {
@@ -31,7 +31,7 @@ export const stockNotificationsService = {
    * S'abonner aux notifications de stock pour un produit
    */
   async subscribe(
-    productId: string,
+    productId: number,
     data: SubscribeStockNotificationDto,
   ): Promise<StockNotificationResponse> {
     return api.post<StockNotificationResponse>(
@@ -44,13 +44,13 @@ export const stockNotificationsService = {
    * Vérifier si un utilisateur est déjà inscrit aux notifications
    */
   async checkSubscription(
-    productId: string,
+    productId: number,
     email: string,
-    variantId?: string,
+    variantId?: number,
   ): Promise<CheckSubscriptionResponse> {
     const params = new URLSearchParams({ email });
-    if (variantId) {
-      params.append('variantId', variantId);
+    if (variantId != null) {
+      params.append('variantId', String(variantId));
     }
 
     return api.get<CheckSubscriptionResponse>(

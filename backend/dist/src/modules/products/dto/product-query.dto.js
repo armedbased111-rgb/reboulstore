@@ -26,8 +26,10 @@ class ProductQueryDto {
 exports.ProductQueryDto = ProductQueryDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
-    __metadata("design:type", String)
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
 ], ProductQueryDto.prototype, "category", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),

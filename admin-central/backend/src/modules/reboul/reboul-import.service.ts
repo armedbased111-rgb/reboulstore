@@ -143,8 +143,11 @@ export class ReboulImportService {
       }
     }
 
-    const seenSkus = new Set<string>();
+    const seenReferences = new Set<string>();
     const productKeys = new Set<string>();
+
+    // Source de vérité Reboul = référence produit (alignée magasin)
+    const refKey = (row: CsvRow) => (row.reference ?? '').trim().replace(/\s+/g, ' ');
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -152,6 +155,7 @@ export class ReboulImportService {
       const rowWarnings: string[] = [];
 
       if (!row.name?.trim()) rowErrors.push('name obligatoire');
+      if (!refKey(row)) rowErrors.push('référence produit obligatoire');
       const priceNum = parseFloat(String(row.price).replace(',', '.'));
       if (isNaN(priceNum) || priceNum <= 0) rowErrors.push('price invalide');
       if (!row.category?.trim()) rowErrors.push('category obligatoire');
@@ -160,9 +164,9 @@ export class ReboulImportService {
       if (!row.size?.trim()) rowErrors.push('size obligatoire');
       const stockNum = parseInt(String(row.stock), 10);
       if (isNaN(stockNum) || stockNum < 0) rowWarnings.push('stock invalide, sera 0');
-      if (!row.sku?.trim()) rowErrors.push('sku obligatoire');
-      if (row.sku && seenSkus.has(row.sku)) rowErrors.push('sku dupliqué');
-      if (row.sku) seenSkus.add(row.sku);
+      const key = refKey(row);
+      if (key && seenReferences.has(key)) rowErrors.push('référence en double (même ligne en double)');
+      if (key) seenReferences.add(key);
 
       const cat = row.category?.trim() && categoryByName.get(row.category.toLowerCase());
       if (row.category?.trim() && !cat) rowErrors.push(`catégorie "${row.category}" introuvable`);

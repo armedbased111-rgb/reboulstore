@@ -7,7 +7,7 @@ import { api } from './api';
 // Interface pour créer une session de checkout (utilisée en interne)
 // interface CreateCheckoutSessionRequest {
 //   items: Array<{
-//     variantId: string;
+//     variantId: number;
 //     quantity: number;
 //   }>;
 // }
@@ -23,7 +23,7 @@ interface CreateCheckoutSessionResponse {
  * @returns URL de redirection vers Stripe Checkout
  */
 export const createCheckoutSession = async (
-  items: Array<{ variantId: string; quantity: number }>,
+  items: Array<{ variantId: number; quantity: number }>,
   couponCode?: string,
 ): Promise<string> => {
   const response = await api.post<CreateCheckoutSessionResponse>(

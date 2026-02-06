@@ -7,9 +7,9 @@ interface UseCartReturn {
   cart: Cart | null;
   loading: boolean;
   error: string | null;
-  addToCart: (variantId: string, quantity: number) => Promise<void>;
-  updateItem: (itemId: string, quantity: number) => Promise<void>;
-  removeItem: (itemId: string) => Promise<void>;
+  addToCart: (variantId: number, quantity: number) => Promise<void>;
+  updateItem: (itemId: number, quantity: number) => Promise<void>;
+  removeItem: (itemId: number) => Promise<void>;
   clearCart: () => Promise<void>;
   refetch: () => void;
   total: number;
@@ -48,7 +48,7 @@ export const useCart = (): UseCartReturn => {
   }, [fetchCart]);
 
   // Ajouter un article au panier
-  const addToCart = useCallback(async (variantId: string, quantity: number) => {
+  const addToCart = useCallback(async (variantId: number, quantity: number) => {
     try {
       setError(null);
       await cartService.addToCart(sessionId, variantId, quantity);
@@ -61,7 +61,7 @@ export const useCart = (): UseCartReturn => {
   }, [sessionId, fetchCart]);
 
   // Mettre à jour la quantité d'un article
-  const updateItem = useCallback(async (itemId: string, quantity: number) => {
+  const updateItem = useCallback(async (itemId: number, quantity: number) => {
     try {
       setError(null);
       await cartService.updateCartItem(itemId, quantity, sessionId);
@@ -74,7 +74,7 @@ export const useCart = (): UseCartReturn => {
   }, [sessionId, fetchCart]);
 
   // Retirer un article du panier
-  const removeItem = useCallback(async (itemId: string) => {
+  const removeItem = useCallback(async (itemId: number) => {
     try {
       setError(null);
       await cartService.removeCartItem(itemId, sessionId);

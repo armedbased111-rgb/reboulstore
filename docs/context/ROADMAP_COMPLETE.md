@@ -1,8 +1,8 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 4.3  
+**Version** : 4.4  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 30/01/2026
+**Dernière mise à jour** : 06/02/2026
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -2648,7 +2648,7 @@ docker compose up backend frontend
 
 **Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via entrée manuelle dans l'Admin
 
-**📊 Statut** : **Fonctionnel** (tests OK ; import complet Stone à finaliser par l'utilisateur)
+**📊 Statut** : **Fonctionnel** (référence = source de vérité, doublons bloqués ; import Stone à finaliser par l'utilisateur)
 
 **📊 Informations** : Collections reçues une à une sous forme de table, entrée manuelle des données une à une
 
@@ -2662,6 +2662,8 @@ docker compose up backend frontend
   - [x] Parser fichier CSV/Excel (validation format, délimiteur ; ou ,)
   - [x] Prévisualisation données avant import
   - [x] Validation données (champs requis, formats, contraintes)
+  - [x] **Référence produit = source de vérité** (obligatoire, unicité ; SKU dérivé automatiquement)
+  - [x] **Détection doublons** : même référence en double → erreur bloquante (ex. L100001-V09A-29 deux fois)
   - [x] Gestion erreurs (afficher lignes avec erreurs)
 
 - [x] **Processus import** :
@@ -2688,42 +2690,48 @@ docker compose up backend frontend
   - [x] Vérifier variants et stocks (ordre tailles correct)
   - [x] Vérifier association marques/catégories
 
-### 24.6 Amélioration Processus Stocks - Gestion Manuelle
+### 24.6 Interface CLI Base de Données
 
-**Objectif** : Gérer la mise à jour des stocks manuellement via l'Admin
+**Objectif** : Disposer d’une interface CLI dédiée à la base Reboul (lecture/inspect + petites opérations encadrées) pour aller plus vite que via l’Admin, tout en respectant les règles DB (VPS uniquement + backup auto avant opérations risquées).
 
-**📊 Informations** : Stocks gérés manuellement (pas de sync AS400 pour l'instant)
+- [x] **24.6.1 Design CLI DB**
+  - [x] Lister les cas d’usage prioritaires (lecture produits/variants/stocks, recherche par **référence produit**, inspection commandes/paniers, check cohérence séquences, etc.)
+  - [x] Valider qu’on réutilise `./rcli` et la connexion actuelle (SSH / VPS, jamais DB locale)
+  - [x] Définir la convention de commandes `./rcli db ...` avec :
+    - [x] Recherche par **référence produit** (`--ref`) en priorité
+    - [x] Support `--id` et `--sku` en option
+  - [x] Séparer clairement commandes **lecture** vs commandes **mutantes** (qui exigeront backup + confirmation)
 
-- [ ] **Interface Admin - Gestion Stocks** :
-  - [ ] Vérifier interface Admin permet bien modification stocks par variant
-  - [ ] Interface pour mise à jour stocks en masse (si nécessaire)
-  - [ ] **Système d'alerte réassort** : Notifications pour produits avec stock entre 0 et 5 unités (dans l'admin)
-  - [ ] Affichage stocks faibles (0-5 unités) avec alerte visuelle
+- [x] **24.6.2 Commandes lecture (read-only) – MVP** ✅
+  - [x] `product-find --ref REF` / `--id ID` / `--sku SKU` → un produit
+  - [x] `product-list --brand "Stone Island"` [--collection] [--limit] → liste produits par marque/collection + résumé variants (taille min→max, stock)
+  - [x] `variant-list --product-id ID` / `--ref REF` → variants d’un produit (id, sku, size, color, stock)
+  - [x] `check-sequences` → séquences critiques (carts, orders, products)
+  - [x] Tables Rich + `--json`
 
-- [ ] **Workflow mise à jour stocks** :
-  - [ ] Documenter processus manuel de mise à jour stocks
-  - [ ] Guide utilisation Admin pour modification stocks
-  - [ ] Processus validation après mise à jour
+- [x] **24.6.3 Commandes d’édition encadrée** ✅
+  - [x] Stock : `variant-set-stock`, `product-set-all-stock`
+  - [x] Couleur : `variant-set-color`, `product-set-all-color`
+  - [x] Taille : `variant-set-size`
+  - [x] Ajout / suppression : `variant-add`, `variant-delete`
+  - [x] Prix produit : `product-set-price`
+  - [x] `product-set-active` (colonne `is_published`)
+  - [x] Backup auto + confirmation (`--yes` / prompt) pour toutes les commandes mutantes
 
-- [ ] **Système d'alerte réassort** :
-  - [ ] Créer système notification produits avec stock 0-5 unités
-  - [ ] Affichage dans Admin (dashboard, liste produits)
-  - [ ] Alertes visuelles (badges, couleurs)
+- [x] **24.6.4 Intégration CLI & docs** ✅
+  - [x] `docs/context/DB_CLI_USAGE.md` (guide complet)
+  - [x] Sous-section “Interface CLI DB” dans `docs/context/CONTEXT.md`
+  - [x] Commande Cursor `/db-cli-workflow` à jour
+  - [x] `project-rules.mdc` : rappel VPS + backup obligatoire avant actions CLI risquées
+  - [ ] Optionnel : documenter dans `cli/CONTEXT.md` / `cli/RECAPITULATIF.md` (déjà résumé dans RECAP base de données)
 
-- [ ] **Documentation** :
-  - [ ] Documenter workflow stocks final (manuel)
-  - [ ] Guide utilisation Admin
-  - [ ] Troubleshooting guide
+- [x] **24.6.5 Compléter le CLI DB (optionnel – pour clôturer 24.6 à 100 %)** ✅
+  - [x] **product-set-active** : colonne `is_published` alignée (migration + entité), commande finalisée
+  - [x] **Édition produit** : `product-set-name`, `product-set-ref`, `product-set-category`, `product-set-brand`, `product-set-collection`
+  - [x] **Inspection commandes / paniers** : `order-list` (--last N), `order-detail --id <ID>`, `cart-list` (--last N)
+  - [x] **Export CSV** : `export-csv --brand "X"` [--collection Y] [--output file.csv] (une ligne par variant)
 
-- [ ] **Workflow Admin** :
-  - [ ] Interface Admin pour lancer sync stocks
-  - [ ] Affichage rapport sync (produits modifiés, erreurs)
-  - [ ] Historique synchronisations
-
-- [ ] **Documentation** :
-  - [ ] Documenter workflow stocks final
-  - [ ] Guide utilisation Admin
-  - [ ] Troubleshooting guide
+Phase 24.6 CLI DB considérée terminée à 100 %.
 
 ### 24.7 Workflow Images Produits
 

@@ -24,7 +24,8 @@ export const VariantSelector = ({
 }: VariantSelectorProps) => {
   // Gérer le changement de sélection
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const variantId = e.target.value;
+    const rawId = e.target.value;
+    const variantId = parseInt(rawId, 10);
     const variant = variants.find((v) => v.id === variantId);
     if (variant) {
       onVariantChange(variant);

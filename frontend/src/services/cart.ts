@@ -16,7 +16,7 @@ export const getCart = async (sessionId: string): Promise<Cart> => {
 // Ajouter un article au panier
 export const addToCart = async (
   sessionId: string,
-  variantId: string,
+  variantId: number,
   quantity: number
 ): Promise<CartItem> => {
   return await api.post<CartItem>(
@@ -35,7 +35,7 @@ export const addToCart = async (
 
 // Mettre à jour la quantité d'un article
 export const updateCartItem = async (
-  itemId: string,
+  itemId: number,
   quantity: number,
   sessionId: string
 ): Promise<CartItem> => {
@@ -54,7 +54,7 @@ export const updateCartItem = async (
 
 // Retirer un article du panier
 export const removeCartItem = async (
-  itemId: string,
+  itemId: number,
   sessionId: string
 ): Promise<void> => {
   await api.delete(`/cart/items/${itemId}`, {

@@ -18,6 +18,7 @@ export declare class Product {
     brand: Brand | null;
     collectionId: number | null;
     collection: Collection | null;
+    isPublished: boolean;
     images: Image[];
     variants: Variant[];
     variantsData: string | null;

@@ -6,7 +6,7 @@ import { useToast } from '../../contexts/ToastContext';
 
 interface StockNotificationModalProps {
   product: Product;
-  variantId?: string;
+  variantId?: number;
   isOpen: boolean;
   onClose: () => void;
   onSubscribe: () => void;

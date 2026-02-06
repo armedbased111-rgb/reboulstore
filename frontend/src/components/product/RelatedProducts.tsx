@@ -4,8 +4,8 @@ import { getProducts } from '../../services/products';
 import type { Product } from '../../types';
 
 interface RelatedProductsProps {
-  categoryId?: string;
-  currentProductId: string;
+  categoryId?: number;
+  currentProductId: number;
   limit?: number;
 }
 
@@ -31,7 +31,7 @@ export const RelatedProducts = ({
       try {
         setLoading(true);
         const response = await getProducts({
-          category: categoryId,
+          category: String(categoryId),
           limit,
         });
 

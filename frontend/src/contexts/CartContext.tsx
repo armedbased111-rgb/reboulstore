@@ -7,9 +7,9 @@ interface CartContextType {
   cart: Cart | null;
   loading: boolean;
   error: string | null;
-  addToCart: (variantId: string, quantity: number) => Promise<void>;
-  updateItem: (itemId: string, quantity: number) => Promise<void>;
-  removeItem: (itemId: string) => Promise<void>;
+  addToCart: (variantId: number, quantity: number) => Promise<void>;
+  updateItem: (itemId: number, quantity: number) => Promise<void>;
+  removeItem: (itemId: number) => Promise<void>;
   clearCart: () => Promise<void>;
   refetch: () => void;
   total: number;

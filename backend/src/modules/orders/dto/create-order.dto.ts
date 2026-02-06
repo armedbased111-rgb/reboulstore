@@ -1,11 +1,12 @@
 import {
-  IsUUID,
   IsString,
   IsEmail,
   IsOptional,
   IsObject,
   ValidateNested,
   IsNotEmpty,
+  IsNumber,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -47,8 +48,9 @@ class CustomerInfoDto {
 }
 
 export class CreateOrderDto {
-  @IsUUID()
-  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
   cartId: number;
 
   @IsObject()

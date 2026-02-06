@@ -1,7 +1,9 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.31.0  
-**Phase actuelle** : Phase 24 EN COURS 🟢 (Préparation Collection Réelle) - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ terminées
+**Version** : 0.33.0  
+**Phase actuelle** : Phase 24 en finalisation 🟢 (Préparation Collection Réelle + Interface CLI DB)  
+  - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ (import CSV : référence = source de vérité, doublons bloqués en analyse ; import Stone à finaliser)  
+  - 24.6 (Interface CLI base de données) ✅ 100 % : lecture + édition encadrée + inspection commandes/paniers + export CSV
 **Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
 
 ---
@@ -196,6 +198,20 @@ Documentation/
 ```
 
 ---
+
+## 🛠️ Interface CLI DB (`./rcli db ...`)
+
+Voir et éditer les articles rapidement depuis le terminal (base Reboul sur VPS uniquement).
+
+**Lecture** : `product-find`, `product-list`, `variant-list`, `check-sequences`, `order-list` (--last N), `order-detail --id <ID>`, `cart-list`.
+
+**Édition** (backup auto + `--yes` ou confirmation) : stock (`variant-set-stock`, `product-set-all-stock`), couleur (`variant-set-color`, `product-set-all-color`), taille (`variant-set-size`), variant-add / variant-delete, prix (`product-set-price`), visibilité (`product-set-active`), nom/réf/catégorie/marque/collection (`product-set-name`, `product-set-ref`, `product-set-category`, `product-set-brand`, `product-set-collection`).
+
+**Export** : `export-csv --brand "X"` [--collection Y] [--output file.csv] (une ligne par variant).
+
+**Référence** : `docs/context/DB_CLI_USAGE.md` | Commande Cursor : `/db-cli-workflow`
+
+🏁 **Règles** : DB toujours sur VPS ; commandes mutantes = backup auto (sauf `--no-backup`) + confirmation (`--yes` ou prompt).
 
 ## ✅ État actuel (Version 0.30.0)
 

@@ -4,8 +4,8 @@ import { formatPrice } from '../../utils/priceFormatter';
 
 interface CartItemProps {
   item: CartItemType;
-  onUpdateQuantity: (itemId: string, quantity: number) => Promise<void>;
-  onRemove: (itemId: string) => Promise<void>;
+  onUpdateQuantity: (itemId: number, quantity: number) => Promise<void>;
+  onRemove: (itemId: number) => Promise<void>;
 }
 
 export const CartItem = ({ item, onUpdateQuantity, onRemove }: CartItemProps) => {

@@ -363,7 +363,7 @@ export const Header = () => {
       try {
         setLoadingProductImageCategory(true);
         const response = await getProducts({
-          category: hoveredCategory.id,
+          category: String(hoveredCategory.id),
           limit: 50,
         });
 

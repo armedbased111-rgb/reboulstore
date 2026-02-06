@@ -18,7 +18,9 @@ class AddToCartDto {
 }
 exports.AddToCartDto = AddToCartDto;
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], AddToCartDto.prototype, "variantId", void 0);
 __decorate([

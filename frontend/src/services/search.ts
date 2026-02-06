@@ -5,7 +5,7 @@ import type { Brand } from '../types';
 
 export interface SearchSuggestion {
   type: 'product' | 'category' | 'brand';
-  id: string;
+  id: number;
   name: string;
   slug?: string;
   imageUrl?: string;

@@ -31,6 +31,7 @@ let Product = class Product {
     brand;
     collectionId;
     collection;
+    isPublished;
     images;
     variants;
     variantsData;
@@ -98,6 +99,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'collection_id' }),
     __metadata("design:type", Object)
 ], Product.prototype, "collection", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', name: 'is_published', default: true }),
+    __metadata("design:type", Boolean)
+], Product.prototype, "isPublished", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => image_entity_1.Image, (image) => image.product),
     __metadata("design:type", Array)

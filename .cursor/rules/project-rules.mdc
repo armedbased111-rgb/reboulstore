@@ -97,6 +97,16 @@ const dbPort = process.env.DB_PORT; // 5433 (dev) ou 5432 (prod)
 - Créer une base de données locale pour le développement
 - Modifier `.env.production` sans autorisation
 
+#### CLI DB Reboul (`./rcli db ...`) – Voir et éditer les articles rapidement
+
+**RÈGLE – Priorité CLI pour les opérations base de données** : Pour toute opération sur la base Reboul (consultation, édition stocks, produits, commandes, export), **utiliser en priorité le CLI** (`./rcli db ...`). L’IA a accès complet à cet outil ; cela permet de gérer les stocks et les données ensemble (utilisateur + LLM) de façon cohérente et traçable.
+
+- ✅ **Lecture** : `product-find`, `product-list` (par marque/collection), `variant-list`, `check-sequences`, `order-list`, `order-detail`, `cart-list` — 100 % read-only.
+- ✅ **Édition** : stock (variant / tous), couleur (variant / tous), taille, `variant-add`, `variant-delete`, `product-set-price`, `product-set-active`, nom/réf/catégorie/marque/collection — **backup auto** avant modification (sauf `--no-backup`) et **confirmation** (`--yes` ou prompt).
+- ✅ **Export** : `export-csv --brand "X"` [--collection Y] [-o file.csv].
+- ✅ Référence : `docs/context/DB_CLI_USAGE.md` | Commande Cursor : `/db-cli-workflow`.
+- ❌ Base **toujours sur VPS** ; ne jamais utiliser une DB locale Docker pour Reboul.
+
 #### Vérification
 
 **Pour vérifier la connexion** :

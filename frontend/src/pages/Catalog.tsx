@@ -39,8 +39,8 @@ export const Catalog = () => {
 
   // États pour les filtres et tri
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('');
-  const [selectedBrandFilter, setSelectedBrandFilter] = useState<string>('');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<number | null>(null);
+  const [selectedBrandFilter, setSelectedBrandFilter] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -101,8 +101,8 @@ export const Catalog = () => {
   // Construire la query pour l'API
   const productQuery = {
     search: searchQuery.trim() || undefined,
-    category: category?.id || selectedCategoryFilter || undefined,
-    brand: brand?.id || selectedBrandFilter || undefined,
+    category: (category?.id ?? selectedCategoryFilter)?.toString() || undefined,
+    brand: brand?.slug || undefined,
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < 1000 ? priceRange[1] : undefined,
     page: currentPage,
@@ -183,12 +183,12 @@ export const Catalog = () => {
   }, [searchQuery, selectedCategoryFilter, selectedBrandFilter, priceRange, selectedColors, selectedSizes, sortBy]);
 
   // Gérer les changements de filtres
-  const handleCategoryFilterChange = (categoryId: string) => {
-    setSelectedCategoryFilter(categoryId === selectedCategoryFilter ? '' : categoryId);
+  const handleCategoryFilterChange = (categoryId: number) => {
+    setSelectedCategoryFilter(categoryId === selectedCategoryFilter ? null : categoryId);
   };
 
-  const handleBrandFilterChange = (brandId: string) => {
-    setSelectedBrandFilter(brandId === selectedBrandFilter ? '' : brandId);
+  const handleBrandFilterChange = (brandId: number) => {
+    setSelectedBrandFilter(brandId === selectedBrandFilter ? null : brandId);
   };
 
   const handleColorToggle = (color: string) => {
@@ -205,8 +205,8 @@ export const Catalog = () => {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCategoryFilter('');
-    setSelectedBrandFilter('');
+    setSelectedCategoryFilter(null);
+    setSelectedBrandFilter(null);
     setPriceRange([0, 1000]);
     setSelectedColors([]);
     setSelectedSizes([]);
@@ -216,8 +216,8 @@ export const Catalog = () => {
 
   const hasActiveFilters =
     searchQuery.trim() ||
-    selectedCategoryFilter ||
-    selectedBrandFilter ||
+    selectedCategoryFilter != null ||
+    selectedBrandFilter != null ||
     priceRange[0] > 0 ||
     priceRange[1] < 1000 ||
     selectedColors.length > 0 ||

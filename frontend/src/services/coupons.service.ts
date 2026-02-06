@@ -1,7 +1,7 @@
 import { api } from './api';
 
 export interface Coupon {
-  id: string;
+  id: number;
   code: string;
   discountType: 'percentage' | 'fixed_amount';
   discountValue: number;
@@ -40,7 +40,7 @@ export const getActiveCoupons = async (): Promise<Coupon[]> => {
  */
 export const applyCoupon = async (
   code: string,
-  cartId: string,
+  cartId: number,
 ): Promise<CouponValidation> => {
   // api.post retourne déjà les données directement (response.data est extrait)
   return await api.post<CouponValidation>('/orders/apply-coupon', {
