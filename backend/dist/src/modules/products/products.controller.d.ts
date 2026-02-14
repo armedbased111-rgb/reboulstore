@@ -16,7 +16,7 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     findImagesByProduct(id: number): Promise<import("../../entities/image.entity").Image[]>;
     createImage(productId: number, file: MulterFile | undefined, body: any): Promise<import("../../entities/image.entity").Image>;
-    createImagesBulk(productId: number, files: MulterFile[] | undefined, body: any): Promise<import("../../entities/image.entity").Image[]>;
+    createImagesBulk(productId: number, files: MulterFile[] | undefined, body: any, ordersQuery?: string): Promise<import("../../entities/image.entity").Image[]>;
     deleteImage(productId: number, imageId: number): Promise<void>;
     updateImageOrder(productId: number, imageId: number, updateOrderDto: UpdateImageOrderDto): Promise<import("../../entities/image.entity").Image>;
     create(createProductDto: CreateProductDto): Promise<import("../../entities/product.entity").Product>;

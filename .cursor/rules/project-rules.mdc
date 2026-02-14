@@ -101,6 +101,7 @@ const dbPort = process.env.DB_PORT; // 5433 (dev) ou 5432 (prod)
 
 **RÈGLE – Priorité CLI pour les opérations base de données** : Pour toute opération sur la base Reboul (consultation, édition stocks, produits, commandes, export), **utiliser en priorité le CLI** (`./rcli db ...`). L’IA a accès complet à cet outil ; cela permet de gérer les stocks et les données ensemble (utilisateur + LLM) de façon cohérente et traçable.
 
+- ✅ **Reference Finder** : `./rcli db ref <REF>` — hub par référence : affiche produit + variants + toutes les commandes d’édition prêtes à copier-coller (set-name, set-price, set-all-stock, variant-set-stock, variant-delete, etc.). Idéal pour **vérifier une feuille de stock** : prendre chaque ref de la feuille et lancer `./rcli db ref <REF>` pour contrôler que la ref est bonne en base.
 - ✅ **Lecture** : `product-find`, `product-list` (par marque/collection), `variant-list`, `check-sequences`, `order-list`, `order-detail`, `cart-list` — 100 % read-only.
 - ✅ **Édition** : stock (variant / tous), couleur (variant / tous), taille, `variant-add`, `variant-delete`, `product-set-price`, `product-set-active`, nom/réf/catégorie/marque/collection — **backup auto** avant modification (sauf `--no-backup`) et **confirmation** (`--yes` ou prompt).
 - ✅ **Export** : `export-csv --brand "X"` [--collection Y] [-o file.csv].
@@ -638,9 +639,10 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 #### Quand mettre à jour ROADMAP_COMPLETE.md ?
 
 1. **À CHAQUE étape complétée** : Cocher `[ ]` → `[x]` immédiatement
-2. **À CHAQUE phase terminée** : Ajouter ✅ au titre de la phase
-3. **Avant de commencer une nouvelle phase** : Vérifier ROADMAP_COMPLETE.md pour savoir quoi faire
-4. **Après chaque session de travail** : Mettre à jour l'avancement
+2. **Pour la Phase 24.10 (Images IA)** : En plus de cocher les tâches, mettre à jour la ligne « État actuel (dernière MAJ) » dans la section 24.10, et tenir à jour `docs/integrations/IMAGES_IA_WORKFLOW.md` (statut, prochaine étape) pour que l’avancement soit lisible
+3. **À CHAQUE phase terminée** : Ajouter ✅ au titre de la phase
+4. **Avant de commencer une nouvelle phase** : Vérifier ROADMAP_COMPLETE.md pour savoir quoi faire
+5. **Après chaque session de travail** : Mettre à jour l'avancement
 
 #### Comment mettre à jour ?
 

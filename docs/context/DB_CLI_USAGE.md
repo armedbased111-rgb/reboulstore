@@ -4,6 +4,25 @@ Ce fichier résume **uniquement** les commandes CLI pour travailler vite sur la 
 
 Toutes les commandes passent par `./rcli` et la **DB du VPS** (via SSH).
 
+**Feuilles de stock → import** : voir **`docs/context/FEUILLES_STOCK_REBOUL.md`** (lecture des pages de stock, CSV, wipe par collection, création catégories, import Admin).
+
+---
+
+### 0. Reference Finder (hub par référence)
+
+Une ref → vue produit + variants + commandes d’édition prêtes à copier-coller :
+
+```bash
+./rcli db ref 4100111/V34
+```
+
+Affiche :
+- **Produit** : id, nom, ref, prix, publié, catégorie, marque, collection
+- **Variants** : tableau id / SKU / taille / couleur / stock
+- **Actions** : toutes les commandes avec `--id` et `--ref` déjà remplis (set-name, set-price, set-active, set-all-stock, set-all-color, variant-set-stock, variant-delete, etc.)
+
+Si la ref exacte n’existe pas, le CLI propose des références proches (recherche partielle).
+
 ---
 
 ### 1. Chercher un produit par référence (cas le plus courant)

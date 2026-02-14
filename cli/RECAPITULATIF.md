@@ -97,6 +97,20 @@ Le CLI Python est **100% fonctionnel** et prêt à être utilisé dans le workfl
 ./rcli db product-set-price --id 123 --price 199.90 --yes
 ```
 
+### 📥 Import feuilles de stock (Reboul)
+Convertir une feuille de stock (Marque, Genre, Référence, Stock) en CSV d'import BDD. Réutilisable pour toutes les pages de stock (ex. Stone Island : 7 pages).
+```bash
+# Sortie stdout
+./rcli import feuille-to-csv -i feuille-stock.csv --collection SS26 --stock 2 --price 100
+
+# Écrire dans un fichier
+./rcli import feuille-to-csv -i feuille-stock.csv -o import-ss26.csv --collection SS26 --stock 2 --price 100
+
+# Fusionner plusieurs pages (dédupliquer par référence)
+./rcli import merge-pages -i page1.csv -i page2.csv -o import-ss26-merged.csv
+```
+Colonnes attendues en entrée : **Marque**, **Genre**, **Référence**, **Stock** (délimiteur `;` ou `,` auto-détecté). Sortie : `name;reference;brand;category;collection;stock;price` prêt pour l’import Admin.
+
 ### 📚 Documentation
 ```bash
 ./rcli docs generate api

@@ -45,7 +45,6 @@ export const Catalog = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('relevance');
-  const [currentPage, setCurrentPage] = useState(1);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Charger les catégories et marques pour les filtres
@@ -98,15 +97,15 @@ export const Catalog = () => {
     fetchBrand();
   }, [brandSlug]);
 
-  // Construire la query pour l'API
+  // Construire la query pour l'API (on charge jusqu'à 100 produits, pagination côté client)
   const productQuery = {
     search: searchQuery.trim() || undefined,
     category: (category?.id ?? selectedCategoryFilter)?.toString() || undefined,
     brand: brand?.slug || undefined,
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < 1000 ? priceRange[1] : undefined,
-    page: currentPage,
-    limit: 20,
+    page: 1,
+    limit: 100,
     sortBy: sortBy === 'relevance' ? undefined : sortBy,
     sortOrder: (sortBy === 'price-asc' ? 'ASC' : sortBy === 'price-desc' ? 'DESC' : 'DESC') as 'ASC' | 'DESC',
   };
@@ -149,12 +148,8 @@ export const Catalog = () => {
     );
   }
 
-  // Pagination côté frontend (après filtrage et tri)
-  const itemsPerPage = 20;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const products = filteredProducts.slice(startIndex, endIndex);
-  const totalPagesFiltered = Math.ceil(filteredProducts.length / itemsPerPage);
+  // Tous les produits filtrés (défilement infini, pas de pagination)
+  const products = filteredProducts;
 
   // Extraire les couleurs et tailles uniques de TOUS les produits (pas seulement filtrés)
   const availableColors = Array.from(
@@ -176,11 +171,6 @@ export const Catalog = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
-
-  // Réinitialiser la page quand les filtres changent
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategoryFilter, selectedBrandFilter, priceRange, selectedColors, selectedSizes, sortBy]);
 
   // Gérer les changements de filtres
   const handleCategoryFilterChange = (categoryId: number) => {
@@ -211,7 +201,6 @@ export const Catalog = () => {
     setSelectedColors([]);
     setSelectedSizes([]);
     setSortBy('relevance');
-    setCurrentPage(1);
   };
 
   const hasActiveFilters =
@@ -270,7 +259,7 @@ export const Catalog = () => {
       <div className="w-full">
         {/* Header avec recherche, filtres et tri */}
         <div className="border-b border-gray-200 bg-white sticky top-[46px] z-40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex flex-col gap-4">
               {/* Barre de recherche */}
               <div className="flex items-center gap-3">
@@ -332,7 +321,7 @@ export const Catalog = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex gap-8">
             {/* Sidebar Filtres - Desktop */}
             <aside
@@ -475,8 +464,8 @@ export const Catalog = () => {
               </div>
             </aside>
 
-            {/* Contenu principal */}
-            <div className="flex-1">
+            {/* Contenu principal - prend toute la largeur restante */}
+            <div className="flex-1 min-w-0">
               {/* Section Banner - Titre de la collection */}
               <div id="shopify-section-template--27249844748613__banner" className="shopify-section">
                 <section className="m-[2px] last:mb-0">
@@ -544,59 +533,6 @@ export const Catalog = () => {
                 </section>
               </div>
 
-              {/* Section Pagination */}
-              {!loading && !error && totalPagesFiltered > 1 && (
-                <section className="m-[2px] last:mb-0">
-                  <div className="p-[2px] bg-[#FFFFFF] relative w-full pt-2">
-                    <nav role="navigation" aria-label="Pagination" className="pb-4">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                          disabled={currentPage === 1}
-                          className="inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 whitespace-nowrap text-sm text-black border border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed"
-                        >
-                          Précédent
-                        </button>
-                        {Array.from({ length: totalPagesFiltered }, (_, i) => i + 1)
-                          .filter(
-                            (page) =>
-                              page === 1 ||
-                              page === totalPagesFiltered ||
-                              (page >= currentPage - 1 && page <= currentPage + 1)
-                          )
-                          .map((page, index, array) => {
-                            const prevPage = array[index - 1];
-                            const showEllipsis = prevPage && page - prevPage > 1;
-                            return (
-                              <div key={page} className="flex">
-                                {showEllipsis && (
-                                  <span className="px-4 py-2 text-sm text-gray-500">...</span>
-                                )}
-                                <button
-                                  onClick={() => setCurrentPage(page)}
-                                  className={`inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none whitespace-nowrap text-sm ${
-                                    currentPage === page
-                                      ? 'text-white bg-black'
-                                      : 'text-black border border-gray-300 hover:bg-gray-50'
-                                  }`}
-                                >
-                                  {page}
-                                </button>
-                              </div>
-                            );
-                          })}
-                        <button
-                          onClick={() => setCurrentPage((p) => Math.min(totalPagesFiltered, p + 1))}
-                          disabled={currentPage === totalPagesFiltered}
-                          className="inline-block py-2.5 md:py-1.5 px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 whitespace-nowrap text-sm text-black border border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed"
-                        >
-                          Suivant
-                        </button>
-                      </div>
-                    </nav>
-                  </div>
-                </section>
-              )}
             </div>
           </div>
         </div>

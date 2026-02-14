@@ -2364,56 +2364,42 @@ docker compose up backend frontend
 
 ## 📦 Phase 24 : Préparation Collection Réelle
 
-**🎯 Objectif** : Intégrer les données réelles du magasin dans le site (AS400, marques, images, stocks)
+**🎯 Objectif** : Avoir un **workflow complet et reproductible** pour ajouter une collection réelle au site : données (produits, variants, stocks) + marques + images. Une fois les images produit au bon niveau, le workflow « ajout de collection » est bouclé.
 
-**📅 Timing** : Après déploiement sur serveur (Phase 23), avant lancement réel
+**Où on en est** :
+- **Données & ajout de collection** : ✅ **On a trouvé notre manière.** Feuilles de stock → extraction (ou CSV) → CSV au format BDD → `merge-pages` (déduplication) → wipe collection si besoin → création catégories (CLI) → import Admin. Automatisation CLI : `feuille-to-csv`, `merge-pages`, `wipe-products-by-collection`, `category-create`, **Reference Finder** (`db ref <REF>`) pour vérifier les refs en base. Import Stone Island SS26 (7 pages, 69 produits, 332 variants) validé.
+- **Images produit** : **On sait comment faire.** Pipeline IA en place (photos brutes → `./rcli images generate` → `./rcli images upload --ref REF`) ; doc récap `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`. Workflow classique (shooting, retouche, Cloudinary, optimisation) à finaliser / valider en parallèle (24.7).
 
-**⏱️ Durée estimée** : 2-3 semaines (selon volume données et automatisation)
+**📅 Après Phase 24** : Phase correctifs/améliorations (liste front à venir) → Phase 25 (Finalisation) → évolution Images IA (24.10) après abo.
 
-**📅 Date cible** : Février 2025 (sortie officielle)
+---
 
-**📋 Statut** : 🟢 **EN COURS** - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ terminées. Reste : 24.3, 24.6, 24.7, 24.8, 24.9
+### 📋 Vue d’ensemble des sous-phases
 
-**📅 Après Phase 24** : Phase 25 (Finalisation Avant Lancement) - Recherche, Home, SEO, Tests, Performance
+| # | Sous-phase | Statut | Note |
+|---|------------|--------|------|
+| 24.1 | Documentation & Contexte | ✅ Terminé | COLLECTION_REAL, FEUILLES_STOCK, IMAGES_WORKFLOW, etc. |
+| 24.2 | Marques avec Logos | ✅ Terminé | 57 marques, logos Cloudinary, BrandCarousel, BrandMarquee |
+| 24.3 | Politique Livraison Finale | ⏳ À faire | Réunion magasin → config Shop |
+| 24.4 | Rotation Collections | ✅ Terminé | Actif/archivée, nouvelle collection remplace l’ancienne |
+| 24.5 | AS400 | ⚠️ Suspendu | Approche manuelle adoptée |
+| **24.5bis** | **Import collections (feuilles → CSV → Admin)** | ✅ **Terminé** | **Workflow en place** : feuille-to-csv, merge-pages, wipe, categories, import Admin. Réfs vérifiables avec `db ref`. |
+| 24.6 | CLI DB (Reference Finder, édition, export) | ✅ Terminé | `db ref`, product-list, variant-list, set-stock, export-csv, etc. |
+| **24.7** | **Workflow Images Produits** | ⏳ **À finaliser** | **Dernier bloc pour boucler le workflow.** Doc + optimisation/cron en place ; validation E2E + qualité à faire. Évolution IA en 24.10. |
+| 24.8 | Ajout continu produits | ✅ Couvert par 24.5bis | Même processus : nouvelle feuille/CSV → merge si besoin → import. Pas de sous-phase séparée à traiter. |
+| 24.9 | Checklist finale – Validation collection | ⏳ À faire | En dernier, une fois données + images OK |
+| 24.10 | Évolution Images IA (Nano Banana / Gemini) | ✅ Pipeline en place | Photos brutes → generate (4 vues) → upload Cloudinary par ref. Voir `IMAGES_PRODUIT_PIPELINE.md`. |
 
-### 📋 Ordre Logique des Sous-Phases
+**📊 Progression** : Workflow **données / ajout de collection** = en place. **Images produit** : pipeline IA opérationnel (24.10). Reste : finaliser workflow classique images (24.7), politique livraison (24.3), checklist (24.9).
 
-**Ordre d'exécution recommandé** :
-1. ✅ **24.1** Documentation & Contexte - **TERMINÉ**
-2. ✅ **24.2** Insertion Marques avec Logos - **TERMINÉ** (57 marques créées)
-3. ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
-4. ✅ **24.4** Système Rotation Collections - **TERMINÉ**
-5. ⚠️ **24.5** Intégration AS400 - **EN SUSPENS** (approche manuelle adoptée)
-6. ✅ **24.5bis** Import Manuel Collections via Tables/CSV - **TERMINÉ** (fonctionnel, tests OK ; import Stone à finaliser)
-7. ⏳ **24.6** Amélioration Processus Stocks - **À FAIRE** (gestion manuelle + alertes réassort)
-8. ⏳ **24.7** Workflow Images Produits - **PRESQUE TERMINÉ** (peut être fait en parallèle)
-9. ⏳ **24.8** Workflow Ajout Continu Produits - **À FAIRE** (entrée manuelle continue)
-10. ⏳ **24.9** Checklist Finale - Validation Collection - **À FAIRE** (en dernier)
+---
 
-**📊 Progression Phase 24** : 4/10 sous-phases terminées (40%)
+### 📊 Décisions prises (résumé)
 
-**Dépendances clés** :
-- 24.4 (Rotation Collections) ✅ **TERMINÉ** → **AVANT** 24.5bis (Import Manuel)
-- 24.5bis (Import Manuel) → **AVANT** 24.6 (Stocks) et 24.8 (Ajout Continu)
-- 24.1-24.3 peuvent être faits en parallèle
-- 24.7 (Images) peut être fait en parallèle
-- **24.5 (AS400) EN SUSPENS** - Peut être repris plus tard si nécessaire
-
-### ⚠️ Points Critiques Identifiés
-
-- **Ajout continu** : Nouveaux produits ajoutés chaque semaine → workflow d'ajout continu nécessaire
-- **Rotation collections** : Système actif/archivée → nouvelle collection remplace l'ancienne
-- **Variants complexes** : Chaussures avec couleurs multiples, plusieurs types de tailles (pantalon italien, etc.), marques qui taillent différemment
-- **Synchronisation stocks** : Quotidienne après réassorts manuels + alertes réassort (0-5 unités)
-
-### 📊 Décisions Prises
-
-- **Marques** : 36 marques (enfants + adultes), logos depuis ancien git de reboul
-- **Images** : Shooting à Aubagne, retouche Photoshop, stockage Cloudinary, 3-5 images/produit
-- **Stocks** : Réassorts quotidiens (matin/soir), gestion manuelle, rupture = stock = 0
-- **Priorités** : Sneakers → Reboul adulte → Reboul enfant
-- **AS400** : ⚠️ **EN SUSPENS** - Trop de temps nécessaire. Approche alternative adoptée
-- **Import Données** : ✅ **NOUVELLE APPROCHE** - Collections reçues une à une sous forme de table (Excel/CSV), entrée manuelle des données une à une via Admin
+- **Import données** : Feuilles de stock → CSV (format BDD) → fusion des pages (déduplication) → wipe collection optionnel → création catégories (CLI) → import Admin. Pas d’AS400 pour l’instant.
+- **Marques** : 57 marques avec logos (Cloudinary). Affichage front (BrandCarousel, BrandMarquee).
+- **Images** : Shooting + retouche + Cloudinary + optimisation WebP (cron). Évolution IA (photos brutes → studio) à explorer après abo (24.10).
+- **Stocks** : Gestion manuelle ; alertes réassort (0–5 unités) optionnel.
 
 ### 24.1 Documentation & Contexte
 
@@ -2646,7 +2632,7 @@ docker compose up backend frontend
 
 ### 24.5bis Import Manuel Collections via Tables/CSV ✅
 
-**Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via entrée manuelle dans l'Admin
+**Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via l’Admin. **C’est le cœur du workflow « ajout de collection »** : en amont, feuilles de stock → CSV (CLI `feuille-to-csv`), fusion de pages (`merge-pages`), wipe + catégories si besoin ; en aval, vérification des refs avec `./rcli db ref <REF>`.
 
 **📊 Statut** : **Fonctionnel** (référence = source de vérité, doublons bloqués ; import Stone à finaliser par l'utilisateur)
 
@@ -2685,10 +2671,11 @@ docker compose up backend frontend
   - [ ] Créer guide utilisation Admin pour import (optionnel)
 
 - [x] **Validation** :
-  - [x] Tester import collection complète (Stone Island : 5 ref, 39 variants — OK)
+  - [x] Tester import collection complète (ex. Stone Island SS26 : 7 pages fusionnées, 69 produits, 332 variants — OK)
   - [x] Vérifier produits créés correctement (réf sans taille, 1 produit par ref)
   - [x] Vérifier variants et stocks (ordre tailles correct)
   - [x] Vérifier association marques/catégories
+  - [x] Workflow complet documenté dans `docs/context/FEUILLES_STOCK_REBOUL.md` (feuille-to-csv, merge-pages, wipe, category-create, import Admin, vérif avec `db ref`)
 
 ### 24.6 Interface CLI Base de Données
 
@@ -2735,7 +2722,7 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 ### 24.7 Workflow Images Produits
 
-**Objectif** : Documenter et optimiser le processus de création/upload images produits
+**Objectif** : Finaliser le processus de création/upload images produits. **C’est le dernier bloc à boucler pour avoir le workflow « ajout de collection » complet** : données ✅, images à valider.
 
 #### 24.7.1 Documentation Workflow Images
 
@@ -2797,33 +2784,71 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
   - [ ] Vérifier performance chargement
   - [ ] Tester cron job optimisation
 
-### 24.8 Workflow Ajout Continu Produits
+- **Évolution prévue** : voir **24.10 Évolution Images IA** (photos brutes → images studio + mannequin IA, après abo Nano Banana / Gemini).
 
-**Objectif** : Permettre l'ajout de nouveaux produits chaque semaine tout au long de la saison (entrée manuelle)
+### 24.10 Évolution Images IA (Nano Banana / Gemini) – après abonnement
 
-**📊 Informations** : ⚠️ **IMPORTANT** - Nouveaux produits ajoutés chaque semaine via entrée manuelle dans l'Admin
+**Objectif** : Explorer, **doucement**, la génération / amélioration d’images IA (photos brutes → images produit type studio, détails, mannequin IA sans visage). Pas de pression : on avance étape par étape après abo.
 
-- [x] **Processus d'ajout manuel** :
-  - [x] Interface Admin pour ajouter nouveaux produits manuellement ✅ (déjà disponible)
-  - [ ] Workflow validation avant publication :
-    - [ ] Vérifier données complètes
-    - [ ] Vérifier images présentes
-    - [ ] Validation manuelle si nécessaire
+**Suivi** : La roadmap est mise à jour à chaque tâche faite. Doc de suivi détaillé : `docs/integrations/IMAGES_IA_WORKFLOW.md`. **Récap pipeline (3 étapes)** : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`.
 
-- [ ] **Import incrémental via table/CSV** :
-  - [ ] Utiliser interface import collection (24.5bis) pour nouveaux produits
-  - [ ] Processus import nouveaux produits depuis table/CSV
-  - [ ] Vérification doublons avant import
+**État actuel (dernière MAJ)** : **Pipeline images IA validé.** (1) Photos brutes dans `photos/`, refs de style dans `refs/` (refs = style uniquement, pas le produit). (2) `./rcli images generate` (Gemini 3 Pro par défaut) → 4 vues ; les vues 3 et 4 s’appuient sur la 1_face générée comme source de vérité (même vêtement). (3) Optionnel : `./rcli images adjust` avec `--ref` pour recaler les couleurs d’une vue sur une autre. (4) `./rcli images upload --ref REF --dir output/` (Cloudinary + BDD). Préconisations prise de vue (couleurs, produit) dans `IMAGES_IA_WORKFLOW.md`. Récap dans `IMAGES_PRODUIT_PIPELINE.md`.
 
-- [ ] **Documentation** :
-  - [ ] Documenter workflow ajout continu
-  - [ ] Guide utilisation Admin pour ajout manuel
-  - [ ] Guide utilisation script import incrémental
+---
 
-- [ ] **Validation** :
-  - [ ] Tester ajout manuel nouveau produit
-  - [ ] Tester import incrémental
-  - [ ] Vérifier workflow validation
+**Vision** (à long terme) :
+- Prises de vues brutes au magasin (règles documentées dans `IMAGES_IA_WORKFLOW.md`).
+- **Pipeline** : 1 photo brute (face, + optionnel dos) → script → **3–4 images** (face, dos, détail logo, lifestyle).
+- **Intégration** : script CLI (`./rcli` ou dédié) qui appelle l’API Nano Banana.
+
+**Plan pipeline + intégration (ordre)** :
+1. **Récupérer la clé API Gemini** (https://aistudio.google.com/apikey — gratuit, pas de waitlist).
+2. **Script CLI** : client API Gemini (image + prompt → image), puis enchaîner les 4 prompts validés → 3–4 images (face, dos si fourni, détail logo, lifestyle).
+3. **Commande** : ex. `./rcli images generate --face photo.jpg [--back photo_dos.jpg] -o ./output`.
+4. Doc d’usage dans `IMAGES_IA_WORKFLOW.md`.
+
+---
+
+**Tâches (cocher au fur et à mesure)** :
+
+*Phase 1 – Préparation*
+- [x] Choisir et souscrire abonnement → **Nano Banana Pro acheté**
+- [x] Décider Nano Banana vs Gemini → **Nano Banana en priorité**
+- [x] Documenter vision, options, premier pas → `IMAGES_IA_WORKFLOW.md`
+- [x] Premier test manuel fond studio réussi
+- [x] Valider 4 prompts (face, dos, détail logo, lifestyle) → sauvegardés dans `IMAGES_IA_WORKFLOW.md`
+- [x] Définir règles de prise de vues → documentées dans `IMAGES_IA_WORKFLOW.md`
+- [x] Décider où intégrer → **script CLI** (1 photo → 3–4 images)
+
+*Phase 2 – Pipeline + script CLI (API Gemini)*
+- [x] Récupérer clé API **Gemini** (https://aistudio.google.com/apikey) et la mettre dans `.env` (`GEMINI_API_KEY=...`)
+- [x] Implémenter client API Gemini (image + prompt → image, modèle `gemini-2.5-flash-image`)
+- [x] Enchaîner les 4 vues : face, dos (si photo dos fournie), détail logo, lifestyle → sortie 3–4 fichiers
+- [x] Exposer en commande CLI : `./rcli images generate --face photo.jpg [--back photo_dos.jpg] -o ./output`
+- [x] Documenter usage dans `IMAGES_IA_WORKFLOW.md`
+- [x] Mode dossier : lecture auto de `photos/` (face.jpg, back.jpg) et `refs/` (1_face.png, …)
+- [x] Images de référence : option refs/ + `gemini-3-pro-image-preview` pour les vues avec ref
+
+*Phase 3 – Améliorations (stabilité / qualité)*
+- [x] Stabiliser vue lifestyle : retry auto si pas d’image + gemini-3-pro pour cette vue
+- [x] 1_face générée comme source de vérité pour vues 3 et 4 (même vêtement)
+- [x] images adjust --ref pour caler couleurs sur une image de référence
+- [ ] Optionnel : tout en gemini-3-pro ; prompts structurés ; phrase « same lighting » ; multi-turn (backlog)
+
+*Phase 4 – Upload Cloudinary et rattachement produit*
+- [x] Commande `./rcli images upload --ref REF --dir output/` : récupération id produit par ref, envoi bulk au backend, images attachées au produit (Cloudinary + BDD)
+- [x] Doc récap pipeline : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md` (photos brutes → generate → upload)
+
+**Note** : Nano Banana retenu pour 24.10. Les 4 prompts et les règles de prise de vues sont la base du pipeline.
+
+### 24.8 Ajout continu produits
+
+**Objectif** : Pouvoir ajouter de nouvelles collections ou nouveaux produits en continu.
+
+**📊 Statut** : **Couvert par le workflow 24.5bis.** Pour une nouvelle collection ou de nouveaux produits : même processus (feuille de stock ou CSV → `feuille-to-csv` si besoin → `merge-pages` si plusieurs fichiers → wipe collection si repartir de zéro → `category-create` pour les catégories manquantes → import Admin). Aucune sous-tâche spécifique à faire en plus.
+
+- [x] Processus = import collection (24.5bis), réutilisable pour chaque nouvelle collection ou lot.
+- [ ] Optionnel : documenter dans un paragraphe « Ajout d’une nouvelle collection » dans `docs/context/FEUILLES_STOCK_REBOUL.md` (déjà décrit en pratique).
 
 ### 24.9 Checklist Finale - Validation Collection
 
@@ -3126,10 +3151,9 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 ### 🟢 Priorité 3 (Collection Réelle & Finalisation - FÉVRIER 2025) - Phases 24-25
 - **Phase 24** : Préparation Collection Réelle 🟢 EN COURS
-  - ✅ 24.1 Documentation & Contexte (terminé)
-  - ✅ 24.2 Insertion Marques avec Logos (terminé)
-  - ✅ 24.4 Système Rotation Collections (terminé)
-  - ⏳ 24.3, 24.6, 24.7, 24.8, 24.9 (en cours)
+  - **Workflow collection (données)** : ✅ en place. Reste : **images produit (24.7)** pour boucler.
+  - ✅ 24.1 Doc, 24.2 Marques, 24.4 Rotation, 24.5bis Import, 24.6 CLI DB ; 24.8 = couvert par 24.5bis
+  - ⏳ 24.3 Politique livraison, 24.7 Images, 24.9 Checklist ; ✅ 24.10 Pipeline images IA en place
 - **Phase 25** : Finalisation Avant Lancement ⏳ À FAIRE
   - 🔴 25.1 Recherche Produits (CRITICAL)
   - 🔴 25.2 Page Home Complète (CRITICAL)
@@ -3142,18 +3166,13 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 ### 📝 Notes :
 - **Page Home** : Améliorations progressives au fil du temps
-- **Données réelles** : **🆕 Phase 24 - Préparation Collection Réelle** 🟢 **EN COURS**
-  - ✅ **24.1** Documentation & Contexte (terminé)
-  - ✅ **24.2** Insertion Marques avec Logos (terminé - 57 marques créées)
-  - ⏳ **24.3** Politique Livraison Finale (réunion magasin nécessaire)
-  - ✅ **24.4** Système Rotation Collections (terminé)
-  - ⚠️ **24.5** Intégration AS400 (EN SUSPENS - approche manuelle adoptée)
-  - ✅ **24.5bis** Import Manuel Collections via Tables/CSV (fonctionnel)
-  - ⏳ **24.6** Amélioration Processus Stocks (gestion manuelle + alertes réassort)
-  - ⏳ **24.7** Workflow Images Produits (presque terminé)
-  - ⏳ **24.8** Workflow Ajout Continu Produits (entrée manuelle continue)
-  - ⏳ **24.9** Checklist Finale - Validation Collection
-  - **Voir** : `docs/COLLECTION_REAL.md` (workflow complet), `docs/PHASE_24_SYNTHESE.md` (synthèse), `docs/AS400_ANALYSIS_GUIDE.md` (exploration AS400)
+- **Données réelles** : **Phase 24 - Préparation Collection Réelle** 🟢 **EN COURS**
+  - **Workflow ajout de collection (données)** : ✅ en place (feuilles → CSV → merge → wipe → catégories → import Admin ; CLI : feuille-to-csv, merge-pages, db ref, etc.). Ex. Stone SS26 importé (69 produits, 332 variants).
+  - ✅ 24.1 Documentation, 24.2 Marques, 24.4 Rotation collections, 24.5bis Import collections, 24.6 CLI DB
+  - ⏳ **24.7 Images produit** : à finaliser (dernier bloc pour boucler le workflow)
+  - ⏳ 24.3 Politique livraison, 24.9 Checklist finale
+  - ✅ 24.10 Pipeline images IA (photos brutes → generate → upload), voir `IMAGES_PRODUIT_PIPELINE.md`
+  - **Voir** : `docs/context/FEUILLES_STOCK_REBOUL.md`, `docs/context/DB_CLI_USAGE.md`, `docs/COLLECTION_REAL.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md` (pipeline images IA)
 - **Finalisation avant lancement** : **🆕 Phase 25 - Finalisation Avant Lancement** ⏳ **À FAIRE**
   - 🔴 **25.1** Recherche Produits (Backend + Frontend) - CRITICAL
   - 🔴 **25.2** Page Home Complète (Frontend) - CRITICAL

@@ -72,6 +72,7 @@ export class ProductsController {
     @Param('id', ParseIntPipe) productId: number,
     @UploadedFiles() files: MulterFile[] | undefined,
     @Body() body: any,
+    @Query('orders') ordersQuery?: string,
   ) {
     if (!files || files.length === 0) {
       throw new BadRequestException('At least one image file is required');
@@ -81,9 +82,11 @@ export class ProductsController {
       throw new BadRequestException('You can upload up to 7 images at once');
     }
 
-    // alts peut être une string ou un tableau de strings
     const altsRaw = body.alts ?? body['alts[]'];
-    const ordersRaw = body.orders ?? body['orders[]'];
+    const ordersRaw =
+      ordersQuery !== undefined && ordersQuery !== ''
+        ? ordersQuery.split(',').map((s) => s.trim())
+        : body.orders ?? body['orders[]'];
 
     const altsArray: (string | undefined)[] = Array.isArray(altsRaw)
       ? altsRaw

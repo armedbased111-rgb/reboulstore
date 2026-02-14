@@ -4,10 +4,25 @@ Voir et éditer les articles rapidement depuis le terminal. Base **toujours sur 
 
 ---
 
+## 0. Reference Finder (hub par ref)
+
+**Une ref → tout en un coup** : produit + variants + commandes d’édition prêtes à copier-coller.
+
+```bash
+./rcli db ref 4100111/V34
+```
+
+Affiche : id, nom, ref, prix, publié, catégorie, marque, collection ; tableau des variants (id, SKU, taille, couleur, stock) ; puis toutes les commandes avec `--id` / `--ref` déjà remplis (set-name, set-price, set-all-stock, variant-set-stock, variant-delete, etc.).
+
+**Vérifier une feuille de stock (ex. Stone Island)** : pour chaque ref de la feuille, lancer `./rcli db ref <REF>` et contrôler que la ref est bien en base (produit + variants cohérents). Si la ref n’existe pas, le CLI propose des références proches.
+
+---
+
 ## 1. Lecture seule – inspection
 
 | Action | Commande |
 |--------|----------|
+| **Hub par ref (recommandé)** | `./rcli db ref L100001/V09A` |
 | Produit par référence | `./rcli db product-find --ref L100001/V09A` [--json] |
 | Liste par marque | `./rcli db product-list --brand "Stone Island"` [--limit 50] [--json] |
 | Variants d’un produit | `./rcli db variant-list --ref L100001/V09A` ou `--product-id 57` |
@@ -41,8 +56,6 @@ Toutes les commandes d’édition : backup serveur automatique (sauf `--no-backu
 
 ## 3. Workflow typique
 
-1. Lister les produits d’une marque : `product-list --brand "Stone Island"`
-2. Sniper une ref → lister les variants : `variant-list --ref L100001/V09A`
-3. Éditer (stock / couleur / taille / ajout / suppression) avec les commandes ci-dessus
-
-Le bloc « Édition » sous `variant-list` rappelle toutes ces commandes.
+1. **Vérifier une ref (feuille de stock)** : `./rcli db ref <REF>` → voir produit + variants + actions prêtes.
+2. Lister les produits d’une marque : `product-list --brand "Stone Island"`.
+3. Sniper une ref puis éditer : `ref <REF>` affiche déjà les commandes avec les bons IDs ; sinon `variant-list --ref <REF>` puis les commandes d’édition ci-dessus.

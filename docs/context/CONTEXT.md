@@ -203,7 +203,9 @@ Documentation/
 
 Voir et éditer les articles rapidement depuis le terminal (base Reboul sur VPS uniquement).
 
-**Lecture** : `product-find`, `product-list`, `variant-list`, `check-sequences`, `order-list` (--last N), `order-detail --id <ID>`, `cart-list`.
+**Reference Finder** : `./rcli db ref <REF>` — hub par ref : produit + variants + commandes d’édition prêtes à copier-coller. **Vérifier une feuille de stock** : pour chaque ref de la feuille (ex. Stone Island), lancer `./rcli db ref <REF>` pour contrôler que la ref est bonne en base.
+
+**Lecture** : `ref` (hub), `product-find`, `product-list`, `variant-list`, `check-sequences`, `order-list` (--last N), `order-detail --id <ID>`, `cart-list`.
 
 **Édition** (backup auto + `--yes` ou confirmation) : stock (`variant-set-stock`, `product-set-all-stock`), couleur (`variant-set-color`, `product-set-all-color`), taille (`variant-set-size`), variant-add / variant-delete, prix (`product-set-price`), visibilité (`product-set-active`), nom/réf/catégorie/marque/collection (`product-set-name`, `product-set-ref`, `product-set-category`, `product-set-brand`, `product-set-collection`).
 

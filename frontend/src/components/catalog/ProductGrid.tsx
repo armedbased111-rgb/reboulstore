@@ -28,9 +28,11 @@ export const ProductGrid = ({ products }: ProductGridProps) => {
         grid
         gap-[2px]
         grid-cols-2
-        sm:[grid-template-columns:repeat(auto-fit,minmax(0,222px))]
-        md:[grid-template-columns:repeat(auto-fit,minmax(0,254px))]
+        sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]
+        md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]
+        lg:grid-cols-[repeat(auto-fill,minmax(260px,1fr))]
         mb-4
+        w-full
       "
     >
       {products.map((product) => (

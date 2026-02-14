@@ -414,6 +414,144 @@ def suggest():
     """Commandes pour suggérer des phases et améliorations"""
     pass
 
+@cli.group('import')
+def import_cmd():
+    """Commandes pour préparer les imports (feuilles de stock → CSV BDD)"""
+    pass
+
+@import_cmd.command('feuille-to-csv')
+@click.option('--input', '-i', 'input_path', required=True, type=click.Path(exists=True), help='CSV feuille de stock (colonnes: Marque, Genre, Référence, Stock)')
+@click.option('--output', '-o', 'output_path', type=click.Path(), help='Fichier de sortie (défaut: stdout)')
+@click.option('--collection', default='SS26', help='Valeur collection pour toutes les lignes')
+@click.option('--stock', default=2, type=int, help='Valeur stock pour toutes les lignes')
+@click.option('--price', default=100, type=int, help='Valeur price pour toutes les lignes')
+@click.option('--delimiter', default='auto', help='Séparateur CSV: ; ou , ou auto (détecté)')
+def import_feuille_to_csv(input_path, output_path, collection, stock, price, delimiter):
+    """Convertir une feuille de stock Reboul en CSV d'import BDD (name;reference;brand;category;collection;stock;price).
+    Réutilisable pour toutes les pages de stock (ex. Stone Island : 7 pages)."""
+    import csv
+    with open(input_path, 'r', encoding='utf-8') as f:
+        first = f.readline()
+        sep = ';' if (';' in first and (',' not in first or first.index(';') < first.index(','))) else ','
+        if delimiter != 'auto':
+            sep = ';' if delimiter == ';' else ','
+        f.seek(0)
+        reader = csv.DictReader(f, delimiter=sep)
+        if not reader.fieldnames:
+            console.print('[red]❌ Fichier CSV vide ou sans en-tête[/red]')
+            return
+        import unicodedata
+        def norm(s):
+            s = s.strip().lower()
+            n = unicodedata.normalize('NFD', s)
+            return ''.join(c for c in n if not unicodedata.combining(c))
+        lower = {}
+        for k in reader.fieldnames:
+            key = k.strip()
+            lower[key.lower()] = key
+            lower[norm(k)] = key
+        def get(row, *keys):
+            for k in keys:
+                for alias in (k.strip().lower(), norm(k)):
+                    if alias in lower and lower[alias] in row:
+                        v = row[lower[alias]].strip()
+                        if v:
+                            return v
+            return ''
+        rows_out = []
+        for row in reader:
+            marque = get(row, 'marque', 'brand')
+            genre = get(row, 'genre', 'category', 'categorie')
+            ref = get(row, 'reference', 'ref', 'référence')
+            if not ref:
+                continue
+            name = f"{marque} {genre}".strip() if (marque and genre) else (marque or genre or ref)
+            name = ' '.join(w.capitalize() for w in name.split())
+            rows_out.append({
+                'name': name,
+                'reference': ref,
+                'brand': marque,
+                'category': genre.lower() if genre else '',
+                'collection': collection,
+                'stock': str(stock),
+                'price': str(price),
+            })
+        if not rows_out:
+            console.print('[yellow]⚠️ Aucune ligne avec Référence trouvée[/yellow]')
+            return
+        out_header = ['name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
+        buf = []
+        buf.append(';'.join(out_header))
+        for r in rows_out:
+            buf.append(';'.join(str(r[k]) for k in out_header))
+        result = '\n'.join(buf)
+        if output_path:
+            with open(output_path, 'w', encoding='utf-8', newline='') as out:
+                out.write(result)
+            console.print(f"[green]✅ {len(rows_out)} lignes → {output_path}[/green]")
+        else:
+            console.print(result)
+
+
+@import_cmd.command('merge-pages')
+@click.option('--input', '-i', 'input_paths', required=True, type=click.Path(exists=True), multiple=True, help='CSV à fusionner (2 ou plus, même format BDD)')
+@click.option('--output', '-o', 'output_path', required=True, type=click.Path(), help='Fichier CSV fusionné (dédupliqué par référence)')
+def import_merge_pages(input_paths, output_path):
+    """Fusionner plusieurs pages CSV en un seul fichier, dédupliqué par référence.
+    Quand la même référence apparaît sur plusieurs pages (ex. fin page 1 = début page 2), la dernière occurrence gagne (stock mis à jour)."""
+    import csv
+    out_header = ['name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
+
+    def ref_key(ref):
+        return (ref or '').strip()
+
+    by_ref = {}
+    total_lines = 0
+    for path in input_paths:
+        with open(path, 'r', encoding='utf-8') as f:
+            first = f.readline()
+            sep = ';' if (';' in first and (',' not in first or first.find(';') < first.find(','))) else ','
+            f.seek(0)
+            reader = csv.DictReader(f, delimiter=sep)
+            if not reader.fieldnames:
+                continue
+            for row in reader:
+                ref = (row.get('reference') or row.get('Reference') or row.get('référence') or '').strip()
+                if not ref:
+                    continue
+                total_lines += 1
+                key = ref_key(ref)
+                name = (row.get('name') or row.get('Name') or '').strip()
+                brand = (row.get('brand') or row.get('Brand') or '').strip()
+                category = (row.get('category') or row.get('Category') or '').strip().lower()
+                collection = (row.get('collection') or row.get('Collection') or 'SS26').strip()
+                stock = (row.get('stock') or row.get('Stock') or '2').strip()
+                price = (row.get('price') or row.get('Price') or '100').strip()
+                by_ref[key] = {
+                    'name': name or by_ref.get(key, {}).get('name', ''),
+                    'reference': ref,
+                    'brand': brand or by_ref.get(key, {}).get('brand', ''),
+                    'category': category or by_ref.get(key, {}).get('category', ''),
+                    'collection': collection or by_ref.get(key, {}).get('collection', 'SS26'),
+                    'stock': stock,
+                    'price': price,
+                }
+
+    if not by_ref:
+        console.print('[red]❌ Aucune ligne avec référence trouvée dans les fichiers[/red]')
+        return
+    rows_out = list(by_ref.values())
+    dup_removed = total_lines - len(rows_out)
+    buf = [';'.join(out_header)]
+    for r in rows_out:
+        buf.append(';'.join(str(r.get(k, '')) for k in out_header))
+    with open(output_path, 'w', encoding='utf-8', newline='') as out:
+        out.write('\n'.join(buf))
+    console.print(f"[green]✅ {len(rows_out)} lignes uniques → {output_path}[/green]")
+    if dup_removed > 0:
+        console.print(f"[dim]   (chevauchement pages : {dup_removed} doublon(s) retiré(s), dernière occurrence conservée)[/dim]")
+
+
 @cli.group()
 def build():
     """Commandes pour analyser les builds"""
@@ -1402,6 +1540,109 @@ def db_variant_list(reference, product_id, as_json):
     console.print("[dim]  • Couleur (un variant)  : variant-set-color --id <ID> --color <COULEUR> [--yes][/dim]")
     console.print("[dim]  • Ajouter un variant    : variant-add --ref <REF> --sku <SKU> --size <S> --color <C> [--stock <n>] [--yes][/dim]")
     console.print("[dim]  • Supprimer un variant  : variant-delete --id <ID> [--yes][/dim]")
+
+
+@db.command('ref')
+@click.argument('reference', type=str)
+def db_ref(reference):
+    """🔍 Reference Finder : affiche produit + variants et commandes d'édition prêtes à l'emploi"""
+    ref = (reference or "").strip()
+    if not ref:
+        console.print("[red]❌ Indiquez une référence (ex: 4100111/V34)[/red]")
+        return
+    ref_esc = ref.replace("'", "''")
+    ref_shell = f'"{ref}"' if " " in ref or "/" in ref else ref
+
+    sql_product = (
+        "SELECT p.id, p.name, p.reference, p.price, p.is_published, "
+        "p.category_id, p.brand_id, p.collection_id, "
+        "COALESCE(cat.name, '') AS cat_name, COALESCE(b.name, '') AS brand_name, COALESCE(coll.name, '') AS coll_name "
+        "FROM products p "
+        "LEFT JOIN categories cat ON cat.id = p.category_id "
+        "LEFT JOIN brands b ON b.id = p.brand_id "
+        "LEFT JOIN collections coll ON coll.id = p.collection_id "
+        f"WHERE p.reference = '{ref_esc}' LIMIT 1;"
+    )
+    try:
+        rows = _run_db_query(sql_product)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not rows:
+        sql_like = (
+            "SELECT p.id, p.name, p.reference FROM products p "
+            f"WHERE p.reference ILIKE '%{ref_esc}%' ORDER BY p.reference LIMIT 5;"
+        )
+        try:
+            rows_like = _run_db_query(sql_like)
+        except Exception:
+            rows_like = []
+        if rows_like:
+            console.print(f"[yellow]⚠️ Aucun produit avec la ref exacte « {ref} ». Références proches :[/yellow]")
+            for r in rows_like:
+                console.print(f"  [dim]./rcli db ref {r[2]}[/dim]")
+            return
+        console.print("[yellow]⚠️ Aucun produit trouvé pour cette référence[/yellow]")
+        return
+
+    r = rows[0]
+    pid = int(r[0])
+    name, pref, price = r[1], r[2], r[3]
+    published = r[4]
+    cat_id, brand_id, coll_id = r[5], r[6], r[7]
+    cat_name, brand_name, coll_name = r[8], r[9], r[10]
+
+    variants_sql = (
+        "SELECT v.id, v.sku, v.size, v.color, v.stock "
+        f"FROM variants v WHERE v.product_id = {pid} ORDER BY v.id;"
+    )
+    try:
+        var_rows = _run_db_query(variants_sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur variants: {e}[/red]")
+        var_rows = []
+
+    product_text = (
+        f"ID {pid}  |  {name or '-'}\n"
+        f"Ref: {pref or '-'}  |  Prix: {price} €  |  Publié: {'Oui' if published else 'Non'}\n"
+        f"Cat: {cat_name or '-'}  |  Marque: {brand_name or '-'}  |  Collection: {coll_name or '-'}"
+    )
+    console.print(Panel(product_text, title="Produit", border_style="cyan"))
+    if not var_rows:
+        console.print("[yellow]Aucun variant[/yellow]")
+    else:
+        vt = Table(title=f"Variants ({len(var_rows)})")
+        vt.add_column("ID", style="cyan", justify="right")
+        vt.add_column("SKU", style="green")
+        vt.add_column("Taille", style="yellow")
+        vt.add_column("Couleur", style="magenta")
+        vt.add_column("Stock", justify="right")
+        for v in var_rows:
+            vt.add_row(str(v[0]), v[1] or "", v[2] or "", v[3] or "", str(v[4]) if v[4] is not None else "0")
+        console.print(vt)
+
+    console.print("[bold]Actions (copier-coller)[/bold]")
+    console.print("[dim]Produit[/dim]")
+    console.print(f"  ./rcli db product-set-name --id {pid} --name \"<nom>\" -y")
+    console.print(f"  ./rcli db product-set-ref --id {pid} --ref {ref_shell} -y")
+    console.print(f"  ./rcli db product-set-price --id {pid} --price <prix> -y")
+    console.print(f"  ./rcli db product-set-active --id {pid} --active -y   # ou --inactive")
+    if cat_id:
+        console.print(f"  ./rcli db product-set-category --id {pid} --category-id {cat_id} -y")
+    if brand_id:
+        console.print(f"  ./rcli db product-set-brand --id {pid} --brand-id {brand_id} -y")
+    if coll_id:
+        console.print(f"  ./rcli db product-set-collection --id {pid} --collection-id {coll_id} -y")
+    console.print(f"  ./rcli db product-set-all-stock --ref {ref_shell} --stock <n> -y")
+    console.print(f"  ./rcli db product-set-all-color --ref {ref_shell} --color \"<couleur>\" -y")
+    console.print("[dim]Variants[/dim]")
+    console.print(f"  ./rcli db variant-add --ref {ref_shell} --sku <SKU> --size <S> --color \"<C>\" --stock <n> -y")
+    for v in var_rows:
+        console.print(f"  ./rcli db variant-set-stock --id {v[0]} --stock <n> -y   # {v[1]}")
+    console.print(f"  ./rcli db variant-set-size --id <ID> --size \"<T>\" -y")
+    console.print(f"  ./rcli db variant-set-color --id <ID> --color \"<C>\" -y")
+    for v in var_rows:
+        console.print(f"  ./rcli db variant-delete --id {v[0]} -y   # {v[1]}")
 
 
 @db.command('check-sequences')
@@ -2492,6 +2733,70 @@ def delete_backup_cmd(backup_file, yes):
         console.print(f"[red]❌ {message}[/red]")
 
 
+@db.command('wipe-products-by-collection')
+@click.option('--collection', '-c', default='SS26', help='Nom de la collection (ex: SS26)')
+@click.option('--no-backup', is_flag=True, help='Ne pas faire de backup avant (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Confirmer sans demander')
+def wipe_products_by_collection_cmd(collection, no_backup, yes):
+    """🗑️ Supprimer uniquement les produits (et variants, images) d'une collection donnée (ex. SS26)."""
+    coll_esc = collection.replace("'", "''")
+    if not yes:
+        console.print("[yellow]⚠️  Ceci va SUPPRIMER tous les produits de la collection « %s » (variants + images liés).[/yellow]" % collection)
+        if not click.confirm("Continuer ?"):
+            console.print("[yellow]Annulé.[/yellow]")
+            return
+    if not no_backup:
+        console.print("[cyan]💾 Backup avant purge...[/cyan]")
+        _create_server_backup()
+        console.print("[green]✅ Backup créé[/green]")
+    try:
+        rows = _run_db_query("SELECT id FROM collections WHERE name = '%s' LIMIT 1;" % coll_esc)
+        if not rows:
+            console.print("[red]❌ Collection « %s » introuvable[/red]" % collection)
+            return
+        cid = rows[0][0]
+        _exec_db_sql(
+            "DELETE FROM cart_items WHERE variant_id IN "
+            "(SELECT id FROM variants WHERE product_id IN (SELECT id FROM products WHERE collection_id = %s));" % cid
+        )
+        _exec_db_sql("DELETE FROM images WHERE product_id IN (SELECT id FROM products WHERE collection_id = %s);" % cid)
+        _exec_db_sql("DELETE FROM variants WHERE product_id IN (SELECT id FROM products WHERE collection_id = %s);" % cid)
+        _exec_db_sql("DELETE FROM products WHERE collection_id = %s;" % cid)
+        console.print("[green]✅ Produits/variants/images de la collection « %s » supprimés[/green]" % collection)
+    except Exception as e:
+        console.print("[red]❌ %s[/red]" % e)
+
+
+@db.command('category-create')
+@click.option('--name', '-n', required=True, help='Nom de la catégorie (ex: bermuda, jogging molleton)')
+@click.option('--no-backup', is_flag=True, help='Ne pas faire de backup avant')
+@click.option('--yes', '-y', is_flag=True, help='Confirmer sans demander')
+def db_category_create(name, no_backup, yes):
+    """➕ Créer une catégorie si elle n'existe pas (slug = nom normalisé)."""
+    slug = name.strip().lower().replace(' ', '-').replace("'", "")
+    for c in ("/", "\\", "'"):
+        slug = slug.replace(c, "")
+    if not slug:
+        console.print("[red]❌ Nom invalide[/red]")
+        return
+    try:
+        rows = _run_db_query("SELECT id, name FROM categories WHERE slug = '%s' LIMIT 1;" % slug.replace("'", "''"))
+        if rows:
+            console.print("[green]✅ Catégorie déjà existante : %s (id=%s)[/green]" % (rows[0][1], rows[0][0]))
+            return
+        if not yes and not click.confirm("Créer la catégorie « %s » (slug=%s) ?" % (name, slug)):
+            return
+        if not no_backup:
+            _create_server_backup()
+        name_esc = name.strip().replace("'", "''")
+        _exec_db_sql("INSERT INTO categories (name, slug) VALUES ('%s', '%s');" % (name_esc, slug.replace("'", "''")))
+        rows = _run_db_query("SELECT id, name, slug FROM categories WHERE slug = '%s';" % slug.replace("'", "''"))
+        if rows:
+            console.print("[green]✅ Catégorie créée : %s (id=%s, slug=%s)[/green]" % (rows[0][1], rows[0][0], rows[0][2]))
+    except Exception as e:
+        console.print("[red]❌ %s[/red]" % e)
+
+
 @db.command('wipe-products')
 @click.option('--server', is_flag=True, help='Exécuter sur le serveur VPS (SSH)')
 @click.option('--no-backup', is_flag=True, help='Ne pas faire de backup avant (déconseillé)')
@@ -2785,6 +3090,10 @@ try:
     # Analytics commands
     from commands.analytics import analytics
     cli.add_command(analytics, 'analytics')
+
+    # Images IA (phase 24.10 – Gemini)
+    from commands.images import images as images_group
+    cli.add_command(images_group, 'images')
 except ImportError as e:
     # Les commandes serveur sont optionnelles si les dépendances ne sont pas installées
     pass

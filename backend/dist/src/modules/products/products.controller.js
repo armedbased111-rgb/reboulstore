@@ -41,7 +41,7 @@ let ProductsController = class ProductsController {
         };
         return this.productsService.createImage(productId, file, createImageDto);
     }
-    createImagesBulk(productId, files, body) {
+    createImagesBulk(productId, files, body, ordersQuery) {
         if (!files || files.length === 0) {
             throw new common_1.BadRequestException('At least one image file is required');
         }
@@ -49,7 +49,9 @@ let ProductsController = class ProductsController {
             throw new common_1.BadRequestException('You can upload up to 7 images at once');
         }
         const altsRaw = body.alts ?? body['alts[]'];
-        const ordersRaw = body.orders ?? body['orders[]'];
+        const ordersRaw = ordersQuery !== undefined && ordersQuery !== ''
+            ? ordersQuery.split(',').map((s) => s.trim())
+            : body.orders ?? body['orders[]'];
         const altsArray = Array.isArray(altsRaw)
             ? altsRaw
             : altsRaw
@@ -142,8 +144,9 @@ __decorate([
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.UploadedFiles)()),
     __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Query)('orders')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object, String]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "createImagesBulk", null);
 __decorate([
