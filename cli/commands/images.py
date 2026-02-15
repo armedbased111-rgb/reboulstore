@@ -353,9 +353,9 @@ UPLOAD_IMAGE_ORDER = ["1_face", "2_back", "3_detail_logo", "4_lifestyle"]
 @click.option("--ref", "reference", required=True, help="Référence produit (ex: L100001/V09A)")
 @click.option("--dir", "image_dir", default="output", type=click.Path(path_type=Path), help="Dossier contenant les images (1_face.png, 2_back.png, …)")
 @click.option("--backend", "backend_url", default="http://localhost:3001", help="URL du backend Reboul (pour POST /products/:id/images/bulk)")
-@click.option("--replace", "do_replace", is_flag=True, help="Remplacer les images existantes (supprime les anciennes sur Cloudinary + BDD puis upload)")
-def upload(reference, image_dir, backend_url, do_replace):
-    """Upload les images du dossier vers Cloudinary et les attache au produit (ref). Backend doit être démarré."""
+@click.option("--append", "do_append", is_flag=True, help="Ajouter sans supprimer les images existantes (défaut : remplacer les anciennes sur Cloudinary + BDD puis upload)")
+def upload(reference, image_dir, backend_url, do_append):
+    """Upload les images du dossier vers Cloudinary et les attache au produit (ref). Par défaut remplace les images existantes. Backend doit être démarré."""
     image_dir = Path(image_dir).resolve()
     if not image_dir.is_dir():
         console.print(f"[red]❌ Dossier introuvable : {image_dir}[/red]")
@@ -367,6 +367,7 @@ def upload(reference, image_dir, backend_url, do_replace):
         raise SystemExit(1)
 
     base_url = backend_url.rstrip("/")
+    do_replace = not do_append
 
     if do_replace:
         try:

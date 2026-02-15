@@ -319,7 +319,7 @@ Détails : (1)(3) Fait. (2) Optionnel. (4) Phrase « same lighting ». (5) Comma
 
 **Deuxième passe (adjust)** : si une image générée est presque bonne, envoyer celle-ci + une consigne d’ajustement. Commande : `./rcli images adjust --image output/1_face.png --prompt "More relaxed sleeves" -o output/` → crée `1_face_adjusted.png`. Option `--gemini-pro` pour forcer Pro sur l’ajustement.
 
-**Upload Cloudinary** : une fois les images générées dans un dossier (ex. `output/`), les envoyer au backend pour upload Cloudinary et rattachement au produit par référence : `./rcli images upload --ref L100001/V09A --dir output/`. Le backend Reboul doit être démarré (défaut `http://localhost:3001`). Option `--backend https://...` pour un autre hôte. Les fichiers attendus sont `1_face.png`, `2_back.png`, `3_detail_logo.png`, `4_lifestyle.png` (ou .jpg).
+**Upload Cloudinary** : une fois les images générées dans un dossier (ex. `output/`), les envoyer au backend pour upload Cloudinary et rattachement au produit par référence : `./rcli images upload --ref L100001/V09A --dir output/`. Par défaut les images existantes du produit sont supprimées (Cloudinary + BDD) puis les nouvelles sont uploadées ; pour ajouter sans supprimer : `--append`. Le backend Reboul doit être démarré (défaut `http://localhost:3001`). Option `--backend https://...` pour un autre hôte. Les fichiers attendus sont `1_face.png`, `2_back.png`, `3_detail_logo.png`, `4_lifestyle.png` (ou .jpg).
 
 ---
 

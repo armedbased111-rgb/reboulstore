@@ -145,7 +145,7 @@ backend/
 
 ## 📊 État actuel
 
-### Version : 0.24.2 - Phase 17.11.4 terminée ✅
+### Version : 0.24.3 - Phase 17.11.4 terminée ✅
 
 **Statut** : ✅ Backend complet et production-ready - Tous les modules essentiels complétés, infrastructure Docker production configurée, monitoring & logs en place
 

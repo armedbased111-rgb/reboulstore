@@ -2,7 +2,7 @@
 
 **Version** : 4.4  
 **Date** : 17 décembre 2025  
-**Dernière mise à jour** : 06/02/2026
+**Dernière mise à jour** : 15/02/2026 à 21:04
 **Approche** : Backend ↔ Frontend alternés, fonctionnalités complètes, Workflow Figma intégré
 
 ---
@@ -2389,6 +2389,7 @@ docker compose up backend frontend
 | 24.8 | Ajout continu produits | ✅ Couvert par 24.5bis | Même processus : nouvelle feuille/CSV → merge si besoin → import. Pas de sous-phase séparée à traiter. |
 | 24.9 | Checklist finale – Validation collection | ⏳ À faire | En dernier, une fois données + images OK |
 | 24.10 | Évolution Images IA (Nano Banana / Gemini) | ✅ Pipeline en place | Photos brutes → generate (4 vues) → upload Cloudinary par ref. Voir `IMAGES_PRODUIT_PIPELINE.md`. |
+| **24.11** | **Plan Claude Code (étape par étape)** | ⏳ À faire | Setup Claude Code, contexte, vérifs CLI/DB/images, roadmap/doc, clôture Phase 24 + support Phase 25. Voir § 24.11. |
 
 **📊 Progression** : Workflow **données / ajout de collection** = en place. **Images produit** : pipeline IA opérationnel (24.10). Reste : finaliser workflow classique images (24.7), politique livraison (24.3), checklist (24.9).
 
@@ -2840,6 +2841,61 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 - [x] Doc récap pipeline : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md` (photos brutes → generate → upload)
 
 **Note** : Nano Banana retenu pour 24.10. Les 4 prompts et les règles de prise de vues sont la base du pipeline.
+
+### 24.11 Plan Claude Code – étape par étape
+
+**Objectif** : Intégrer **Claude Code** (terminal + contexte projet) pour clôturer la Phase 24 et accompagner la Phase 25. Contexte détaillé : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md`. Fichier lu par Claude dans le repo : `CLAUDE.md` (racine).
+
+**À cocher au fur et à mesure** :
+
+*Étape 1 – Installation et connexion*
+- [x] Installer Claude Code : `curl -fsSL https://claude.ai/install.sh | bash` (ou `brew install --cask claude-code`)
+- [x] Lancer `claude` puis `/login` ; vérifier que le compte est bien connecté
+- [ ] Vérifier la version : `claude --version` (ou équivalent selon doc officielle)
+
+*Étape 2 – Contexte projet*
+- [x] Vérifier que `CLAUDE.md` existe à la racine du projet (résumé projet, règles DB/déploiement, CLI, références)
+- [x] Lire `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md` (vision Cursor vs Claude Code, workflows, setup)
+- [x] Dans le repo : `claude -p "what does this project do?"` → réponse cohérente avec Reboul Store / Phase 24–25
+
+*Étape 3 – Vérification CLI*
+- [x] `claude -p "list the main ./rcli command groups"` → doit mentionner db, images, roadmap, docs, server
+- [x] `claude -p "how do I generate product images from raw photos?"` → doit décrire `./rcli images generate` et pipeline (photos/ → output/ → upload)
+- [x] Demander à Claude : « Run ./rcli images --help and summarize » → exécution correcte et résumé des sous-commandes
+
+*Étape 4 – Première tâche concrète (DB)*
+- [x] Donner une ref produit (ex. d’une feuille de stock) et demander : « Vérifie si ce produit existe en base avec ./rcli db ref REF »
+- [x] Vérifier que Claude exécute la commande et interprète le résultat (produit trouvé ou non, variants, stocks)
+
+*Étape 5 – Première tâche concrète (images IA)*
+- [x] Préparer un dossier `photos/` avec au moins une photo test + `refs/` si besoin
+- [x] Demander à Claude : « Run ./rcli images generate --input-dir photos -o output/ and tell me the result »
+- [x] Vérifier que les 4 fichiers sortent dans `output/` ; si oui, demander : « Now run ./rcli images upload --ref REF --dir output/ (with a real product ref) » (backend doit tourner)
+
+*Étape 6 – Roadmap et doc*
+- [x] Demander : « Update ROADMAP_COMPLETE.md to check the task "24.11 Plan Claude Code – étape par étape" for the steps we just completed »
+- [x] Ou : « Run ./rcli roadmap update --task "24.11 Plan Claude Code" » (si une tâche unique existe côté CLI)
+- [x] Demander : « Run ./rcli docs sync » et vérifier que la doc est synchronisée
+
+*Étape 7 – Git*
+- [ ] Demander : « What files have I changed? » puis « Commit my changes with a descriptive message (feat: add Claude Code plan and context) »
+- [ ] Vérifier que le message suit les conventions (type(scope): message)
+
+*Étape 8 – Règles critiques (vérification)*
+- [ ] Demander : « Before running a database migration, what should we do? » → doit mentionner backup (./rcli db backup --server)
+- [ ] Demander : « Can we run docker compose down -v on this project? » → doit répondre non (risque volumes DB)
+
+*Étape 9 – Clôture Phase 24 avec Claude*
+- [ ] Utiliser Claude pour batch images : liste de refs → pour chaque ref, `db ref` puis si OK `images generate` (depuis photos dédiées) puis `images upload`
+- [ ] Utiliser Claude pour cocher les tâches 24.7 / 24.9 / 24.11 dans la roadmap quand les critères sont remplis
+- [ ] Utiliser Claude pour `./rcli docs sync` après chaque grosse avancée
+
+*Étape 10 – Phase 25 (support)*
+- [ ] Après chaque livrable Phase 25 (recherche, Home, SEO, etc.) : demander à Claude de mettre à jour la roadmap et lancer `./rcli docs sync`
+- [ ] Utiliser Claude pour commits conventionnels et résumés de changements
+- [ ] Optionnel : demander à Claude de vérifier les refs d’une feuille de stock avec `db ref` avant import
+
+**Références** : `CLAUDE.md`, `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`, `docs/context/DB_CLI_USAGE.md`.
 
 ### 24.8 Ajout continu produits
 

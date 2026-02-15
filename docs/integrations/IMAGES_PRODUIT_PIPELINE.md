@@ -45,8 +45,8 @@ Sortie : `1_face.png`, `2_back.png`, `3_detail_logo.png`, `4_lifestyle.png` dans
 **Upload** (backend Reboul doit tourner) :
 ```bash
 ./rcli images upload --ref L100001/V09A --dir output/
-# --replace : supprime les anciennes images (Cloudinary + BDD) puis upload
 ```
+Par défaut : supprime les images existantes du produit (Cloudinary + BDD) puis upload les 4 nouvelles. Pour ajouter sans supprimer : `--append`.
 Ordre des images : 1_face, 2_back, 3_detail_logo, 4_lifestyle (ordre 0, 1, 2, 3 en BDD).
 
 ---
