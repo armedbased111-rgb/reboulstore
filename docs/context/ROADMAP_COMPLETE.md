@@ -2846,6 +2846,8 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 **Objectif** : Intégrer **Claude Code** (terminal + contexte projet) pour clôturer la Phase 24 et accompagner la Phase 25. Contexte détaillé : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md`. Fichier lu par Claude dans le repo : `CLAUDE.md` (racine).
 
+**État** : **Setup complet (étapes 1–8) terminé.** Étapes 9–10 = usage au fil de l’eau (batch images, clôture Phase 24, support Phase 25).
+
 **À cocher au fur et à mesure** :
 
 *Étape 1 – Installation et connexion*
@@ -2878,12 +2880,12 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 - [x] Demander : « Run ./rcli docs sync » et vérifier que la doc est synchronisée
 
 *Étape 7 – Git*
-- [ ] Demander : « What files have I changed? » puis « Commit my changes with a descriptive message (feat: add Claude Code plan and context) »
-- [ ] Vérifier que le message suit les conventions (type(scope): message)
+- [x] Demander : « What files have I changed? » puis « Commit my changes with a descriptive message (feat: add Claude Code plan and context) »
+- [x] Vérifier que le message suit les conventions (type(scope): message)
 
 *Étape 8 – Règles critiques (vérification)*
-- [ ] Demander : « Before running a database migration, what should we do? » → doit mentionner backup (./rcli db backup --server)
-- [ ] Demander : « Can we run docker compose down -v on this project? » → doit répondre non (risque volumes DB)
+- [x] Demander : « Before running a database migration, what should we do? » → doit mentionner backup (./rcli db backup --server)
+- [x] Demander : « Can we run docker compose down -v on this project? » → doit répondre non (risque volumes DB)
 
 *Étape 9 – Clôture Phase 24 avec Claude*
 - [ ] Utiliser Claude pour batch images : liste de refs → pour chaque ref, `db ref` puis si OK `images generate` (depuis photos dédiées) puis `images upload`

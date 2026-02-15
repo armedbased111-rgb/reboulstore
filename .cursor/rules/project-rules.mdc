@@ -1396,6 +1396,19 @@ Voir `cli/utils/server_helper.py` pour la configuration.
   - Exemples d'utilisation
   - Impact et gains de productivité
 
+- **`/claude-code-workflow`** : Workflow Toi + Cursor + Claude Code + CLI
+  - Quand utiliser Claude Code (batch CLI, docs sync, roadmap, commits) vs rester dans Cursor (code, architecture)
+  - Prompts prêts à coller dans Claude Code (batch images, vérif refs, docs sync, commit)
+  - Référence : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md`, `CLAUDE.md`
+
+### 🔄 Workflow Cursor + Claude Code (routage automatique)
+
+**Règle** : Pour les tâches **batch / CLI / doc / git** (liste de refs, images generate+upload en masse, `./rcli docs sync`, mise à jour roadmap, commit de session), **suggérer d'utiliser Claude Code** dans le terminal et fournir un **prompt prêt à coller**.
+
+- **Cursor (moi)** : code, architecture, règles, revue, explications. Je ne peux pas lancer Claude Code.
+- **Claude Code** : terminal (`claude` dans le repo), exécute `./rcli`, git, enchaînements. Contexte = `CLAUDE.md` + docs.
+- **Routage** : Quand l'utilisateur demande une tâche du type batch images, vérif refs en masse, sync doc, mise à jour roadmap, ou commit descriptif → proposer : « Pour ça, ouvre Claude Code dans le terminal et colle ce prompt : [prompt adapté]. » Utiliser les exemples de `/.cursor/commands/claude-code-workflow.md` ou les adapter.
+
 ### Utilisation des commandes
 
 1. **Dans le chat Cursor** : Taper `/nomcommande` pour afficher le guide
@@ -1443,6 +1456,12 @@ Voir `cli/utils/server_helper.py` pour la configuration.
 - ✅ Quand l'utilisateur demande comment vérifier la sécurité
 - ✅ Pour rappeler les workflows de gestion serveur (avant/après déploiement)
 - ✅ Pour fournir les commandes CLI serveur appropriées
+
+#### Quand utiliser automatiquement `/claude-code-workflow`
+- ✅ Quand l'utilisateur demande un batch (images, vérif refs, etc.) ou une tâche CLI enchaînée
+- ✅ Quand l'utilisateur demande de synchroniser la doc, mettre à jour la roadmap, ou faire un commit de session
+- ✅ Pour proposer un prompt prêt à coller dans Claude Code (terminal) au lieu d'exécuter soi-même des commandes répétitives
+- ✅ Quand l'utilisateur demande comment faire travailler Cursor et Claude Code ensemble
 
 #### Quand utiliser automatiquement `/update-roadmap` ou `/documentation-workflow`
 - ✅ Après chaque tâche complétée

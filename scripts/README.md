@@ -35,6 +35,18 @@ Crée une catégorie via l'API backend.
 - API URL : `http://localhost:3001` (modifiable dans le script)
 - Endpoint : `/categories`
 
+### `claude-prompt.sh`
+
+Envoie une requête one-shot à **Claude Code** (réponse puis exit). Pour une session interactive, lancer `claude` directement.
+
+**Usage :**
+```bash
+./scripts/claude-prompt.sh "Run ./rcli docs sync and tell me the result"
+./scripts/claude-prompt.sh "What files have I changed?"
+```
+
+**Prérequis :** Claude Code installé et connecté (`claude`, `/login`).
+
 ---
 
 ## ➕ Ajouter un nouveau script

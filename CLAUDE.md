@@ -21,10 +21,30 @@ Toutes les commandes depuis la **racine du projet**.
 - **Docs** : `./rcli docs sync` (synchronise ROADMAP ↔ BACKEND.md ↔ FRONTEND.md)
 - **Serveur** : `./rcli server status`, `./rcli server logs`, `./rcli db backup --server`
 
+## Frontend (code React)
+
+- **Stack** : React (TypeScript), Vite, TailwindCSS v4, shadcn/ui (`frontend/src/components/ui/shadcn`), AnimeJS (animations).
+- **Structure** : `frontend/src/pages/` (Home, Catalog, Product, Cart, Checkout), `frontend/src/components/`, `frontend/src/hooks/`, `frontend/src/services/`.
+- **Conventions** : mobile-first, design inspiré A-COLD-WALL* (minimaliste, premium), composants réutilisables, animations via AnimeJS + `AnimationProvider`. Référence détaillée : `frontend/FRONTEND.md`.
+- **Règle code** : concis, commentaires essentiels uniquement, noms explicites.
+
+## Backend (code NestJS)
+
+- **Stack** : NestJS, TypeORM, PostgreSQL (toujours VPS ; tunnel en dev).
+- **Structure** : `backend/src/modules/` (products, categories, cart, orders, auth, etc.), `backend/src/entities/`, services, controllers.
+- **Conventions** : modules NestJS, DTOs, pas de logique métier dans les controllers. Référence détaillée : `backend/BACKEND.md`.
+- **Règle code** : concis, commentaires essentiels uniquement.
+
+## Quand utiliser Claude
+
+Batch/CLI/doc/git (images, db ref, docs sync, roadmap, commit, backup) → Claude. Design, animations, règles détaillées → Cursor. Détail : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md` § 10.
+
 ## Références utiles
 
 - Roadmap détaillée : `docs/context/ROADMAP_COMPLETE.md` (Phase 24, 25)
-- Contexte Claude Code + Cursor : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md`
+- Frontend détaillé : `frontend/FRONTEND.md` (stack, structure, design system, animations)
+- Backend détaillé : `backend/BACKEND.md` (modules, entités, API)
+- Contexte Claude Code + Cursor : `docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md` (§ 10 = quand utiliser Claude)
 - Pipeline images IA : `docs/integrations/IMAGES_IA_WORKFLOW.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`
 - Règles projet (Cursor) : `.cursor/rules/project-rules.mdc`
 

@@ -128,7 +128,25 @@ Tu peux enrichir CLAUDE.md au fil du temps (ex : commandes préférées, pièges
 
 ---
 
-## 5. Workflows « combo » Cursor + Claude Code
+## 5. Workflow « automatique » (Toi + Cursor + Claude + CLI)
+
+- **Cursor ne peut pas lancer Claude Code**, mais les règles projet lui disent : pour les tâches **batch / CLI / doc / git**, **suggérer d’utiliser Claude Code** et fournir un **prompt prêt à coller**.
+- **Commande Cursor** : `/claude-code-workflow` — décrit le workflow et donne les prompts types (batch images, vérif refs, docs sync, commit). L’IA Cursor utilise cette commande pour router et proposer le bon prompt.
+- **Boucle** : Tu es dans Cursor → tu demandes un batch ou une mise à jour doc → je te dis « ouvre Claude Code et colle ce prompt » → tu exécutes dans le terminal → tu reviens dans Cursor. Contexte partagé : `CLAUDE.md` (Claude), project-rules (Cursor), `./rcli` (commun).
+
+---
+
+## 6. Frontend avec Claude Code
+
+- **Claude Code peut modifier le code front** : il lit les fichiers (`frontend/src/...`), propose des édits (composants, pages, hooks). Il s’appuie sur **CLAUDE.md** (section « Frontend ») : stack React/Vite/Tailwind/shadcn/AnimeJS, structure, conventions, lien vers `frontend/FRONTEND.md`.
+- **Quand faire le front dans Cursor vs Claude** :
+  - **Cursor** : features avec règles projet (Figma, animations AnimeJS, design system), revue de code, explications pas à pas. Les règles détaillées (project-rules) sont dans Cursor.
+  - **Claude Code** : refactors ciblés, ajout d’un composant ou d’une page en une demande (« ajoute un filtre prix dans Catalog »), corrections de style/typos. Tu peux lui dire « respecte frontend/FRONTEND.md et la section Frontend de CLAUDE.md ».
+- **Pour une tâche front dans Claude** : ouvre `claude` dans le repo, décris la tâche (ex. « add a price range filter to Catalog.tsx using Tailwind and shadcn if needed »). Claude lira les fichiers concernés et `frontend/FRONTEND.md` si besoin. Après édition, tu reviens dans Cursor pour tester et ajuster (règles, design, animations).
+
+---
+
+## 7. Workflows « combo » Cursor + Claude Code
 
 1. **Batch images pour une collection**  
    - Toi/Cursor : préparer `photos/` et `refs/`, vérifier `.env` (GEMINI_API_KEY).  
@@ -144,7 +162,7 @@ Tu peux enrichir CLAUDE.md au fil du temps (ex : commandes préférées, pièges
 
 ---
 
-## 6. Où on va (vision « overpower »)
+## 8. Où on va (vision « overpower »)
 
 - **Court terme** : Phase 24 clôturée avec images IA intégrées (déjà en place) + workflow classique 24.7 validé ; politique livraison et checklist 24.9.
 - **Moyen terme** : Phase 25 (recherche, Home, SEO, tests, perfs, filtres, dashboard) avec Cursor pour le code et Claude Code pour les tâches répétitives (CLI, batch, doc, git).
@@ -152,7 +170,7 @@ Tu peux enrichir CLAUDE.md au fil du temps (ex : commandes préférées, pièges
 
 ---
 
-## 7. Fichiers de référence
+## 9. Fichiers de référence
 
 | Fichier | Usage |
 |--------|--------|
@@ -166,4 +184,45 @@ Tu peux enrichir CLAUDE.md au fil du temps (ex : commandes préférées, pièges
 
 ---
 
-**Prochaine étape** : installer/lancer Claude Code dans le repo, vérifier que CLAUDE.md est bien lu (« what does this project do? »), puis enchaîner sur une première tâche concrète (ex. batch images ou mise à jour roadmap 24.10).
+## 10. Récap : tout le setup Claude + quand l’utiliser
+
+### Ce qu’on a déjà mis en place
+
+| Élément | Rôle |
+|--------|------|
+| **CLAUDE.md** (racine) | Contexte lu par Claude à chaque session : projet, règles (DB VPS, pas de `down -v`, backup avant migration), CLI, frontend (stack, structure, conventions), références docs. |
+| **Plan 24.11** (ROADMAP_COMPLETE.md) | Étapes 1–8 (install, contexte, CLI, DB, images, roadmap, git, règles) + étapes 9–10 (usage réel : batch, clôture Phase 24, support Phase 25). |
+| **docs/context/CLAUDE_CODE_CURSOR_CONTEXT.md** | Ce fichier : vision Cursor vs Claude, setup, workflows combo, frontend avec Claude, récap. |
+| **Commande Cursor `/claude-code-workflow`** | Quand utiliser Claude vs Cursor, prompts prêts à coller (batch images, vérif refs, docs sync, commit, backup, exemple frontend). |
+| **Règle Cursor (project-rules)** | Pour les tâches batch/CLI/doc/git, Cursor suggère d’utiliser Claude Code et fournit un prompt prêt à coller. |
+| **Pipeline images** | Upload par défaut = replace (supprime les anciennes puis upload) ; `--append` pour ajouter sans supprimer. |
+| **CLAUDE.md Backend** | Section Backend (NestJS, structure, conventions) + section « Quand utiliser Claude ». |
+| **Script `scripts/claude-prompt.sh`** | Requête one-shot : `./scripts/claude-prompt.sh "Run ./rcli docs sync"` (équivalent à `claude -p "..."`). |
+
+### Ce qu’on pourrait encore setup (optionnel)
+
+- **Enrichir CLAUDE.md** : ajouter une section Backend (stack NestJS, structure `backend/src/`, conventions), ou des « pièges à éviter » (ex. ne pas toucher à `.env.production`).
+- **Skills Claude Code** : si Claude Code supporte des skills custom (fichiers ou dossiers dédiés), ajouter un skill « Reboul » qui charge CLAUDE.md + chemins clés (ROADMAP, IMAGES_PIPELINE, DB_CLI).
+- **Script raccourci** : un script `./scripts/claude-prompt.sh "ta demande"` qui ouvre une session Claude avec le prompt pré-rempli (pour gagner du temps depuis Cursor).
+- **Checklist par type de tâche** : un petit doc « Quand je fais X, je dis à Claude Y » (ex. avant import collection → « vérifie les refs dans refs.txt avec db ref »).
+- **MCP / API** : si un jour un pont Cursor ↔ Claude Code existe (MCP ou API), le brancher pour que Cursor puisse déléguer une tâche à Claude sans que tu colles le prompt à la main.
+
+### Dans quelles circonstances on utilise Claude
+
+| Circonstance | On utilise Claude pour… | Exemple de prompt / action |
+|--------------|--------------------------|----------------------------|
+| **Batch images (plusieurs refs)** | Pour chaque ref : vérifier en base → generate → upload. | « Pour chaque ref dans refs_batch.txt : db ref, puis si OK images generate depuis photos/REF, puis images upload --ref REF. Résume succès/échecs. » |
+| **Vérifier une feuille de stock avant import** | Exécuter `db ref` sur chaque ref et lister les manquantes. | « Pour chaque ligne de refs.txt run ./rcli db ref REF. Liste les refs non trouvées. » |
+| **Sync doc après une avancée** | Lancer `./rcli docs sync` et éventuellement cocher des tâches roadmap. | « Run ./rcli docs sync. Puis coche dans ROADMAP la tâche [X]. » |
+| **Commit de session** | Résumer les changements et proposer un commit conventionnel. | « What files have I changed? Commit with message type(scope): description. » |
+| **Backup avant migration / opération risquée** | Lancer le backup DB côté serveur. | « Before we run a migration, run ./rcli db backup --server and confirm. » |
+| **Clôture Phase 24 (étapes 9–10)** | Batch images, cocher 24.7 / 24.9 / 24.11, docs sync. | Prompts de l’Étape 9 (voir ROADMAP § 24.11). |
+| **Phase 25 (après chaque livrable)** | Mise à jour roadmap + docs sync + commit. | « Update roadmap for task [X], run ./rcli docs sync, then commit with feat: … » |
+| **Refactor / tâche front ciblée** | Modifier un composant ou une page (sans Figma/animations complexes). | « Read FRONTEND.md and CLAUDE.md Frontend. Add [feature] to [fichier]. Keep code concise. » |
+| **Vérif serveur / déploiement** | Statut des services, logs (en lecture). | « Run ./rcli server status and summarize. » |
+
+### En résumé
+
+- **Cursor** : code au quotidien, règles projet, Figma, animations, architecture, revue. C’est l’outil principal.
+- **Claude Code** : dès qu’il y a **enchaînement de commandes** (CLI, batch, doc, git) ou **tâche front/back ciblée** bien décrite, tu ouvres `claude` dans le repo, tu colles un prompt (ou tu le formules), et Claude exécute. Le contexte est dans **CLAUDE.md** et les docs référencées.
+- **Quand tu hésites** : demande-toi « est-ce que c’est surtout du batch / CLI / doc / git ou une tâche bien délimitée ? » → Claude. « Est-ce que ça touche au design, aux animations, aux règles projet détaillées ? » → Cursor.

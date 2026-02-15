@@ -77,6 +77,12 @@ Ajouter / modifier / contextualiser des phases dans la roadmap
 - Où la noter (BRAINSTORMING_ROADMAP, CLARIFICATIONS_BRAINSTORMING, ROADMAP_COMPLETE)
 - Comment rester cohérent avec la vision globale
 
+### `/claude-code-workflow`
+Workflow Toi + Cursor + Claude Code + CLI
+- Qui fait quoi (Cursor = code, Claude Code = batch/CLI/doc/git)
+- Quand utiliser Claude Code (prompts prêts à coller)
+- Référence : CLAUDE_CODE_CURSOR_CONTEXT.md, CLAUDE.md
+
 ### `/architecture-workflow`
 Architecture multi‑sites + admin centrale
 - Fichiers d’architecture (Admin Central, multi‑shops)
