@@ -76,8 +76,8 @@ export const reboulProductsService = {
   /**
    * Importer des produits depuis un tableau collé (Marque, Genre, Reference, Stock).
    */
-  async importFromPaste(pastedText: string): Promise<{ created: number; errors: { row: number; message: string }[] }> {
-    const response = await api.post<{ created: number; errors: { row: number; message: string }[] }>(
+  async importFromPaste(pastedText: string): Promise<{ created: number; updated: number; errors: { row: number; message: string }[] }> {
+    const response = await api.post<{ created: number; updated: number; errors: { row: number; message: string }[] }>(
       '/admin/reboul/products/import-from-paste',
       { pastedText },
     );

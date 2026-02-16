@@ -36,7 +36,9 @@ export interface ImportPreview {
 
 export interface ImportResult {
   productsCreated: number;
+  productsUpdated: number;
   variantsCreated: number;
+  variantsUpdated: number;
   errors: string[];
 }
 

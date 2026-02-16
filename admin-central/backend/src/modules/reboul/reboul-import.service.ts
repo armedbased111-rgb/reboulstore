@@ -48,7 +48,9 @@ export interface ImportPreview {
 
 export interface ImportResult {
   productsCreated: number;
+  productsUpdated: number;
   variantsCreated: number;
+  variantsUpdated: number;
   errors: string[];
 }
 
@@ -228,7 +230,7 @@ export class ReboulImportService {
       grouped.get(key)!.push(row);
     }
 
-    const result: ImportResult = { productsCreated: 0, variantsCreated: 0, errors: [] };
+    const result: ImportResult = { productsCreated: 0, productsUpdated: 0, variantsCreated: 0, variantsUpdated: 0, errors: [] };
 
     const sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
     const sizeSortKey = (size: string): number | string => {
@@ -281,9 +283,14 @@ export class ReboulImportService {
       }));
 
       try {
-        await this.productsService.createWithImages(productData, [], variants);
-        result.productsCreated += 1;
-        result.variantsCreated += variants.length;
+        const upsertResult = await this.productsService.upsertWithVariants(productData, [], variants);
+        if (upsertResult.action === 'created') {
+          result.productsCreated += 1;
+        } else {
+          result.productsUpdated += 1;
+        }
+        result.variantsCreated += upsertResult.variantsCreated;
+        result.variantsUpdated += upsertResult.variantsUpdated;
       } catch (e: any) {
         result.errors.push(`${first.name}: ${e?.message || String(e)}`);
       }

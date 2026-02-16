@@ -302,6 +302,55 @@ export class ReboulProductsService {
   }
 
   /**
+   * Upsert : si le produit (par reference) existe, met à jour le stock des variants existants
+   * et crée les nouveaux variants. Sinon, crée le produit + variants.
+   */
+  async upsertWithVariants(
+    productData: Partial<Product>,
+    images: Array<{ url: string; publicId?: string; alt?: string; order: number }>,
+    variants: Array<{ color: string; size: string; stock: number; sku: string }>,
+  ): Promise<{ action: 'created' | 'updated'; product: Product; variantsCreated: number; variantsUpdated: number }> {
+    const existing = productData.reference
+      ? await this.productRepository.findOne({
+          where: { reference: productData.reference },
+          relations: ['variants'],
+        })
+      : null;
+
+    if (existing) {
+      let variantsCreated = 0;
+      let variantsUpdated = 0;
+
+      for (const v of variants) {
+        const existingVariant = await this.variantRepository.findOne({
+          where: { sku: v.sku },
+        });
+        if (existingVariant) {
+          existingVariant.stock = v.stock;
+          await this.variantRepository.save(existingVariant);
+          variantsUpdated++;
+        } else {
+          const newVariant = this.variantRepository.create({
+            productId: existing.id,
+            color: v.color,
+            size: v.size,
+            stock: v.stock,
+            sku: v.sku,
+          });
+          await this.variantRepository.save(newVariant);
+          variantsCreated++;
+        }
+      }
+
+      const product = await this.findOne(existing.id);
+      return { action: 'updated', product, variantsCreated, variantsUpdated };
+    }
+
+    const product = await this.createWithImages(productData, images, variants);
+    return { action: 'created', product, variantsCreated: variants.length, variantsUpdated: 0 };
+  }
+
+  /**
    * Mettre à jour un produit et ses images/variants
    */
   async updateWithImages(
@@ -384,9 +433,10 @@ export class ReboulProductsService {
    * Importer des produits depuis un tableau collé (fiche Edite : Marque, Genre, Reference, Stock).
    * 1 ligne = 1 article = 1 variant. Taille extraite de la Reference. Prix = 0, nom = Reference (à compléter après).
    */
-  async importFromPaste(pastedText: string): Promise<{ created: number; errors: { row: number; message: string }[] }> {
+  async importFromPaste(pastedText: string): Promise<{ created: number; updated: number; errors: { row: number; message: string }[] }> {
     const errors: { row: number; message: string }[] = [];
     let created = 0;
+    let updated = 0;
 
     const lines = pastedText
       .split(/\r?\n/)
@@ -469,7 +519,9 @@ export class ReboulProductsService {
 
       const existingSku = await this.variantRepository.findOne({ where: { sku } });
       if (existingSku) {
-        errors.push({ row: r + 1, message: `SKU déjà existant: ${sku}` });
+        existingSku.stock = stock;
+        await this.variantRepository.save(existingSku);
+        updated++;
         continue;
       }
 
@@ -496,6 +548,6 @@ export class ReboulProductsService {
       }
     }
 
-    return { created, errors };
+    return { created, updated, errors };
   }
 }
