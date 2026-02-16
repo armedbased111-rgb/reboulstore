@@ -2,7 +2,7 @@
 
 ## Projet
 
-E-commerce multi-sites (Reboul, puis CP Company, Outlet). Stack : React (Vite) + NestJS + PostgreSQL. Phase actuelle : **24** (Préparation collection réelle), puis **25** (Finalisation avant lancement).
+E-commerce multi-sites (Reboul, puis CP Company, Outlet). Stack : React (Vite) + NestJS + PostgreSQL. Phase actuelle : **25** (Finalisation Frontend). Phase 24 clôturée (15/02/2026).
 
 ## Règles absolues
 
@@ -16,6 +16,7 @@ E-commerce multi-sites (Reboul, puis CP Company, Outlet). Stack : React (Vite) +
 Toutes les commandes depuis la **racine du projet**.
 
 - **DB** : `./rcli db ref REF`, `product-find`, `product-list`, `variant-list`, `variant-set-stock`, `product-set-all-stock`, `export-csv`, etc. → `docs/context/DB_CLI_USAGE.md`
+- **Import** : Admin → Import Collection (CSV ou collage). **Upsert** : si ref/SKU existe déjà, le stock est mis à jour (pas de crash doublon). Fichiers : `admin-central/backend/src/modules/reboul/reboul-import.service.ts`, `reboul-products.service.ts`.
 - **Images IA (24.10)** : `./rcli images generate --input-dir photos -o output/`, `./rcli images adjust`, `./rcli images upload --ref REF --dir output/` → `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`
 - **Roadmap** : `./rcli roadmap update --task "..."`, `./rcli roadmap check`
 - **Docs** : `./rcli docs sync` (synchronise ROADMAP ↔ BACKEND.md ↔ FRONTEND.md)

@@ -72,6 +72,7 @@ Le projet prévoit **3 sites e-commerce indépendants** gérés depuis une **Adm
   - Tous les champs produits (materials, careInstructions, madeIn, customSizeChart)
   - Upload images (max 7) avec Cloudinary + réorganisation
   - Gestion variants (taille, couleur, stock, SKU) avec validation
+- Import collections : CSV (format complet) + collage fiche Edite. **Upsert** : réimport met à jour les stocks au lieu de crasher sur les doublons.
 - Gestion catégories : CRUD complet + upload image/vidéo hero + size chart
 - Gestion marques : CRUD complet + upload logo + mega menu images/vidéos
 - Gestion commandes : Liste avec filtres + détails commande
@@ -522,7 +523,7 @@ Voir et éditer les articles rapidement depuis le terminal (base Reboul sur VPS 
    - ✅ 24.2 Insertion Marques avec Logos (terminé - 57 marques)
    - ✅ 24.4 Système Rotation Collections (terminé)
    - ⏳ 24.3 Politique Livraison Finale (réunion magasin)
-   - ✅ 24.5bis Import Manuel Collections via Tables/CSV (fonctionnel)
+   - ✅ 24.5bis Import Manuel Collections via Tables/CSV (fonctionnel, upsert stock si ref existe)
    - ⏳ 24.6 Amélioration Processus Stocks (gestion manuelle + alertes)
    - ⏳ 24.7 Workflow Images Produits (presque terminé)
    - ⏳ 24.8 Workflow Ajout Continu Produits

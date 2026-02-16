@@ -1,6 +1,6 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 4.5 · Dernière MAJ : 15/02/2026
+**Version** : 4.6 · Dernière MAJ : 16/02/2026
 
 ---
 
@@ -79,7 +79,7 @@ Détail historique conservé en archive si besoin.
 
 ### Détail des sous-phases (référence)
 
-- **Import données** : Feuilles de stock → CSV (format BDD) → fusion des pages (déduplication) → wipe collection optionnel → création catégories (CLI) → import Admin. Pas d’AS400 pour l’instant.
+- **Import données** : Feuilles de stock → CSV (format BDD) → fusion des pages (déduplication) → wipe collection optionnel → création catégories (CLI) → import Admin. Réimport = upsert stock (pas de crash doublons). Pas d'AS400 pour l'instant.
 - **Marques** : 57 marques avec logos (Cloudinary). Affichage front (BrandCarousel, BrandMarquee).
 - **Images** : Shooting + retouche + Cloudinary + optimisation WebP (cron). Évolution IA (photos brutes → studio) à explorer après abo (24.10).
 - **Stocks** : Gestion manuelle ; alertes réassort (0–5 unités) optionnel.
@@ -317,7 +317,7 @@ Détail historique conservé en archive si besoin.
 
 **Objectif** : Importer les collections reçues une à une sous forme de table (Excel/CSV) via l’Admin. **C’est le cœur du workflow « ajout de collection »** : en amont, feuilles de stock → CSV (CLI `feuille-to-csv`), fusion de pages (`merge-pages`), wipe + catégories si besoin ; en aval, vérification des refs avec `./rcli db ref <REF>`.
 
-**📊 Statut** : **Fonctionnel** (référence = source de vérité, doublons bloqués ; import Stone à finaliser par l'utilisateur)
+**📊 Statut** : **Fonctionnel** (référence = source de vérité ; upsert si ref existe → stock mis à jour ; import Stone à finaliser par l'utilisateur)
 
 **📊 Informations** : Collections reçues une à une sous forme de table, entrée manuelle des données une à une
 
@@ -333,6 +333,7 @@ Détail historique conservé en archive si besoin.
   - [x] Validation données (champs requis, formats, contraintes)
   - [x] **Référence produit = source de vérité** (obligatoire, unicité ; SKU dérivé automatiquement)
   - [x] **Détection doublons** : même référence en double → erreur bloquante (ex. L100001-V09A-29 deux fois)
+  - [x] **Upsert à l'import** : si ref/SKU existe déjà → mise à jour du stock au lieu de crasher (CSV + collage). Compteurs `productsUpdated`/`variantsUpdated` affichés dans le résumé.
   - [x] Gestion erreurs (afficher lignes avec erreurs)
 
 - [x] **Processus import** :
