@@ -201,6 +201,43 @@ let ReboulProductsService = class ReboulProductsService {
         }
         return this.findOne(product.id);
     }
+    async upsertWithVariants(productData, images, variants) {
+        const existing = productData.reference
+            ? await this.productRepository.findOne({
+                where: { reference: productData.reference },
+                relations: ['variants'],
+            })
+            : null;
+        if (existing) {
+            let variantsCreated = 0;
+            let variantsUpdated = 0;
+            for (const v of variants) {
+                const existingVariant = await this.variantRepository.findOne({
+                    where: { sku: v.sku },
+                });
+                if (existingVariant) {
+                    existingVariant.stock = v.stock;
+                    await this.variantRepository.save(existingVariant);
+                    variantsUpdated++;
+                }
+                else {
+                    const newVariant = this.variantRepository.create({
+                        productId: existing.id,
+                        color: v.color,
+                        size: v.size,
+                        stock: v.stock,
+                        sku: v.sku,
+                    });
+                    await this.variantRepository.save(newVariant);
+                    variantsCreated++;
+                }
+            }
+            const product = await this.findOne(existing.id);
+            return { action: 'updated', product, variantsCreated, variantsUpdated };
+        }
+        const product = await this.createWithImages(productData, images, variants);
+        return { action: 'created', product, variantsCreated: variants.length, variantsUpdated: 0 };
+    }
     async updateWithImages(id, updateData, images, variants) {
         await this.update(id, updateData);
         const product = await this.findOne(id);
@@ -257,6 +294,7 @@ let ReboulProductsService = class ReboulProductsService {
     async importFromPaste(pastedText) {
         const errors = [];
         let created = 0;
+        let updated = 0;
         const lines = pastedText
             .split(/\r?\n/)
             .map((l) => l.trim())
@@ -331,7 +369,9 @@ let ReboulProductsService = class ReboulProductsService {
             const sku = reference;
             const existingSku = await this.variantRepository.findOne({ where: { sku } });
             if (existingSku) {
-                errors.push({ row: r + 1, message: `SKU déjà existant: ${sku}` });
+                existingSku.stock = stock;
+                await this.variantRepository.save(existingSku);
+                updated++;
                 continue;
             }
             try {
@@ -357,7 +397,7 @@ let ReboulProductsService = class ReboulProductsService {
                 errors.push({ row: r + 1, message: e?.message || 'Erreur création produit' });
             }
         }
-        return { created, errors };
+        return { created, updated, errors };
     }
 };
 exports.ReboulProductsService = ReboulProductsService;

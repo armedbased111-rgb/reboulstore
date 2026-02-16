@@ -21,6 +21,7 @@ export declare class ReboulProductsController {
         pastedText: string;
     }): Promise<{
         created: number;
+        updated: number;
         errors: {
             row: number;
             message: string;

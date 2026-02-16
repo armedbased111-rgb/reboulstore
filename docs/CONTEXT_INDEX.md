@@ -7,8 +7,11 @@ Les fichiers restent physiquement à la racine (pour compatibilité, liens, hist
 
 ### 🗺️ Contexte global & roadmap
 
-- `ROADMAP_COMPLETE.md`  
-  Roadmap complète du projet, toutes les phases, **source de vérité principale**.
+- `context/ROADMAP_COMPLETE.md`  
+  Roadmap complète : Phases 1-23 en résumé, Phase 24-26 détaillées, post-lancement en résumé. **Source de vérité principale**.
+
+- `context/COLLECTIONS_ROADMAP.md`  
+  Suivi des collections (première + futures) : politiques, refs marque par marque, photos, import, produit par produit. À part de la roadmap principale.
 
 - `CONTEXT.md`  
   Contexte général, architecture, état actuel du projet.

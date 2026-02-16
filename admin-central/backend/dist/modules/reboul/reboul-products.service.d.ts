@@ -63,6 +63,22 @@ export declare class ReboulProductsService {
         stock: number;
         sku: string;
     }>): Promise<Product>;
+    upsertWithVariants(productData: Partial<Product>, images: Array<{
+        url: string;
+        publicId?: string;
+        alt?: string;
+        order: number;
+    }>, variants: Array<{
+        color: string;
+        size: string;
+        stock: number;
+        sku: string;
+    }>): Promise<{
+        action: 'created' | 'updated';
+        product: Product;
+        variantsCreated: number;
+        variantsUpdated: number;
+    }>;
     updateWithImages(id: number | string, updateData: Partial<Product>, images?: Array<{
         id?: number | string;
         url: string;
@@ -78,6 +94,7 @@ export declare class ReboulProductsService {
     }>): Promise<Product>;
     importFromPaste(pastedText: string): Promise<{
         created: number;
+        updated: number;
         errors: {
             row: number;
             message: string;

@@ -1,10 +1,10 @@
 # 🏪 Reboul Store - Contexte du Projet
 
 **Version** : 0.33.0  
-**Phase actuelle** : Phase 24 en finalisation 🟢 (Préparation Collection Réelle + Interface CLI DB)  
-  - 24.1 ✅, 24.2 ✅, 24.4 ✅, 24.5bis ✅ (import CSV : référence = source de vérité, doublons bloqués en analyse ; import Stone à finaliser)  
-  - 24.6 (Interface CLI base de données) ✅ 100 % : lecture + édition encadrée + inspection commandes/paniers + export CSV
-**Objectif Février 2025** : Lancement site Reboul avec première collection + Admin Centrale connectée
+**Phase actuelle** : Phase 24 clôturée ✅ (15/02/2026). Phase 25 en cours (Finalisation Frontend reboulstore.com – revue page par page).  
+**Roadmap** : Phases 1–23 résumées dans `ROADMAP_COMPLETE.md` ; Phase 24, 25, 26 détaillées ; post-lancement en résumé. Source de vérité : `docs/context/ROADMAP_COMPLETE.md`.  
+**Collections** : Suivi à part dans `docs/context/COLLECTIONS_ROADMAP.md` (avancement par marque, refs, images).  
+**Objectif** : Lancement site Reboul (première collection + Admin Centrale connectée).
 
 ---
 

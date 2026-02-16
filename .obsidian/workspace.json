@@ -203,8 +203,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "3e0655cdde2bb3a8",
+  "floating": {
+    "id": "ddef63a74e66274b",
+    "type": "floating",
+    "children": [
+      {
+        "id": "596faf9a4ab960a7",
+        "type": "window",
+        "children": [
+          {
+            "id": "a6298b7f506ef249",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "d5e2bde1f06a402f",
+                "type": "leaf",
+                "state": {
+                  "type": "empty",
+                  "state": {},
+                  "icon": "lucide-file",
+                  "title": "Nouvel onglet"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 343,
+        "y": 98,
+        "width": 1024,
+        "height": 800,
+        "maximize": false,
+        "zoom": 0
+      }
+    ]
+  },
+  "active": "d5e2bde1f06a402f",
   "lastOpenFiles": [
+    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
     "docs/import-collection-template.csv",
     "admin-central/frontend/dist/assets/index-BdFGt_4z.js",
     "admin-central/frontend/dist/assets/index-B9NTbTsG.css",
@@ -215,7 +251,6 @@
     "backend/dist/templates/emails/order-received.hbs",
     "backend/dist/templates/emails/order-delivered.hbs",
     "backend/dist/templates/emails/order-confirmation.hbs",
-    "backend/dist/templates/emails/order-cancelled.hbs",
     "admin-central/backend/node_modules/proxy-from-env/README.md",
     "admin-central/backend/node_modules/axios/lib/helpers/README.md",
     "admin-central/backend/node_modules/axios/lib/env/README.md",
@@ -227,7 +262,6 @@
     "admin-central/backend/node_modules/follow-redirects/README.md",
     "admin-central/backend/node_modules/csv-parse/README.md",
     "obsidian-vault/Canvas/Workflow-CLI.canvas",
-    "obsidian-vault/Canvas/Workflow-Deploy.canvas",
     "obsidian-vault/Canvas/Regle-Deploiement.canvas",
     "frontend/dist/archive reboul 2024/topo_w.png",
     "frontend/dist/archive reboul 2024/topo_b.png",

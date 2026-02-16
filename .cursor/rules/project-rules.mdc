@@ -140,98 +140,14 @@ docker exec reboulstore-backend printenv | grep DB_
 - **Performance** : AnimeJS garantit 60fps, utiliser `AnimationProvider` pour le nettoyage
 - **Documentation** : Chaque animation doit être documentée avec JSDoc
 
-##### Structure des animations
+##### Structure
 
-```
-frontend/src/animations/
-├── index.ts                 # Export centralisé
-├── presets/                 # Animations réutilisables
-│   ├── fade-in.ts
-│   ├── slide-up.ts
-│   └── scale-hover.ts
-├── components/              # Animations spécifiques à des composants
-│   └── [ComponentName]/
-│       └── [animation].ts
-└── utils/
-    ├── animejs-helpers.ts  # Hook useAnimeJS
-    └── constants.ts         # Durées, eases, délais standards
-```
+`frontend/src/animations/` : `index.ts`, `presets/` (réutilisables), `components/[ComponentName]/`, `utils/constants.ts` + `animejs-helpers.ts`.
 
-##### Processus de création d'animation
+##### Référence
 
-1. **Décider du type** :
-   - Animation réutilisable → `animations/presets/`
-   - Animation spécifique → `animations/components/[ComponentName]/`
-
-2. **Créer le fichier** :
-   - Nommer en `kebab-case.ts`
-   - Exporter fonction nommée `animate[NomAnimation]`
-   - Documenter avec JSDoc
-   - Utiliser les constantes de `animations/utils/constants.ts`
-   - Utiliser `toMilliseconds()` et `convertEasing()` pour la compatibilité
-
-3. **Exporter** :
-   - Ajouter l'export dans `animations/index.ts`
-
-4. **Utiliser** :
-   - Importer depuis `animations/index.ts`
-   - Utiliser `useRef` + `useEffect` dans le composant
-   - Préférer `useAnimation()` hook (via `AnimationProvider`) pour le nettoyage automatique
-
-##### Exemple d'animation réutilisable
-
-```typescript
-// animations/presets/fade-in.ts
-import * as anime from 'animejs';
-import { toMilliseconds, convertEasing, ANIMATION_DURATIONS, ANIMATION_EASES } from '../utils/constants';
-
-export const animateFadeIn = (
-  element: HTMLElement | string | null,
-  options: { duration?: number; delay?: number } = {}
-): ReturnType<typeof anime.animate> | null => {
-  if (!element) return null;
-
-  return anime.animate(element, {
-    opacity: [0, 1],
-    duration: toMilliseconds(options.duration || ANIMATION_DURATIONS.NORMAL),
-    delay: toMilliseconds(options.delay || 0),
-    easing: convertEasing(ANIMATION_EASES.DEFAULT),
-  });
-};
-```
-
-##### Utilisation dans un composant
-
-**Avec AnimationProvider (recommandé)** :
-
-```typescript
-import { useRef, useEffect } from 'react';
-import { useAnimation } from '../../animations';
-import { animateFadeIn } from '../../animations';
-
-const MyComponent = () => {
-  const { prefersReducedMotion, cleanup } = useAnimation();
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (prefersReducedMotion || !elementRef.current) return;
-
-    const anim = animateFadeIn(elementRef.current, { duration: 0.6 });
-
-    return () => {
-      if (elementRef.current) cleanup(elementRef.current);
-    };
-  }, [prefersReducedMotion, cleanup]);
-
-  return <div ref={elementRef}>Content</div>;
-};
-```
-
-##### Documentation
-
-- **Consulter ANIMATIONS_GUIDE.md** : `docs/animations/ANIMATIONS_GUIDE.md` pour les concepts, exemples et bonnes pratiques
-- **Workflow complet** : Voir `docs/animations/ANIMATIONS_GUIDE.md` section "Workflow de création d'animation"
-- **Références AnimeJS** : https://animejs.com/
+- **Workflow, exemples, processus** : `docs/animations/ANIMATIONS_GUIDE.md` (création, utilisation avec `useAnimation()`, nettoyage).
+- **AnimeJS** : https://animejs.com/
 
 ##### Bonnes pratiques
 
@@ -261,75 +177,9 @@ const MyComponent = () => {
 - ❌ Composants shadcn/ui standards (déjà designés)
 - ❌ Ajustements techniques (fix bugs, optimisations)
 
-##### Processus complet (Workflow Figma)
+##### Processus
 
-**📐 Phase 1 : Design dans Figma (TOI)**
-
-1. **Avant de commencer le code** : Tu designs dans Figma
-   - Créer/ouvrir le fichier Figma du projet
-   - Designer la page/composant (respecter design system)
-   - Utiliser Auto Layout (≈ Flexbox)
-   - Définir couleurs, typo, espacements (Tailwind-friendly)
-
-2. **Design System Reboul** (à respecter) :
-   - Style : A-COLD-WALL* (minimaliste, premium)
-   - Typo : Geist
-   - Couleurs : Palette Reboul (noir, blanc, gris, accent)
-   - Composants : shadcn/ui comme base
-
-3. **Partage** :
-   - Tu me partages le lien Figma (lien de partage public ou commentaire)
-   - Tu me dis quelle page/composant tu as designé
-   - Tu me précises les interactions importantes (hover, états, animations)
-
-**💻 Phase 2 : Implémentation Code (MOI ou TOI selon mode)**
-
-4. **Je consulte Figma** :
-   - J'analyse ton design
-   - Je note les mesures (padding, margin, tailles)
-   - Je repère les composants shadcn/ui à utiliser
-   - Je planifie la structure (composants, props, state)
-
-5. **Implémentation** :
-   - **Mode pédagogique** (défaut) : Je te guide pour coder
-   - **Mode normal** (si tu demandes) : Je code directement
-   - J'utilise shadcn/ui + TailwindCSS
-   - Je respecte ton design (couleurs, espacements, typo)
-   - Je structure proprement (composants réutilisables)
-   - J'ajoute la logique métier (hooks, API, state)
-
-6. **⚠️ IMPORTANT - Export Figma** :
-   - **NE PAS** copier-coller l'export Figma tel quel
-   - Utiliser Figma comme **référence visuelle**, pas source de code
-   - Recoder proprement avec notre stack (React + shadcn + Tailwind)
-   - L'export peut donner des idées de structure, mais à adapter
-
-**✅ Phase 3 : Validation & Ajustements (ENSEMBLE)**
-
-7. **Tests** :
-   - Lancer frontend, vérifier rendu
-   - Comparer avec Figma
-   - Tester responsive (mobile, tablet, desktop)
-   - Tester interactions (hover, focus, etc.)
-
-8. **Ajustements** :
-   - Si différences : on ajuste le code ou Figma
-   - On itère jusqu'à satisfaction
-   - On valide ensemble
-
-**📝 Phase 4 : Documentation**
-
-9. **Après implémentation** :
-   - Mettre à jour ROADMAP_COMPLETE.md : `docs/context/ROADMAP_COMPLETE.md` (cocher tâche)
-   - Mettre à jour FRONTEND.md : `frontend/FRONTEND.md` (ajouter page/composant)
-   - Capturer screenshot si nécessaire
-
-##### Plugins Figma recommandés
-
-- **Tailwind CSS** : Générer classes Tailwind depuis design
-- **Iconify** : Bibliothèque d'icônes (Lucide, Heroicons, etc.)
-- **Anima** ou **Figma to Code** : Export React (référence, pas production)
-- **Auto Layout** : Déjà intégré (essentiel pour layouts flexibles)
+Design (toi, Figma) → partage lien + composant ciblé → implémentation (moi/toi, shadcn + Tailwind) → validation ensemble → mise à jour ROADMAP + FRONTEND.md. **Design system** : A-COLD-WALL*, Geist, palette Reboul, shadcn base. **Export Figma** : ne pas copier-coller ; Figma = référence visuelle, recoder en React/shadcn/Tailwind.
 
 ##### Bonnes pratiques Figma
 
@@ -476,99 +326,9 @@ const MyComponent = () => {
 
 ### Git / Version Control
 
-#### 📦 Workflow Git
+**Référence** : `docs/GIT_WORKFLOW.md` (workflow, conflits, release).
 
-**Référence complète** : `docs/GIT_WORKFLOW.md` ⭐
-
-##### Principes de base
-
-- **Commits fréquents** : Commiter régulièrement avec des messages clairs
-- **Branches fonctionnelles** : Une branche par fonctionnalité/bugfix
-- **Pull requests** : Toujours créer une PR pour revue avant merge
-- **Conventions** : Respecter les conventions de nommage des branches et des commits
-
-##### Workflow standard
-
-1. **Créer une branche** depuis `main` (ou `develop` si applicable)
-   ```bash
-   git checkout main
-   git pull origin main
-   git checkout -b feature/nom-fonctionnalite
-   ```
-
-2. **Développer et commiter**
-   ```bash
-   git add .
-   git commit -m "feat: description de la fonctionnalité"
-   ```
-
-3. **Pousser et créer une Pull Request**
-   ```bash
-   git push origin feature/nom-fonctionnalite
-   ```
-
-4. **Après review** : Merge dans `main` et supprimer la branche
-
-##### Conventions Git
-
-**Branches** :
-- `feature/nom-fonctionnalite` : Nouvelle fonctionnalité
-- `fix/nom-bug` : Correction de bug
-- `hotfix/nom-urgent` : Correction urgente
-- `refactor/nom-refactor` : Refactoring
-- `docs/nom-doc` : Documentation
-
-**Commits** :
-- Format : `type: description courte`
-- Types : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-- Exemples :
-  ```bash
-  git commit -m "feat: ajout page checkout"
-  git commit -m "fix: correction bug panier vide"
-  git commit -m "docs: mise à jour README"
-  git commit -m "refactor: optimisation service produits"
-  ```
-
-**Messages de commit** :
-- ✅ Première ligne : 50 caractères max, description claire
-- ✅ Corps (optionnel) : Expliquer le "pourquoi" si nécessaire
-- ✅ Référencer les issues/PR si applicable : `Closes #123`
-
-**Exemple complet** :
-```bash
-feat: ajout système de paiement Stripe
-
-- Intégration API Stripe
-- Page de confirmation
-- Gestion des erreurs de paiement
-
-Closes #45
-```
-
-##### Bonnes pratiques
-
-✅ **À FAIRE** :
-- Commiter souvent avec des messages clairs
-- Créer des branches descriptives
-- Tester avant de push
-- Faire des PR pour revue
-- Synchroniser régulièrement avec `main`
-
-❌ **À ÉVITER** :
-- Commits "WIP" ou "fix" vagues
-- Branches trop longues (> 2-3 semaines)
-- Merge direct dans `main` sans PR
-- Force push sur `main`
-- Oublier de pull avant de commencer
-
-##### Documentation complète
-
-Voir `docs/GIT_WORKFLOW.md` pour :
-- Workflow détaillé par type de développement
-- Résolution de conflits
-- Git hooks et automatisations
-- Workflow de release
-- Gestion des versions
+**Conventions** : Branches `feature/`, `fix/`, `hotfix/`, `refactor/`, `docs/`. Commits `type: description` (feat, fix, docs, style, refactor, test, chore) ; 50 car. max ; optionnel `Closes #n`. PR avant merge sur `main`.
 
 ### Phase Design / Webdesign (Figma - Outil principal)
 
@@ -698,25 +458,8 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 ### Processus de documentation
 
-1. **Avant de commencer** : 
-   - ✅ **Consulter ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` (obligatoire)
-   - ✅ **Consulter ARCHITECTURE_ADMIN_CENTRAL.md** : `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` si travail sur admin ou architecture
-   - ✅ Consulter CONTEXT.md : `docs/context/CONTEXT.md` pour l'état actuel
-   - ✅ Consulter FRONTEND.md : `frontend/FRONTEND.md` ou BACKEND.md : `backend/BACKEND.md` selon le contexte
-
-2. **Pendant le développement** : 
-   - Noter les changements et nouvelles fonctionnalités
-
-3. **Après chaque étape** : 
-   - ✅ **Mettre à jour ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` (obligatoire, cocher les tâches)
-     - **⭐ UTILISER LE CLI** : `./rcli roadmap update --task "..."` (gain de 97%)
-   - ✅ Mettre à jour CONTEXT.md : `docs/context/CONTEXT.md` si fin de phase
-     - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
-   - ✅ Mettre à jour FRONTEND.md : `frontend/FRONTEND.md` ou BACKEND.md : `backend/BACKEND.md`
-     - **⭐ UTILISER LE CLI** : `./rcli docs sync` (synchronise automatiquement)
-   
-4. **Format** : Suivre la structure existante des fichiers (sections, formatage, emojis)
-   - **Note** : Le CLI respecte automatiquement le format existant
+**Avant** : Consulter `ROADMAP_COMPLETE.md` (obligatoire), `ARCHITECTURE_ADMIN_CENTRAL.md` si admin, `CONTEXT.md` / `FRONTEND.md` ou `BACKEND.md` selon le contexte.  
+**Après chaque étape** : Cocher tâches dans `ROADMAP_COMPLETE.md` (`./rcli roadmap update --task "..."`), lancer `./rcli docs sync` pour CONTEXT / FRONTEND / BACKEND.
 
 ### 🔒 Règle : Gestion des fichiers MD temporaires
 

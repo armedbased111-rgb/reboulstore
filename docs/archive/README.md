@@ -17,6 +17,12 @@ Ce dossier contient les fichiers de documentation temporaires ou obsolètes qui 
 - `PHASE_24_2_RESUME.md` - Résumé Phase 24.2 (terminée le 2025-12-29)
 - `PHASE_4.2_COMPLETED.md` - Phase 4.2 complétée (ancienne phase, 2025-12-20)
 
+### Rangement 2026-02 (dossier 2026-02-cleanup/)
+- `CONTEXTUALISATION_PROMO_HERO.md` - Contexte promo/hero (one-off)
+- `TRAME_RAPIDE_RENDEZ_VOUS.md` - Trame rendez-vous (one-off)
+- `SOLUTION_ERREURS_COLLECTIONS.md` - Solution erreurs collections (résolu)
+- `PHASE_16_RECAP.md`, `PHASE_23_COMPLETION.md`, `PHASE_23_RECAP.md` - Récaps phases terminées (détail déplacé dans résumé roadmap)
+
 ## 📝 Règle
 
 **Ces fichiers sont archivés car** :
