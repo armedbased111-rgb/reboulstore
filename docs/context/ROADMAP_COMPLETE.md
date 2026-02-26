@@ -477,7 +477,7 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 **Suivi** : La roadmap est mise à jour à chaque tâche faite. Doc de suivi détaillé : `docs/integrations/IMAGES_IA_WORKFLOW.md`. **Récap pipeline (3 étapes)** : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`.
 
-**État actuel (dernière MAJ)** : **Pipeline images IA validé.** (1) Photos brutes dans `photos/`, refs de style dans `refs/` (refs = style uniquement, pas le produit). (2) `./rcli images generate` (Gemini 3 Pro par défaut) → 4 vues ; les vues 3 et 4 s’appuient sur la 1_face générée comme source de vérité (même vêtement). (3) Optionnel : `./rcli images adjust` avec `--ref` pour recaler les couleurs d’une vue sur une autre. (4) `./rcli images upload --ref REF --dir output/` (Cloudinary + BDD). Préconisations prise de vue (couleurs, produit) dans `IMAGES_IA_WORKFLOW.md`. Récap dans `IMAGES_PRODUIT_PIPELINE.md`.
+**État actuel (dernière MAJ 18/02/2026)** : **Pipeline images IA validé + correction couleur programmatique.** (1) Photos brutes dans `photos/`, refs de style dans `refs/`. (2) `./rcli images generate` (Gemini 2.5 Flash ou 3 Pro) → 4 vues. (3) `./rcli images adjust` pour retouches IA. (4) **`./rcli images color-fix`** : correction couleur **programmatique** (PIL/numpy) — extrait le hex de 1_face et l'applique à 2_back pixel par pixel. Modes : `--dir` (un produit), `--batch` (tout un dossier), `--source`/`--target` (explicite). (5) `./rcli images upload --ref REF --dir output/`. (6) Vérifs (même produit + couleur) sur Gemini 2.5 Flash. Récap dans `IMAGES_PRODUIT_PIPELINE.md`.
 
 ---
 

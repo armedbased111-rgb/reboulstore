@@ -43,7 +43,7 @@ Pour **photos brutes → images produit (fond studio + détails + option mannequ
 
 - **Nano Banana = Gemini** : le modèle « Nano Banana » sur nanobanana.im est en fait **Gemini 2.5 Flash Image** (et Pro = Gemini 3 Pro Image). L’API est celle de Google.
 - **Accès direct** : clé API **gratuite** (ou payante selon usage) sur **https://aistudio.google.com/apikey** — pas de waitlist.
-- **Image editing** : photo + prompt → image (même principe que Nano Banana). Modèle `gemini-2.5-flash-image` ou `gemini-3-pro-image-preview`.
+- **Image editing** : photo + prompt → image (même principe que Nano Banana). Modèle `gemini-2.5-flash-image` ou `gemini-3-pro-image-preview`. Vérifs (même produit + couleur) sur `gemini-2.5-flash`.
 - **Doc** : [Gemini API – Image generation](https://ai.google.dev/gemini-api/docs/image-generation) (text-to-image et **image + text → image**).
 - **Pour 24.10** : on utilise l’**API Gemini** pour le script CLI (1 photo → 4 vues). Les 4 prompts validés sur Nano Banana restent utilisables ; interface nanobanana.im reste dispo en manuel avec ton compte Pro.
 
@@ -55,7 +55,7 @@ Pour **photos brutes → images produit (fond studio + détails + option mannequ
 
 ### 1. Avant la prise de vue
 
-- **Fond** : uni, clair (blanc ou gris clair), sans objet ni texte visible.
+- **Fond** : uni, gris très clair **#F3F3F3** (fond du site), sans objet ni texte visible.
 - **Espace** : assez de recul pour cadrer le produit en entier (face ou dos).
 - **Préparer le produit** : propre, repassé si besoin, pas de plis majeurs ; cintre retiré pour le shot (ou accepté si on garde « No hanger » dans le prompt).
 
@@ -92,14 +92,14 @@ Pour que le pipeline prenne **le bon produit** et limite les **dérives de coule
 - **Éclairage neutre** : lumière du jour ou LED neutres (éviter néons colorés, ampoules chaudes) pour que la teinte du tissu soit fidèle.
 - **Balance des blancs** : régler sur « lumière du jour » ou « neutre » ; pas de filtre chaud/froid qui dénature le bleu ou le noir.
 - **Contraste produit / fond** : fond gris clair ou blanc uni pour que le vêtement se détache bien ; le modèle s’appuie sur ta photo pour la couleur, une photo trop sombre ou trop jaune peut dériver en sortie.
-- **Si dérive** : utiliser `./rcli images adjust --image output/2_back.png --ref output/1_face.png --prompt "Match garment colors to reference" -o output/2_back.png --gemini-pro` pour recaler une vue sur une autre.
+- **Si dérive** : utiliser `./rcli images color-fix --dir output/` (recommandé, programmatique) ou `./rcli images adjust --ref output/1_face.png --prompt "Match garment colors" --gemini-flash` (IA, moins fiable sur les couleurs).
 
 **Produit bien identifiable**
 - **Un seul produit par shot** : pas plusieurs vêtements dans le cadre ; le script envoie ta photo comme « image 1 = produit à montrer », un cadre clair évite toute ambiguïté.
 - **Produit entier et lisible** : face (et dos si fourni) bien visibles, logo/étiquette lisibles si possible ; le modèle génère d’abord 1_face et 2_back, puis s’en sert comme **source de vérité** pour les vues 3 (détail) et 4 (lifestyle), donc une photo face nette et complète améliore toute la série.
 - **Refs = style uniquement** : les images dans `refs/` (1_face, 2_back, etc.) servent uniquement au cadrage et au fond. Ne pas mettre ta photo produit dans `refs/` ; mettre les refs dans `refs/`, les photos du produit dans `photos/`.
 
-**Résumé** : fond uni, lumière neutre, produit seul et bien cadré → bonnes couleurs et bon produit en sortie. En cas de petit écart, `adjust --ref` permet de recaler une vue sur une autre.
+**Résumé** : fond uni, lumière neutre, produit seul et bien cadré → bonnes couleurs et bon produit en sortie. En cas de petit écart, `color-fix --dir` (programmatique) ou `adjust --ref` (IA) permet de recaler une vue sur une autre.
 
 ---
 
@@ -110,7 +110,8 @@ Pour que le pipeline prenne **le bon produit** et limite les **dérives de coule
 - **Règles de prise de vues** : définies (ordre : avant / technique / cadrage par vue / à éviter), section ci‑dessus.
 - **Script CLI** : opérationnel (mode dossier `photos/` + `refs/`, **Pro par défaut**, `--gemini-flash` pour l’économique). Voir Usage CLI ci‑dessous.
 - **Refs vs trucs** : `photos/` = produit à shooter ; `refs/` = style uniquement. Les vues 3 et 4 utilisent la **1_face générée** comme source de vérité (même vêtement). `adjust --ref` pour recaler les couleurs.
-- **Pipeline 24.10** : validé (generate → optionnel adjust → upload). Préconisations prise de vue ci‑dessus.
+- **Pipeline 24.10** : validé (generate → optionnel adjust → color-fix → upload). Préconisations prise de vue ci‑dessus.
+- **Adjust pliage + ombres** : workflow validé. Refs `refs/face.jpg` / `refs/back.jpg` uniquement pour pliage et cadrage. Remplacer l’ombre allongée en bas par une ombre douce autour du vêtement (effet aplat). Même vêtement que l’image 1, pas de recopie ni d’invention. Détail : `IMAGES_PRODUIT_PIPELINE.md` § « Pliage et ombres ».
 - **Fond** : plain light grey or white sur toutes les vues ; pas de props (règle `BG` dans le script).
 - **Taille du vêtement** : vues face et dos : même échelle flat lay ; vues 3 et 4 : cadrage dédié (détail porté, lifestyle épaules vers le bas).
 - **Suivi** : mettre à jour la checklist 24.10 dans `ROADMAP_COMPLETE.md` et « État actuel » à chaque avancée.
@@ -304,6 +305,7 @@ Faire un premier rendu, puis un second appel avec la sortie + *« Adjust: more r
 | 3 | Optionnel : prompts structurés (COMPOSITION / LIGHTING / STYLE) pour face et détail | Fait |
 | 4 | Optionnel : phrase « same lighting as back view » dans prompts face et détail | À faire |
 | 5 | Multi-turn : commande `adjust` (image + consigne → image ajustée) | Fait |
+| 6 | **`color-fix`** : correction couleur programmatique (PIL/numpy), modes `--dir`, `--batch`, `--source`/`--target` | Fait |
 
 Détails : (1)(3) Fait. (2) Optionnel. (4) Phrase « same lighting ». (5) Commande `adjust` disponible (image + consigne → image ajustée).
 
