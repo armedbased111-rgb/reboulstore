@@ -12,7 +12,7 @@
 |------|--------|
 | **Collection en cours** | Stone Island SS26 (données importées ✅ ; photos à faire) |
 | **Prochaine tâche** | 5.1 Shooting & préparation photos (ou 1.1 politiques si priorité) |
-| **Workflow de base** | Feuille/CSV → `feuille-to-csv` / `merge-pages` → wipe + `category-create` si besoin → import Admin → `db ref` → photos → `images generate` → `images upload` |
+| **Workflow de base** | Feuille/CSV → `feuille-to-csv` / `merge-pages` → wipe + `category-create` si besoin → import Admin → `db ref` → photos → `images generate` ou `images generate-batch` → `images upload` |
 
 **Références** : `docs/COLLECTION_REAL.md`, `docs/context/FEUILLES_STOCK_REBOUL.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`, `docs/integrations/IMAGES_IA_WORKFLOW.md`, `docs/integrations/IMAGES_WORKFLOW.md`, `./rcli db ref <REF>`, `./rcli images --help`.
 
@@ -197,8 +197,12 @@
   - [ ] Vérifier que les 4 fichiers (ou nombre attendu) sont dans `output/`
   - [ ] Backend allumé (site/API disponibles)
   - [ ] Lancer : `./rcli images upload --ref <REF> --dir output/` (remplacer par la ref réelle)
-  - [ ] Vérifier en Admin que les images sont attachées au produit
-  - [ ] Répéter pour la ref suivante (ou traiter par lots si script possible)
+- [ ] **6.3 Option – génération en masse (batch)**  
+  - [ ] Si les photos sont organisées en **un dossier par ref** (ex. iCloud Stone Island : sous-dossiers `L100001-V09A`, … avec face/back dedans) :  
+    `./rcli images generate-batch --input-dir "/chemin/vers/STONE ISLAND" -o ./output_batch [--upload] [--skip-existing]`  
+  - [ ] Premier passage = générer toutes les refs d’un coup ; quelques échecs possibles (rate limit, photo manquante) → reprendre avec `--skip-existing` pour les refs manquantes.
+  - [ ] Passage au peigne fin optionnel : pour les refs où le rendu ne convient pas, `./rcli images adjust` sur la vue concernée puis ré-upload. Si le batch est déjà bon, pas d’adjust nécessaire.
+  - [ ] Voir `docs/integrations/IMAGES_PRODUIT_PIPELINE.md` (Génération en masse + Workflow batch recommandé).
 
 - [ ] **6.3 Pour chaque produit (ref) – workflow classique**
   - [ ] Retoucher les images (résolution, poids, détourage) selon `docs/integrations/IMAGES_WORKFLOW.md`

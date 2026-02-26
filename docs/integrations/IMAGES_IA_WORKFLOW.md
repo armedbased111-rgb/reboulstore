@@ -344,6 +344,8 @@ Détails : (1)(3) Fait. (2) Optionnel. (4) Phrase « same lighting ». (5) Comma
 
 **Mode dossier** : dans **photos/** mets `face.jpg` (obligatoire), `back.jpg` (optionnel). Dans **refs/** : `1_face.png`, `2_back.png`, `3_detail_logo.png` ou `3_details_logo.png`, `4_lifestyle.png`. Le script les lit tout seul. Sorties : `1_face.png`, `2_back.png`, `3_detail_logo.png`, `4_lifestyle.png`.
 
+**Mode batch** : pour traiter une collection entière (ex. un dossier par ref dans un dossier parent type iCloud Stone Island) : `./rcli images generate-batch --input-dir "/path/to/STONE ISLAND" -o ./output_batch [--upload] [--skip-existing]`. Chaque sous-dossier = une ref (nom avec `-` au lieu de `/`). Détail : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`.
+
 ---
 
 ## Références

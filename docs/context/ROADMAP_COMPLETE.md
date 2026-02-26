@@ -25,8 +25,9 @@
 | 1–23 | Infra, auth, commandes, Stripe, Admin, SEO, prod | ✅ Complétées |
 | **24** | Préparation collection réelle (données, images, CLI, Claude) | ✅ **Clôturée** 15/02/2026 |
 | **25** | Finalisation Frontend reboulstore.com (revue page par page) | 🟡 **En cours** |
-| **26** | Sécurité backend & DB, VPS, tests API, Stripe (routes paiement) | 🔜 À faire |
-| 27+ | Post-lancement (analytics, marketing, support) | 🔜 À planifier |
+| **26** | Sécurité, Tests unitaires, Pré-lancement | 🔜 À faire |
+| **27** | Lancement – Stripe Live & Go-Live | 🔜 À faire |
+| 28+ | Post-lancement (analytics, marketing, blog, support) | 🔜 À planifier |
 
 ---
 
@@ -601,7 +602,7 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 | # | Tâche | Statut |
 |---|--------|--------|
-| 25.1 | Passer en revue **Home.tsx** | À faire |
+| 25.1 | Passer en revue **Home.tsx** + **Newsletter popup** | À faire |
 | 25.2 | Passer en revue **Checkout.tsx** | À faire |
 | 25.3 | Passer en revue **Catalog.tsx** | À faire |
 | 25.4 | Passer en revue **Product.tsx** | À faire |
@@ -620,30 +621,42 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 | 25.17 | Passer en revue **Terms.tsx** | À faire |
 | 25.18 | Passer en revue **Privacy.tsx** | À faire |
 | 25.19 | Passer en revue **NotFound.tsx** / **ServerError.tsx** | À faire |
+| 25.20 | **SEO Metadata** toutes pages (`react-helmet-async` : title, meta description, Open Graph) + **Favicon** | À faire |
 
-*À chaque revue : noter améliorations et manques → puis implémenter. Détail des tâches d’implémentation ajouté au moment de la revue.*
+*À chaque revue : noter améliorations et manques → puis implémenter. Détail des tâches d'implémentation ajouté au moment de la revue.*
 
 ---
 
-## 🔒 Phase 26 : Sécurité Backend & DB, VPS, Tests API, Stripe
+## 🔒 Phase 26 : Sécurité, SEO, Tests, Pré-lancement
 
 **À faire après Phase 25.** Thèmes (détail à préciser au moment venu) :
 
 - **Sécurité backend et DB** : renforcement config, bonnes pratiques, audit.
 - **VPS** : durcissement, monitoring, bonnes pratiques.
 - **Tests finaux API** : couverture endpoints critiques, scénarios de régression.
-- **Ajustement routes de paiement Stripe** : routes exactes, flux précis (success/cancel, webhooks), alignement front/back.
+- **Tests unitaires frontend** (Vitest + Testing Library) : composants critiques, hooks, flow panier/checkout.
 
 ---
 
-## Phase 27+ : Post-lancement (résumé)
+## 🚀 Phase 27 : Lancement – Stripe & Go-Live
+
+**Phase finale avant mise en production.**
+
+- **Intégration Stripe Live** : `@stripe/react-stripe-js`, PaymentIntent backend, flux complet (success/cancel, webhooks), tests en mode live.
+- **Ajustement routes de paiement** : routes exactes, alignement front/back.
+- **Go-live checklist** : domaine, SSL, monitoring, backup auto, smoke tests.
+
+---
+
+## Phase 28+ : Post-lancement – Améliorations & Marketing
 
 - **Analytics** : GA4, conversions, heatmaps, A/B tests.
-- **Marketing** : Newsletter, réseaux sociaux, pixels, fidélité.
+- **Marketing** : Réseaux sociaux, pixels, fidélité.
+- **BlogCarousel** : carrousel d'articles/actus sur la Home (contenu éditorial).
 - **Support** : Chat, FAQ, tickets.
 - **Évolutions** : Mobile, dark mode, i18n, multi-devise, etc.
 
-Détail à planifier après Phase 26.
+Détail à planifier après Phase 27.
 
 ---
 
