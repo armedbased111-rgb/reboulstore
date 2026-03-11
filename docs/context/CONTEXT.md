@@ -1,9 +1,9 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.33.0  
+**Version** : 0.33.1  
 **Phase actuelle** : Phase 24 clôturée ✅ (15/02/2026). Phase 25 en cours (Finalisation Frontend reboulstore.com – revue page par page).  
 **Roadmap** : Phases 1–23 résumées dans `ROADMAP_COMPLETE.md` ; Phase 24, 25, 26 détaillées ; post-lancement en résumé. Source de vérité : `docs/context/ROADMAP_COMPLETE.md`.  
-**Collections** : Suivi à part dans `docs/context/COLLECTIONS_ROADMAP.md` (avancement par marque, refs, images).  
+**Collections** : Suivi à part dans `docs/context/COLLECTIONS_ROADMAP.md`. **Stone Island SS26 : ~41/77 refs avec images (3 batchs IA, 14 refs restant à shooter)**. **Autry SS26 : 36 produits / 167 variants, 0 image (shooting à faire, pipeline shoe prêt)**. **Bisous Skateboards SS26 : 33 produits / 101 variants, 25/33 images générées (8 accessoires en attente)**.  
 **Objectif** : Lancement site Reboul (première collection + Admin Centrale connectée).
 
 ---

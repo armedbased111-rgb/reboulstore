@@ -102,24 +102,34 @@ Le design s'inspire **fortement** du site [A-COLD-WALL*](https://www.a-cold-wall
 
 ## 📦 Composants créés
 
+> MAJ 10/03/2026 — Phase 25 en cours
+
 ### Layout
 - ✅ **Layout** : Wrapper principal (PromoBanner, Header, Footer, main)
-- ✅ **Header** : Navigation, mega menu, recherche, badge panier
-- 🚧 **Footer** : Structure de base (à finaliser)
+- ✅ **Header** : Navigation, mega menu catégories + marques (images/vidéos hover), recherche, badge panier, auth button
+- ✅ **Footer** : Style A-COLD-WALL*
 - ✅ **PromoBanner** : Bannière promotionnelle
+- ✅ **NavigationLoader** : Loader de navigation entre pages
+- ✅ **PageLoader** : Loader d'ouverture animé
 
 ### Homepage
 - ✅ **FeaturedProducts** : Carousel Swiper avec navigation, hover effect, prix réduit
-- 🚧 **HeroSection** : À créer
-- 🚧 **FeaturedCategories** : À créer
-- 🚧 **LocalAnchor** : À créer
-- 🚧 **BlogCarousel** : À créer
+- ✅ **HeroSectionImage** : Hero avec support vidéo/image
+- ✅ **CategorySection** : Section catégories
+- ✅ **PromoCard** : Carte promotionnelle
 
-### À créer
-- **Page Catalog** : ProductCard, FilterSidebar, ProductGrid, Pagination
-- **Page Product** : ProductGallery, ProductInfo, VariantSelector, AddToCartButton
-- **Page Cart** : CartItem, CartSummary, EmptyCart, QuantitySelector
-- **Page Checkout** : CheckoutForm, OrderSummary, PaymentSection
+### Pages complètes
+- ✅ **Catalog** : ProductGrid, filtres catégorie + marque, HeroSection (vidéo/image)
+- ✅ **Product** : ProductGallery (Swiper), ProductInfo, VariantSelector, AddToCartButton, ProductTabs
+- ✅ **Cart** : Panier complet
+- ✅ **Checkout** : Formulaire + Stripe
+- ✅ **Login / Register / Profile** : Auth complète (JWT, guards, routes protégées)
+- ✅ **Orders / OrderDetail** : Historique commandes
+
+### Header Variants (playground `/header-playground`)
+- ✅ **HeaderReboulVariantA** : Éditoriale Symétrique (logo centré, nav split, underline hover)
+- ✅ **HeaderReboulVariantB** : Double Bande (top bar marques + nav principale dropdown)
+- ✅ **HeaderReboulVariantC** : Asymétrique Contemporaine (Cormorant italic, drawer mobile)
 
 ## 📝 Principes de design
 

@@ -1,0 +1,196 @@
+Rapport : CSV vs BDD (collection SS26)
+Marque : Stone Island
+
+Nouveaux (dans le CSV, pas en BDD) — à ajouter
+  11000027/V93 L  |  Stone Island Surchemise  |  stock=2  price=100.0
+  11000027/V93 M  |  Stone Island Surchemise  |  stock=2  price=100.0
+  11000027/V93 S  |  Stone Island Surchemise  |  stock=2  price=100.0
+  11000027/V93 XL  |  Stone Island Surchemise  |  stock=2  price=100.0
+  2100023/V09A M  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100023/V09A S  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100023/V09A XXL  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100023/V09A XXXL  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G L  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G M  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G S  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G XL  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G XXL  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2100027E/V05G XXXL  |  Stone Island Tee shirt  |  stock=2  price=100.0
+  2200010/V08G 3XL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V08G L  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V08G M  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V08G S  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V08G XL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V08G XXL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 3XL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 L  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 M  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 S  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 XL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  2200010/V61 XXL  |  Stone Island Polo mc  |  stock=2  price=100.0
+  3100008/V05G 29  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100008/V05G 30  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100008/V05G 31  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100008/V05G 32  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100008/V05G 33  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100008/V05G 34  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100032/V09A 29  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100032/V09A 30  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100032/V09A 33  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100032/V09A 36  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100032/V09A 40  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100049/V09A 29  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100049/V09A 30  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100049/V09A 31  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100049/V09A 32  |  Stone Island Pantalon  |  stock=2  price=100.0
+  3100049/V09A 33  |  Stone Island Pantalon  |  stock=2  price=100.0
+  4100024/V07C L  |  Stone Island Veste  |  stock=2  price=100.0
+  4100024/V07C M  |  Stone Island Veste  |  stock=2  price=100.0
+  4100024/V07C XL  |  Stone Island Veste  |  stock=2  price=100.0
+  4100024/V07C XXL  |  Stone Island Veste  |  stock=2  price=100.0
+  4100052/V20 L  |  Stone Island Parka  |  stock=2  price=100.0
+  4100052/V20 M  |  Stone Island Parka  |  stock=2  price=100.0
+  4100052/V20 S  |  Stone Island Parka  |  stock=2  price=100.0
+  4100052/V20 XL  |  Stone Island Parka  |  stock=2  price=100.0
+  4100057/V20 L  |  Stone Island Veste  |  stock=2  price=100.0
+  4100057/V20 M  |  Stone Island Veste  |  stock=2  price=100.0
+  4100057/V20 XL  |  Stone Island Veste  |  stock=2  price=100.0
+  6100060E/V08G XL  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100060E/V08G XXL  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G L  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G M  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G S  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G XL  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G XXL  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062/V08G XXXL  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062E/V41 L  |  Stone Island Sweat  |  stock=2  price=100.0
+  6100062E/V41 M  |  Stone Island Sweat  |  stock=2  price=100.0
+  6200011E/V05G L  |  Stone Island Bermuda Molleton  |  stock=2  price=100.0
+  6200011E/V05G M  |  Stone Island Bermuda Molleton  |  stock=2  price=100.0
+  6200011E/V05G S  |  Stone Island Bermuda Molleton  |  stock=2  price=100.0
+  6200011E/V05G XL  |  Stone Island Bermuda Molleton  |  stock=2  price=100.0
+  6200011E/V05G XXL  |  Stone Island Bermuda Molleton  |  stock=2  price=100.0
+  6200021/V05G L  |  Stone Island Jogging Molleton  |  stock=2  price=100.0
+  6200021/V05G M  |  Stone Island Jogging Molleton  |  stock=2  price=100.0
+  6200021/V05G S  |  Stone Island Jogging Molleton  |  stock=2  price=100.0
+  6200021/V05G XL  |  Stone Island Jogging molleton  |  stock=2  price=100.0
+  6200021/V05G XXL  |  Stone Island Jogging molleton  |  stock=2  price=100.0
+  6200021/V29 S  |  Stone Island Jogging molleton  |  stock=2  price=100.0
+  B100003/V08G XL  |  Stone Island Maillot homme  |  stock=2  price=100.0
+  J100007/VJ201 30  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ201 31  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ201 36  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ201 38  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ901 29  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ901 30  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ901 32  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ901 33  |  Stone Island Pantalon  |  stock=2  price=100.0
+  J100007/VJ901 34  |  Stone Island Pantalon  |  stock=2  price=100.0
+  L100020/V20 29  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 30  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 31  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 32  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 33  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 34  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 36  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 38  |  Stone Island Bermuda  |  stock=2  price=100.0
+  L100020/V20 40  |  Stone Island Bermuda  |  stock=2  price=100.0
+
+Mises à jour de stock (référence présente des deux côtés)
+  5100023/V29 XL  |  variant_id=302  stock: 6 → 2  (Stone Island Sweat)
+  1200005/V05G S  |  variant_id=291  stock: 4 → 2  (Stone Island Surchemise)
+  2200010/V29 M  |  variant_id=286  stock: 6 → 2  (Stone Island Polo mc)
+  5100023/V29 M  |  variant_id=300  stock: 6 → 2  (Stone Island Sweat)
+  5100023/V93 M  |  variant_id=306  stock: 6 → 2  (Stone Island Sweat)
+  5100023/V29 L  |  variant_id=301  stock: 6 → 2  (Stone Island Sweat)
+  1200005/V05G XL  |  variant_id=294  stock: 4 → 2  (Stone Island Surchemise)
+  2200010/V24 M  |  variant_id=280  stock: 6 → 2  (Stone Island Polo mc)
+  5100023/V93 XXL  |  variant_id=309  stock: 4 → 2  (Stone Island Sweat)
+  5100023/V93 XL  |  variant_id=308  stock: 4 → 2  (Stone Island Sweat)
+  2200010/V29 S  |  variant_id=285  stock: 4 → 2  (Stone Island Polo mc)
+  1200005/V05G L  |  variant_id=293  stock: 6 → 2  (Stone Island Surchemise)
+  5100023/V93 L  |  variant_id=307  stock: 6 → 2  (Stone Island Sweat)
+  2200010/V29 XXL  |  variant_id=290  stock: 4 → 2  (Stone Island Polo mc)
+  5100023/V29 XXL  |  variant_id=303  stock: 4 → 2  (Stone Island Sweat)
+  2200010/V24 L  |  variant_id=282  stock: 4 → 2  (Stone Island Polo mc)
+  5100023/V93 S  |  variant_id=305  stock: 4 → 2  (Stone Island Sweat)
+  1200005/V05G M  |  variant_id=292  stock: 6 → 2  (Stone Island Surchemise)
+  6100058/V29 L  |  variant_id=328  stock: 6 → 2  (Stone Island Sweat)
+  5100023/V29 S  |  variant_id=299  stock: 4 → 2  (Stone Island Sweat)
+  2200010/V29 L  |  variant_id=288  stock: 4 → 2  (Stone Island Polo mc)
+  2200010/V29 XL  |  variant_id=289  stock: 4 → 2  (Stone Island Polo mc)
+  2200010/V24 XL  |  variant_id=283  stock: 5 → 2  (Stone Island Polo mc)
+
+Mises à jour de prix (produit)
+  Aucune.
+
+Retraits (en BDD, plus dans le CSV) — à supprimer
+  1200011/V20 L  |  variant_id=298  (product_id=82, stock actuel=1)
+  1200011/V20 M  |  variant_id=297  (product_id=82, stock actuel=2)
+  1200011/V20 S  |  variant_id=296  (product_id=82, stock actuel=2)
+  2100001/V29 XXXL  |  variant_id=466  (product_id=122, stock actuel=2)
+  2100027E/V08G L  |  variant_id=489  (product_id=127, stock actuel=2)
+  2100027E/V08G XL  |  variant_id=490  (product_id=127, stock actuel=2)
+  2100027E/V08G XXL  |  variant_id=491  (product_id=127, stock actuel=2)
+  2100027E/V08G XXXL  |  variant_id=492  (product_id=127, stock actuel=2)
+  2100027E/V09A XL  |  variant_id=496  (product_id=128, stock actuel=2)
+  2100027E/V09A XXL  |  variant_id=497  (product_id=128, stock actuel=2)
+  2200010/V24 3XL  |  variant_id=281  (product_id=79, stock actuel=2)
+  3100018/V20 30  |  variant_id=409  (product_id=110, stock actuel=2)
+  3100018/V20 31  |  variant_id=410  (product_id=110, stock actuel=2)
+  3100018/V20 32  |  variant_id=411  (product_id=110, stock actuel=2)
+  3100018/V20 33  |  variant_id=412  (product_id=110, stock actuel=2)
+  3100018/V20 34  |  variant_id=413  (product_id=110, stock actuel=2)
+  3100018/V20 36  |  variant_id=414  (product_id=110, stock actuel=2)
+  3100031/V05G 36  |  variant_id=422  (product_id=111, stock actuel=2)
+  3100031/V05G 38  |  variant_id=423  (product_id=111, stock actuel=2)
+  3100032/V29 32  |  variant_id=430  (product_id=114, stock actuel=2)
+  4100001/V05G XXL  |  variant_id=514  (product_id=131, stock actuel=2)
+  4100001/V08F XL  |  variant_id=519  (product_id=132, stock actuel=2)
+  4100001/V08F XXL  |  variant_id=520  (product_id=132, stock actuel=2)
+  4100001/V29 XXL  |  variant_id=525  (product_id=133, stock actuel=2)
+  4100001/V41 XXL  |  variant_id=531  (product_id=134, stock actuel=2)
+  4100001/V41 XXXL  |  variant_id=532  (product_id=134, stock actuel=2)
+  4100057/V20 XXXL  |  variant_id=535  (product_id=135, stock actuel=2)
+  4100076/V65 L  |  variant_id=537  (product_id=136, stock actuel=2)
+  4100076/V65 M  |  variant_id=536  (product_id=136, stock actuel=2)
+  4100076/V65 XL  |  variant_id=538  (product_id=136, stock actuel=2)
+  4100111/V20 XXL  |  variant_id=543  (product_id=137, stock actuel=2)
+  4100111/V20 XXXL  |  variant_id=544  (product_id=137, stock actuel=2)
+  4100111/V34 S  |  variant_id=545  (product_id=138, stock actuel=2)
+  4100111/V34 XL  |  variant_id=548  (product_id=138, stock actuel=2)
+  4100111/V34 XXL  |  variant_id=549  (product_id=138, stock actuel=2)
+  5100035E/V20 L  |  variant_id=313  (product_id=85, stock actuel=2)
+  5100035E/V20 M  |  variant_id=312  (product_id=85, stock actuel=2)
+  5100035E/V20 S  |  variant_id=311  (product_id=85, stock actuel=2)
+  5100035E/V20 XL  |  variant_id=314  (product_id=85, stock actuel=2)
+  5100035E/V20 XXL  |  variant_id=315  (product_id=85, stock actuel=2)
+  5100035E/V64 L  |  variant_id=318  (product_id=86, stock actuel=2)
+  5100035E/V64 M  |  variant_id=317  (product_id=86, stock actuel=2)
+  5100035E/V64 S  |  variant_id=316  (product_id=86, stock actuel=2)
+  5100035E/V64 XL  |  variant_id=319  (product_id=86, stock actuel=2)
+  5100035E/V64 XXL  |  variant_id=320  (product_id=86, stock actuel=2)
+  5100038/V02E L  |  variant_id=323  (product_id=87, stock actuel=2)
+  5100038/V02E M  |  variant_id=322  (product_id=87, stock actuel=2)
+  5100038/V02E S  |  variant_id=321  (product_id=87, stock actuel=2)
+  5100038/V02E XL  |  variant_id=324  (product_id=87, stock actuel=2)
+  5100038/V02E XXL  |  variant_id=325  (product_id=87, stock actuel=2)
+  5100074/V20 S  |  variant_id=432  (product_id=116, stock actuel=2)
+  5100074/V20 XXL  |  variant_id=436  (product_id=116, stock actuel=2)
+  5100074/V29 S  |  variant_id=437  (product_id=117, stock actuel=2)
+  5100074/V29 XXL  |  variant_id=441  (product_id=117, stock actuel=2)
+  6100014/V29 XXL  |  variant_id=256  (product_id=74, stock actuel=2)
+  6100058/V29 S  |  variant_id=326  (product_id=88, stock actuel=2)
+  6100058/V29 XL  |  variant_id=329  (product_id=88, stock actuel=2)
+  6100058/V29 XXL  |  variant_id=330  (product_id=88, stock actuel=2)
+  6100058/V29 XXXL  |  variant_id=331  (product_id=88, stock actuel=2)
+  6100058/V34 XL  |  variant_id=335  (product_id=89, stock actuel=2)
+  6100060E/V04A XXL  |  variant_id=340  (product_id=90, stock actuel=2)
+  6100060E/V29 XXXL  |  variant_id=349  (product_id=92, stock actuel=2)
+  B100003/V31 XXL  |  variant_id=390  (product_id=105, stock actuel=2)
+  B100004/V05G XXL  |  variant_id=395  (product_id=106, stock actuel=2)
+  B100004/V20 XXL  |  variant_id=400  (product_id=107, stock actuel=2)
+  B100004/V61 XXL  |  variant_id=405  (product_id=108, stock actuel=2)
+  L100020/V29 38  |  variant_id=250  (product_id=73, stock actuel=2)
+
+Résumé : 93 nouveau(x), 23 mise(s) à jour stock, 67 retrait(s)

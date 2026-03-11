@@ -27,6 +27,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { NavigationLoader } from './components/loaders/NavigationLoader'
 import { PageLoader } from './components/loaders/PageLoader'
 import { LoaderPlayground } from './pages/LoaderPlayground'
+import ProductStitchDemo from './pages/ProductStitchDemo'
+import { HeaderPlayground } from './pages/HeaderPlayground'
 import { QuickSearch } from './components/search/QuickSearch'
 import { useQuickSearchContext } from './contexts/QuickSearchContext'
 
@@ -247,6 +249,8 @@ function App() {
         
         {/* Pages de test sans Layout */}
         <Route path="/loader-playground" element={<LoaderPlayground />} />
+        <Route path="/product-stitch-demo" element={<ProductStitchDemo />} />
+        <Route path="/header-playground" element={<HeaderPlayground />} />
       </Routes>
     </BrowserRouter>
   )

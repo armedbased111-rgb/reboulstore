@@ -1,0 +1,32 @@
+{
+  "Stone Island": {
+    "name": "Stone Island",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/STONE ISLAND",
+    "output_dir": "./output_batch_stone_island",
+    "product_type": "garment",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  },
+  "Autry": {
+    "name": "Autry",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/AUTRY",
+    "output_dir": "./output_batch_autry",
+    "product_type": "shoe",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  },
+  "Bisous Skateboards": {
+    "name": "Bisous Skateboards",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/BISOUS SKATEBOARD",
+    "output_dir": "./output_batch_bisous",
+    "product_type": "garment",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  }
+}

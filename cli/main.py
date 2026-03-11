@@ -4,6 +4,15 @@ CLI Python pour Reboul Store
 Automatise les tâches répétitives et améliore le contexte pour Cursor
 """
 
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+    _env_path = Path(__file__).resolve().parent.parent / ".env"
+    load_dotenv(_env_path)
+except Exception:
+    pass
+
 import click
 import re
 import json
@@ -550,6 +559,299 @@ def import_merge_pages(input_paths, output_path):
     console.print(f"[green]✅ {len(rows_out)} lignes uniques → {output_path}[/green]")
     if dup_removed > 0:
         console.print(f"[dim]   (chevauchement pages : {dup_removed} doublon(s) retiré(s), dernière occurrence conservée)[/dim]")
+
+
+@import_cmd.command('compare-csv')
+@click.option('--input', '-i', 'input_path', required=True, type=click.Path(exists=True), help='CSV de mise à jour (même format: name;reference;brand;category;collection;stock;price)')
+@click.option('--collection', type=str, required=True, help='Nom de la collection (ex: SS26) pour comparer à la BDD')
+@click.option('--brand', type=str, default=None, help='Filtrer aussi par marque (optionnel)')
+@click.option('--output', '-o', 'output_path', type=click.Path(), default=None, help='Exporter le rapport en fichier texte')
+def import_compare_csv(input_path, collection, brand, output_path):
+    """Comparer un CSV de mise à jour avec la BDD : nouveaux ajouts, mises à jour stocks, retraits à supprimer."""
+    import csv as csv_module
+
+    def _lower_map(reader_fieldnames):
+        m = {}
+        for k in (reader_fieldnames or []):
+            key = k.strip().lower()
+            m[key] = k
+        return m
+
+    with open(input_path, 'r', encoding='utf-8') as f:
+        first = f.readline()
+        sep = ';' if (';' in first and (',' not in first or first.find(';') < first.find(','))) else ','
+        f.seek(0)
+        reader = csv_module.DictReader(f, delimiter=sep)
+        lower = _lower_map(reader.fieldnames)
+        def get(row, *keys):
+            for k in keys:
+                key = k.strip().lower()
+                if key in lower and lower[key] in row:
+                    v = (row.get(lower[key]) or '').strip()
+                    if v:
+                        return v
+            return ''
+        csv_rows = []
+        for row in reader:
+            ref_full = get(row, 'reference', 'ref', 'référence')
+            if not ref_full:
+                continue
+            try:
+                stock_val = int(get(row, 'stock') or '0')
+            except ValueError:
+                stock_val = 0
+            try:
+                price_val = float((get(row, 'price') or '0').replace(',', '.'))
+            except ValueError:
+                price_val = 0.0
+            csv_rows.append({
+                'reference': ref_full,
+                'name': get(row, 'name'),
+                'brand': get(row, 'brand'),
+                'category': get(row, 'category'),
+                'collection': get(row, 'collection'),
+                'stock': stock_val,
+                'price': price_val,
+            })
+
+    if not csv_rows:
+        console.print('[red]❌ Aucune ligne avec référence dans le CSV[/red]')
+        return
+
+    csv_by_key = {}
+    for r in csv_rows:
+        key = (r['reference'] or '').strip().replace('\r', '')
+        csv_by_key[key] = r
+
+    where_clauses = ["c.name ILIKE '%" + collection.replace("'", "''") + "%'"]
+    if brand:
+        where_clauses.append("b.name ILIKE '%" + brand.replace("'", "''") + "%'")
+    where_sql = " AND ".join(where_clauses)
+    sql = (
+        "SELECT p.id AS product_id, p.reference AS product_ref, p.price AS product_price, "
+        "v.id AS variant_id, v.size, v.stock "
+        "FROM products p "
+        "JOIN variants v ON v.product_id = p.id "
+        "JOIN collections c ON c.id = p.collection_id "
+        "LEFT JOIN brands b ON b.id = p.brand_id "
+        "WHERE " + where_sql + " ORDER BY p.reference, v.size;"
+    )
+    try:
+        db_rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur BDD: {e}[/red]")
+        return
+
+    db_by_key = {}
+    for r in db_rows:
+        if len(r) < 6:
+            continue
+        p_ref = (r[1] or '').strip()
+        size = (r[4] or '').strip()
+        key = (p_ref + " " + size).strip()
+        try:
+            stock_db = int(r[5]) if r[5] else 0
+        except (ValueError, TypeError):
+            stock_db = 0
+        try:
+            price_db = float(r[2]) if r[2] else 0.0
+        except (ValueError, TypeError):
+            price_db = 0.0
+        db_by_key[key] = {
+            'product_id': int(r[0]),
+            'variant_id': int(r[3]),
+            'product_ref': p_ref,
+            'size': size,
+            'stock': stock_db,
+            'price': price_db,
+        }
+
+    csv_keys = set(csv_by_key)
+    db_keys = set(db_by_key)
+
+    new_keys = csv_keys - db_keys
+    remove_keys = db_keys - csv_keys
+    common_keys = csv_keys & db_keys
+
+    updates_stock = []
+    updates_price = []
+    for k in common_keys:
+        csv_row = csv_by_key[k]
+        db_row = db_by_key[k]
+        if csv_row['stock'] != db_row['stock']:
+            updates_stock.append({
+                'key': k,
+                'name': csv_row.get('name', ''),
+                'variant_id': db_row['variant_id'],
+                'stock_old': db_row['stock'],
+                'stock_new': csv_row['stock'],
+            })
+        if abs((csv_row.get('price') or 0) - (db_row.get('price') or 0)) > 0.001:
+            updates_price.append({
+                'key': k,
+                'name': csv_row.get('name', ''),
+                'product_id': db_row['product_id'],
+                'price_old': db_row.get('price', 0),
+                'price_new': csv_row.get('price', 0),
+            })
+
+    lines_out = []
+    def out(s):
+        lines_out.append(s)
+        console.print(s)
+
+    out("[bold]Rapport : CSV vs BDD (collection %s)[/bold]" % collection)
+    if brand:
+        out("[dim]Marque : %s[/dim]" % brand)
+    out("")
+
+    out("[green]Nouveaux (dans le CSV, pas en BDD) — à ajouter[/green]")
+    if not new_keys:
+        out("  Aucun.")
+    else:
+        for k in sorted(new_keys):
+            r = csv_by_key[k]
+            out("  %s  |  %s  |  stock=%s  price=%s" % (k, (r.get('name') or '')[:40], r.get('stock'), r.get('price')))
+    out("")
+
+    out("[yellow]Mises à jour de stock (référence présente des deux côtés)[/yellow]")
+    if not updates_stock:
+        out("  Aucune.")
+    else:
+        for u in updates_stock:
+            out("  %s  |  variant_id=%s  stock: %s → %s  (%s)" % (
+                u['key'], u['variant_id'], u['stock_old'], u['stock_new'], (u.get('name') or '')[:30]))
+    out("")
+
+    out("[yellow]Mises à jour de prix (produit)[/yellow]")
+    seen_product_price = set()
+    if not updates_price:
+        out("  Aucune.")
+    else:
+        for u in updates_price:
+            pid = u['product_id']
+            if pid in seen_product_price:
+                continue
+            seen_product_price.add(pid)
+            out("  product_id=%s  |  %s  |  prix: %s → %s" % (pid, (u.get('name') or '')[:30], u['price_old'], u['price_new']))
+    out("")
+
+    out("[red]Retraits (en BDD, plus dans le CSV) — à supprimer[/red]")
+    if not remove_keys:
+        out("  Aucun.")
+    else:
+        for k in sorted(remove_keys):
+            d = db_by_key[k]
+            out("  %s  |  variant_id=%s  (product_id=%s, stock actuel=%s)" % (k, d['variant_id'], d['product_id'], d['stock']))
+    out("")
+
+    out("[dim]Résumé : %d nouveau(x), %d mise(s) à jour stock, %d retrait(s)[/dim]" % (
+        len(new_keys), len(updates_stock), len(remove_keys)))
+
+    if output_path:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            for line in lines_out:
+                plain = re.sub(r'\[/?[^\]]*\]', '', line) + '\n'
+                f.write(plain)
+        console.print(f"[green]Rapport enregistré → %s[/green]" % output_path)
+
+
+def _image_to_csv_one(api_key, input_path, collection, brand, stock, price):
+    """Envoie une image à Gemini Vision, retourne la liste des lignes CSV (sans en-tête)."""
+    import base64
+    import requests
+    from pathlib import Path
+
+    path = Path(input_path)
+    with open(path, "rb") as f:
+        data = f.read()
+    b64 = base64.standard_b64encode(data).decode("ascii")
+    suffix = (path.suffix or "").lower()
+    mime = "image/jpeg" if suffix in (".jpg", ".jpeg") else "image/png"
+
+    prompt = (
+        "You see a photo or scan of a STOCK SHEET (feuille de stock) from a clothing store. "
+        "Extract EVERY row from the table. "
+        "Columns usually: Marque (brand), Genre (category), Référence (reference = product code + space + size, e.g. 'L100001/V09A 29' or '6100014/V29 L'). "
+        "If a Stock column is visible, use it; otherwise use %d. If Price is visible use it; otherwise use %d. "
+        "Output ONLY a CSV with this exact header (semicolon separator): name;reference;brand;category;collection;stock;price\n"
+        "Rules: name = Brand + space + Category (e.g. Stone Island Bermuda). reference = full ref with size (exactly as printed). "
+        "brand = Marque. category = Genre in lowercase. collection = %s. stock = number. price = number. "
+        "One line per row; no extra text, no markdown, no code block."
+    ) % (stock, price, collection)
+    if brand:
+        prompt += " If brand is not clearly visible, use \"%s\" for brand and adjust name accordingly." % brand.replace('"', '\\"')
+
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+    body = {
+        "contents": [{"parts": [{"text": prompt}, {"inline_data": {"mime_type": mime, "data": b64}}]}],
+        "generationConfig": {"responseModalities": ["TEXT"]},
+    }
+    resp = requests.post(
+        url,
+        headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
+        json=body,
+        timeout=60,
+    )
+    resp.raise_for_status()
+    text = ""
+    for part in resp.json().get("candidates", [{}])[0].get("content", {}).get("parts", []):
+        if "text" in part:
+            text += part.get("text", "")
+    text = text.strip()
+    if not text:
+        return []
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    out_header = "name;reference;brand;category;collection;stock;price"
+    if lines and "name" in lines[0].lower() and "reference" in lines[0].lower():
+        data_lines = [ln for ln in lines[1:] if ln and not ln.startswith("```")]
+    else:
+        data_lines = [ln for ln in lines if ln and not ln.startswith("```")]
+    return data_lines
+
+
+@import_cmd.command('image-to-csv')
+@click.option('--input', '-i', 'input_paths', required=True, type=click.Path(exists=True), multiple=True, help='Photo(s) ou scan(s) de feuille(s) de stock (jpg/png). Plusieurs -i pour plusieurs pages.')
+@click.option('--output', '-o', 'output_path', required=True, type=click.Path(), help='Fichier CSV de sortie (format BDD, dédupliqué si plusieurs images)')
+@click.option('--collection', default='SS26', help='Valeur collection pour toutes les lignes')
+@click.option('--brand', default=None, help='Marque par défaut si non lisible sur la feuille (ex: Stone Island)')
+@click.option('--stock', default=2, type=int, help='Stock par défaut si non lisible')
+@click.option('--price', default=100, type=int, help='Prix par défaut si non lisible')
+def import_image_to_csv(input_paths, output_path, collection, brand, stock, price):
+    """Extraire le tableau de une ou plusieurs photos/scans via Gemini Vision → un seul CSV BDD (dédupliqué par référence)."""
+    import os
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        console.print("[red]❌ GEMINI_API_KEY manquante. Ajoute-la dans .env à la racine.[/red]")
+        return
+
+    paths = list(input_paths)
+    out_header = "name;reference;brand;category;collection;stock;price"
+    by_ref = {}
+    total_rows = 0
+    for i, p in enumerate(paths):
+        console.print("[dim]Image %d/%d : %s[/dim]" % (i + 1, len(paths), p))
+        try:
+            data_lines = _image_to_csv_one(api_key, p, collection, brand, stock, price)
+        except Exception as e:
+            console.print(f"[red]❌ Erreur pour {p}: {e}[/red]")
+            continue
+        for ln in data_lines:
+            parts = ln.split(";", 6)
+            if len(parts) >= 2:
+                ref = (parts[1] or "").strip()
+                if ref:
+                    by_ref[ref] = ln
+                    total_rows += 1
+        console.print("[green]  → %d lignes[/green]" % len(data_lines))
+    if not by_ref:
+        console.print("[red]❌ Aucune ligne extraite.[/red]")
+        return
+    csv_content = out_header + "\n" + "\n".join(by_ref.values())
+    with open(output_path, "w", encoding="utf-8", newline="") as f:
+        f.write(csv_content)
+    console.print(f"[green]✅ %d lignes uniques (%d images) → %s[/green]" % (len(by_ref), len(paths), output_path))
 
 
 @cli.group()
@@ -1852,6 +2154,124 @@ def db_export_csv(brand, collection, output):
         console.print(f"[green]✅ Exporté %d lignes → %s[/green]" % (len(rows), output))
     else:
         console.print(csv_content)
+
+
+@db.command('count-products')
+@click.option('--brand', type=str, help='Filtrer par nom de marque (optionnel)')
+@click.option('--collection', type=str, help='Filtrer par nom de collection (optionnel)')
+def db_count_products(brand, collection):
+    """📊 Compter les produits (optionnellement par marque/collection)"""
+    where_clauses = []
+    joins = []
+
+    if brand:
+        brand_esc = brand.replace("'", "''")
+        joins.append("JOIN brands b ON b.id = p.brand_id")
+        where_clauses.append(f"b.name ILIKE '%{brand_esc}%'")
+
+    if collection:
+        coll_esc = collection.replace("'", "''")
+        joins.append("JOIN collections c ON c.id = p.collection_id")
+        where_clauses.append(f"c.name ILIKE '%{coll_esc}%'")
+
+    joins_sql = ""
+    if joins:
+        # dict.fromkeys pour dédupliquer les JOIN si les deux filtres sont présents
+        joins_sql = " " + " ".join(dict.fromkeys(joins))
+    where_sql = ""
+    if where_clauses:
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+
+    sql = f"SELECT COUNT(*) FROM products p{joins_sql} {where_sql};"
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors du comptage: {e}[/red]")
+        return
+    total = int(rows[0][0]) if rows and rows[0] else 0
+    if brand or collection:
+        console.print(f"[green]✅ {total} produit(s) pour ces critères[/green]")
+    else:
+        console.print(f"[green]✅ {total} produit(s) au total[/green]")
+
+
+@db.command('list-empty-products')
+def db_list_empty_products():
+    """📊 Lister les produits Stone SS26 sans aucun variant"""
+    sql = (
+        "SELECT p.id, p.name, p.reference, "
+        "COALESCE(cat.name, '') AS category_name, "
+        "COALESCE(b.name, '') AS brand_name, "
+        "COALESCE(c.name, '') AS collection_name "
+        "FROM products p "
+        "LEFT JOIN categories cat ON cat.id = p.category_id "
+        "LEFT JOIN brands b ON b.id = p.brand_id "
+        "LEFT JOIN collections c ON c.id = p.collection_id "
+        "LEFT JOIN variants v ON v.product_id = p.id "
+        "WHERE b.name = 'Stone Island' AND c.name = 'SS26' "
+        "GROUP BY p.id, p.name, p.reference, cat.name, b.name, c.name "
+        "HAVING COUNT(v.id) = 0 "
+        "ORDER BY p.id;"
+    )
+    try:
+        rows = _run_db_query(sql)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la requête: {e}[/red]")
+        return
+    if not rows:
+        console.print("[green]✅ Aucun produit vide (sans variants) pour Stone SS26[/green]")
+        return
+    table = Table(title="Produits Stone SS26 sans variants")
+    table.add_column("ID", style="cyan", justify="right")
+    table.add_column("Catégorie", style="yellow")
+    table.add_column("Nom", style="green")
+    table.add_column("Référence", style="magenta")
+    table.add_column("Marque")
+    table.add_column("Collection")
+    for r in rows:
+        table.add_row(str(r[0]), r[3] or "", r[1] or "", r[2] or "", r[4] or "", r[5] or "")
+    console.print(table)
+
+
+@db.command('delete-empty-products')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation (supprimer directement)')
+def db_delete_empty_products(yes):
+    """🗑️ Supprimer les produits Stone SS26 sans variants (après backup)"""
+    sql_ids = (
+        "SELECT p.id FROM products p "
+        "LEFT JOIN brands b ON b.id = p.brand_id "
+        "LEFT JOIN collections c ON c.id = p.collection_id "
+        "LEFT JOIN variants v ON v.product_id = p.id "
+        "WHERE b.name = 'Stone Island' AND c.name = 'SS26' "
+        "GROUP BY p.id "
+        "HAVING COUNT(v.id) = 0;"
+    )
+    try:
+        rows = _run_db_query(sql_ids)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la requête: {e}[/red]")
+        return
+    ids = [str(int(r[0])) for r in rows if r and r[0]]
+    if not ids:
+        console.print("[green]✅ Aucun produit vide à supprimer pour Stone SS26[/green]")
+        return
+    ids_str = ", ".join(ids)
+    console.print(f"[yellow]⚠️ Ceci va supprimer {len(ids)} produit(s) (IDs: {ids_str}) pour Stone SS26.[/yellow]")
+    if not yes:
+        if not click.confirm("Continuer ?"):
+            console.print("[yellow]Annulé.[/yellow]")
+            return
+    try:
+        _create_server_backup()
+    except Exception as e:
+        console.print(f"[red]❌ Backup serveur échoué, aucune suppression effectuée: {e}[/red]")
+        return
+    try:
+        _exec_db_sql("DELETE FROM products WHERE id IN (%s);" % ", ".join(ids))
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la suppression: {e}[/red]")
+        return
+    console.print(f"[green]✅ {len(ids)} produit(s) supprimé(s) pour Stone SS26[/green]")
 
 
 @db.command('variant-set-stock')

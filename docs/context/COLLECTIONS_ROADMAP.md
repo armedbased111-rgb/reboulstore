@@ -2,7 +2,7 @@
 
 **Objectif** : Suivre l'avancement de la **première collection** et des **futures collections** (setup complet : politiques, refs marque par marque, photos, ajout en base). Cette roadmap est **à part** de la roadmap principale : les collections, tu en feras toujours — on ne mélange pas avec les phases produit (front, backend, lancement). **Step by step, check-in** comme la roadmap principale.
 
-**Dernière MAJ** : 15/02/2026
+**Dernière MAJ** : 10/03/2026
 
 ---
 
@@ -10,9 +10,11 @@
 
 | Info | Valeur |
 |------|--------|
-| **Collection en cours** | Stone Island SS26 (données importées ✅ ; photos à faire) |
-| **Prochaine tâche** | 5.1 Shooting & préparation photos (ou 1.1 politiques si priorité) |
-| **Workflow de base** | Feuille/CSV → `feuille-to-csv` / `merge-pages` → wipe + `category-create` si besoin → import Admin → `db ref` → photos → `images generate` ou `images generate-batch` → `images upload` |
+| **Collection principale** | Stone Island SS26 (77 refs en base ; **~41/77 refs avec images** après 3 batchs ; 14 refs restant à shooter : casquettes, polo ml, pull été, sac) |
+| **Autry SS26** | 36 produits / 167 variants en base ✅ ; dossiers iCloud créés ; **0 image** (shooting pas encore fait) |
+| **Bisous Skateboards SS26** | 33 produits / 101 variants en base ✅ ; **25/33 images générées** ; 8 accessoires en attente de photos |
+| **Prochaine tâche** | Stone Island : shooter 14 refs restantes → batch 4 → upload. Bisous : shooter 8 accessoires → batch → upload. Autry : shooter les 36 refs → batch shoe → upload |
+| **Workflow de base** | Feuille/CSV → `image-to-csv` (photos feuilles) / `feuille-to-csv` → `merge-pages` → wipe + `category-create` si besoin → import Admin → `import compare-csv` (maj stock) → `db ref` → photos → `images generate` ou `images generate-batch` → `images upload` |
 
 **Références** : `docs/COLLECTION_REAL.md`, `docs/context/FEUILLES_STOCK_REBOUL.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`, `docs/integrations/IMAGES_IA_WORKFLOW.md`, `docs/integrations/IMAGES_WORKFLOW.md`, `./rcli db ref <REF>`, `./rcli images --help`.
 
@@ -26,8 +28,8 @@
 | **2** | Préparation des données (feuille/CSV, format, fusion) | ✅ Fait (photos → IA → CSV, 7 pages fusionnées) |
 | **3** | Base de données (wipe, catégories, import Admin) | ✅ Fait (69 produits, 332 variants importés) |
 | **4** | Vérification post-import (refs en base) | ✅ Fait |
-| **5** | Shooting & préparation photos | À faire |
-| **6** | Génération & upload images (par produit) | À faire |
+| **5** | Shooting & préparation photos | 🟡 En cours (premier lot de produits shooté / traité, reste 42 refs à shooter) |
+| **6** | Génération & upload images (par produit) | 🟡 En cours (pipeline IA + upload batch pour 27/69 refs) |
 | **7** | Contrôle qualité (visuels site / Admin) | À faire |
 | **8** | Clôture collection (checklist finale) | À faire |
 
@@ -35,13 +37,15 @@
 
 ---
 
-## Avancement par marque (Collection 1 : Stone Island SS26)
+## Avancement par marque (Collection 1 : SS26)
 
 *À mettre à jour au fur et à mesure (données importées, refs avec images). Ce tableau est la référence pour l’avancement par marque.*
 
-| Marque        | Refs total | Refs en base | Refs avec images | Statut / Note        |
-|---------------|------------|--------------|------------------|----------------------|
-| Stone Island  | 69         | 69           | 0                | Données ✅ ; images à faire |
+| Marque               | Refs total | Refs en base | Refs avec images | Statut / Note        |
+|----------------------|------------|--------------|------------------|----------------------|
+| Stone Island         | 77         | 77           | ~41              | Données ✅ ; maj stock fév. 2026 ; 3 batchs IA générés ; **14 refs restant à shooter** (casquettes, polo ml, pull été, sac) |
+| Autry                | 36         | 36           | 0                | Données ✅ (167 variants) ; dossiers iCloud créés ; **shooting à faire** ; pipeline shoe prêt (`--product-type shoe`, 3 vues : face/back/top) |
+| Bisous Skateboards   | 33         | 33           | 25               | Données ✅ (101 variants) ; **25/33 images générées** ; **8 accessoires en attente de photos** |
 
 **Comment mettre à jour** : après import, remplir « Refs total » et « Refs en base » (ex. `./rcli db product-list --brand "Stone Island" --collection SS26` pour compter). Quand tu uploades les images produit par produit, incrémenter « Refs avec images ». Quand une marque est 100 % (refs avec images = refs total), passer le statut à ✅.
 
@@ -153,9 +157,40 @@
   - [x] Si stocks ou tailles incorrects : utiliser les commandes CLI d’édition (`variant-set-stock`, etc.) ou corriger en Admin
   - [ ] Documenter toute anomalie pour ne pas la répéter sur les prochaines collections
 
-- [ ] **4.3 Liste de refs pour les photos**
-  - [ ] Établir la liste des refs produits qui auront des photos (tout ou partie de la collection)
+- [x] **4.3 Liste de refs pour les photos**
+  - [x] Établir la liste des refs produits qui auront des photos (tout ou partie de la collection) — 69 refs Stone SS26
   - [ ] Ordre recommandé : par marque / catégorie ou par ordre de shooting
+
+---
+
+### Phase 4.bis – Mise à jour stock SS26 (févr. 2026)
+
+**Objectif** : Reprendre les nouvelles feuilles de stock Stone SS26, mettre à jour les stocks et nettoyer les produits/variants obsolètes.
+
+- [x] **4.bis.1 Générer le CSV de mise à jour depuis les photos des feuilles**
+  - [x] Dossier photos : `collections/stone island/photo to csv/IMG_0575.jpg` → `IMG_0581.jpg`
+  - [x] `./rcli import image-to-csv -i collections/stone\\ island/photo\\ to\\ csv/IMG_0575.jpg ... IMG_0581.jpg -o docs/stone-maj-ss26.csv --collection SS26 --brand "Stone Island" --stock 2 --price 100`
+  - [x] Résultat : 358 lignes variantes, 77 refs produit distinctes.
+
+- [x] **4.bis.2 Comparer CSV ↔ BDD (Stone SS26)**
+  - [x] `./rcli import compare-csv -i docs/stone-maj-ss26.csv --collection SS26 --brand "Stone Island" -o docs/stone-maj-rapport.txt`
+  - [x] Rapport : 93 variants nouveaux, 23 mises à jour de stock, 67 variants en retrait (présents en BDD, absents du CSV).
+
+- [x] **4.bis.3 Importer la mise à jour dans l’Admin**
+  - [x] Import collection avec `stone-maj-ss26.csv` (SS26 sélectionnée)
+  - [x] Création des catégories manquantes (`bermuda molleton`, `parka`)
+  - [x] Résultat import : 14 produits créés, 64 mis à jour, 93 variants créés, 265 variants mis à jour (stock).
+
+- [x] **4.bis.4 Appliquer les retraits**
+  - [x] Suppression des 67 variants marqués en retrait via `./rcli db variant-delete --id <variant_id> -y` (liste issue du rapport).
+  - [x] Nettoyage des produits sans variants Stone SS26 :
+    - [x] `./rcli db list-empty-products` → 6 produits vides.
+    - [x] `./rcli db delete-empty-products -y` → suppression des produits `1200011/V20`, `5100035E/V20`, `5100035E/V64`, `5100038/V02E`, `3100018/V20`, `4100076/V65`.
+
+- [x] **4.bis.5 Vérification finale**
+  - [x] `./rcli db count-products --brand "Stone Island" --collection SS26` → **77 produits**.
+
+Notes : la feuille de stock SS26 et le CSV `stone-maj-ss26.csv` sont désormais la source de vérité pour cette collection ; tout produit/variant Stone SS26 hors de cette liste est supprimé.
 
 ---
 
@@ -257,6 +292,39 @@
 - [ ] **8.4 Documentation**
   - [ ] Noter les écarts ou décisions prises pour cette collection (pour réutilisation sur les suivantes)
   - [ ] Mettre à jour cette roadmap : cocher les phases terminées, ajouter la date de clôture
+
+---
+
+---
+
+## Collection 1 : Autry SS26
+
+| Phase | Intitulé | Statut |
+|-------|----------|--------|
+| 1–4 | Setup, données, BDD, vérification | ✅ Fait |
+| 5 | Shooting photos (36 refs, sneakers) | ⏳ À faire |
+| 6 | Génération images (`--product-type shoe`, 3 vues) + upload | ⏳ Après shooting |
+| 7–8 | Contrôle qualité + clôture | ⏳ |
+
+**Données** : 36 produits, 167 variants, collection SS26, catégorie baskets.
+**Pipeline shoe** : `./rcli images generate-batch --input-dir "/chemin/AUTRY" -o ./output_batch_autry --refs-dir refs_empty --gemini-flash --flash-attempts 4 --product-type shoe --skip-existing --delay 30`
+**Vues générées** : `1_face` (profil latéral), `2_back` (talon), `4_top` (vue de dessus). Vue `3_front_angle` supprimée.
+**Dossiers iCloud** : un dossier par ref, `/` remplacé par `-`.
+
+---
+
+## Collection 1 : Bisous Skateboards SS26
+
+| Phase | Intitulé | Statut |
+|-------|----------|--------|
+| 1–4 | Setup, données, BDD, vérification | ✅ Fait |
+| 5 | Shooting photos | 🟡 Partiel (25/33 faits, 8 accessoires restants) |
+| 6 | Génération images + upload | 🟡 25/33 images générées (output_batch_bisous) |
+| 7–8 | Contrôle qualité + clôture | ⏳ |
+
+**Données** : 33 produits, 101 variants, collection SS26. Marque = `Bisous Skateboards`.
+**Catégories** : collier chien / laisse chien / porte clefs / autre → fusionnés dans `accessoires`.
+**Batch** : `./rcli images generate-batch --input-dir "/chemin/BISOUS SKATEBOARD" -o ./output_batch_bisous --refs-dir refs_empty --gemini-flash --flash-attempts 4 --skip-existing --delay 30`
 
 ---
 

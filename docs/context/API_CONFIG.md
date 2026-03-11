@@ -432,24 +432,15 @@ import type { MyType } from './service';
 
 ---
 
-## 🔄 Phases futures
+## ✅ Phases complétées (config)
 
-### Phase 13 : Stripe
-- Ajouter `STRIPE_SECRET_KEY` et `STRIPE_PUBLIC_KEY`
-- Endpoints : `/stripe/webhook`, `/orders/create-payment-intent`
+- **Phase 13 (Stripe)** ✅ : `STRIPE_SECRET_KEY`, `STRIPE_PUBLIC_KEY`, `STRIPE_WEBHOOK_SECRET` — configurés en production. Webhook : `https://www.reboulstore.com/api/checkout/webhook`.
+- **Phase 15 (Cloudinary)** ✅ : `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — upload images/vidéos produits, catégories, marques.
+- **Phase 15.5 (Admin Infrastructure)** ✅ : Ports 4000/4001, connexion TypeORM Reboul validée.
+- **Phase 16-17 (Admin Backend & Frontend)** ✅ : Tous les endpoints admin opérationnels, interface admin complète (Dashboard, Produits, Catégories, Marques, Commandes, Utilisateurs, Settings, Import).
+- **Phase 23 (Production)** ✅ : Déployé sur OVH VPS-3 (`152.228.218.35`). HTTPS Let's Encrypt, Cloudflare CDN, GA4. `www.reboulstore.com` + `admin.reboulstore.com` opérationnels.
 
-### Phase 15 : Cloudinary
-- Ajouter `CLOUDINARY_*` variables
-- Endpoints : `/products/:id/images` (upload)
-
-### Phase 15.5 : Admin Centrale - Infrastructure ✅ TERMINÉE
-- ✅ Ports configurés : Frontend 4000, Backend 4001
-- ✅ Variables d'environnement admin documentées
-- ✅ Connexion TypeORM Reboul validée
-
-### Phase 16-17 : Admin Centrale - Backend & Frontend
-- Endpoints admin complets (produits, commandes, utilisateurs Reboul)
-- Interface admin complète
+**Phase actuelle** : Phase 25 (Finalisation Frontend). Les variables d'environnement de production sont configurées dans les fichiers `.env.production` sur le VPS (ne pas commiter).
 
 ---
 

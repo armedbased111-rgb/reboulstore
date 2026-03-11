@@ -1,8 +1,13 @@
 # 📊 Reboul Store - État du Projet
 
-**Date de mise à jour** : Session actuelle
-**Version Backend** : 0.3.0
-**Version Frontend** : 0.7.0
+> ⚠️ **Ce document est obsolète** (rédigé lors des phases 1-10, début 2025). Pour l'état actuel du projet, consulter :
+> - **`docs/context/CONTEXT.md`** — vue d'ensemble et état actuel
+> - **`docs/context/ROADMAP_COMPLETE.md`** — roadmap complète (Phase 25 en cours)
+> - **`docs/context/COLLECTIONS_ROADMAP.md`** — avancement collections (Stone Island, Autry, Bisous)
+
+**Phase actuelle** : **Phase 25** (Finalisation Frontend) · Dernière MAJ : 10/03/2026
+**Version Backend** : 0.3.0 (obsolète)
+**Version Frontend** : 0.7.0 (obsolète)
 
 ---
 

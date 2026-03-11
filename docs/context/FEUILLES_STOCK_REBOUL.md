@@ -86,7 +86,27 @@ L’import crée les **produits** (une réf produit par groupe) et les **variant
 
 ---
 
-## 5. Vérifier après import (CLI)
+## 5. Mise à jour stock : comparer CSV vs BDD
+
+Quand tu reçois une **nouvelle feuille** (ou CSV) de mise à jour pour une collection déjà en base (ex. Stone Island SS26), utilise la comparaison pour savoir quoi ajouter, mettre à jour ou retirer :
+
+```bash
+./rcli import compare-csv -i mise-a-jour.csv --collection SS26
+# optionnel : filtrer par marque, exporter le rapport
+./rcli import compare-csv -i mise-a-jour.csv --collection SS26 --brand "Stone Island" -o rapport.txt
+```
+
+Le rapport affiche :
+- **Nouveaux** : lignes dans le CSV absentes de la BDD → à importer (ou ajouter manuellement).
+- **Mises à jour de stock** : même référence en CSV et en BDD mais stock différent → mettre à jour le variant (`./rcli db variant-set-stock --id <variant_id> --stock <n> -y`).
+- **Mises à jour de prix** : même produit, prix différent → `./rcli db product-set-price --id <product_id> --price <n> -y`.
+- **Retraits** : en BDD mais plus dans le CSV → à supprimer (variant ou produit selon le cas, avec `./rcli db variant-delete --id <id> -y` après vérification).
+
+Format CSV attendu : même que l’import (`name;reference;brand;category;collection;stock;price`). La clé de comparaison est la colonne **reference** (ex. `L100001/V09A 29` = réf produit + espace + taille).
+
+---
+
+## 6. Vérifier après import (CLI)
 
 ```bash
 ./rcli db product-list --collection SS26 --limit 50
@@ -98,7 +118,7 @@ Vérifier : nombre de produits, nombre de variants par produit, références et 
 
 ---
 
-## 6. Vérifier chaque ref (feuille de stock en main)
+## 7. Vérifier chaque ref (feuille de stock en main)
 
 Avec la **feuille papier** (ex. Stone Island) : pour chaque référence de la feuille, contrôler qu’elle est bien en base et que les variants correspondent.
 
@@ -115,8 +135,10 @@ Affiche le produit + tous les variants + les commandes d’édition prêtes à c
 | Action | Commande |
 |--------|----------|
 | **Vérifier une ref (hub)** | `./rcli db ref <REF>` |
+| Image (photo/scan) → CSV BDD | `./rcli import image-to-csv -i photo.jpg -o sortie.csv --collection SS26 [--brand "Stone Island"]` |
 | Feuille CSV → CSV BDD | `./rcli import feuille-to-csv -i fichier.csv -o sortie.csv --collection SS26 --stock 2 --price 100` |
 | Fusionner plusieurs pages (dédupliquer) | `./rcli import merge-pages -i page1.csv -i page2.csv -o merged.csv` |
+| Comparer CSV mise à jour vs BDD | `./rcli import compare-csv -i mise-a-jour.csv --collection SS26 [-o rapport.txt]` |
 | Vider les produits d’une collection | `./rcli db wipe-products-by-collection -c SS26 -y` |
 | Créer une catégorie | `./rcli db category-create -n "nom catégorie" -y` |
 | Lister les produits SS26 | `./rcli db product-list --collection SS26` |

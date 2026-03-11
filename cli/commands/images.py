@@ -70,6 +70,47 @@ PROMPT_LIFESTYLE = (
     + BG
 )
 
+# Vue 1 – Face chaussure : profil latéral, semelle vers le bas
+PROMPT_FACE_SHOE = (
+    "Single image: one sneaker only. Lateral side profile view, full silhouette from heel to toe. "
+    "Shoe alone—no foot, no person, no box, no tissue paper, no laces hanging loose. "
+    "Sole facing down. The sneaker must fill most of the frame. "
+    "Center the shoe horizontally and vertically with equal margins on all sides. "
+    "Soft even lighting; only a very subtle soft shadow directly under the sole. No harsh shadows. "
+    "Clean e-commerce product photography. Output only this one image."
+    + BG
+)
+# Vue 2 – Dos chaussure : vue talon/arrière
+PROMPT_BACK_SHOE = (
+    "Single image: one sneaker only. Back view showing the heel, collar and back panel of the shoe. "
+    "Shoe alone—no foot, no person, no box. "
+    "Sole facing down. The sneaker must fill most of the frame. "
+    "Center the shoe horizontally and vertically with equal margins on all sides. "
+    "Soft even lighting; only a very subtle soft shadow directly under the sole. No harsh shadows. "
+    "Clean e-commerce product photography. Output only this one image."
+    + BG
+)
+# Vue 3 – 3/4 avant chaussure : angle hero classique sneaker
+PROMPT_FRONT_ANGLE_SHOE = (
+    "Single image: one sneaker only. Three-quarter front angle view (approximately 45 degrees): "
+    "showing the front toe, side profile, top of the shoe and a hint of the sole — the classic hero sneaker shot. "
+    "Shoe alone—no foot, no person, no box. Sole facing down. "
+    "The sneaker must fill most of the frame, centered with equal margins. "
+    "Soft even lighting; only a very subtle soft shadow directly under the sole. No harsh shadows. "
+    "Clean premium e-commerce product photography, Autry / New Balance style. Output only this one image."
+    + BG
+)
+# Vue 4 – Dessus chaussure : top-down view (lacets, languette, logo)
+PROMPT_TOP_SHOE = (
+    "Single image: one sneaker only. Top-down overhead view (bird's eye view): "
+    "looking straight down at the shoe from above, showing laces, tongue, toe box and full top surface. "
+    "Shoe alone—no foot, no person, no box. Sole facing down, shoe flat on the surface. "
+    "The sneaker must fill most of the frame, perfectly centered. "
+    "Soft even lighting, no harsh shadows. "
+    "Clean e-commerce product detail photography. Output only this one image."
+    + BG
+)
+
 GEMINI_MODEL = "gemini-2.5-flash-image"
 GEMINI_REF_MODEL = "gemini-3-pro-image-preview"
 GEMINI_VISION_MODEL = "gemini-2.5-flash"  # Vision + texte (vérif même produit / couleur) — 2.5 plus fiable que 2.0
@@ -397,6 +438,7 @@ def _run_generate_one(
     delay_after_image: float = 0,
     only_face_back: bool = False,
     flash_attempts: int = 4,
+    product_type: str = "garment",
 ) -> bool:
     """Génère 3 ou 4 images pour un dossier photos. Retourne True si au moins une image a été écrite."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -421,13 +463,25 @@ def _run_generate_one(
     ref_detail_b64, ref_detail_mime = (_encode_image(ref_detail_path) if ref_detail_path else (None, None))
     ref_lifestyle_b64, ref_lifestyle_mime = (_encode_image(ref_lifestyle_path) if ref_lifestyle_path else (None, None))
 
-    steps = [
-        ("1_face", face_b64, face_mime, PROMPT_FACE, ref_face_b64, ref_face_mime),
-        ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
-    ]
-    if back_path:
-        back_b64, back_mime = _encode_image(back_path)
-        steps.insert(1, ("2_back", back_b64, back_mime, PROMPT_BACK, ref_back_b64, ref_back_mime))
+    p_face = PROMPT_FACE_SHOE if product_type == "shoe" else PROMPT_FACE
+    p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
+
+    if product_type == "shoe":
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, None, None),
+            ("4_top", face_b64, face_mime, PROMPT_TOP_SHOE, None, None),
+        ]
+        if back_path:
+            back_b64, back_mime = _encode_image(back_path)
+            steps.insert(1, ("2_back", back_b64, back_mime, p_back, None, None))
+    else:
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
+            ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
+        ]
+        if back_path:
+            back_b64, back_mime = _encode_image(back_path)
+            steps.insert(1, ("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
     if only_face_back:
         steps = [s for s in steps if s[0] in ("1_face", "2_back")]
 
@@ -554,7 +608,8 @@ def check_api():
 @click.option("--flash-attempts", "flash_attempts", default=4, type=int, help="En mode Flash, nombre de générations par vue (défaut 4). Plus de chances d'avoir une sortie sans invention.")
 @click.option("-o", "output_dir", default="./output", type=click.Path(path_type=Path), help="Dossier de sortie")
 @click.option("--only", "only_views", default=None, help="Régénérer uniquement ces vues (ex: 2_back ou 1_face,2_back)")
-def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempts, output_dir, only_views):
+@click.option("--product-type", "product_type", default="garment", type=click.Choice(["garment", "shoe"]), help="Type de produit : garment (défaut) ou shoe (baskets/sneakers)")
+def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempts, output_dir, only_views, product_type):
     """Génère 3 ou 4 images via Gemini. Par défaut Gemini 3 Pro (une run propre). --gemini-flash pour l'économique."""
     _load_env()
     api_key = os.getenv("GEMINI_API_KEY")
@@ -599,13 +654,25 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
     ref_detail_b64, ref_detail_mime = (_encode_image(ref_detail_path) if ref_detail_path else (None, None))
     ref_lifestyle_b64, ref_lifestyle_mime = (_encode_image(ref_lifestyle_path) if ref_lifestyle_path else (None, None))
 
-    steps = [
-        ("1_face", face_b64, face_mime, PROMPT_FACE, ref_face_b64, ref_face_mime),
-        ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
-    ]
-    if back_path:
-        back_b64, back_mime = _encode_image(back_path)
-        steps.insert(1, ("2_back", back_b64, back_mime, PROMPT_BACK, ref_back_b64, ref_back_mime))
+    p_face = PROMPT_FACE_SHOE if product_type == "shoe" else PROMPT_FACE
+    p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
+
+    if product_type == "shoe":
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, None, None),
+            ("4_top", face_b64, face_mime, PROMPT_TOP_SHOE, None, None),
+        ]
+        if back_path:
+            back_b64, back_mime = _encode_image(back_path)
+            steps.insert(1, ("2_back", back_b64, back_mime, p_back, None, None))
+    else:
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
+            ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
+        ]
+        if back_path:
+            back_b64, back_mime = _encode_image(back_path)
+            steps.insert(1, ("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
 
     if only_set:
         steps = [s for s in steps if s[0] in only_set]
@@ -717,14 +784,15 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
 @click.option("--input-dir", "input_dir", required=True, type=click.Path(path_type=Path), help="Dossier parent : un sous-dossier par ref (nom = ref avec '-' au lieu de '/', ex. L100001-V09A)")
 @click.option("--refs-dir", "refs_dir", default="refs", type=click.Path(path_type=Path), help="Dossier refs (sous-dossiers face/, back/, details/, lifestyle/ ou fichiers à la racine)")
 @click.option("-o", "output_dir", default="./output_batch", type=click.Path(path_type=Path), help="Dossier de sortie (un sous-dossier par ref)")
-@click.option("--skip-existing", is_flag=True, help="Ne pas régénérer si 1_face.png existe déjà pour cette ref")
+@click.option("--skip-existing", is_flag=True, help="Ne pas régénérer si le dossier output contient déjà un fichier *face* et un fichier *back*")
 @click.option("--upload", "do_upload", is_flag=True, help="Après chaque génération, uploader les images vers le backend")
 @click.option("--backend", "backend_url", default="http://localhost:3001", help="URL du backend (pour --upload)")
 @click.option("--gemini-flash", "use_flash", is_flag=True, help="Utiliser Gemini 2.5 Flash (économique)")
 @click.option("--flash-attempts", "flash_attempts", default=4, type=int, help="En mode Flash, nombre de générations par vue (défaut 4). Plus de chances d'avoir une sortie sans invention.")
 @click.option("--only-face-back", "only_face_back", is_flag=True, help="Générer uniquement 1_face et 2_back (économie quota, le reste plus tard)")
 @click.option("--delay", default=30, type=float, help="Délai en secondes après chaque image générée (chaque requête API). Recommandé 30 pour éviter 429. Défaut 30.")
-def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, backend_url, use_flash, flash_attempts, delay, only_face_back):
+@click.option("--product-type", "product_type", default="garment", type=click.Choice(["garment", "shoe"]), help="Type de produit : garment (défaut) ou shoe (baskets/sneakers)")
+def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, backend_url, use_flash, flash_attempts, delay, only_face_back, product_type):
     """Parcourt les sous-dossiers de --input-dir, génère les images pour chaque ref (un sous-dossier = une ref). --delay = pause après chaque image. --only-face-back = uniquement 1 et 2. Optionnel : --upload."""
     _load_env()
     api_key = os.getenv("GEMINI_API_KEY")
@@ -747,7 +815,12 @@ def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, ba
     for i, subdir in enumerate(subdirs, 1):
         ref = subdir.name.replace("-", "/")
         out_dir = output_root / subdir.name
-        if skip_existing and (out_dir / "1_face.png").exists():
+        already_done = (
+            out_dir.exists()
+            and any("face" in f.name for f in out_dir.iterdir() if f.is_file())
+            and any("back" in f.name for f in out_dir.iterdir() if f.is_file())
+        )
+        if skip_existing and already_done:
             skip_count += 1
             if do_upload:
                 if _upload_one(ref, out_dir, backend_url, False, silent=True)[0]:
@@ -757,7 +830,7 @@ def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, ba
                     failed_refs.append(ref)
             continue
         console.print(f"[blue][{i}/{len(subdirs)}] {ref}[/blue]")
-        if _run_generate_one(api_key, subdir, refs_dir, out_dir, use_flash, delay_after_image=delay, only_face_back=only_face_back, flash_attempts=flash_attempts):
+        if _run_generate_one(api_key, subdir, refs_dir, out_dir, use_flash, delay_after_image=delay, only_face_back=only_face_back, flash_attempts=flash_attempts, product_type=product_type):
             if do_upload:
                 if _upload_one(ref, out_dir, backend_url, False, silent=True)[0]:
                     ok_count += 1
@@ -1386,3 +1459,51 @@ def upload_batch(batch_dir, backend_url, do_append):
     if failed_refs:
         console.print(f"[red]Refs en échec : {', '.join(failed_refs)}[/red]")
         raise SystemExit(1)
+
+
+@images.command("ui")
+@click.option("--port", default=7842, type=int, help="Port du serveur (défaut 7842)")
+@click.option("--no-browser", is_flag=True, help="Ne pas ouvrir le browser")
+def ui_command(port, no_browser):
+    """Lance l'interface web de gestion des images produits."""
+    import subprocess
+    import webbrowser
+    import threading
+    import time
+    import sys as _sys
+
+    ui_dir = PROJECT_ROOT / "tools" / "image-ui"
+    backend_dir = ui_dir / "backend"
+    dist_dir = ui_dir / "dist"
+    frontend_dir = ui_dir / "frontend"
+
+    if not ui_dir.exists():
+        console.print("[red]tools/image-ui/ introuvable[/red]")
+        return
+
+    # Build frontend si dist/ absent
+    if not dist_dir.exists():
+        console.print("[blue]Build du frontend (première fois)…[/blue]")
+        subprocess.run(["npm", "install"], cwd=str(frontend_dir), check=True)
+        subprocess.run(["npm", "run", "build"], cwd=str(frontend_dir), check=True)
+
+    # Installer deps Python
+    req_file = backend_dir / "requirements.txt"
+    if req_file.exists():
+        subprocess.run([_sys.executable, "-m", "pip", "install", "-q", "-r", str(req_file)], check=True)
+
+    # Ouvrir le browser après 1.5s
+    if not no_browser:
+        def _open():
+            time.sleep(1.5)
+            webbrowser.open(f"http://localhost:{port}")
+        threading.Thread(target=_open, daemon=True).start()
+
+    console.print(f"[green]Image UI → http://localhost:{port}[/green]")
+    console.print("[dim]Ctrl+C pour quitter[/dim]")
+
+    # Lancer uvicorn depuis le dossier backend
+    import uvicorn
+    _sys.path.insert(0, str(backend_dir))
+    os.chdir(str(backend_dir))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

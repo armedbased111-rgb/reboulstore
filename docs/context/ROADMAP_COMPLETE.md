@@ -1,6 +1,6 @@
 # 🗺️ Roadmap Complète - Reboul Store Platform
 
-**Version** : 4.6 · Dernière MAJ : 16/02/2026
+**Version** : 4.7 · Dernière MAJ : 10/03/2026
 
 ---
 
@@ -12,7 +12,7 @@
 | **Dernière phase clôturée** | Phase 24 ✅ (15/02/2026) |
 | **Prochaine tâche** | **25.1** Passer en revue Home.tsx (améliorations, idées, manques → puis implémentation) |
 | **Puis** | 25.2 Checkout · 25.3 Catalog · 25.4 Product · … (voir liste Phase 25) |
-| **Collections** | Suivi à part : `docs/context/COLLECTIONS_ROADMAP.md` (refs, photos, politiques, marque par marque) |
+| **Collections** | Suivi à part : `docs/context/COLLECTIONS_ROADMAP.md` · Stone Island ~41/77 images · Bisous Skateboards 25/33 · Autry 0/36 (shooting à faire) |
 
 **Objectif** : Site Reboul (enfants) prêt à la vente + Admin Centrale connectée. CP Company & Outlet après lancement.
 
@@ -477,7 +477,7 @@ Phase 24.6 CLI DB considérée terminée à 100 %.
 
 **Suivi** : La roadmap est mise à jour à chaque tâche faite. Doc de suivi détaillé : `docs/integrations/IMAGES_IA_WORKFLOW.md`. **Récap pipeline (3 étapes)** : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`.
 
-**État actuel (dernière MAJ 18/02/2026)** : **Pipeline images IA validé + correction couleur programmatique.** (1) Photos brutes dans `photos/`, refs de style dans `refs/`. (2) `./rcli images generate` (Gemini 2.5 Flash ou 3 Pro) → 4 vues. (3) `./rcli images adjust` pour retouches IA. (4) **`./rcli images color-fix`** : correction couleur **programmatique** (PIL/numpy) — extrait le hex de 1_face et l'applique à 2_back pixel par pixel. Modes : `--dir` (un produit), `--batch` (tout un dossier), `--source`/`--target` (explicite). (5) `./rcli images upload --ref REF --dir output/`. (6) Vérifs (même produit + couleur) sur Gemini 2.5 Flash. Récap dans `IMAGES_PRODUIT_PIPELINE.md`.
+**État actuel (dernière MAJ 25/02/2026)** : **Pipeline images IA validé + premier batch réel Stone SS26.** (1) Photos brutes dans `photos/` (1_face/2_back) ; refs de style optionnelles (mais batch Stone = `refs_empty`, fond géré par les prompts). (2) `./rcli images generate-batch --gemini-flash --flash-attempts 4 --only-face-back --refs-dir refs_empty --delay 30` → 1_face/2_back pour 27 refs sur 69. (3) `./rcli images color-fix --batch output_batch_stone_island` : couleur dos recollée sur la face. (4) `./rcli images upload-batch --batch output_batch_stone_island` : 27 refs uploadées (54 images) vers Cloudinary + BDD. (5) Ajustements ponctuels sur quelques refs avec `./rcli images adjust --gemini-pro` (Gemini 3 Pro, sans `--ref`, prompts minimaux, sorties `_adjusted`, sans `--skip-verify`). (6) Workflow complet documenté dans `IMAGES_PRODUIT_PIPELINE.md` + avancement collection dans `COLLECTIONS_ROADMAP.md` (27/69 refs avec images).
 
 ---
 
