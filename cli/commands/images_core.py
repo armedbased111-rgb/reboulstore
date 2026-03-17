@@ -3,6 +3,7 @@ Noyau fonctionnel images IA — sans Click ni console.print.
 Importable depuis le backend FastAPI et les commandes CLI.
 """
 import base64
+import io
 import os
 import random
 import time
@@ -21,6 +22,13 @@ NO_INVENTION = (
     "If the garment has no hood, output must have no hood. If it has no visible logo/badge, output must have none. "
     "CRITICAL: do NOT add any badge or patch on the sleeve or shoulder unless it is explicitly visible in the source photo — "
     "even if the brand typically uses one. Reproduce only what is visible, never invent. "
+)
+NO_INVENTION_SHOE = (
+    " CRITICAL — reproduce the shoe EXACTLY as shown in the source photo: "
+    "do NOT invent, modify or hallucinate any text, letters or markings. "
+    "Tongue label: copy only the text and layout that is clearly visible in the source — if you cannot read it clearly, leave the label blank or as a plain patch, never guess. "
+    "Sole/midsole text: copy only what is explicitly visible in the source photo — do NOT add 'GAME SET MATCH' or any other text unless it is clearly readable in the input. "
+    "Side logos, heel badge, insole print: reproduce only what is visible, never invent details based on brand knowledge. "
 )
 
 PROMPT_FACE = (
@@ -63,6 +71,53 @@ PROMPT_LIFESTYLE = (
     "Soft even studio lighting. Plain light grey background. "
     "Clean lookbook-style product shot for e-commerce. Output only this one image."
     + BG
+)
+
+# ── Prompts chaussure ─────────────────────────────────────────────────────────
+
+PROMPT_FACE_SHOE = (
+    "Single image: one sneaker only. Lateral side profile view, full silhouette from heel to toe. "
+    "Shoe alone—no foot, no person, no box, no tissue paper, no laces hanging loose. "
+    "Sole facing down. The sneaker must fill most of the frame. "
+    "Center the shoe horizontally and vertically with equal margins on all sides. "
+    "Soft even lighting; only a very subtle soft shadow directly under the sole. No harsh shadows. "
+    "Clean e-commerce product photography. Output only this one image."
+    + NO_INVENTION_SHOE
+    + BG
+)
+PROMPT_BACK_SHOE = (
+    "Single image: one sneaker only. Back view showing the heel, collar and back panel of the shoe. "
+    "Shoe alone—no foot, no person, no box. "
+    "Sole facing down. The sneaker must fill most of the frame. "
+    "Center the shoe horizontally and vertically with equal margins on all sides. "
+    "Soft even lighting; only a very subtle soft shadow directly under the sole. No harsh shadows. "
+    "Clean e-commerce product photography. Output only this one image."
+    + NO_INVENTION_SHOE
+    + BG
+)
+PROMPT_TOP_SHOE = (
+    "Single image: one sneaker only. Top-down overhead view (bird's eye view): "
+    "looking straight down at the shoe from above, showing laces, tongue, toe box and full top surface. "
+    "Shoe alone—no foot, no person, no box. Sole facing down, shoe flat on the surface. "
+    "The sneaker must fill most of the frame, perfectly centered. "
+    "Soft even lighting; only a very subtle soft shadow under the sole. No harsh shadows. "
+    "Clean e-commerce product photography. Output only this one image. "
+    "TONGUE LABEL — CRITICAL: copy the tongue label EXACTLY as it appears in the source photo: "
+    "same shape, same colors, same text, same logo layout. Do NOT replace it with a different label design. "
+    "MIDSOLE TEXT: copy exactly the text visible on the midsole/outsole in the source — do not alter it. "
+    + NO_INVENTION_SHOE
+    + BG
+)
+
+# ── Prompt adjust ─────────────────────────────────────────────────────────────
+
+ADJUST_SYSTEM = (
+    "You are an image editor. Your job is to apply ONE small change to the input image. DO NOT redraw, regenerate or replace the garment. "
+    "CRITICAL: The garment in the output must be THE SAME as in the input — same type, same color, same view (front or back), same framing. "
+    "Change ONLY what the instruction asks (e.g. shadow, fold, lighting, remove a tag). Do not substitute a different product or view. "
+    "Apply ONLY this change: {prompt}. "
+    "Background must be plain solid #F3F3F3 (light grey) only. "
+    "Output only the modified image, no text."
 )
 
 GEMINI_MODEL = "gemini-2.5-flash-image"
@@ -324,7 +379,7 @@ def run_generate_one(
     stop_check: Optional[Callable[[], bool]] = None,
 ) -> bool:
     """
-    Génère les images (1_face, 2_back, 3_detail_logo) pour un produit.
+    Génère les images (garment: 1_face + 2_back / shoe: 1_face + 2_back + 4_top) pour un produit.
 
     Args:
         progress_callback: callback(event_type, message) pour les logs
@@ -353,13 +408,24 @@ def run_generate_one(
     ref_back_b64, ref_back_mime = (encode_image(ref_back_path) if ref_back_path else (None, None))
     ref_detail_b64, ref_detail_mime = (encode_image(ref_detail_path) if ref_detail_path else (None, None))
 
-    steps = [
-        ("1_face", face_b64, face_mime, PROMPT_FACE, ref_face_b64, ref_face_mime),
-        ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
-    ]
-    if back_path:
-        back_b64, back_mime = encode_image(back_path)
-        steps.insert(1, ("2_back", back_b64, back_mime, PROMPT_BACK, ref_back_b64, ref_back_mime))
+    p_face = PROMPT_FACE_SHOE if product_type == "shoe" else PROMPT_FACE
+    p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
+
+    if product_type == "shoe":
+        # Shoes : 1_face (génération latérale) + 4_top (Gemini ADJUST depuis back.jpeg)
+        # Pas de 2_back : back.jpeg = vue du dessus, pas talon
+        top_source_path = back_path if back_path else face_path
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, None, None),
+            ("4_top_bgremove", None, None, None, None, None),
+        ]
+    else:
+        steps = [
+            ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
+        ]
+        if back_path:
+            back_b64, back_mime = encode_image(back_path)
+            steps.append(("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
     if only_face_back:
         steps = [s for s in steps if s[0] in ("1_face", "2_back")]
 
@@ -372,6 +438,44 @@ def run_generate_one(
         if should_stop():
             log("Arrêt demandé")
             break
+
+        # ── Vue top chaussure : Gemini adjust (suppression fond) ─────────────
+        if name == "4_top_bgremove":
+            log("4_top (nettoyage fond Gemini)…")
+            top_b64, top_mime = encode_image(top_source_path)
+            bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (paper, tissue paper, table, floor, any surface). "
+                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Equal margins on all sides. "
+                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
+                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            top_written = 0
+            for t in range(num_variants):
+                if should_stop():
+                    break
+                try:
+                    out_bytes = call_gemini(
+                        api_key, top_b64, top_mime, bg_prompt, use_flash=use_flash,
+                    )
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        (output_dir / f"4_top{suffix}.png").write_bytes(out_bytes)
+                        top_written += 1
+                        if delay_after_image > 0 and t == 0:
+                            time.sleep(delay_after_image)
+                except Exception as e:
+                    log(f"4_top variant {t+1}: {e}")
+            if top_written:
+                written += 1
+                log(f"4_top — {top_written} variante(s)")
+            else:
+                log("4_top — pas d'image")
+            continue
+        # ───────────────────────────────────────────────────────────────────────
 
         log(f"Génération {name}…")
         pass_color_b64, pass_color_mime = None, None
@@ -553,3 +657,199 @@ def normalize_background_to_hex(image_path: Path, output_path: Path, target_hex:
     out_arr[mask, 0], out_arr[mask, 1], out_arr[mask, 2] = tr, tg, tb
     Image.fromarray(out_arr).save(output_path)
     return np.any(mask)
+
+
+# ── Campaign scenes ───────────────────────────────────────────────────────────
+
+CAMPAIGN_SCENES: dict[str, dict] = {
+    # Prompts à construire depuis des références visuelles réelles
+    "custom": {
+        "label": "Custom",
+        "season": "all",
+        "desc": "",
+    },
+    "floating_jacket": {
+        "label": "Veste flottante (fond blanc)",
+        "season": "all",
+        "raw_prompt": (
+            "Pure white #FFFFFF background. ZERO shadow — no drop shadow, "
+            "no contact shadow, nothing.\n\n"
+            "The jacket is OPEN — zipper fully unzipped, both front panels spread "
+            "wide apart, jacket open like wings. Hood open and expanded upward. "
+            "Both sleeves extended outward naturally, slightly angled.\n\n"
+            "The garment floats mid-air, tilted diagonally 20-30 degrees, "
+            "as if caught by the wind and suspended in zero gravity.\n\n"
+            "The whole jacket must be small enough to leave generous white space "
+            "on all 4 sides — jacket occupies maximum 55% of the frame.\n\n"
+            "Preserve exact color, badge, textures and all details from the input.\n"
+            "No mannequin, no hanger, no person."
+        ),
+        "desc": "",
+    },
+    "shoe_flatlay_beach": {
+        "label": "Sneaker flat lay — plage SS26",
+        "season": "ss26",
+        "raw_prompt": (
+            "Keep the exact same top-down flat lay view as the input image — "
+            "same overhead angle, same framing, shoe fills 60-70% of the frame.\n\n"
+            "Replace ONLY the background with a real photorealistic SS26 beach scene "
+            "shot from directly above: warm sand with subtle texture, a few small pebbles, "
+            "maybe a thin stripe of turquoise shallow water at one edge. "
+            "Natural summer sunlight, warm tones, Mediterranean feel.\n\n"
+            "The shoe stays perfectly flat, no perspective distortion. "
+            "Add a very subtle soft shadow directly underneath the shoe, "
+            "consistent with natural overhead sunlight.\n\n"
+            "CRITICAL — copy the shoe pixel-perfectly from the input: "
+            "every logo, every label, every tag, every text on the tongue/insole/sole/heel "
+            "must be IDENTICAL to the reference — do NOT invent, modify or hallucinate any text. "
+            "If you cannot read a marking clearly, reproduce the shape faithfully without adding letters. "
+            "Preserve exact colors, material textures, stitching, sole pattern and silhouette.\n"
+            "No mannequin, no person, no artificial props.\n"
+            "Output: square or portrait crop, photorealistic editorial quality."
+        ),
+        "desc": "",
+    },
+}
+
+CAMPAIGN_PROMPT = (
+    "Photorealistic fashion campaign photograph. Shot on medium format camera (Hasselblad or Phase One). "
+    "The input image shows a garment — use it as the exact product reference for color, texture, cut and details. "
+    "Generate a single photorealistic image: a real person wearing this exact garment, "
+    "photographed by a professional fashion photographer. "
+    "The person: stylish, anonymous — head cropped out or turned away, body from shoulders to knees. "
+    "Lighting must be physically consistent — same light source illuminates both the person and the environment. "
+    "No compositing artifacts. No AI-generated look. The image must be indistinguishable from a real photograph. "
+    "Garment details: preserve exact color, fabric texture, logo placement, cut and silhouette from the reference. "
+    "Scene: {scene_desc}. "
+    "Format: horizontal landscape, full bleed, no borders, no text, no watermarks. "
+    "Style reference: Dior, Stone Island, CP Company campaign photography quality."
+)
+
+
+
+def run_campaign(
+    api_key: str,
+    image_path: Path,
+    scene_key: str,
+    output_path: Path,
+    custom_prompt: Optional[str] = None,
+    use_flash: bool = False,
+    progress_callback: Optional[Callable[[str, str], None]] = None,
+) -> bool:
+    """
+    Génère une image de campagne publicitaire à partir d'un produit.
+
+    Args:
+        image_path: image source du produit (face ou back)
+        scene_key: clé de scène depuis CAMPAIGN_SCENES, ou "custom"
+        output_path: chemin de sortie
+        custom_prompt: prompt personnalisé (si scene_key == "custom")
+        use_flash: utiliser Flash (défaut: Pro)
+        progress_callback: callback(event_type, message)
+
+    Retourne True si l'image a été écrite.
+    """
+    def log(msg: str):
+        if progress_callback:
+            progress_callback("log", msg)
+
+    image_path = Path(image_path).resolve()
+    output_path = Path(output_path).resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Résolution du prompt
+    if custom_prompt and custom_prompt.strip():
+        prompt_text = custom_prompt.strip()
+    else:
+        scene = CAMPAIGN_SCENES.get(scene_key, CAMPAIGN_SCENES["custom"])
+        if scene.get("raw_prompt"):
+            prompt_text = scene["raw_prompt"]
+        else:
+            prompt_text = CAMPAIGN_PROMPT.format(scene_desc=scene["desc"])
+
+    img_b64, mime = encode_image(image_path)
+
+    log(f"Génération campagne {scene_key} pour {image_path.name}…")
+    try:
+        out_bytes = call_gemini(
+            api_key, img_b64, mime, prompt_text,
+            use_ref_model=not use_flash,
+            use_flash_model=use_flash,
+        )
+        if not out_bytes:
+            log("Pas d'image dans la réponse Gemini")
+            return False
+        output_path.write_bytes(out_bytes)
+        log(f"OK → {output_path.name}")
+        return True
+    except requests.HTTPError as e:
+        log(f"Erreur HTTP {e.response.status_code}")
+        return False
+    except Exception as e:
+        log(f"Erreur: {e}")
+        return False
+
+
+# ── Adjust une image ──────────────────────────────────────────────────────────
+
+def run_adjust(
+    api_key: str,
+    image_path: Path,
+    prompt: str,
+    output_path: Path,
+    ref_path: Optional[Path] = None,
+    use_flash: bool = False,
+    use_pro: bool = True,
+    progress_callback: Optional[Callable[[str, str], None]] = None,
+) -> bool:
+    """
+    Ajuste une image avec un prompt. Retourne True si l'image a été écrite.
+
+    Args:
+        ref_path: image de référence optionnelle (ex: 1_face pour caler le cadrage)
+        use_flash: utiliser Gemini Flash (défaut: non, utilise Pro)
+        use_pro: forcer Gemini Pro (défaut: oui)
+        progress_callback: callback(event_type, message)
+    """
+    def log(msg: str):
+        if progress_callback:
+            progress_callback("log", msg)
+
+    image_path = Path(image_path).resolve()
+    output_path = Path(output_path).resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    prompt_text = ADJUST_SYSTEM.format(prompt=prompt)
+    ref_b64, ref_mime = None, None
+    if ref_path is not None:
+        ref_path = Path(ref_path).resolve()
+        ref_b64, ref_mime = encode_image(ref_path)
+        prompt_text = (
+            "First image = image to modify. Second image = reference. "
+            + prompt_text
+            + " Use the second image as reference for colors or style where the instruction says so."
+        )
+
+    img_b64, mime = encode_image(image_path)
+    use_ref_model = (use_pro or bool(ref_b64)) and not use_flash
+
+    log(f"Ajustement : {image_path.name}…")
+    try:
+        out_bytes = call_gemini(
+            api_key, img_b64, mime, prompt_text,
+            ref_b64=ref_b64, ref_mime=ref_mime,
+            use_ref_model=use_ref_model,
+            use_flash_model=use_flash,
+        )
+        if not out_bytes:
+            log("Pas d'image dans la réponse")
+            return False
+        output_path.write_bytes(out_bytes)
+        log(f"OK → {output_path.name}")
+        return True
+    except requests.HTTPError as e:
+        log(f"Erreur HTTP {e.response.status_code}")
+        return False
+    except Exception as e:
+        log(f"Erreur: {e}")
+        return False

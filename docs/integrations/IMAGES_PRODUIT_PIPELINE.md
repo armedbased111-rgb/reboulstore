@@ -96,6 +96,51 @@ Avec `--skip-verify` sur l'adjust, le produit reste garanti par le prompt (« Sa
 
 ---
 
+## Pipeline Chaussures (sneakers / Autry)
+
+> **`--product-type shoe`** active le pipeline shoe dans `generate` et `generate-batch`.
+
+### Convention shooting
+
+| Fichier | Vue | Destination |
+|---------|-----|-------------|
+| `face.jpeg` | Profil latéral | `1_face` (génération IA) |
+| `back.jpeg` | Dessus / top-down | `4_top` (Gemini ADJUST) |
+
+Pas de photo talon → pas de `2_back` pour les chaussures.
+
+### Étapes générées
+
+1. **`1_face`** : Gemini génère depuis `face.jpeg` (vue latérale propre sur fond #F3F3F3).
+2. **`4_top`** : Gemini ADJUST prend `back.jpeg` (photo brute vue du dessus), supprime le fond, centre sur #F3F3F3. Tous les détails sont préservés pixel-perfect : étiquette languette, texte midsole, logo, stitching.
+
+**Pourquoi ADJUST et pas génération IA ?** L'IA réinterprétait l'étiquette de la languette (inventait le mauvais label). En donnant `back.jpeg` comme source (étiquette déjà visible), Gemini ne peut rien inventer — il enlève juste le fond.
+
+**Pourquoi pas rembg ?** Testé et abandonné : bords noirs, shoe coupé à droite malgré ajustements de threshold.
+
+### Batch Autry
+
+```bash
+./rcli images generate-batch \
+  --input-dir "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /AUTRY" \
+  -o ./output_batch_autry \
+  --refs-dir refs_empty \
+  --gemini-flash --flash-attempts 4 \
+  --product-type shoe \
+  --skip-existing --delay 30
+```
+
+### Stratégie ADJUST anti-hallucination (universelle)
+
+**Principe** : quand l'IA invente des détails (badges, logos, textes, étiquettes) → **ne pas générer de zéro**. Donner la photo source brute qui contient déjà le bon détail + Gemini ADJUST "remove bg, center, preserve everything pixel-perfect".
+
+**Cas d'usage** :
+- Autry `4_top` : étiquette languette → `back.jpeg` comme source ✅
+- Stone Island (potentiel) : badge compass qui change de position → `back.jpeg` comme source
+- Toute marque avec détails graphiques précis (broderie, patch, texte) → même logique
+
+---
+
 ## En 3 étapes
 
 | Étape | Action | Résultat |
@@ -161,7 +206,7 @@ Ordre des images : 1_face, 2_back, 3_detail_logo (ordre 0, 1, 2 en BDD).
 # Reprendre en ignorant les refs déjà générées
 ./rcli images generate-batch --input-dir "/path/to/STONE ISLAND" --skip-existing --upload
 ```
-Options : `--refs-dir refs` (partagé), `--gemini-flash` (économique), `--flash-attempts 4` (défaut : 4 générations par vue en Flash, pour limiter les inventions), `--only-face-back` (uniquement 1_face et 2_back), `--skip-existing` (ne pas régénérer si `1_face.png` existe déjà), `--delay 30` (défaut : secondes **après chaque image générée** ; recommandé 30 pour éviter 429).
+Options : `--refs-dir refs` (partagé), `--gemini-flash` (économique), `--flash-attempts 4` (défaut : 4 générations par vue en Flash, pour limiter les inventions), `--only-face-back` (uniquement 1_face et 2_back), `--skip-existing` (ne pas régénérer si `1_face.png` existe déjà), `--delay 30` (défaut : secondes **après chaque image générée** ; recommandé 30 pour éviter 429), `--product-type shoe` (pipeline chaussures : 1_face + 4_top via ADJUST).
 
 **Vérifier la connexion API avant un batch** : `./rcli images check-api` — teste la clé et indique si tout est OK ou si tu es en 429 (attendre puis relancer avec `--delay` plus élevé).
 

@@ -33,6 +33,7 @@ const coupons_module_1 = require("./modules/coupons/coupons.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const sms_module_1 = require("./modules/sms/sms.module");
 const stock_notifications_module_1 = require("./modules/stock-notifications/stock-notifications.module");
+const hero_module_1 = require("./modules/hero/hero.module");
 const schedule_1 = require("@nestjs/schedule");
 let AppModule = class AppModule {
 };
@@ -77,6 +78,7 @@ exports.AppModule = AppModule = __decorate([
             notifications_module_1.NotificationsModule,
             sms_module_1.SmsModule,
             stock_notifications_module_1.StockNotificationsModule,
+            hero_module_1.HeroModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

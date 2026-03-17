@@ -2,7 +2,7 @@
 
 **Objectif** : Suivre l'avancement de la **première collection** et des **futures collections** (setup complet : politiques, refs marque par marque, photos, ajout en base). Cette roadmap est **à part** de la roadmap principale : les collections, tu en feras toujours — on ne mélange pas avec les phases produit (front, backend, lancement). **Step by step, check-in** comme la roadmap principale.
 
-**Dernière MAJ** : 10/03/2026
+**Dernière MAJ** : 17/03/2026
 
 ---
 
@@ -11,9 +11,9 @@
 | Info | Valeur |
 |------|--------|
 | **Collection principale** | Stone Island SS26 (77 refs en base ; **~41/77 refs avec images** après 3 batchs ; 14 refs restant à shooter : casquettes, polo ml, pull été, sac) |
-| **Autry SS26** | 36 produits / 167 variants en base ✅ ; dossiers iCloud créés ; **0 image** (shooting pas encore fait) |
+| **Autry SS26** | 36 produits / 167 variants en base ✅ ; shooting fait ; **1 ref testée (AULM-BH02)** ; batch complet 35 refs restantes à lancer |
 | **Bisous Skateboards SS26** | 33 produits / 101 variants en base ✅ ; **25/33 images générées** ; 8 accessoires en attente de photos |
-| **Prochaine tâche** | Stone Island : shooter 14 refs restantes → batch 4 → upload. Bisous : shooter 8 accessoires → batch → upload. Autry : shooter les 36 refs → batch shoe → upload |
+| **Prochaine tâche** | Stone Island : trier 61 refs puis upload. Bisous : shooter 8 accessoires. Autry : lancer batch complet (35 refs) → trier → upload |
 | **Workflow de base** | Feuille/CSV → `image-to-csv` (photos feuilles) / `feuille-to-csv` → `merge-pages` → wipe + `category-create` si besoin → import Admin → `import compare-csv` (maj stock) → `db ref` → photos → `images generate` ou `images generate-batch` → `images upload` |
 
 **Références** : `docs/COLLECTION_REAL.md`, `docs/context/FEUILLES_STOCK_REBOUL.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`, `docs/integrations/IMAGES_IA_WORKFLOW.md`, `docs/integrations/IMAGES_WORKFLOW.md`, `./rcli db ref <REF>`, `./rcli images --help`.
@@ -44,7 +44,7 @@
 | Marque               | Refs total | Refs en base | Refs avec images | Statut / Note        |
 |----------------------|------------|--------------|------------------|----------------------|
 | Stone Island         | 77         | 77           | ~41              | Données ✅ ; maj stock fév. 2026 ; 3 batchs IA générés ; **14 refs restant à shooter** (casquettes, polo ml, pull été, sac) |
-| Autry                | 36         | 36           | 0                | Données ✅ (167 variants) ; dossiers iCloud créés ; **shooting à faire** ; pipeline shoe prêt (`--product-type shoe`, 3 vues : face/back/top) |
+| Autry                | 36         | 36           | 1                | Données ✅ (167 variants) ; shooting fait ; **1 ref testée (AULM-BH02)** ; pipeline shoe opérationnel (`--product-type shoe`, 2 vues : 1_face + 4_top Gemini ADJUST) |
 | Bisous Skateboards   | 33         | 33           | 25               | Données ✅ (101 variants) ; **25/33 images générées** ; **8 accessoires en attente de photos** |
 
 **Comment mettre à jour** : après import, remplir « Refs total » et « Refs en base » (ex. `./rcli db product-list --brand "Stone Island" --collection SS26` pour compter). Quand tu uploades les images produit par produit, incrémenter « Refs avec images ». Quand une marque est 100 % (refs avec images = refs total), passer le statut à ✅.
@@ -302,13 +302,13 @@ Notes : la feuille de stock SS26 et le CSV `stone-maj-ss26.csv` sont désormais 
 | Phase | Intitulé | Statut |
 |-------|----------|--------|
 | 1–4 | Setup, données, BDD, vérification | ✅ Fait |
-| 5 | Shooting photos (36 refs, sneakers) | ⏳ À faire |
-| 6 | Génération images (`--product-type shoe`, 3 vues) + upload | ⏳ Après shooting |
+| 5 | Shooting photos (36 refs, sneakers) | ✅ Fait |
+| 6 | Génération images (`--product-type shoe`, 2 vues : 1_face + 4_top) + tri + upload | ⏳ En cours (1 ref testée, batch 35 restantes à lancer) |
 | 7–8 | Contrôle qualité + clôture | ⏳ |
 
 **Données** : 36 produits, 167 variants, collection SS26, catégorie baskets.
 **Pipeline shoe** : `./rcli images generate-batch --input-dir "/chemin/AUTRY" -o ./output_batch_autry --refs-dir refs_empty --gemini-flash --flash-attempts 4 --product-type shoe --skip-existing --delay 30`
-**Vues générées** : `1_face` (profil latéral), `2_back` (talon), `4_top` (vue de dessus). Vue `3_front_angle` supprimée.
+**Vues générées** : `1_face` (profil latéral, génération IA) + `4_top` (vue du dessus, Gemini ADJUST depuis back.jpeg). Pas de `2_back` (back.jpeg = vue top, pas talon). Vue `3_front_angle` supprimée.
 **Dossiers iCloud** : un dossier par ref, `/` remplacé par `-`.
 
 ---

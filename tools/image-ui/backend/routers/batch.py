@@ -2,9 +2,9 @@ import asyncio
 import json
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
-from ..models import BatchStartRequest
-from ..services.batch_runner import batch_runner
-from ..services.brand_config import load_configs
+from models import BatchStartRequest
+from services.batch_runner import batch_runner
+from services.brand_config import load_configs
 
 router = APIRouter()
 
@@ -26,6 +26,7 @@ async def start_batch(req: BatchStartRequest):
         "flash_attempts": req.flash_attempts or config.get("flash_attempts", 4),
         "delay": req.delay if req.delay is not None else config.get("delay", 30),
         "skip_existing": req.skip_existing,
+        "target_refs": req.target_refs or None,
     }
     loop = asyncio.get_event_loop()
     batch_runner.start(job_params, loop)

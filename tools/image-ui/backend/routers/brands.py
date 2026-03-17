@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from ..models import BrandConfig
-from ..services.brand_config import load_configs, upsert_brand, delete_brand
-from ..services.ref_status import scan_brand_refs
+from models import BrandConfig
+from services.brand_config import load_configs, upsert_brand, delete_brand
+from services.ref_status import scan_brand_refs
 
 router = APIRouter()
 

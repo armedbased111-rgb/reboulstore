@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Literal
-from .brand_config import resolve_output_dir
+from services.brand_config import resolve_output_dir
 
 StatusType = Literal["empty", "needs_generation", "needs_upload", "done"]
 PHOTO_EXTS = {'.jpg', '.jpeg', '.png', '.heic', '.HEIC', '.JPG', '.JPEG', '.PNG'}
@@ -43,6 +43,16 @@ def count_input_photos(input_dir: Path, ref_name: str) -> int:
     )
 
 
+def list_input_photos(input_dir: Path, ref_name: str) -> list[str]:
+    folder = input_dir / ref_name
+    if not folder.exists():
+        return []
+    return sorted([
+        f.name for f in folder.iterdir()
+        if f.is_file() and f.suffix.lower() in {e.lower() for e in PHOTO_EXTS}
+    ])
+
+
 def list_output_images(output_folder: Path) -> list[str]:
     if not output_folder.exists():
         return []
@@ -53,19 +63,28 @@ def list_output_images(output_folder: Path) -> list[str]:
 
 
 def scan_brand_refs(brand_config: dict) -> list[dict]:
+    from services.db_lookup import get_products_info_batch
     input_dir = Path(brand_config["input_dir"])
     output_dir = resolve_output_dir(brand_config["output_dir"])
     refs = []
-    if input_dir.exists():
-        for d in sorted(input_dir.iterdir()):
-            if d.is_dir() and not d.name.startswith("."):
-                status = get_ref_status(input_dir, output_dir, d.name)
-                images = list_output_images(output_dir / d.name)
-                photo_count = count_input_photos(input_dir, d.name)
-                refs.append({
-                    "name": d.name,
-                    "status": status,
-                    "images": images,
-                    "input_photo_count": photo_count,
-                })
+    if not input_dir.exists():
+        return refs
+
+    subdirs = [d for d in sorted(input_dir.iterdir()) if d.is_dir() and not d.name.startswith(".")]
+    folder_names = [d.name for d in subdirs]
+    db_info = get_products_info_batch(folder_names)
+
+    for d in subdirs:
+        status = get_ref_status(input_dir, output_dir, d.name)
+        images = list_output_images(output_dir / d.name)
+        photo_count = count_input_photos(input_dir, d.name)
+        info = db_info.get(d.name, {})
+        refs.append({
+            "name": d.name,
+            "status": status,
+            "images": images,
+            "input_photo_count": photo_count,
+            "product_name": info.get("name"),
+            "category": info.get("category"),
+        })
     return refs

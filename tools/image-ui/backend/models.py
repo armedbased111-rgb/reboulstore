@@ -38,3 +38,18 @@ class BatchStartRequest(BaseModel):
     delay: int = 30
     product_type: str = "garment"
     refs_dir: str = "refs_empty"
+    target_refs: Optional[list[str]] = None
+
+
+class AdjustRequest(BaseModel):
+    prompt: str
+    model: Literal["pro", "flash"] = "pro"
+    ref_image: Optional[str] = None  # filename in same ref dir, e.g. "1_face.png"
+    overwrite: bool = False
+
+
+class CampaignRequest(BaseModel):
+    source_image: str           # filename dans le dossier du ref (ex: "1_face.png")
+    scene: str = "urban"        # clé dans CAMPAIGN_SCENES ou "custom"
+    custom_prompt: Optional[str] = None
+    model: Literal["pro", "flash"] = "pro"

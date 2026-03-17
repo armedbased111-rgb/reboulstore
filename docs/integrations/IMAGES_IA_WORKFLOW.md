@@ -350,10 +350,46 @@ Détails : (1)(3) Fait. (2) Optionnel. (4) Phrase « same lighting ». (5) Comma
 
 ---
 
+## Pipeline Chaussures — Stratégie ADJUST (validée Autry SS26)
+
+### Problème résolu
+
+L'IA inventait l'étiquette de la languette sur la vue `4_top` (vue du dessus) car la source était `face.jpeg` (profil latéral, étiquette peu visible). Le modèle "complétait" avec sa connaissance de la marque → mauvais label.
+
+### Solution : Gemini ADJUST sur photo brute
+
+Au lieu de **générer** la vue top depuis zéro, on donne la **photo brute `back.jpeg`** (vue top-down du shoot, étiquette déjà visible) et on demande juste de supprimer le fond.
+
+```bash
+# Régénérer uniquement la vue 4_top d'une ref
+./rcli images generate --face photos/face.jpeg --back photos/back.jpeg \
+  -o ./output_batch_autry/AULM-BH02 \
+  --refs-dir refs_empty \
+  --gemini-flash --flash-attempts 4 \
+  --product-type shoe \
+  --only 4_top
+```
+
+### Convention shooting Autry
+
+| Fichier | Vue réelle | Pipeline |
+|---------|------------|----------|
+| `face.jpeg` | Profil latéral | `1_face` (génération IA) |
+| `back.jpeg` | Dessus / top-down | `4_top` (Gemini ADJUST) |
+
+Pas de photo talon → pas de `2_back` pour les chaussures.
+
+### Principe universel (applicable à d'autres marques)
+
+**Quand l'IA invente un détail** (badge, logo, texte, étiquette) → ne pas générer de zéro. Donner la photo source brute qui contient déjà le bon détail + ADJUST "remove background, center, preserve everything pixel-perfect".
+
+Applicable à Stone Island (badge compass) si besoin : `back.jpeg` → ADJUST.
+
+---
+
 ## Références
 
 - [Nano Banana – AI Product Photography Guide](https://www.nano-banana.ai/en/posts/ai-product-photography-ecommerce-guide)
-- [Nano Banana](https://nanobanana.im) – site principal (compte Pro, dashboard, API)
-- [Nano Banana API – Developer Guide](https://www.nano-banana.run/nano-banana-api) (doc technique API)
 - [Gemini – Image generation](https://ai.google.dev/gemini-api/docs/image-generation) (Google AI for Developers)
 - Roadmap : `docs/context/ROADMAP_COMPLETE.md` – Phase 24.10
+- Pipeline détaillé chaussures : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md` § Pipeline Chaussures

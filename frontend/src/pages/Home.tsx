@@ -1,5 +1,34 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { HeroSectionImage } from '../components/home/HeroSectionImage';
+
+
+interface HeroSlide {
+  id: string;
+  imageSrc: string;
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  buttonLink: string;
+}
+
+const FALLBACK_SLIDES: HeroSlide[] = [
+  {
+    id: 'fallback_1',
+    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1773351718/homepage/homepage/hero.png',
+    title: 'SS26 Pre Release',
+    subtitle: 'Stone Island SS26',
+    buttonText: 'Shop now',
+    buttonLink: '/catalog',
+  },
+  {
+    id: 'fallback_2',
+    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1773352040/homepage/homepage/hero_2.png',
+    title: 'SS26 Pre Release',
+    subtitle: 'Stone Island SS26',
+    buttonText: 'Shop now',
+    buttonLink: '/catalog',
+  },
+];
 import { FeaturedProducts } from '../components/home/FeaturedProducts';
 import { CategorySection } from '../components/home/CategorySection';
 import { BrandCarousel } from '../components/home/BrandCarousel';
@@ -15,6 +44,14 @@ import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 export const Home = () => {
   const query = useMemo(() => ({ limit: 10 }), []);
   const { products, loading } = useProducts(query);
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(FALLBACK_SLIDES);
+
+  useEffect(() => {
+    fetch('/api/hero')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setHeroSlides(data); })
+      .catch(() => {}); // garde le fallback si image-ui off
+  }, []);
 
   const createRevealUp = (duration: number = 1.4, distance: number = 40) =>
     useScrollAnimation((element) => {
@@ -45,14 +82,11 @@ export const Home = () => {
 
   return (
     <div className='px-[4px]'>
-      {/* Hero Section avec image */}
+      {/* Hero Section avec slideshow */}
       <div ref={heroImageRef}>
         <HeroSectionImage
-          title="Winter Sale"
-          subtitle="Up To 50% Off"
-          buttonText="Shop now"
-          buttonLink="/catalog"
-          imageSrc="https://res.cloudinary.com/dxen69pdo/image/upload/v1768255803/homepage/homepage/background.jpg"
+          slides={heroSlides}
+          autoplayInterval={6000}
         />
       </div>
 
@@ -60,7 +94,7 @@ export const Home = () => {
       {!loading && products.length > 0 && (
         <div ref={featuredProductsRef1}>
           <FeaturedProducts
-            title="Winter Sale"
+            title="SS26 Pre Release"
             products={products}
           />
         </div>
@@ -80,7 +114,7 @@ export const Home = () => {
       {/* Hero Section with video */}
       <div ref={heroVideoRef}>
         <HeroSectionVideo
-          title="Winter Sale"
+          title="SS26 Pre Release"
           subtitle="Up To 50% Off"
           buttonText="Shop now"
           buttonLink="/catalog"

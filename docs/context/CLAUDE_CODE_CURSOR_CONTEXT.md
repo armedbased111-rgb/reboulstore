@@ -28,7 +28,7 @@ Les deux peuvent travailler sur le même repo : Cursor pour le flux de dev, Clau
 - **Backend** : NestJS, TypeORM, PostgreSQL (toujours sur VPS ; en dev : tunnel SSH `host.docker.internal:5433`).
 - **CLI** : `./rcli` (Python, Click) à la racine — DB, images IA, roadmap, server, deploy, docs, etc.
 - **Phase en cours** : **Phase 25** (Finalisation Frontend reboulstore.com – revue page par page). Phase 24 clôturée ✅ (15/02/2026).
-- **Collections** : Stone Island SS26 (~41/77 images) · Bisous Skateboards SS26 (25/33) · Autry SS26 (0/36, shooting à faire). Pipeline shoe (`--product-type shoe`, 3 vues) opérationnel.
+- **Collections** : Stone Island SS26 (63/63 générées, 2 uploadées, 61 à trier) · Bisous Skateboards SS26 (25/33) · Autry SS26 (1 ref testée, batch 35 restantes à lancer). Pipeline shoe (`--product-type shoe`, 2 vues : 1_face + 4_top Gemini ADJUST) opérationnel.
 
 Tout ça doit être compréhensible par Claude Code (via CLAUDE.md) et par Cursor (règles existantes).
 

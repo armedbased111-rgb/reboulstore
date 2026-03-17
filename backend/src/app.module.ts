@@ -24,6 +24,7 @@ import { CouponsModule } from './modules/coupons/coupons.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SmsModule } from './modules/sms/sms.module';
 import { StockNotificationsModule } from './modules/stock-notifications/stock-notifications.module';
+import { HeroModule } from './modules/hero/hero.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -65,6 +66,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     NotificationsModule,
     SmsModule,
     StockNotificationsModule,
+    HeroModule,
   ],
   controllers: [AppController],
   providers: [AppService],

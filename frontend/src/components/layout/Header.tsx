@@ -578,8 +578,8 @@ export const Header = () => {
             </button>
           
             {/* Account / Login button */}
-            <Link 
-              to={isAuthenticated ? "/profile" : "/login"} 
+            <Link
+              to={isAuthenticated ? "/profile" : "/login"}
               className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
             >
               {isAuthenticated ? (user?.firstName ? user.firstName.toUpperCase() : 'MON COMPTE') : 'CONNEXION'}

@@ -1,9 +1,9 @@
 # 🏪 Reboul Store - Contexte du Projet
 
-**Version** : 0.33.1  
-**Phase actuelle** : Phase 24 clôturée ✅ (15/02/2026). Phase 25 en cours (Finalisation Frontend reboulstore.com – revue page par page).  
+**Version** : 0.34.0  
+**Phase actuelle** : **Phase 25 EN COURS** (Finalisation Frontend reboulstore.com – revue page par page). **Phase 24 est entièrement clôturée** (15/02/2026).  
 **Roadmap** : Phases 1–23 résumées dans `ROADMAP_COMPLETE.md` ; Phase 24, 25, 26 détaillées ; post-lancement en résumé. Source de vérité : `docs/context/ROADMAP_COMPLETE.md`.  
-**Collections** : Suivi à part dans `docs/context/COLLECTIONS_ROADMAP.md`. **Stone Island SS26 : ~41/77 refs avec images (3 batchs IA, 14 refs restant à shooter)**. **Autry SS26 : 36 produits / 167 variants, 0 image (shooting à faire, pipeline shoe prêt)**. **Bisous Skateboards SS26 : 33 produits / 101 variants, 25/33 images générées (8 accessoires en attente)**.  
+**Collections** : Suivi à part dans `docs/context/COLLECTIONS_ROADMAP.md`. **Stone Island SS26 : ~41/77 refs avec images (3 batchs IA, ~27/69 refs couvertes par pipeline IA, reste à shooter/traiter)**. **Autry SS26 : 36 produits / 167 variants, 0 image (shooting à faire, pipeline shoe 3 vues prêt)**. **Bisous Skateboards SS26 : 33 produits / 101 variants, 25/33 images générées (quelques accessoires/restes en attente)**.  
 **Objectif** : Lancement site Reboul (première collection + Admin Centrale connectée).
 
 ---
@@ -518,27 +518,17 @@ Voir et éditer les articles rapidement depuis le terminal (base Reboul sur VPS 
    - ✅ HTTPS (Let's Encrypt) : Certificats SSL actifs pour www et admin
    - ✅ Cloudflare CDN : **ACTIVÉ** (CDN opérationnel, SSL/TLS, Speed, Caching, WAF actif)
    - ✅ GA4 Monitoring : Tracking actif + CLI realtime opérationnel (Measurement ID: G-S8LMN95862)
-3. **Phase actuelle** : Phase 24 EN COURS 🟢 (Préparation Collection Réelle)
-   - ✅ 24.1 Documentation & Contexte (terminé)
-   - ✅ 24.2 Insertion Marques avec Logos (terminé - 57 marques)
-   - ✅ 24.4 Système Rotation Collections (terminé)
-   - ⏳ 24.3 Politique Livraison Finale (réunion magasin)
-   - ✅ 24.5bis Import Manuel Collections via Tables/CSV (fonctionnel, upsert stock si ref existe)
-   - ⏳ 24.6 Amélioration Processus Stocks (gestion manuelle + alertes)
-   - ⏳ 24.7 Workflow Images Produits (presque terminé)
-   - ⏳ 24.8 Workflow Ajout Continu Produits
-   - ⏳ 24.9 Checklist Finale - Validation Collection
+3. **Phase actuelle** : **Phase 25 EN COURS 🟡 (Finalisation Frontend reboulstore.com – revue page par page)**  
+   - Voir `ROADMAP_COMPLETE.md` → section **Phase 25 : Finalisation Frontend reboulstore.com** (revue Home, Checkout, Catalog, Product, Cart, Search, Login, Register, Profile, Orders, SEO Metadata, etc.).
+   - Les derniers points de la collection réelle (validation images, politique livraison, checklist finale) sont suivis et clôturés côté Phase 24 dans `ROADMAP_COMPLETE.md`, avec les validations finales rattachées à la Phase 25.
 
-4. **Prochaine phase** : Phase 25 ⏳ (Finalisation Avant Lancement)
-   - 🔴 25.1 Recherche Produits (Backend + Frontend) - CRITICAL
-   - 🔴 25.2 Page Home Complète (Frontend) - CRITICAL
-   - 🟡 25.3 SEO de Base (Backend + Frontend) - HIGH
-   - 🟡 25.4 Tests Critiques (E2E, Intégration) - HIGH
-   - 🟡 25.5 Performance de Base (Optimisations essentielles) - HIGH
-   - 🟡 25.6 Dashboard Admin Stats (Admin) - HIGH
-   - 🟡 25.7 Filtres Avancés Catalog (Frontend) - HIGH
-4. **Objectif Février 2025** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
-5. **Améliorations** : 
+4. **Phases suivantes** :  
+   - **Phase 26** : Sécurité, Tests avancés, Pré-lancement  
+   - **Phase 27** : Lancement – Stripe Live & Go-Live  
+   - **Phase 28+** : Post-lancement (analytics, marketing, blog, support)
+
+5. **Objectif** : Site Reboul (catégorie enfants) prêt à la vente + Admin Centrale connectée
+6. **Améliorations** : 
    - CLI pour gestion VPS, CLI GA4 realtime (voir `docs/VPS_CLI_IMPROVEMENTS.md`, `docs/GA4_API_SETUP.md`)
    - ✅ **CLI Analyse Verbosité** : Nouvelle commande `./rcli analyze verbosity` pour détecter automatiquement le code verbeux (commentaires redondants, répétitions, code dupliqué) selon la règle primordiale d'écriture du code
 

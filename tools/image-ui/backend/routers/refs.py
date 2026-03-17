@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pathlib import Path
-from ..services.brand_config import load_configs, resolve_output_dir
-from ..services.ref_status import scan_brand_refs, get_ref_status, list_output_images, count_input_photos
+from services.brand_config import load_configs, resolve_output_dir
+from services.ref_status import scan_brand_refs, get_ref_status, list_output_images, count_input_photos, list_input_photos
 
 router = APIRouter()
 
@@ -24,5 +24,5 @@ def get_ref(name: str, ref: str):
     output_dir = resolve_output_dir(config["output_dir"])
     status = get_ref_status(input_dir, output_dir, ref)
     images = list_output_images(output_dir / ref)
-    photo_count = count_input_photos(input_dir, ref)
-    return {"name": ref, "status": status, "images": images, "input_photo_count": photo_count}
+    input_photos = list_input_photos(input_dir, ref)
+    return {"name": ref, "status": status, "images": images, "input_photo_count": len(input_photos), "input_photos": input_photos}

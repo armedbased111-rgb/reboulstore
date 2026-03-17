@@ -100,15 +100,20 @@ PROMPT_FRONT_ANGLE_SHOE = (
     "Clean premium e-commerce product photography, Autry / New Balance style. Output only this one image."
     + BG
 )
-# Vue 4 – Dessus chaussure : top-down view (lacets, languette, logo)
+# Vue 4 – Dessus chaussure : top-down view (lacets, languette, semelle)
 PROMPT_TOP_SHOE = (
     "Single image: one sneaker only. Top-down overhead view (bird's eye view): "
     "looking straight down at the shoe from above, showing laces, tongue, toe box and full top surface. "
     "Shoe alone—no foot, no person, no box. Sole facing down, shoe flat on the surface. "
     "The sneaker must fill most of the frame, perfectly centered. "
     "Soft even lighting, no harsh shadows. "
-    "Clean e-commerce product detail photography. Output only this one image."
+    "Clean e-commerce product detail photography. Output only this one image. "
+    "TONGUE LABEL — CRITICAL: copy the tongue label EXACTLY as it appears in the source photo: "
+    "same shape, same colors, same text, same logo layout. Do NOT replace it with a different label design. "
+    "MIDSOLE TEXT: copy exactly the text visible on the midsole/outsole in the source — do not alter it. "
+    "Reproduce only what is explicitly visible in the source photo — never invent details. "
     + BG
+    + NO_INVENTION
 )
 
 GEMINI_MODEL = "gemini-2.5-flash-image"
@@ -467,21 +472,20 @@ def _run_generate_one(
     p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
 
     if product_type == "shoe":
+        # Shoes : 1_face (génération IA latérale) + 4_top (Gemini ADJUST depuis back.jpeg)
+        # Pas de 2_back : back.jpeg = vue du dessus (top-down), pas talon
+        _top_source = back_path if back_path else face_path
         steps = [
             ("1_face", face_b64, face_mime, p_face, None, None),
-            ("4_top", face_b64, face_mime, PROMPT_TOP_SHOE, None, None),
+            ("4_top_bgremove", None, None, None, None, None),
         ]
-        if back_path:
-            back_b64, back_mime = _encode_image(back_path)
-            steps.insert(1, ("2_back", back_b64, back_mime, p_back, None, None))
     else:
         steps = [
             ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
-            ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
         ]
         if back_path:
             back_b64, back_mime = _encode_image(back_path)
-            steps.insert(1, ("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
+            steps.append(("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
     if only_face_back:
         steps = [s for s in steps if s[0] in ("1_face", "2_back")]
 
@@ -490,6 +494,35 @@ def _run_generate_one(
     written = 0
     product_seed = random.randint(0, 2**31 - 1)  # 1 ref produit = 1 mannequin : même seed pour 3
     for name, img_b64, mime, prompt, r_b64, r_mime in steps:
+        # ── Vue top chaussure : Gemini ADJUST depuis back.jpeg (suppression fond) ──
+        if name == "4_top_bgremove":
+            top_b64, top_mime = _encode_image(_top_source)
+            _bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (paper, tissue paper, table, floor, any surface). "
+                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Equal margins on all sides. "
+                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
+                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            top_saved = False
+            for t in range(num_variants):
+                try:
+                    out_bytes = _call_gemini(api_key, top_b64, top_mime, _bg_prompt, use_flash=use_flash)
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        (output_dir / f"4_top{suffix}.png").write_bytes(out_bytes)
+                        top_saved = True
+                        if delay_after_image > 0 and t == 0:
+                            time.sleep(delay_after_image)
+                except Exception:
+                    pass
+            if top_saved:
+                written += 1
+            continue
+        # ─────────────────────────────────────────────────────────────────────
         pass_color_b64, pass_color_mime = None, None
         pass_model_ref_b64, pass_model_ref_mime = None, None
         if (use_pro or use_flash) and (r_b64 and r_mime):
@@ -658,28 +691,28 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
     p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
 
     if product_type == "shoe":
+        # Shoes : 1_face (génération IA latérale) + 4_top (Gemini ADJUST depuis back.jpeg)
+        # Pas de 2_back : back.jpeg = vue du dessus (top-down), pas talon
+        _top_source = back_path if back_path else face_path
         steps = [
             ("1_face", face_b64, face_mime, p_face, None, None),
-            ("4_top", face_b64, face_mime, PROMPT_TOP_SHOE, None, None),
+            ("4_top_bgremove", None, None, None, None, None),
         ]
-        if back_path:
-            back_b64, back_mime = _encode_image(back_path)
-            steps.insert(1, ("2_back", back_b64, back_mime, p_back, None, None))
     else:
         steps = [
             ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
-            ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
         ]
         if back_path:
             back_b64, back_mime = _encode_image(back_path)
-            steps.insert(1, ("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
+            steps.append(("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
 
     if only_set:
-        steps = [s for s in steps if s[0] in only_set]
+        only_set_expanded = {("4_top_bgremove" if v == "4_top" else v) for v in only_set}
+        steps = [s for s in steps if s[0] in only_set_expanded]
         if not steps:
             console.print("[red]❌ Aucune vue à générer pour --only %s.[/red]" % only_views)
             raise SystemExit(1)
-        console.print(f"[dim]   Vues uniquement : {', '.join(s[0] for s in steps)}[/dim]")
+        console.print(f"[dim]   Vues uniquement : {', '.join(s[0].replace('_bgremove','') for s in steps)}[/dim]")
 
     use_pro = not use_flash
     if use_pro:
@@ -690,6 +723,39 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
     max_attempts = 3
     product_seed = random.randint(0, 2**31 - 1)  # 1 ref produit = 1 mannequin pour 3 et 4
     for name, img_b64, mime, prompt, r_b64, r_mime in steps:
+        # ── Vue top chaussure : Gemini ADJUST depuis back.jpeg (suppression fond) ──
+        if name == "4_top_bgremove":
+            console.print("[blue]🔄 4_top (nettoyage fond Gemini)...[/blue]")
+            top_b64, top_mime = _encode_image(_top_source)
+            _bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (paper, tissue paper, table, floor, any surface). "
+                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Equal margins on all sides. "
+                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
+                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            saved_paths = []
+            for t in range(num_variants):
+                try:
+                    out_bytes = _call_gemini(api_key, top_b64, top_mime, _bg_prompt, use_flash=use_flash)
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        out_path = output_dir / f"4_top{suffix}.png"
+                        out_path.write_bytes(out_bytes)
+                        saved_paths.append(out_path)
+                        if use_flash and t == 0:
+                            console.print(f"[dim]   (x{num_variants} Flash…)[/dim]")
+                except Exception as e:
+                    console.print(f"[yellow]⚠️ 4_top variant {t+1}: {e}[/yellow]")
+            for p in saved_paths:
+                console.print(f"[green]✅ {p}[/green]")
+            if not saved_paths:
+                console.print("[yellow]⚠️ 4_top: pas d'image[/yellow]")
+            continue
+        # ─────────────────────────────────────────────────────────────────────
         console.print(f"[blue]🔄 {name}...[/blue]")
         pass_color_b64, pass_color_mime = None, None
         pass_model_ref_b64, pass_model_ref_mime = None, None
@@ -1222,7 +1288,7 @@ def _get_product_ids_by_brand(brand: str, limit: int = 500) -> list:
 
 
 # Ordre des images pour l'upload (nom de base sans extension)
-UPLOAD_IMAGE_ORDER = ["1_face", "2_back", "3_detail_logo"]
+UPLOAD_IMAGE_ORDER = ["1_face", "2_back"]
 
 
 def _collect_face_back_images(image_dir: Path) -> list:
