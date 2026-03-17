@@ -1531,7 +1531,11 @@ def upload_batch(batch_dir, backend_url, do_append):
 @click.option("--port", default=7842, type=int, help="Port du serveur (défaut 7842)")
 @click.option("--no-browser", is_flag=True, help="Ne pas ouvrir le browser")
 def ui_command(port, no_browser):
+<<<<<<< HEAD
     """Lance l'interface web de gestion des images produits."""
+=======
+    """Lance l'interface web de gestion des images."""
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     import subprocess
     import webbrowser
     import threading
@@ -1568,7 +1572,11 @@ def ui_command(port, no_browser):
     console.print(f"[green]Image UI → http://localhost:{port}[/green]")
     console.print("[dim]Ctrl+C pour quitter[/dim]")
 
+<<<<<<< HEAD
     # Lancer uvicorn depuis le dossier backend
+=======
+    # Lancer uvicorn
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     import uvicorn
     _sys.path.insert(0, str(backend_dir))
     os.chdir(str(backend_dir))

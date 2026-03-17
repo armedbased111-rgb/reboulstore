@@ -16,9 +16,12 @@ export interface RefStatus {
   status: StatusType
   images: string[]
   input_photo_count: number
+<<<<<<< HEAD
   input_photos?: string[]
   product_name?: string
   category?: string
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 }
 
 export interface BrandStats {
@@ -33,7 +36,10 @@ export interface BrandStats {
 
 export interface BatchEvent {
   type: 'ref_start' | 'ref_done' | 'ref_skipped' | 'ref_error' | 'log' | 'stopped' | 'batch_done' | 'error'
+<<<<<<< HEAD
     | 'done' | 'upload_start' | 'upload_done'
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
   ref?: string
   message?: string
   index?: number
@@ -42,7 +48,10 @@ export interface BatchEvent {
   done?: number
   skipped?: number
   error?: string
+<<<<<<< HEAD
   ok?: number
   fail?: number
   output?: string
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 }

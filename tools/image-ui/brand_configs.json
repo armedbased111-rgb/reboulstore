@@ -1,7 +1,11 @@
 {
   "Stone Island": {
     "name": "Stone Island",
+<<<<<<< HEAD
     "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /STONE ISLAND",
+=======
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/STONE ISLAND",
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     "output_dir": "./output_batch_stone_island",
     "product_type": "garment",
     "refs_dir": "refs_empty",
@@ -11,7 +15,11 @@
   },
   "Autry": {
     "name": "Autry",
+<<<<<<< HEAD
     "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /AUTRY",
+=======
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/AUTRY",
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     "output_dir": "./output_batch_autry",
     "product_type": "shoe",
     "refs_dir": "refs_empty",
@@ -21,7 +29,11 @@
   },
   "Bisous Skateboards": {
     "name": "Bisous Skateboards",
+<<<<<<< HEAD
     "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /BISOUS SKATEBOARD",
+=======
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/BISOUS SKATEBOARD",
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     "output_dir": "./output_batch_bisous",
     "product_type": "garment",
     "refs_dir": "refs_empty",

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import asyncio
 import json
 import os
@@ -27,6 +28,17 @@ _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[mGKH]")
 def _strip_ansi(text: str) -> str:
     return _ANSI_RE.sub("", text)
 
+=======
+import json
+from datetime import datetime
+from fastapi import APIRouter, HTTPException
+from pathlib import Path
+from ..services.brand_config import load_configs, resolve_output_dir
+from ..services.ref_status import scan_brand_refs
+
+router = APIRouter()
+
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
 def mark_uploaded(output_dir: Path, ref: str):
     meta_path = output_dir / ref / ".uploaded"
@@ -53,6 +65,7 @@ def mark_ref_done(brand: str, ref: str):
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
     mark_uploaded(output_dir, ref)
     return {"ok": True}
+<<<<<<< HEAD
 
 
 @router.post("/upload/{brand}/{ref}/run")
@@ -179,3 +192,5 @@ async def wipe_and_reupload_brand(brand: str, request: Request):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

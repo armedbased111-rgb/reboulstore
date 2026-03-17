@@ -3,7 +3,10 @@ Noyau fonctionnel images IA — sans Click ni console.print.
 Importable depuis le backend FastAPI et les commandes CLI.
 """
 import base64
+<<<<<<< HEAD
 import io
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 import os
 import random
 import time
@@ -23,6 +26,7 @@ NO_INVENTION = (
     "CRITICAL: do NOT add any badge or patch on the sleeve or shoulder unless it is explicitly visible in the source photo — "
     "even if the brand typically uses one. Reproduce only what is visible, never invent. "
 )
+<<<<<<< HEAD
 NO_INVENTION_SHOE = (
     " CRITICAL — reproduce the shoe EXACTLY as shown in the source photo: "
     "do NOT invent, modify or hallucinate any text, letters or markings. "
@@ -30,6 +34,8 @@ NO_INVENTION_SHOE = (
     "Sole/midsole text: copy only what is explicitly visible in the source photo — do NOT add 'GAME SET MATCH' or any other text unless it is clearly readable in the input. "
     "Side logos, heel badge, insole print: reproduce only what is visible, never invent details based on brand knowledge. "
 )
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
 PROMPT_FACE = (
     "Single image: one garment only. Front view, flat lay on a flat surface. "
@@ -73,6 +79,7 @@ PROMPT_LIFESTYLE = (
     + BG
 )
 
+<<<<<<< HEAD
 # ── Prompts chaussure ─────────────────────────────────────────────────────────
 
 PROMPT_FACE_SHOE = (
@@ -120,6 +127,8 @@ ADJUST_SYSTEM = (
     "Output only the modified image, no text."
 )
 
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 GEMINI_MODEL = "gemini-2.5-flash-image"
 GEMINI_REF_MODEL = "gemini-3-pro-image-preview"
 GEMINI_VISION_MODEL = "gemini-2.5-flash"
@@ -379,7 +388,11 @@ def run_generate_one(
     stop_check: Optional[Callable[[], bool]] = None,
 ) -> bool:
     """
+<<<<<<< HEAD
     Génère les images (garment: 1_face + 2_back / shoe: 1_face + 2_back + 4_top) pour un produit.
+=======
+    Génère les images (1_face, 2_back, 3_detail_logo) pour un produit.
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
     Args:
         progress_callback: callback(event_type, message) pour les logs
@@ -408,6 +421,7 @@ def run_generate_one(
     ref_back_b64, ref_back_mime = (encode_image(ref_back_path) if ref_back_path else (None, None))
     ref_detail_b64, ref_detail_mime = (encode_image(ref_detail_path) if ref_detail_path else (None, None))
 
+<<<<<<< HEAD
     p_face = PROMPT_FACE_SHOE if product_type == "shoe" else PROMPT_FACE
     p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
 
@@ -426,6 +440,15 @@ def run_generate_one(
         if back_path:
             back_b64, back_mime = encode_image(back_path)
             steps.append(("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
+=======
+    steps = [
+        ("1_face", face_b64, face_mime, PROMPT_FACE, ref_face_b64, ref_face_mime),
+        ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
+    ]
+    if back_path:
+        back_b64, back_mime = encode_image(back_path)
+        steps.insert(1, ("2_back", back_b64, back_mime, PROMPT_BACK, ref_back_b64, ref_back_mime))
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     if only_face_back:
         steps = [s for s in steps if s[0] in ("1_face", "2_back")]
 
@@ -439,6 +462,7 @@ def run_generate_one(
             log("Arrêt demandé")
             break
 
+<<<<<<< HEAD
         # ── Vue top chaussure : Gemini adjust (suppression fond) ─────────────
         if name == "4_top_bgremove":
             log("4_top (nettoyage fond Gemini)…")
@@ -477,6 +501,8 @@ def run_generate_one(
             continue
         # ───────────────────────────────────────────────────────────────────────
 
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
         log(f"Génération {name}…")
         pass_color_b64, pass_color_mime = None, None
         pass_model_ref_b64, pass_model_ref_mime = None, None
@@ -657,6 +683,7 @@ def normalize_background_to_hex(image_path: Path, output_path: Path, target_hex:
     out_arr[mask, 0], out_arr[mask, 1], out_arr[mask, 2] = tr, tg, tb
     Image.fromarray(out_arr).save(output_path)
     return np.any(mask)
+<<<<<<< HEAD
 
 
 # ── Campaign scenes ───────────────────────────────────────────────────────────
@@ -853,3 +880,5 @@ def run_adjust(
     except Exception as e:
         log(f"Erreur: {e}")
         return False
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

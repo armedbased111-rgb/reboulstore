@@ -63,34 +63,47 @@ class BatchRunner:
                 return
 
             input_dir = Path(params["input_dir"])
+<<<<<<< HEAD
             from services.brand_config import resolve_output_dir
+=======
+            from .brand_config import resolve_output_dir
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
             output_dir = resolve_output_dir(params["output_dir"])
             refs_dir_name = params.get("refs_dir", "refs_empty")
             refs_dir = PROJECT_ROOT / refs_dir_name
             skip_existing = params.get("skip_existing", True)
             delay = params.get("delay", 30)
             flash_attempts = params.get("flash_attempts", 4)
+<<<<<<< HEAD
             brand_product_type = params.get("product_type", "garment")
             use_flash = params.get("use_flash", True)
             # DB lookup activé si product_type = "auto" ou si la marque est mixte
             use_db_detection = params.get("use_db_detection", True)
+=======
+            product_type = params.get("product_type", "garment")
+            use_flash = params.get("use_flash", True)
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
             subdirs = sorted([d for d in input_dir.iterdir() if d.is_dir() and not d.name.startswith(".")])
             total = len(subdirs)
             done = 0
             skipped = 0
 
+<<<<<<< HEAD
             target_refs = params.get("target_refs")  # Optional[list[str]] — if set, only process these refs
             if target_refs:
                 subdirs = [d for d in subdirs if d.name in target_refs]
                 total = len(subdirs)
 
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
             for i, subdir in enumerate(subdirs):
                 if self._stop_event.is_set():
                     self._emit({"type": "stopped", "message": "Batch interrompu par l'utilisateur"})
                     break
 
                 ref = subdir.name
+<<<<<<< HEAD
 
                 # Détection du type via DB (shoe/garment) avec fallback sur brand default
                 if use_db_detection:
@@ -98,6 +111,8 @@ class BatchRunner:
                     product_type = get_product_type_from_db(ref, fallback=brand_product_type)
                     if product_type != brand_product_type:
                         self._emit({"type": "log", "ref": ref, "message": f"DB → type: {product_type}"})
+=======
+>>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
                 out_dir = output_dir / ref
 
                 # Skip existing check
