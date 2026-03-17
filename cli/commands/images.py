@@ -1386,3 +1386,51 @@ def upload_batch(batch_dir, backend_url, do_append):
     if failed_refs:
         console.print(f"[red]Refs en échec : {', '.join(failed_refs)}[/red]")
         raise SystemExit(1)
+
+
+@images.command("ui")
+@click.option("--port", default=7842, type=int, help="Port du serveur (défaut 7842)")
+@click.option("--no-browser", is_flag=True, help="Ne pas ouvrir le browser")
+def ui_command(port, no_browser):
+    """Lance l'interface web de gestion des images."""
+    import subprocess
+    import webbrowser
+    import threading
+    import time
+    import sys as _sys
+
+    ui_dir = PROJECT_ROOT / "tools" / "image-ui"
+    backend_dir = ui_dir / "backend"
+    dist_dir = ui_dir / "dist"
+    frontend_dir = ui_dir / "frontend"
+
+    if not ui_dir.exists():
+        console.print("[red]tools/image-ui/ introuvable[/red]")
+        return
+
+    # Build frontend si dist/ absent
+    if not dist_dir.exists():
+        console.print("[blue]Build du frontend (première fois)…[/blue]")
+        subprocess.run(["npm", "install"], cwd=str(frontend_dir), check=True)
+        subprocess.run(["npm", "run", "build"], cwd=str(frontend_dir), check=True)
+
+    # Installer deps Python
+    req_file = backend_dir / "requirements.txt"
+    if req_file.exists():
+        subprocess.run([_sys.executable, "-m", "pip", "install", "-q", "-r", str(req_file)], check=True)
+
+    # Ouvrir le browser après 1.5s
+    if not no_browser:
+        def _open():
+            time.sleep(1.5)
+            webbrowser.open(f"http://localhost:{port}")
+        threading.Thread(target=_open, daemon=True).start()
+
+    console.print(f"[green]Image UI → http://localhost:{port}[/green]")
+    console.print("[dim]Ctrl+C pour quitter[/dim]")
+
+    # Lancer uvicorn
+    import uvicorn
+    _sys.path.insert(0, str(backend_dir))
+    os.chdir(str(backend_dir))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
