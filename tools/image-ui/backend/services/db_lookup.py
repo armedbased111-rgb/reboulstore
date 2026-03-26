@@ -38,6 +38,7 @@ def _get_db_conn():
 def get_products_info_batch(folder_names: list[str]) -> dict[str, dict]:
     """
     Retourne un dict {folder_name: {name, category}} pour une liste de refs.
+    Normalise ':' en '-' pour matcher les dossiers avec séparateurs mixtes (ex: CUMULUS:BENI → CUMULUS/BENI en DB).
     Fallback silencieux si DB inaccessible.
     """
     if not folder_names:
@@ -46,6 +47,9 @@ def get_products_info_batch(folder_names: list[str]) -> dict[str, dict]:
     if conn is None:
         return {}
     try:
+        # ':' et '-' sont tous deux des séparateurs valides de noms de dossiers
+        normalized_to_original = {name.replace(":", "-"): name for name in folder_names}
+        normalized_names = list(normalized_to_original.keys())
         with conn.cursor() as cur:
             cur.execute(
                 """
@@ -54,12 +58,14 @@ def get_products_info_batch(folder_names: list[str]) -> dict[str, dict]:
                 JOIN categories c ON c.id = p.category_id
                 WHERE REPLACE(p.reference, '/', '-') = ANY(%s)
                 """,
-                (folder_names,),
+                (normalized_names,),
             )
-            return {
-                row[0]: {"name": row[1], "category": row[2]}
-                for row in cur.fetchall()
-            }
+            result = {}
+            for row in cur.fetchall():
+                normalized = row[0]
+                original = normalized_to_original.get(normalized, normalized)
+                result[original] = {"name": row[1], "category": row[2]}
+            return result
     except Exception:
         return {}
     finally:

@@ -3,10 +3,7 @@ Noyau fonctionnel images IA — sans Click ni console.print.
 Importable depuis le backend FastAPI et les commandes CLI.
 """
 import base64
-<<<<<<< HEAD
 import io
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 import os
 import random
 import time
@@ -26,7 +23,6 @@ NO_INVENTION = (
     "CRITICAL: do NOT add any badge or patch on the sleeve or shoulder unless it is explicitly visible in the source photo — "
     "even if the brand typically uses one. Reproduce only what is visible, never invent. "
 )
-<<<<<<< HEAD
 NO_INVENTION_SHOE = (
     " CRITICAL — reproduce the shoe EXACTLY as shown in the source photo: "
     "do NOT invent, modify or hallucinate any text, letters or markings. "
@@ -34,8 +30,6 @@ NO_INVENTION_SHOE = (
     "Sole/midsole text: copy only what is explicitly visible in the source photo — do NOT add 'GAME SET MATCH' or any other text unless it is clearly readable in the input. "
     "Side logos, heel badge, insole print: reproduce only what is visible, never invent details based on brand knowledge. "
 )
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
 PROMPT_FACE = (
     "Single image: one garment only. Front view, flat lay on a flat surface. "
@@ -79,7 +73,6 @@ PROMPT_LIFESTYLE = (
     + BG
 )
 
-<<<<<<< HEAD
 # ── Prompts chaussure ─────────────────────────────────────────────────────────
 
 PROMPT_FACE_SHOE = (
@@ -127,8 +120,6 @@ ADJUST_SYSTEM = (
     "Output only the modified image, no text."
 )
 
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 GEMINI_MODEL = "gemini-2.5-flash-image"
 GEMINI_REF_MODEL = "gemini-3-pro-image-preview"
 GEMINI_VISION_MODEL = "gemini-2.5-flash"
@@ -365,10 +356,105 @@ def call_gemini(
     )
     resp.raise_for_status()
     data = resp.json()
-    for part in data.get("candidates", [{}])[0].get("content", {}).get("parts", []):
+    candidate = data.get("candidates", [{}])[0]
+    for part in candidate.get("content", {}).get("parts", []):
         if "inlineData" in part:
             return base64.standard_b64decode(part["inlineData"]["data"])
+    # Log raison du refus si disponible
+    finish_reason = candidate.get("finishReason", "")
+    text_parts = [p.get("text", "") for p in candidate.get("content", {}).get("parts", []) if "text" in p]
+    if finish_reason or text_parts:
+        import sys
+        print(f"[Gemini no-image] finishReason={finish_reason!r} text={' | '.join(text_parts)[:200]!r}", file=sys.stderr)
     return None
+
+
+# ── Cadrage PIL shoe (déterministe, après suppression fond Gemini) ────────────
+
+def _pil_cadrage_shoe(img_path: Path, view: str) -> None:
+    """Recadre l'image selon les règles exactes de framing par vue shoe.
+    Détecte le fond réel via les coins (fonctionne même si Gemini n'a pas remplacé le fond)."""
+    import numpy as np
+    from PIL import Image
+
+    RULES = {
+        "face": {"axis": "width",  "fill": 0.912, "left": 0.0463, "top": 0.3277},
+        "top":  {"axis": "height", "fill": 0.690, "left": 0.3044, "top": 0.1596},
+    }
+    rule = RULES.get(view)
+    if rule is None:
+        return
+
+    img = Image.open(img_path).convert("RGB")
+    W, H = img.size
+    arr = np.array(img)
+
+    # Détecte la couleur de fond via les 4 coins (20x20px chacun)
+    s = 20
+    corners = np.concatenate([
+        arr[:s, :s].reshape(-1, 3),
+        arr[:s, -s:].reshape(-1, 3),
+        arr[-s:, :s].reshape(-1, 3),
+        arr[-s:, -s:].reshape(-1, 3),
+    ])
+    bg_color = np.median(corners, axis=0)
+
+    # Masque : pixels suffisamment différents du fond
+    mask = (np.abs(arr.astype(int) - bg_color) > 18).any(axis=2)
+
+    rows = np.where(mask.any(axis=1))[0]
+    cols = np.where(mask.any(axis=0))[0]
+    if not len(rows):
+        return
+
+    crop = img.crop((int(cols[0]), int(rows[0]), int(cols[-1]) + 1, int(rows[-1]) + 1))
+    scale = (W * rule["fill"]) / crop.width if rule["axis"] == "width" else (H * rule["fill"]) / crop.height
+    resized = crop.resize((max(1, int(crop.width * scale)), max(1, int(crop.height * scale))), Image.LANCZOS)
+
+    canvas = Image.new("RGB", (W, H), (243, 243, 243))
+    canvas.paste(resized, (int(W * rule["left"]), int(H * rule["top"])))
+    canvas.save(img_path)
+
+
+# ── Normalisation fond PIL (force #F3F3F3 exact après Gemini) ────────────────
+
+def _pil_normalize_bg(img_path: Path, target: tuple = (243, 243, 243), tolerance: int = 30) -> None:
+    """Normalise le fond vers #F3F3F3 exact via flood-fill depuis les bords.
+    Ne touche que les pixels fond connectés au bord → ne mange jamais le vêtement."""
+    import numpy as np
+    from PIL import Image
+    from collections import deque
+    img = Image.open(img_path).convert("RGB")
+    arr = np.array(img, dtype=np.uint8)
+    H, W = arr.shape[:2]
+    s = 15
+    corners = np.concatenate([
+        arr[:s, :s].reshape(-1, 3), arr[:s, -s:].reshape(-1, 3),
+        arr[-s:, :s].reshape(-1, 3), arr[-s:, -s:].reshape(-1, 3),
+    ])
+    bg = np.median(corners, axis=0)
+    candidate = np.abs(arr.astype(int) - bg).max(axis=2) <= tolerance
+    visited = np.zeros((H, W), dtype=bool)
+    queue = deque()
+    for x in range(W):
+        for y in (0, H - 1):
+            if candidate[y, x] and not visited[y, x]:
+                visited[y, x] = True
+                queue.append((y, x))
+    for y in range(H):
+        for x in (0, W - 1):
+            if candidate[y, x] and not visited[y, x]:
+                visited[y, x] = True
+                queue.append((y, x))
+    while queue:
+        y, x = queue.popleft()
+        for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < H and 0 <= nx < W and not visited[ny, nx] and candidate[ny, nx]:
+                visited[ny, nx] = True
+                queue.append((ny, nx))
+    arr[visited] = target
+    Image.fromarray(arr).save(img_path)
 
 
 # ── Génération d'un produit ───────────────────────────────────────────────────
@@ -388,11 +474,7 @@ def run_generate_one(
     stop_check: Optional[Callable[[], bool]] = None,
 ) -> bool:
     """
-<<<<<<< HEAD
     Génère les images (garment: 1_face + 2_back / shoe: 1_face + 2_back + 4_top) pour un produit.
-=======
-    Génère les images (1_face, 2_back, 3_detail_logo) pour un produit.
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
     Args:
         progress_callback: callback(event_type, message) pour les logs
@@ -421,34 +503,23 @@ def run_generate_one(
     ref_back_b64, ref_back_mime = (encode_image(ref_back_path) if ref_back_path else (None, None))
     ref_detail_b64, ref_detail_mime = (encode_image(ref_detail_path) if ref_detail_path else (None, None))
 
-<<<<<<< HEAD
     p_face = PROMPT_FACE_SHOE if product_type == "shoe" else PROMPT_FACE
     p_back = PROMPT_BACK_SHOE if product_type == "shoe" else PROMPT_BACK
 
     if product_type == "shoe":
-        # Shoes : 1_face (génération latérale) + 4_top (Gemini ADJUST depuis back.jpeg)
-        # Pas de 2_back : back.jpeg = vue du dessus, pas talon
+        # Shoes : 1_face (ADJUST depuis face.jpeg) + 4_top (ADJUST depuis back.jpeg)
+        # Pas de génération IA de zéro → anti-hallucination
         top_source_path = back_path if back_path else face_path
         steps = [
-            ("1_face", face_b64, face_mime, p_face, None, None),
+            ("1_face_bgremove", None, None, None, None, None),
             ("4_top_bgremove", None, None, None, None, None),
         ]
     else:
-        steps = [
-            ("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime),
-        ]
+        # Garment : génération complète (flat lay lissé, fond propre)
+        steps = [("1_face", face_b64, face_mime, p_face, ref_face_b64, ref_face_mime)]
         if back_path:
             back_b64, back_mime = encode_image(back_path)
             steps.append(("2_back", back_b64, back_mime, p_back, ref_back_b64, ref_back_mime))
-=======
-    steps = [
-        ("1_face", face_b64, face_mime, PROMPT_FACE, ref_face_b64, ref_face_mime),
-        ("3_detail_logo", face_b64, face_mime, PROMPT_DETAIL_LOGO, ref_detail_b64, ref_detail_mime),
-    ]
-    if back_path:
-        back_b64, back_mime = encode_image(back_path)
-        steps.insert(1, ("2_back", back_b64, back_mime, PROMPT_BACK, ref_back_b64, ref_back_mime))
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     if only_face_back:
         steps = [s for s in steps if s[0] in ("1_face", "2_back")]
 
@@ -462,7 +533,49 @@ def run_generate_one(
             log("Arrêt demandé")
             break
 
-<<<<<<< HEAD
+        # ── Vue face chaussure : Gemini adjust (suppression fond) ────────────
+        if name == "1_face_bgremove":
+            log("1_face (nettoyage fond Gemini)…")
+            face_adj_b64, face_adj_mime = encode_image(face_path)
+            face_bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (paper, tissue paper, table, floor, any surface). "
+                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Keep the lateral side profile view exactly as-is. Equal margins on all sides. "
+                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
+                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            face_written = 0
+            for t in range(num_variants):
+                if should_stop():
+                    break
+                try:
+                    out_bytes = call_gemini(
+                        api_key, face_adj_b64, face_adj_mime, face_bg_prompt, use_flash=use_flash,
+                    )
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        out_path = output_dir / f"1_face{suffix}.png"
+                        out_path.write_bytes(out_bytes)
+                        # Si Gemini a sorti du paysage (source landscape), convertir en portrait
+                        from PIL import Image as _PIL
+                        _img = _PIL.open(out_path)
+                        if _img.size[0] > _img.size[1]:
+                            _pil_cadrage_shoe(out_path, "face")
+                        face_written += 1
+                        if delay_after_image > 0 and t == 0:
+                            time.sleep(delay_after_image)
+                except Exception as e:
+                    log(f"1_face variant {t+1}: {e}")
+            if face_written:
+                written += 1
+                log(f"1_face — {face_written} variante(s)")
+            else:
+                log("1_face — pas d'image")
+            continue
+
         # ── Vue top chaussure : Gemini adjust (suppression fond) ─────────────
         if name == "4_top_bgremove":
             log("4_top (nettoyage fond Gemini)…")
@@ -499,10 +612,82 @@ def run_generate_one(
             else:
                 log("4_top — pas d'image")
             continue
+
+        # ── Vue face vêtement : Gemini adjust (suppression fond) ──────────────
+        if name == "1_face_bgremove_garment":
+            log("1_face (nettoyage fond Gemini)…")
+            face_adj_b64, face_adj_mime = encode_image(face_path)
+            bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (floor, plastic packaging, cardboard, table, any surface or prop). "
+                    "Replace with solid #F3F3F3 background. "
+                    "Center the garment with equal margins on all sides. "
+                    "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
+                    "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
+                    "Only a very soft shadow directly under the garment edges, no other shadow."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            face_written = 0
+            for t in range(num_variants):
+                if should_stop():
+                    break
+                try:
+                    out_bytes = call_gemini(api_key, face_adj_b64, face_adj_mime, bg_prompt, use_flash=use_flash)
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        out_path = output_dir / f"1_face{suffix}.png"
+                        out_path.write_bytes(out_bytes)
+                        face_written += 1
+                        if delay_after_image > 0 and t == 0:
+                            time.sleep(delay_after_image)
+                except Exception as e:
+                    log(f"1_face variant {t+1}: {e}")
+            if face_written:
+                written += 1
+                log(f"1_face — {face_written} variante(s)")
+            else:
+                log("1_face — pas d'image")
+            continue
+
+        # ── Vue back vêtement : Gemini adjust (suppression fond) ─────────────
+        if name == "2_back_bgremove_garment":
+            log("2_back (nettoyage fond Gemini)…")
+            back_adj_b64, back_adj_mime = encode_image(back_path)
+            bg_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background (floor, plastic packaging, cardboard, table, any surface or prop). "
+                    "Replace with solid #F3F3F3 background. "
+                    "Center the garment with equal margins on all sides. "
+                    "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
+                    "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
+                    "Only a very soft shadow directly under the garment edges, no other shadow."
+                )
+            )
+            num_variants = flash_attempts if use_flash else 1
+            back_written = 0
+            for t in range(num_variants):
+                if should_stop():
+                    break
+                try:
+                    out_bytes = call_gemini(api_key, back_adj_b64, back_adj_mime, bg_prompt, use_flash=use_flash)
+                    if out_bytes:
+                        suffix = f"_{t + 1}" if t > 0 else ""
+                        out_path = output_dir / f"2_back{suffix}.png"
+                        out_path.write_bytes(out_bytes)
+                        back_written += 1
+                        if delay_after_image > 0 and t == 0:
+                            time.sleep(delay_after_image)
+                except Exception as e:
+                    log(f"2_back variant {t+1}: {e}")
+            if back_written:
+                written += 1
+                log(f"2_back — {back_written} variante(s)")
+            else:
+                log("2_back — pas d'image")
+            continue
         # ───────────────────────────────────────────────────────────────────────
 
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
         log(f"Génération {name}…")
         pass_color_b64, pass_color_mime = None, None
         pass_model_ref_b64, pass_model_ref_mime = None, None
@@ -535,7 +720,7 @@ def run_generate_one(
             prompt_to_use = prompt
             pass_r_b64, pass_r_mime, use_ref_model = None, None, False
 
-        if name in ("1_face", "2_back") and errors_guidance_text:
+        if name in ("1_face", "2_back") and errors_guidance_text and pass_r_b64:
             prompt_to_use = prompt_to_use.rstrip() + "\n\n" + errors_guidance_text
         pass_bad_b64 = errors_bad_b64 if name in ("1_face", "2_back") else None
         pass_bad_mime = errors_bad_mime if name in ("1_face", "2_back") else None
@@ -564,7 +749,10 @@ def run_generate_one(
                     last_valid = out_bytes
                     if use_flash:
                         suffix = f"_{attempt + 1}" if attempt > 0 else ""
-                        (output_dir / f"{name}{suffix}.png").write_bytes(out_bytes)
+                        out_path = output_dir / f"{name}{suffix}.png"
+                        out_path.write_bytes(out_bytes)
+                        if name in ("1_face", "2_back") and product_type != "shoe":
+                            _pil_normalize_bg(out_path)
                         saved_any = True
                         if attempt == 0 and delay_after_image > 0:
                             time.sleep(delay_after_image)
@@ -683,7 +871,6 @@ def normalize_background_to_hex(image_path: Path, output_path: Path, target_hex:
     out_arr[mask, 0], out_arr[mask, 1], out_arr[mask, 2] = tr, tg, tb
     Image.fromarray(out_arr).save(output_path)
     return np.any(mask)
-<<<<<<< HEAD
 
 
 # ── Campaign scenes ───────────────────────────────────────────────────────────
@@ -880,5 +1067,3 @@ def run_adjust(
     except Exception as e:
         log(f"Erreur: {e}")
         return False
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

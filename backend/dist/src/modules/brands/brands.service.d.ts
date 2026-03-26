@@ -5,7 +5,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 export declare class BrandsService {
     private brandRepository;
     constructor(brandRepository: Repository<Brand>);
-    findAll(): Promise<Brand[]>;
+    findAll(onlyWithProducts?: boolean): Promise<Brand[]>;
     findOne(id: number): Promise<Brand>;
     findBySlug(slug: string): Promise<Brand>;
     create(createBrandDto: CreateBrandDto): Promise<Brand>;

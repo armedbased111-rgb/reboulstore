@@ -4,8 +4,10 @@ import type { Brand } from '../types';
 /**
  * Récupérer toutes les marques
  */
-export const getBrands = async (): Promise<Brand[]> => {
-  const response = await api.get<Brand[]>('/brands');
+export const getBrands = async (withProducts = true): Promise<Brand[]> => {
+  const response = await api.get<Brand[]>('/brands', {
+    params: withProducts ? { withProducts: 'true' } : undefined,
+  });
   return response.data;
 };
 

@@ -35,12 +35,6 @@ apiClient.interceptors.request.use(
       config.headers['X-Session-Id'] = sessionId;
     }
     
-    // Ajouter le token JWT si disponible (pour les requêtes authentifiées)
-    const token = localStorage.getItem('reboul_auth_token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    
     return config;
   },
   (error) => {

@@ -8,8 +8,6 @@ import { Product } from './pages/Product'
 import { Cart } from './pages/Cart'
 import { Checkout } from './pages/Checkout'
 import { OrderConfirmation } from './pages/OrderConfirmation'
-import { Orders } from './pages/Orders'
-import { OrderDetail } from './pages/OrderDetail'
 import { About } from './pages/About'
 import { Contact } from './pages/Contact'
 import { Stores } from './pages/Stores'
@@ -20,10 +18,6 @@ import { NotFound } from './pages/NotFound'
 import { ServerError } from './pages/ServerError'
 // ErrorBoundary importé mais non utilisé pour l'instant
 // import { ErrorBoundary } from './components/ErrorBoundary'
-import { Login } from './pages/Login'
-import { Register } from './pages/Register'
-import { Profile } from './pages/Profile'
-import { ProtectedRoute } from './components/ProtectedRoute'
 import { NavigationLoader } from './components/loaders/NavigationLoader'
 import { PageLoader } from './components/loaders/PageLoader'
 import { LoaderPlayground } from './pages/LoaderPlayground'
@@ -177,52 +171,6 @@ function App() {
           element={
             <Layout>
               <Privacy />
-            </Layout>
-          } 
-        />
-        <Route 
-          path="/login" 
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          } 
-        />
-        <Route 
-          path="/register" 
-          element={
-            <Layout>
-              <Register />
-            </Layout>
-          } 
-        />
-        <Route 
-          path="/profile" 
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            </Layout>
-          } 
-        />
-        <Route 
-          path="/orders" 
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <Orders />
-              </ProtectedRoute>
-            </Layout>
-          } 
-        />
-        <Route 
-          path="/orders/:id" 
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <OrderDetail />
-              </ProtectedRoute>
             </Layout>
           } 
         />

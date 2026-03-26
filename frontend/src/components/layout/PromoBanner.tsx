@@ -71,16 +71,16 @@ export const PromoBanner = () => {
   const displayText = currentCoupon ? formatCouponText(currentCoupon) : '';
 
   return (
-    <div className="bg-[#1D1D1D] text-white py-2 px-4 flex items-center justify-between">
+    <div className="bg-[#1D1D1D] text-white py-0.5 pl-1 pr-4 flex items-center justify-between">
       {/* Texte promotionnel */}
       <div className="flex-1 text-left">
         {loading ? (
-          <span className="uppercase text-sm font-medium tracking-wide">
+          <span className="uppercase text-xs font-medium tracking-wide">
             Chargement...
           </span>
         ) : (
           <span 
-            className="uppercase text-sm font-medium tracking-wide transition-opacity duration-500"
+            className="uppercase text-xs font-medium tracking-wide transition-opacity duration-500"
             key={currentCoupon?.id} // Force le re-render pour l'animation
           >
             {displayText}
@@ -91,7 +91,7 @@ export const PromoBanner = () => {
       {/* Bouton Close */}
       <button
         onClick={() => setIsClosed(true)}
-        className="ml-4 text-white hover:opacity-70 transition-opacity uppercase text-sm font-medium tracking-wide"
+        className="ml-4 text-white hover:opacity-70 transition-opacity uppercase text-xs font-medium tracking-wide"
         aria-label="Fermer la bannière"
       >
         CLOSE

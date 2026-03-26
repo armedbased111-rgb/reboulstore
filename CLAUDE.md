@@ -49,6 +49,30 @@ Batch/CLI/doc/git (images, db ref, docs sync, roadmap, commit, backup) → Claud
 - Pipeline images IA : `docs/integrations/IMAGES_IA_WORKFLOW.md`, `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`
 - Règles projet (Cursor) : `.cursor/rules/project-rules.mdc`
 
+## Automatisation navigateur (Playwright)
+
+**Playwright = navigateur réel de Claude.** Pas juste du scraping — Claude peut voir, agir et réparer via un vrai Chromium headless.
+
+### Règle fondamentale
+**Chaque nouvelle demande Playwright = nouveau script dédié** dans `.claude/skills/playwright/scripts/`.
+Toujours lire `.claude/skills/playwright/SKILL.md` en premier.
+
+### Cas d'usage (non exhaustif)
+- Scraper / extraire des données → `run.js`
+- Review UI + améliorations frontend → `ui-inspect.js`
+- Tester un formulaire, vérifier des liens cassés → script dédié
+- Surveiller une page externe → script dédié
+- Tout autre besoin "navigateur" → créer le script adapté
+
+### Workflow UI Review frontend (OBLIGATOIRE)
+Quand l'utilisateur demande des améliorations UI / frontend :
+1. **Capturer** : `node .claude/skills/playwright/scripts/ui-inspect.js http://localhost:3000/<route>`
+2. **Lire** les screenshots PNG avec l'outil Read (desktop + mobile)
+3. **Analyser** visuellement : espacement, typo, hiérarchie, responsive, cohérence design
+4. **Proposer** les améliorations avec justification — ce qui est bien + ce qui peut mieux
+5. **Attendre** l'accord explicite avant de toucher au code
+6. **Exécuter** puis **recapturer** pour vérifier le résultat
+
 ## Conventions Git
 
 Branches : `feature/...`, `fix/...`. Commits : `type(scope): message` (feat, fix, docs, refactor, etc.).

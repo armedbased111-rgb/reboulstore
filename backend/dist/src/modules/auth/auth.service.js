@@ -52,60 +52,18 @@ const typeorm_2 = require("typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 const user_entity_1 = require("../../entities/user.entity");
-const email_service_1 = require("../orders/email.service");
-const sms_service_1 = require("../sms/sms.service");
 let AuthService = class AuthService {
     userRepository;
     jwtService;
-    emailService;
-    smsService;
-    constructor(userRepository, jwtService, emailService, smsService) {
+    constructor(userRepository, jwtService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
-        this.emailService = emailService;
-        this.smsService = smsService;
-    }
-    async register(registerDto) {
-        const { email, password, firstName, lastName, phone } = registerDto;
-        const existingUser = await this.userRepository.findOne({
-            where: { email },
-        });
-        if (existingUser) {
-            throw new common_1.ConflictException('Email already exists');
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = this.userRepository.create({
-            email,
-            password: hashedPassword,
-            firstName,
-            lastName,
-            phone,
-        });
-        await this.userRepository.save(user);
-        const payload = { sub: user.id, email: user.email, role: user.role };
-        const access_token = this.jwtService.sign(payload);
-        delete user.password;
-        if (user.firstName) {
-            this.emailService.sendRegistrationConfirmation(user.email, user.firstName);
-        }
-        return { user, access_token };
     }
     async login(loginDto) {
         const { email, password } = loginDto;
         const user = await this.userRepository.findOne({
             where: { email },
-            select: [
-                'id',
-                'email',
-                'password',
-                'firstName',
-                'lastName',
-                'phone',
-                'role',
-                'isVerified',
-                'createdAt',
-                'updatedAt',
-            ],
+            select: ['id', 'email', 'password', 'firstName', 'lastName', 'phone', 'role', 'isVerified', 'createdAt', 'updatedAt'],
         });
         if (!user || !user.password) {
             throw new common_1.UnauthorizedException('Invalid credentials');
@@ -128,54 +86,12 @@ let AuthService = class AuthService {
         delete user.password;
         return user;
     }
-    async requestPasswordResetBySMS(phoneNumber) {
-        const user = await this.userRepository.findOne({
-            where: { phone: phoneNumber },
-        });
-        if (!user) {
-            throw new common_1.UnauthorizedException('Invalid phone number');
-        }
-        const resetToken = this.jwtService.sign({ sub: user.id, type: 'password-reset' }, { expiresIn: '1h' });
-        try {
-            await this.smsService.sendPasswordResetSMS(phoneNumber, resetToken);
-        }
-        catch (error) {
-            throw error;
-        }
-        return resetToken;
-    }
-    async resetPasswordByToken(token, newPassword) {
-        try {
-            const payload = this.jwtService.verify(token);
-            if (payload.type !== 'password-reset') {
-                throw new common_1.UnauthorizedException('Invalid token type');
-            }
-            const user = await this.userRepository.findOne({
-                where: { id: payload.sub },
-            });
-            if (!user) {
-                throw new common_1.UnauthorizedException('User not found');
-            }
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            user.password = hashedPassword;
-            await this.userRepository.save(user);
-        }
-        catch (error) {
-            if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-                throw new common_1.UnauthorizedException('Invalid or expired token');
-            }
-            throw error;
-        }
-    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => email_service_1.EmailService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        jwt_1.JwtService,
-        email_service_1.EmailService,
-        sms_service_1.SmsService])
+        jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

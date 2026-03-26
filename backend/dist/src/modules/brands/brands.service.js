@@ -22,7 +22,15 @@ let BrandsService = class BrandsService {
     constructor(brandRepository) {
         this.brandRepository = brandRepository;
     }
-    async findAll() {
+    async findAll(onlyWithProducts = false) {
+        if (onlyWithProducts) {
+            return this.brandRepository
+                .createQueryBuilder('brand')
+                .innerJoin('brand.products', 'product')
+                .orderBy('brand.name', 'ASC')
+                .groupBy('brand.id')
+                .getMany();
+        }
         return this.brandRepository.find({
             order: { name: 'ASC' },
         });

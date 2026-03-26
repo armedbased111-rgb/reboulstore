@@ -25,8 +25,8 @@ let BrandsController = class BrandsController {
     create(createBrandDto) {
         return this.brandsService.create(createBrandDto);
     }
-    findAll() {
-        return this.brandsService.findAll();
+    findAll(withProducts) {
+        return this.brandsService.findAll(withProducts === 'true');
     }
     findBySlug(slug) {
         return this.brandsService.findBySlug(slug);
@@ -52,8 +52,9 @@ __decorate([
 ], BrandsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('withProducts')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], BrandsController.prototype, "findAll", null);
 __decorate([

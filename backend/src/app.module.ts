@@ -15,7 +15,6 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { BrandsModule } from './modules/brands/brands.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { CollectionsModule } from './modules/collections/collections.module';
@@ -57,7 +56,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     ShopsModule,
     BrandsModule,
     AuthModule,
-    UsersModule,
     CheckoutModule,
     CloudinaryModule,
     CollectionsModule,

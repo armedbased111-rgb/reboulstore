@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   HttpCode,
   HttpStatus,
   ParseIntPipe,
@@ -25,8 +26,8 @@ export class BrandsController {
   }
 
   @Get()
-  findAll() {
-    return this.brandsService.findAll();
+  findAll(@Query('withProducts') withProducts?: string) {
+    return this.brandsService.findAll(withProducts === 'true');
   }
 
   @Get('slug/:slug')

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import asyncio
 import json
 import os
@@ -28,17 +27,6 @@ _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[mGKH]")
 def _strip_ansi(text: str) -> str:
     return _ANSI_RE.sub("", text)
 
-=======
-import json
-from datetime import datetime
-from fastapi import APIRouter, HTTPException
-from pathlib import Path
-from ..services.brand_config import load_configs, resolve_output_dir
-from ..services.ref_status import scan_brand_refs
-
-router = APIRouter()
-
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
 def mark_uploaded(output_dir: Path, ref: str):
     meta_path = output_dir / ref / ".uploaded"
@@ -65,7 +53,6 @@ def mark_ref_done(brand: str, ref: str):
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
     mark_uploaded(output_dir, ref)
     return {"ok": True}
-<<<<<<< HEAD
 
 
 @router.post("/upload/{brand}/{ref}/run")
@@ -79,8 +66,8 @@ async def run_upload_ref(brand: str, ref: str, request: Request):
     if not ref_dir.exists():
         raise HTTPException(404, f"Dossier ref introuvable : {ref}")
 
-    # ref in DB uses "/" not "-"
-    ref_db = ref.replace("-", "/")
+    # ref in DB uses "/" not "-" or ":"
+    ref_db = ref.replace("-", "/").replace(":", "/")
 
     async def event_gen():
         try:
@@ -157,7 +144,7 @@ async def wipe_and_reupload_brand(brand: str, request: Request):
                 if await request.is_disconnected():
                     break
                 ref = ref_info["name"]
-                ref_db = ref.replace("-", "/")
+                ref_db = ref.replace("-", "/").replace(":", "/")
                 ref_dir = output_dir / ref
                 yield f"data: {json.dumps({'type': 'upload_start', 'ref': ref, 'index': i + 1, 'total': len(to_upload)})}\n\n"
 
@@ -192,5 +179,3 @@ async def wipe_and_reupload_brand(brand: str, request: Request):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

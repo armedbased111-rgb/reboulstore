@@ -41,10 +41,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const firstImageUrl = firstImage ? getImageUrl(firstImage.url) : null;
   const secondImageUrl = secondImage ? getImageUrl(secondImage.url) : null;
 
-  // Calculer le prix réduit (30% de réduction comme dans FeaturedProducts)
   const originalPrice = product.price;
-  const salePrice = Math.round(originalPrice * 0.7 * 100) / 100;
-  const hasSale = true; // Pour l'instant, on affiche toujours le prix barré
+  const hasSale = false;
 
   return (
     <li className="product-card">
@@ -98,14 +96,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {/* Prix */}
           <p></p>
           <div>
-            {hasSale ? (
-              <>
-                <s className="mr-[.25em]">{formatPrice(originalPrice)}</s>
-                <span>{formatPrice(salePrice)}</span>
-              </>
-            ) : (
-              <span>{formatPrice(originalPrice)}</span>
-            )}
+            <span>{formatPrice(originalPrice)}</span>
           </div>
           <p></p>
         </article>

@@ -1,10 +1,12 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import { useCategories } from '../../hooks/useCategories';
 import { getImageUrl } from '../../utils/imageUtils';
+import { getProducts } from '../../services/products';
+import type { Product } from '../../types';
 
 // Import Swiper styles
 import 'swiper/swiper-bundle.css';
@@ -26,6 +28,28 @@ export const CategorySection = () => {
   const swiperRef = useRef<SwiperType | null>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
+  const [categoryImages, setCategoryImages] = useState<Record<number, string | null>>({});
+
+  // Charger une image produit aléatoire pour chaque catégorie
+  useEffect(() => {
+    if (categories.length === 0) return;
+    categories.forEach(async (cat) => {
+      try {
+        const response = await getProducts({ category: String(cat.id), limit: 50 });
+        const withImages = response.products.filter(
+          (p: Product) => p.images && p.images.length > 0
+        );
+        if (withImages.length === 0) return;
+        const pick = withImages[Math.floor(Math.random() * withImages.length)];
+        const sorted = [...pick.images!]
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .filter(img => !img.url.toLowerCase().includes('back'));
+        const img = sorted[0] || pick.images![0];
+        const url = getImageUrl(img.url);
+        if (url) setCategoryImages(prev => ({ ...prev, [cat.id]: url }));
+      } catch (_) {}
+    });
+  }, [categories]);
 
   // Mettre à jour l'état des boutons selon la position du swiper
   // (Même logique que FeaturedProducts)
@@ -169,49 +193,29 @@ export const CategorySection = () => {
                 className="!w-[300px] sm:!w-[400px] md:!w-[500px] lg:!w-[600px]"
               >
                 <Link
-                  to={`/collections/${category.slug}`}
+                  to={`/catalog?category=${category.slug}`}
                   className="block group"
                 >
                   <article className="relative">
-                    {/* Image de la catégorie */}
+                    {/* Image produit aléatoire de la catégorie */}
                     <figure className="relative aspect-[4/5] overflow-hidden bg-gray-200">
-                      {getImageUrl(category.imageUrl) ? (
+                      {categoryImages[category.id] ? (
                         <img
-                          src={getImageUrl(category.imageUrl)!}
+                          src={categoryImages[category.id]!}
                           alt={category.name}
                           className="w-full h-full object-cover"
                           loading="lazy"
                         />
                       ) : (
-                        // Placeholder si pas d'image
-                        <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm uppercase">
-                            {category.name}
-                          </span>
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-400 text-sm uppercase">{category.name}</span>
                         </div>
                       )}
 
-                      {/* Overlay avec texte et bouton - Positionné sur l'image */}
-                      {/* Nom de la catégorie - Positionné au milieu à gauche */}
-                      <div className="absolute top-1/2 -translate-y-1/2 left-0 p-6">
-                        <h3 className="text-white text-2xl md:text-3xl font-light uppercase">
-                          {category.name}
-                        </h3>
-                      </div>
-
-                      {/* Bouton "Shop now" - Positionné en bas à gauche */}
-                      <div className="absolute bottom-0 left-0 p-6">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            // La navigation se fait via le Link parent
-                          }}
-                          className="bg-black rounded-md text-white px-6 py-2 text-sm uppercase font-light hover:bg-gray-800 transition-colors"
-                        >
-                          Shop now
-                        </button>
-                      </div>
                     </figure>
+                    <p className="text-[12px] font-medium uppercase mt-[4px] tracking-wide">
+                      {category.name} — SHOP NOW
+                    </p>
                   </article>
                 </Link>
               </SwiperSlide>

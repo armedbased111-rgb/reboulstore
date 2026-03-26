@@ -27,3 +27,4 @@ docs/stripe/STRIPE_LIVE_KEY.md
 factures/
 export-facture.sh
 facture-template.html
+.claude/skills/playwright/screenshots/

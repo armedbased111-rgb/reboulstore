@@ -2500,6 +2500,71 @@ def db_variant_delete(variant_id, no_backup, yes):
     console.print("[green]✅ Variant %d supprimé[/green]" % variant_id)
 
 
+@db.command('product-delete')
+@click.option('--id', 'product_id', type=int, help='ID du produit')
+@click.option('--ref', 'reference', type=str, help='Référence produit (ex: GEL1130/LAV2)')
+@click.option('--no-backup', is_flag=True, help='Ne pas créer de backup (déconseillé)')
+@click.option('--yes', '-y', is_flag=True, help='Ne pas demander de confirmation')
+def db_product_delete(product_id, reference, no_backup, yes):
+    """🗑️ Supprimer un produit et tous ses variants (VPS, avec backup)"""
+    if not product_id and not reference:
+        console.print("[red]❌ Spécifiez --id ou --ref[/red]")
+        return
+    if reference:
+        ref_esc = reference.replace("'", "''")
+        try:
+            rows = _run_db_query(
+                "SELECT id, name, reference FROM products WHERE reference = '" + ref_esc + "' LIMIT 1;"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit trouvé pour cette référence[/yellow]")
+            return
+        product_id = int(rows[0][0])
+        name, ref = rows[0][1], rows[0][2]
+    else:
+        try:
+            rows = _run_db_query(
+                "SELECT id, name, reference FROM products WHERE id = %d;" % product_id
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Erreur: {e}[/red]")
+            return
+        if not rows:
+            console.print("[yellow]⚠️ Aucun produit avec cet ID[/yellow]")
+            return
+        name, ref = rows[0][1], rows[0][2]
+    try:
+        count_rows = _run_db_query(
+            "SELECT COUNT(*) FROM variants WHERE product_id = %d;" % product_id
+        )
+        variant_count = int(count_rows[0][0]) if count_rows else 0
+    except Exception as e:
+        console.print(f"[red]❌ Erreur: {e}[/red]")
+        return
+    if not yes:
+        if not click.confirm(
+            f"Supprimer le produit [bold]{name}[/bold] (ref: {ref}, {variant_count} variant(s)) ? Cette action est irréversible."
+        ):
+            console.print("[yellow]Action annulée[/yellow]")
+            return
+    if not no_backup:
+        try:
+            _create_server_backup()
+        except Exception as e:
+            console.print(f"[red]❌ Backup serveur échoué, aucune modification effectuée: {e}[/red]")
+            return
+    try:
+        _exec_db_sql("DELETE FROM variants WHERE product_id = %d;" % product_id)
+        _exec_db_sql("DELETE FROM products WHERE id = %d;" % product_id)
+    except Exception as e:
+        console.print(f"[red]❌ Erreur lors de la suppression: {e}[/red]")
+        return
+    console.print(f"[green]✅ Produit {product_id} ({ref}) et ses {variant_count} variant(s) supprimés[/green]")
+
+
 @db.command('product-set-all-color')
 @click.option('--ref', 'reference', type=str, help='Référence produit (ex: L100001/V09A)')
 @click.option('--product-id', type=int, help='ID du produit')

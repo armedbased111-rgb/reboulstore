@@ -1,11 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pathlib import Path
-<<<<<<< HEAD
 from services.brand_config import load_configs, resolve_output_dir
-=======
-from ..services.brand_config import load_configs, resolve_output_dir
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
 
 router = APIRouter()
 
@@ -20,7 +16,6 @@ def serve_image(brand: str, ref: str, filename: str):
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))
-<<<<<<< HEAD
 
 
 @router.get("/images/{brand}/{ref}/input/{filename}")
@@ -45,5 +40,3 @@ def serve_campaign_image(brand: str, ref: str, filename: str):
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

@@ -879,13 +879,15 @@ def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, ba
     ok_count = fail_count = skip_count = 0
     failed_refs = []
     for i, subdir in enumerate(subdirs, 1):
-        ref = subdir.name.replace("-", "/")
+        ref = subdir.name.replace("-", "/").replace(":", "/")
         out_dir = output_root / subdir.name
-        already_done = (
-            out_dir.exists()
-            and any("face" in f.name for f in out_dir.iterdir() if f.is_file())
-            and any("back" in f.name for f in out_dir.iterdir() if f.is_file())
-        )
+        if out_dir.exists():
+            out_files = [f.name for f in out_dir.iterdir() if f.is_file()]
+            has_face = any("face" in n for n in out_files)
+            has_second = any("back" in n or "top" in n for n in out_files)
+            already_done = has_face and has_second
+        else:
+            already_done = False
         if skip_existing and already_done:
             skip_count += 1
             if do_upload:
@@ -1344,13 +1346,12 @@ def _upload_one(
     if files_ordered is not None:
         files_to_upload = [(p.name, p) for p in files_ordered]
     else:
-        files_to_upload = []
-        for name in UPLOAD_IMAGE_ORDER:
-            for ext in (".png", ".jpg", ".jpeg"):
-                p = image_dir / (name + ext)
-                if p.exists():
-                    files_to_upload.append((p.name, p))
-                    break
+        exts = (".png", ".jpg", ".jpeg")
+        all_images = sorted(
+            [f for f in image_dir.iterdir() if f.is_file() and f.suffix.lower() in exts and not f.name.startswith(".")],
+            key=lambda p: p.name,
+        )
+        files_to_upload = [(p.name, p) for p in all_images]
     if not files_to_upload:
         if not silent:
             console.print(f"[yellow]⚠️ Aucune image dans {image_dir}[/yellow]")
@@ -1411,15 +1412,13 @@ def upload(reference, image_dir, backend_url, do_append):
         except requests.RequestException as e:
             console.print(f"[red]❌ Erreur lors de la suppression des anciennes images : {e}[/red]")
             raise SystemExit(1)
-    files_to_upload = []
-    for name in UPLOAD_IMAGE_ORDER:
-        for ext in (".png", ".jpg", ".jpeg"):
-            p = image_dir / (name + ext)
-            if p.exists():
-                files_to_upload.append((name, p))
-                break
+    exts = (".png", ".jpg", ".jpeg")
+    files_to_upload = sorted(
+        [(f.name, f) for f in image_dir.iterdir() if f.is_file() and f.suffix.lower() in exts and not f.name.startswith(".")],
+        key=lambda x: x[0],
+    )
     if not files_to_upload:
-        console.print(f"[yellow]⚠️ Aucune image trouvée dans {image_dir} (attendu : 1_face.png, 2_back.png, …)[/yellow]")
+        console.print(f"[yellow]⚠️ Aucune image trouvée dans {image_dir}[/yellow]")
         raise SystemExit(1)
     orders_param = ",".join(str(i) for i in range(len(files_to_upload)))
     url = f"{base_url}/products/{product_id}/images/bulk?orders={orders_param}"
@@ -1531,11 +1530,7 @@ def upload_batch(batch_dir, backend_url, do_append):
 @click.option("--port", default=7842, type=int, help="Port du serveur (défaut 7842)")
 @click.option("--no-browser", is_flag=True, help="Ne pas ouvrir le browser")
 def ui_command(port, no_browser):
-<<<<<<< HEAD
     """Lance l'interface web de gestion des images produits."""
-=======
-    """Lance l'interface web de gestion des images."""
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     import subprocess
     import webbrowser
     import threading
@@ -1572,11 +1567,7 @@ def ui_command(port, no_browser):
     console.print(f"[green]Image UI → http://localhost:{port}[/green]")
     console.print("[dim]Ctrl+C pour quitter[/dim]")
 
-<<<<<<< HEAD
     # Lancer uvicorn depuis le dossier backend
-=======
-    # Lancer uvicorn
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
     import uvicorn
     _sys.path.insert(0, str(backend_dir))
     os.chdir(str(backend_dir))

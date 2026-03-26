@@ -53,8 +53,10 @@ const ProductImage = ({
  * Props du composant FeaturedProducts
  */
 interface FeaturedProductsProps {
-  /** Titre de la section (ex: "Winter Sale", "ACW* Arsenal") */
+  /** Titre de la section (ex: "Winter Sale", "New Arrivals") */
   title: string;
+  /** Lien "voir tout" affiché comme → à droite du titre (optionnel) */
+  viewAllLink?: string;
   /** Liste des produits à afficher (optionnel si categorySlug est fourni) */
   products?: Product[];
   /** Slug de la catégorie pour récupérer automatiquement les produits (optionnel) */
@@ -77,11 +79,12 @@ interface FeaturedProductsProps {
  * 1. Avec prop `products` : Liste de produits fournie directement
  * 2. Avec prop `categorySlug` : Récupère automatiquement les produits de la catégorie
  */
-export const FeaturedProducts = ({ 
-  title, 
-  products: productsProp, 
+export const FeaturedProducts = ({
+  title,
+  viewAllLink,
+  products: productsProp,
   categorySlug,
-  limit = 10 
+  limit = 10
 }: FeaturedProductsProps) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
@@ -178,34 +181,36 @@ export const FeaturedProducts = ({
     swiperRef.current?.slideNext();
   };
 
-  // Obtenir la première image d'un produit (URL complète)
-  const getFirstImage = (product: Product): string | null => {
-    if (product.images && product.images.length > 0) {
-      return getImageUrl(product.images[0].url);
-    }
-    return null; // Pas d'image, on affichera un placeholder CSS
+  // Trie les images : d'abord par order, puis les "back" à la fin
+  const getSortedImages = (product: Product) => {
+    if (!product.images || product.images.length === 0) return [];
+    return [...product.images]
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .sort((a, b) => {
+        const aIsBack = a.url.toLowerCase().includes('back');
+        const bIsBack = b.url.toLowerCase().includes('back');
+        return Number(aIsBack) - Number(bIsBack);
+      });
   };
 
-  // Obtenir la deuxième image (pour hover effect) - URL complète
+  // Obtenir la première image d'un produit (face en priorité)
+  const getFirstImage = (product: Product): string | null => {
+    const sorted = getSortedImages(product);
+    return sorted.length > 0 ? getImageUrl(sorted[0].url) : null;
+  };
+
+  // Obtenir la deuxième image (hover effect — back en priorité si dispo)
   const getSecondImage = (product: Product): string | null => {
-    if (product.images && product.images.length > 1) {
-      return getImageUrl(product.images[1].url);
-    }
-    return null;
+    const sorted = getSortedImages(product);
+    if (sorted.length <= 1) return null;
+    const back = sorted.find(img => img.url.toLowerCase().includes('back'));
+    return getImageUrl((back ?? sorted[1]).url);
   };
 
   // Convertir le prix en nombre (peut être string depuis l'API)
   const getPriceAsNumber = (price: number | string): number => {
-    if (typeof price === 'string') {
-      return parseFloat(price) || 0;
-    }
+    if (typeof price === 'string') return parseFloat(price) || 0;
     return price;
-  };
-
-  // Calculer le prix réduit (exemple : 30% de réduction)
-  const getSalePrice = (price: number | string) => {
-    const numPrice = getPriceAsNumber(price);
-    return Math.round(numPrice * 0.7 * 100) / 100; // 30% de réduction
   };
 
   // Si chargement de la catégorie, ne rien afficher
@@ -232,49 +237,35 @@ export const FeaturedProducts = ({
     <section className="m-[2px] last:mb-0">
       <div className="p-[2px] relative w-full">
         <div className="pb-4">
-          {/* Header avec titre et navigation */}
-          <div className="flex justify-between items-start mb-4">
-            {/* Titre */}
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mr-4 mt-2 mb-4 uppercase tracking-tight">
-              {title}
-            </h2>
+          {/* Header — titre gauche + flèche voir tout + nav droite */}
+          <div className="flex justify-between items-center mb-[16px]">
+            {viewAllLink ? (
+              <Link to={viewAllLink} className="hover:opacity-60 transition-opacity">
+                <h2 className="text-[28px] font-normal leading-none">{title}</h2>
+              </Link>
+            ) : (
+              <h2 className="text-[28px] font-normal leading-none">{title}</h2>
+            )}
 
             {/* Boutons de navigation */}
-            <div className="my-[20px] flex gap-2 mr-3">
-              {/* Bouton Previous */}
+            <div className="flex gap-2 mr-3">
               <button
                 ref={prevButtonRef}
                 onClick={slidePrev}
                 className="disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed"
                 aria-label="Produits précédents"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="14" 
-                  height="13" 
-                  viewBox="0 0 14 13" 
-                  xmlSpace="preserve"
-                  className="fill-current"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current">
                   <path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" />
                 </svg>
               </button>
-
-              {/* Bouton Next */}
               <button
                 ref={nextButtonRef}
                 onClick={slideNext}
                 className="rotate-180 disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed"
                 aria-label="Produits suivants"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="14" 
-                  height="13" 
-                  viewBox="0 0 14 13" 
-                  xmlSpace="preserve"
-                  className="fill-current"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current">
                   <path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" />
                 </svg>
               </button>
@@ -317,7 +308,6 @@ export const FeaturedProducts = ({
               const firstImage = getFirstImage(product);
               const secondImage = getSecondImage(product);
               const productPrice = getPriceAsNumber(product.price);
-              const salePrice = getSalePrice(productPrice);
 
               return (
                 <SwiperSlide
@@ -359,19 +349,14 @@ export const FeaturedProducts = ({
                       </figure>
 
                       {/* Titre produit */}
-                      <h4 className="uppercase text-sm font-regular">
+                      <h4 className="text-[12px] font-medium uppercase mt-[4px]">
                         {product.name}
                       </h4>
 
                       {/* Prix */}
-                      <div className="text-xs">
-                        <s className="mr-[.25em] text-gray-500">
-                          {productPrice.toFixed(2)} EUR
-                        </s>
-                        <span className="font-normal">
-                          {salePrice.toFixed(2)} EUR
-                        </span>
-                      </div>
+                      <p className="text-[12px] font-normal mt-[2px]">
+                        {productPrice.toFixed(2)} EUR
+                      </p>
                     </article>
                   </Link>
                 </SwiperSlide>

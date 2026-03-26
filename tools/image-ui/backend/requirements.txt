@@ -5,8 +5,4 @@ Pillow>=10.0.0
 numpy>=1.24.0
 requests>=2.31.0
 aiofiles>=23.0.0
-<<<<<<< HEAD
 psycopg2-binary>=2.9.0
-requests>=2.31.0
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16

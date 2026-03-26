@@ -12,7 +12,15 @@ export class BrandsService {
     private brandRepository: Repository<Brand>,
   ) {}
 
-  async findAll(): Promise<Brand[]> {
+  async findAll(onlyWithProducts = false): Promise<Brand[]> {
+    if (onlyWithProducts) {
+      return this.brandRepository
+        .createQueryBuilder('brand')
+        .innerJoin('brand.products', 'product')
+        .orderBy('brand.name', 'ASC')
+        .groupBy('brand.id')
+        .getMany();
+    }
     return this.brandRepository.find({
       order: { name: 'ASC' },
     });

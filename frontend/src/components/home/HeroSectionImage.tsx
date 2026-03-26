@@ -95,7 +95,7 @@ export const HeroSectionImage = ({
   }, [nextRandom, visibleSlides.length, autoplayInterval]);
 
   return (
-    <section className="relative w-full h-[92vh] overflow-hidden">
+    <section className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
 
       {/* Media */}
       <div
@@ -120,23 +120,20 @@ export const HeroSectionImage = ({
         )}
       </div>
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+      {/* Gradient overlay — subtil */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 
-      {/* Content — ancré en bas à gauche */}
+      {/* Content — copie exacte ACW* : positionné à ~55% du haut */}
       <div
-        className="absolute inset-0 flex flex-col justify-end px-8 pb-12 md:px-14 md:pb-16 transition-opacity duration-400"
+        className="absolute left-0 right-0 bottom-[36%] md:bottom-[42%] px-[16px] md:px-[20px] transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}
       >
-        <span className="text-[10px] tracking-[0.35em] uppercase text-white/60 mb-4 font-light">
-          {slide.subtitle}
-        </span>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold text-white uppercase tracking-tight leading-none mb-8 max-w-2xl">
+        <h1 className="text-[32px] md:text-[44px] lg:text-[54px] font-light text-white tracking-normal leading-none mb-[16px] md:mb-[24px]">
           {slide.title}
         </h1>
         <Link
           to={slide.buttonLink}
-          className="self-start bg-white text-black text-xs tracking-[0.2em] uppercase font-medium px-8 py-3.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer"
+          className="inline-block bg-black text-white text-[16px] md:text-[20px] font-normal px-[16px] py-[6px] rounded-[6px] hover:opacity-80 transition-opacity cursor-pointer"
         >
           {slide.buttonText}
         </Link>

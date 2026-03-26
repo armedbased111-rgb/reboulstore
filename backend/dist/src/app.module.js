@@ -24,7 +24,6 @@ const orders_module_1 = require("./modules/orders/orders.module");
 const shops_module_1 = require("./modules/shops/shops.module");
 const brands_module_1 = require("./modules/brands/brands.module");
 const auth_module_1 = require("./modules/auth/auth.module");
-const users_module_1 = require("./modules/users/users.module");
 const checkout_module_1 = require("./modules/checkout/checkout.module");
 const cloudinary_module_1 = require("./modules/cloudinary/cloudinary.module");
 const collections_module_1 = require("./modules/collections/collections.module");
@@ -69,7 +68,6 @@ exports.AppModule = AppModule = __decorate([
             shops_module_1.ShopsModule,
             brands_module_1.BrandsModule,
             auth_module_1.AuthModule,
-            users_module_1.UsersModule,
             checkout_module_1.CheckoutModule,
             cloudinary_module_1.CloudinaryModule,
             collections_module_1.CollectionsModule,

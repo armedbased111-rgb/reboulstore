@@ -11,11 +11,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-<<<<<<< HEAD
-from routers import brands, refs, images_serve, batch, upload, adjust, images_manage, campaign, hero
-=======
-from routers import brands, refs, images_serve, batch, upload
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
+from routers import brands, refs, images_serve, batch, upload, adjust, images_manage, campaign, hero, pil
 
 app = FastAPI(title="Reboul Image UI", version="1.0.0")
 
@@ -31,13 +27,11 @@ app.include_router(refs.router, prefix="/api")
 app.include_router(images_serve.router, prefix="/api")
 app.include_router(batch.router, prefix="/api")
 app.include_router(upload.router, prefix="/api")
-<<<<<<< HEAD
 app.include_router(adjust.router, prefix="/api")
 app.include_router(images_manage.router, prefix="/api")
 app.include_router(campaign.router, prefix="/api")
 app.include_router(hero.router, prefix="/api")
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
+app.include_router(pil.router, prefix="/api")
 
 # Sert le frontend buildé
 dist_dir = Path(__file__).parent.parent / "dist"

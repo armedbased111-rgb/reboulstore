@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
-const register_dto_1 = require("./dto/register.dto");
 const login_dto_1 = require("./dto/login.dto");
 const jwt_auth_guard_1 = require("./jwt-auth.guard");
 let AuthController = class AuthController {
@@ -23,32 +22,14 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async register(registerDto) {
-        return this.authService.register(registerDto);
-    }
     async login(loginDto) {
         return this.authService.login(loginDto);
     }
     async getMe(req) {
         return req.user;
     }
-    async requestPasswordResetBySMS(body) {
-        const token = await this.authService.requestPasswordResetBySMS(body.phoneNumber);
-        return { message: 'SMS sent successfully', token };
-    }
-    async resetPasswordByToken(body) {
-        await this.authService.resetPasswordByToken(body.token, body.newPassword);
-        return { message: 'Password reset successfully' };
-    }
 };
 exports.AuthController = AuthController;
-__decorate([
-    (0, common_1.Post)('register'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
@@ -64,20 +45,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getMe", null);
-__decorate([
-    (0, common_1.Post)('password-reset/sms'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "requestPasswordResetBySMS", null);
-__decorate([
-    (0, common_1.Post)('password-reset/confirm'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "resetPasswordByToken", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X } from 'lucide-react';
 import { useCartContext } from '../../contexts/CartContext';
 import { useCategories } from '../../hooks/useCategories';
 import { useBrands } from '../../hooks/useBrands';
-import { useAuth } from '../../hooks/useAuth';
 import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
-import { Button } from "@/components/ui/button"
 import type { Brand, Product, Category } from '../../types';
 import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
 import * as anime from 'animejs';
@@ -18,7 +16,6 @@ export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { brands, loading: brandsLoading, error: brandsError } = useBrands();
-  const { isAuthenticated, user } = useAuth();
   const { open: openQuickSearch } = useQuickSearchContext();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
@@ -27,21 +24,27 @@ export const Header = () => {
   const [loadingProductImage, setLoadingProductImage] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [randomProductImageCategory, setRandomProductImageCategory] = useState<string | null>(null);
+  const [randomProductImageCategory2, setRandomProductImageCategory2] = useState<string | null>(null);
   const [loadingProductImageCategory, setLoadingProductImageCategory] = useState(false);
   
   // État pour le slider des brands (afficher 10 à la fois)
   const [brandsPage, setBrandsPage] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const BRANDS_PER_PAGE = 10;
-  
+  const CATEGORIES_PER_PAGE = 10;
+
+  // État pour le slider des catégories
+  const [categoriesPage, setCategoriesPage] = useState(0);
+  const [isCategoriesTransitioning, setIsCategoriesTransitioning] = useState(false);
+
   // Refs pour le slider (anciennes refs touch supprimées - swipe non utilisé)
   const brandsSliderRef = useRef<HTMLDivElement>(null);
   const brandsSliderContainerRef = useRef<HTMLDivElement>(null);
+  const categoriesSliderRef = useRef<HTMLDivElement>(null);
+  const categoriesSliderContainerRef = useRef<HTMLDivElement>(null);
   
   // États pour le menu mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileCatalogueOpen, setIsMobileCatalogueOpen] = useState(false);
-  const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
   
   const cartItemsCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
@@ -49,13 +52,10 @@ export const Header = () => {
   const headerRef = useRef<HTMLElement>(null);
   const shopMenuRef = useRef<HTMLDivElement>(null);
   const brandsMenuRef = useRef<HTMLDivElement>(null);
-  const cartBadgeRef = useRef<HTMLButtonElement>(null);
+  const cartBadgeRef = useRef<HTMLAnchorElement>(null);
   
-  // Refs pour le menu mobile
+  // Ref pour le menu mobile
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
-  const mobileCatalogueRef = useRef<HTMLUListElement>(null);
-  const mobileBrandsRef = useRef<HTMLUListElement>(null);
 
   // Animation d'apparition du header au chargement
   useEffect(() => {
@@ -161,137 +161,31 @@ export const Header = () => {
     }
   }, [cartItemsCount]);
 
-  // Animation d'ouverture/fermeture du menu mobile
+  // Animation d'ouverture/fermeture du menu mobile (full-screen fade)
   useEffect(() => {
     if (mobileMenuRef.current) {
       if (isMobileMenuOpen) {
-        // Ouvrir : slide depuis la gauche
         anime.animate(mobileMenuRef.current, {
-          translateX: ['-100%', '0%'],
           opacity: [0, 1],
-          duration: toMilliseconds(0.4),
+          duration: toMilliseconds(0.3),
           easing: convertEasing('power2.out'),
         });
-
-        // Bloquer le scroll du body
         document.body.style.overflow = 'hidden';
       } else {
-        // Fermer : slide vers la gauche
         anime.animate(mobileMenuRef.current, {
-          translateX: ['0%', '-100%'],
           opacity: [1, 0],
-          duration: toMilliseconds(0.3),
+          duration: toMilliseconds(0.2),
           easing: convertEasing('power2.in'),
         });
-
-        // Restaurer le scroll
         document.body.style.overflow = '';
       }
     }
-
     return () => {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
 
-  // Animation transformation hamburger → X
-  useEffect(() => {
-    if (hamburgerButtonRef.current) {
-      const line1 = hamburgerButtonRef.current.querySelector('#hamburger-line-1');
-      const line2 = hamburgerButtonRef.current.querySelector('#hamburger-line-2');
-      const line3 = hamburgerButtonRef.current.querySelector('#hamburger-line-3');
 
-      if (line1 && line2 && line3) {
-        if (isMobileMenuOpen) {
-          // Transformation en X
-          anime.animate(line1, {
-            rotate: [0, 45],
-            translateY: [0, 6],
-            duration: toMilliseconds(0.3),
-            easing: convertEasing('power2.out'),
-          });
-          anime.animate(line2, {
-            opacity: [1, 0],
-            duration: toMilliseconds(0.2),
-          });
-          anime.animate(line3, {
-            rotate: [0, -45],
-            translateY: [0, -6],
-            duration: toMilliseconds(0.3),
-            easing: convertEasing('power2.out'),
-          });
-        } else {
-          // Retour à hamburger
-          anime.animate(line1, {
-            rotate: [45, 0],
-            translateY: [6, 0],
-            duration: toMilliseconds(0.3),
-            easing: convertEasing('power2.out'),
-          });
-          anime.animate(line2, {
-            opacity: [0, 1],
-            duration: toMilliseconds(0.2),
-          });
-          anime.animate(line3, {
-            rotate: [-45, 0],
-            translateY: [-6, 0],
-            duration: toMilliseconds(0.3),
-            easing: convertEasing('power2.out'),
-          });
-        }
-      }
-    }
-  }, [isMobileMenuOpen]);
-
-  // Animation accordéon CATALOGUE mobile
-  useEffect(() => {
-    if (mobileCatalogueRef.current) {
-      if (isMobileCatalogueOpen) {
-        // Ouvrir accordéon : calculer la hauteur réelle
-        const height = mobileCatalogueRef.current.scrollHeight;
-        anime.animate(mobileCatalogueRef.current, {
-          height: [0, height],
-          opacity: [0, 1],
-          duration: toMilliseconds(0.3),
-          easing: convertEasing('power2.out'),
-        });
-      } else {
-        // Fermer accordéon
-        const height = mobileCatalogueRef.current.scrollHeight;
-        anime.animate(mobileCatalogueRef.current, {
-          height: [height, 0],
-          opacity: [1, 0],
-          duration: toMilliseconds(0.2),
-          easing: convertEasing('power2.in'),
-        });
-      }
-    }
-  }, [isMobileCatalogueOpen]);
-
-  // Animation accordéon BRANDS mobile
-  useEffect(() => {
-    if (mobileBrandsRef.current) {
-      if (isMobileBrandsOpen) {
-        // Ouvrir accordéon : calculer la hauteur réelle
-        const height = mobileBrandsRef.current.scrollHeight;
-        anime.animate(mobileBrandsRef.current, {
-          height: [0, height],
-          opacity: [0, 1],
-          duration: toMilliseconds(0.3),
-          easing: convertEasing('power2.out'),
-        });
-      } else {
-        // Fermer accordéon
-        const height = mobileBrandsRef.current.scrollHeight;
-        anime.animate(mobileBrandsRef.current, {
-          height: [height, 0],
-          opacity: [1, 0],
-          duration: toMilliseconds(0.2),
-          easing: convertEasing('power2.in'),
-        });
-      }
-    }
-  }, [isMobileBrandsOpen]);
 
   useEffect(() => {
     if (!hoveredBrand) {
@@ -324,11 +218,11 @@ export const Header = () => {
             Math.floor(Math.random() * productsWithImages.length)
           ];
           
-          // Prendre la première image du produit (ou une aléatoire)
-          const randomImageIndex = Math.floor(
-            Math.random() * randomProduct.images!.length
-          );
-          const selectedImage = randomProduct.images![randomImageIndex];
+          // Trier par order puis exclure les images "back"
+          const sortedImages = [...randomProduct.images!]
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .filter(img => !img.url.toLowerCase().includes('back'));
+          const selectedImage = sortedImages[0] || randomProduct.images![0];
           
           // Construire l'URL complète de l'image avec getImageUrl
           const imageUrl = getImageUrl(selectedImage.url);
@@ -355,6 +249,7 @@ export const Header = () => {
   useEffect(() => {
     if (!hoveredCategory) {
       setRandomProductImageCategory(null);
+      setRandomProductImageCategory2(null);
       setLoadingProductImageCategory(false);
       return;
     }
@@ -367,37 +262,30 @@ export const Header = () => {
           limit: 50,
         });
 
-        // Filtrer les produits qui ont des images
         const productsWithImages = response.products.filter(
           (product: Product) => product.images && product.images.length > 0
         );
 
+        const getProductImage = (product: Product): string | null => {
+          const sorted = [...product.images!]
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .filter(img => !img.url.toLowerCase().includes('back'));
+          const img = sorted[0] || product.images![0];
+          return getImageUrl(img.url);
+        };
+
         if (productsWithImages.length > 0) {
-          // Sélectionner un produit aléatoire
-          const randomProduct = productsWithImages[
-            Math.floor(Math.random() * productsWithImages.length)
-          ];
-          
-          // Prendre la première image du produit (ou une aléatoire)
-          const randomImageIndex = Math.floor(
-            Math.random() * randomProduct.images!.length
-          );
-          const selectedImage = randomProduct.images![randomImageIndex];
-          
-          // Construire l'URL complète de l'image avec getImageUrl
-          const imageUrl = getImageUrl(selectedImage.url);
-          
-          if (imageUrl) {
-            setRandomProductImageCategory(imageUrl);
-          } else {
-            setRandomProductImageCategory(null);
-          }
+          const idx = Math.floor(Math.random() * productsWithImages.length);
+          setRandomProductImageCategory(getProductImage(productsWithImages[idx]));
+          setRandomProductImageCategory2(null);
         } else {
           setRandomProductImageCategory(null);
+          setRandomProductImageCategory2(null);
         }
       } catch (error) {
         console.error('Error fetching random product image for category:', error);
         setRandomProductImageCategory(null);
+        setRandomProductImageCategory2(null);
       } finally {
         setLoadingProductImageCategory(false);
       }
@@ -422,12 +310,35 @@ export const Header = () => {
     }
   }, [brandsPage, brands.length]);
 
+  // Animation du slider des catégories au changement de page
+  useEffect(() => {
+    if (categoriesSliderRef.current && categories.length > 0) {
+      setIsCategoriesTransitioning(true);
+      anime.animate(categoriesSliderRef.current, {
+        opacity: [0.7, 1],
+        duration: toMilliseconds(0.3),
+        easing: convertEasing('power2.out'),
+        complete: () => {
+          setIsCategoriesTransitioning(false);
+        },
+      });
+    }
+  }, [categoriesPage, categories.length]);
+
   // Fonction pour changer de page avec animation
   const changeBrandsPage = (newPage: number, maxPage: number) => {
     if (isTransitioning) return;
     const clampedPage = Math.max(0, Math.min(maxPage - 1, newPage));
     if (clampedPage !== brandsPage) {
       setBrandsPage(clampedPage);
+    }
+  };
+
+  const changeCategoriesPage = (newPage: number, maxPage: number) => {
+    if (isCategoriesTransitioning) return;
+    const clampedPage = Math.max(0, Math.min(maxPage - 1, newPage));
+    if (clampedPage !== categoriesPage) {
+      setCategoriesPage(clampedPage);
     }
   };
 
@@ -445,49 +356,22 @@ export const Header = () => {
 
   return (
     <>
-    <header ref={headerRef} className="bg-white relative z-[60]">
+    <header ref={headerRef} className="bg-white relative z-[9999]">
       <div className="w-full relative">
         <div className="flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Menu hamburger mobile (gauche) + Logo (centré mobile) + Navigation (desktop) */}
           <div className="flex items-center gap-[50px] flex-1 md:flex-none">
             {/* Menu mobile hamburger - À gauche avant le logo */}
-            <button 
-              ref={hamburgerButtonRef}
+            <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex items-center justify-center w-10 h-10 relative z-[100]"
+              className="md:hidden flex items-center justify-center w-10 h-10"
               aria-label="Menu mobile"
               aria-expanded={isMobileMenuOpen}
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                strokeWidth={1.5} 
-                stroke="currentColor" 
-                className="w-6 h-6"
-              >
-                <path 
-                  id="hamburger-line-1"
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
-                />
-                <path 
-                  id="hamburger-line-2"
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
-                />
-                <path 
-                  id="hamburger-line-3"
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" 
-                  {...({ transformOrigin: 'center' } as React.SVGProps<SVGPathElement>)}
-                />
-              </svg>
+              {isMobileMenuOpen
+                ? <X className="w-5 h-5" strokeWidth={1.5} />
+                : <Menu className="w-5 h-5" strokeWidth={1.5} />
+              }
             </button>
 
             {/* Logo - Centré en mobile (position absolute), position normale en desktop */}
@@ -496,7 +380,7 @@ export const Header = () => {
             className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center"
           >
             <span className="text-xl font-bold text-black uppercase tracking-tight">
-              REBOULSTORE 2.0*
+              REBOULSTORE 2.0
             </span>
           </Link>
 
@@ -509,13 +393,17 @@ export const Header = () => {
                   setIsShopMenuOpen(!isShopMenuOpen);
                   setIsBrandsMenuOpen(false);
                   if (!isShopMenuOpen) {
-                    setHoveredCategory(null); // Réinitialiser hoveredCategory à l'ouverture
+                    setCategoriesPage(0);
+                    setIsCategoriesTransitioning(false);
+                    setHoveredCategory(null);
                   }
                 }}
                 onMouseEnter={() => {
                   setIsShopMenuOpen(true);
                   setIsBrandsMenuOpen(false);
-                  setHoveredCategory(null); // Réinitialiser hoveredCategory à l'ouverture
+                  setCategoriesPage(0);
+                  setIsCategoriesTransitioning(false);
+                  setHoveredCategory(null);
                 }}
                 className="flex items-center gap-1 text-black uppercase text-[15px] font-medium hover:opacity-70 transition-opacity"
               >
@@ -567,39 +455,55 @@ export const Header = () => {
           </nav>
           </div>
 
-          {/* Utilitaires à droite - atteint le bord droit */}
-          <div className="hidden md:flex items-center gap-6">
-            {/* Bouton RECHERCHER - Ouvre QuickSearch */}
+          {/* Utilitaires à droite — style ACW* : icônes épurées */}
+          <div className="hidden md:flex items-center gap-5">
+            {/* Search */}
             <button
               onClick={() => openQuickSearch()}
-              className='text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity'
+              className="flex items-center justify-center w-8 h-8 hover:opacity-60 transition-opacity"
+              aria-label="Rechercher"
             >
-              RECHERCHER
+              <Search className="w-[18px] h-[18px] text-black" strokeWidth={1.5} />
             </button>
-          
-            {/* Account / Login button */}
+
+            {/* Cart */}
             <Link
-              to={isAuthenticated ? "/profile" : "/login"}
-              className="text-black uppercase text-sm font-medium hover:opacity-70 transition-opacity"
+              to="/cart"
+              ref={cartBadgeRef}
+              className="relative flex items-center justify-center w-8 h-8 hover:opacity-60 transition-opacity"
+              aria-label="Panier"
             >
-              {isAuthenticated ? (user?.firstName ? user.firstName.toUpperCase() : 'MON COMPTE') : 'CONNEXION'}
+              <ShoppingBag className="w-[18px] h-[18px] text-black" strokeWidth={1.5} />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-white text-[10px] font-medium rounded-full flex items-center justify-center leading-none">
+                  {cartLoading ? '' : cartItemsCount}
+                </span>
+              )}
             </Link>
-            
-            <Button ref={cartBadgeRef} asChild className="relative flex items-center gap-2 bg-black text-white rounded-md uppercase text-sm font-light hover:opacity-90 transition-opacity">
-            <Link to="/cart">
-              CART ({cartLoading ? '...' : cartItemsCount})
-            </Link>
-            </Button>
           </div>
 
-          {/* Bouton recherche mobile - À droite */}
-          <button 
-            onClick={() => openQuickSearch()}
-            className="md:hidden flex items-center justify-center w-10 h-10 relative z-[100]"
-            aria-label="Rechercher"
-          >
-            <Search className="w-5 h-5 text-black" />
-          </button>
+          {/* Icônes mobiles — Search + Cart */}
+          <div className="md:hidden flex items-center gap-1 relative z-[100]">
+            <button
+              onClick={() => openQuickSearch()}
+              className="flex items-center justify-center w-10 h-10"
+              aria-label="Rechercher"
+            >
+              <Search className="w-5 h-5 text-black" strokeWidth={1.5} />
+            </button>
+            <Link
+              to="/cart"
+              className="relative flex items-center justify-center w-10 h-10"
+              aria-label="Panier"
+            >
+              <ShoppingBag className="w-5 h-5 text-black" strokeWidth={1.5} />
+              {cartItemsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-black text-white text-[10px] font-medium rounded-full flex items-center justify-center leading-none">
+                  {cartLoading ? '' : cartItemsCount}
+                </span>
+              )}
+            </Link>
+          </div>
         </div>
         
         {/* Mega Menu CATALOGUE - Style A-COLD-WALL* - Enfant du header pour être sticky */}
@@ -621,43 +525,112 @@ export const Header = () => {
               }}
             >
               <div className="flex">
-                {/* Colonne gauche : Catégories - Large espace */}
-                <div 
+                {/* Colonne gauche : Catégories - Paginé 10/page, style ACW* compact */}
+                <div
                   className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
                   onMouseLeave={() => setHoveredCategory(null)}
                 >
-                  <ul>
+                  {/* Shop All — toujours visible, hors pagination */}
+                  <Link
+                    to="/catalog"
+                    className="block text-[15px] leading-[22px] uppercase hover:opacity-70 transition-opacity mb-1"
+                    style={{ color: 'rgb(0, 0, 245)' }}
+                    onClick={() => setIsShopMenuOpen(false)}
+                  >
+                    Shop All
+                  </Link>
+
+                  <div
+                    ref={categoriesSliderContainerRef}
+                    className="relative overflow-hidden"
+                    style={{
+                      minHeight: `${CATEGORIES_PER_PAGE * 22}px`,
+                      height: `${CATEGORIES_PER_PAGE * 22}px`,
+                    }}
+                  >
                     {categoriesLoading ? (
-                      <li className="text-base text-gray-500">Chargement...</li>
+                      <div className="text-[15px] text-gray-500">Chargement...</div>
                     ) : categoriesError ? (
-                      <li className="text-base text-red-500">Erreur de chargement</li>
+                      <div className="text-[15px] text-red-500">Erreur de chargement</div>
                     ) : categories.length === 0 ? (
-                      <li className="text-base text-gray-500">Aucune catégorie</li>
+                      <div className="text-[15px] text-gray-500">Aucune catégorie</div>
                     ) : (
-                      categories.map((category) => (
-                        <li key={category.id}>
-                          <Link
-                            to={`/catalog?category=${category.slug}`}
-                            className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
-                            onClick={() => setIsShopMenuOpen(false)}
-                            onMouseEnter={() => setHoveredCategory(category)}
-                            onMouseLeave={() => setHoveredCategory(null)}
-                          >
-                            {category.name}
-                          </Link>
-                        </li>
-                      ))
-                    )}
-                    <li>
-                      <Link
-                        to="/catalog"
-                        className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
-                        onClick={() => setIsShopMenuOpen(false)}
+                      <div
+                        ref={categoriesSliderRef}
+                        className="flex flex-col transition-transform ease-out"
+                        style={{
+                          transform: `translateY(-${categoriesPage * (100 / Math.ceil(categories.length / CATEGORIES_PER_PAGE))}%)`,
+                          height: `${Math.ceil(categories.length / CATEGORIES_PER_PAGE) * 100}%`,
+                          transitionDuration: '400ms',
+                        }}
                       >
-                        Shop All
-                      </Link>
-                    </li>
-                  </ul>
+                        {Array.from({ length: Math.ceil(categories.length / CATEGORIES_PER_PAGE) }).map((_, pageIndex) => {
+                          const totalPages = Math.ceil(categories.length / CATEGORIES_PER_PAGE);
+                          const pageItems = categories.slice(pageIndex * CATEGORIES_PER_PAGE, (pageIndex + 1) * CATEGORIES_PER_PAGE);
+                          return (
+                            <div
+                              key={pageIndex}
+                              className="flex-shrink-0"
+                              style={{ height: `${100 / totalPages}%` }}
+                            >
+                              <ul>
+                                {pageItems.map((category) => (
+                                  <li key={category.id}>
+                                    <Link
+                                      to={`/catalog?category=${category.slug}`}
+                                      className="block text-[15px] leading-[22px] text-black hover:opacity-70 transition-opacity"
+                                      onClick={() => setIsShopMenuOpen(false)}
+                                      onMouseEnter={() => setHoveredCategory(category)}
+                                      onMouseLeave={() => setHoveredCategory(null)}
+                                    >
+                                      {category.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Pagination catégories */}
+                  {!categoriesLoading && !categoriesError && categories.length > CATEGORIES_PER_PAGE && (
+                    <div className="flex items-center justify-center gap-3 mt-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const maxPage = Math.ceil(categories.length / CATEGORIES_PER_PAGE);
+                          changeCategoriesPage(categoriesPage - 1, maxPage);
+                        }}
+                        disabled={categoriesPage === 0 || isCategoriesTransitioning}
+                        className="flex items-center justify-center w-8 h-8 text-black hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                        aria-label="Page précédente"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <span className="text-xs text-gray-500 uppercase">
+                        {categoriesPage + 1} / {Math.ceil(categories.length / CATEGORIES_PER_PAGE)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const maxPage = Math.ceil(categories.length / CATEGORIES_PER_PAGE);
+                          changeCategoriesPage(categoriesPage + 1, maxPage);
+                        }}
+                        disabled={categoriesPage >= Math.ceil(categories.length / CATEGORIES_PER_PAGE) - 1 || isCategoriesTransitioning}
+                        className="flex items-center justify-center w-8 h-8 text-black hover:opacity-70 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                        aria-label="Page suivante"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Section droite : Images dynamiques qui changent au hover */}
@@ -699,29 +672,6 @@ export const Header = () => {
                         </p>
                       </div>
 
-                      {/* Image 2 : Image de la catégorie */}
-                      <div className="max-w-[320px]" key={`image2-category-${hoveredCategory.id}`}>
-                        {hoveredCategory.imageUrl ? (
-                          <img 
-                            key={`img2-category-${hoveredCategory.id}`}
-                            src={getImageUrl(hoveredCategory.imageUrl) || ''}
-                            alt={hoveredCategory.name || 'Category Image'}
-                            className="w-full aspect-[4/5] object-cover mb-3 transition-opacity duration-300"
-                            loading="lazy"
-                            onError={(e) => {
-                              // Fallback vers placeholder si erreur
-                              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400"%3E%3Crect fill="%23F3F3F3" width="320" height="400"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3EImage%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full aspect-[4/5] bg-white flex items-center justify-center mb-3">
-                            <div className="text-xs text-gray-400">Aucune image</div>
-                          </div>
-                        )}
-                        <p className="text-xs text-black uppercase">
-                          {`${hoveredCategory.name} COLLECTION`}
-                        </p>
-                      </div>
                     </>
                   )}
                 </div>
@@ -750,25 +700,35 @@ export const Header = () => {
             >
               <div className="flex">
                 {/* Colonne gauche : Marques - Large espace avec slider vertical */}
-                <div 
+                <div
                   className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
                   onMouseLeave={() => setHoveredBrand(null)}
                 >
+                  {/* Shop All Brands — toujours visible, hors pagination */}
+                  <Link
+                    to="/catalog"
+                    className="block text-[15px] leading-[22px] uppercase hover:opacity-70 transition-opacity mb-1"
+                    style={{ color: 'rgb(0, 0, 245)' }}
+                    onClick={() => setIsBrandsMenuOpen(false)}
+                  >
+                    Shop All Brands
+                  </Link>
+
                   {/* Container slider VERTICAL avec overflow hidden */}
-                  <div 
+                  <div
                     ref={brandsSliderContainerRef}
                     className="relative overflow-hidden"
-                    style={{ 
-                      minHeight: `${BRANDS_PER_PAGE * 32}px`, 
-                      height: `${BRANDS_PER_PAGE * 32}px`,
+                    style={{
+                      minHeight: `${BRANDS_PER_PAGE * 22}px`,
+                      height: `${BRANDS_PER_PAGE * 22}px`,
                     }}
                   >
                     {brandsLoading ? (
-                      <div className="text-base text-gray-500">Chargement...</div>
+                      <div className="text-[15px] text-gray-500">Chargement...</div>
                     ) : brandsError ? (
-                      <div className="text-base text-red-500">Erreur de chargement</div>
+                      <div className="text-[15px] text-red-500">Erreur de chargement</div>
                     ) : brands.length === 0 ? (
-                      <div className="text-base text-gray-500">Aucune marque</div>
+                      <div className="text-[15px] text-gray-500">Aucune marque</div>
                     ) : (
                       <div
                         ref={brandsSliderRef}
@@ -779,11 +739,10 @@ export const Header = () => {
                           transitionDuration: '400ms',
                         }}
                       >
-                        {/* Créer une page pour chaque groupe de 10 brands */}
                         {Array.from({ length: Math.ceil(brands.length / BRANDS_PER_PAGE) }).map((_, pageIndex) => {
                           const totalPages = Math.ceil(brands.length / BRANDS_PER_PAGE);
                           return (
-                            <div 
+                            <div
                               key={pageIndex}
                               className="flex-shrink-0"
                               style={{ height: `${100 / totalPages}%` }}
@@ -792,34 +751,19 @@ export const Header = () => {
                                 {brands
                                   .slice(pageIndex * BRANDS_PER_PAGE, (pageIndex + 1) * BRANDS_PER_PAGE)
                                   .map((brand) => (
-                        <li 
-                          key={brand.id}
-                                      className="mb-1"
-                        >
-                          <Link
-                            to={`/catalog?brand=${brand.slug}`}
-                            className="block text-[18px] uppercase text-black hover:opacity-70 transition-opacity"
-                            onClick={() => setIsBrandsMenuOpen(false)}
+                                    <li key={brand.id}>
+                                      <Link
+                                        to={`/catalog?brand=${brand.slug}`}
+                                        className="block text-[15px] leading-[22px] text-black hover:opacity-70 transition-opacity"
+                                        onClick={() => setIsBrandsMenuOpen(false)}
                                         onMouseEnter={() => setHoveredBrand(brand)}
                                         onMouseLeave={() => setHoveredBrand(null)}
-                          >
-                            {brand.name}
-                          </Link>
-                        </li>
+                                      >
+                                        {brand.name}
+                                      </Link>
+                                    </li>
                                   ))}
-                                {/* Lien "Shop All Brands" sur la dernière page seulement */}
-                                {pageIndex === totalPages - 1 && (
-                                  <li className="mt-4">
-                      <Link
-                        to="/catalog"
-                        className="block uppercase text-[18px] text-black hover:opacity-70 transition-opacity"
-                        onClick={() => setIsBrandsMenuOpen(false)}
-                      >
-                        Shop All Brands
-                      </Link>
-                    </li>
-                                )}
-                  </ul>
+                              </ul>
                             </div>
                           );
                         })}
@@ -994,184 +938,58 @@ export const Header = () => {
       </div>
     </header>
     
-    {/* Menu Mobile Hamburger - Rendu en dehors du header pour éviter les problèmes de z-index */}
+    {/* Menu Mobile Full-Screen — dans le sticky wrapper (z-9998 < header z-9999) */}
     {isMobileMenuOpen && (
-      <>
-        {/* Overlay */}
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-        
-          {/* Menu */}
-          <div 
-            ref={mobileMenuRef}
-            className="fixed top-0 left-0 w-[85vw] max-w-[400px] h-full bg-white z-[9999] md:hidden flex flex-col shadow-lg border-r border-gray-200"
-            style={{ transform: 'translateX(-100%)' }}
+      <div
+        ref={mobileMenuRef}
+        className="fixed inset-0 z-[9998] bg-white overflow-y-auto md:hidden"
+        style={{ opacity: 0 }}
+      >
+        <nav className="pl-[5px] pt-[96px] pb-10">
+          <Link
+            to="/catalog"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block mb-[16px] text-[16px] font-normal leading-[18px] uppercase hover:opacity-50 transition-opacity"
+            style={{ color: 'rgb(0, 0, 245)' }}
           >
-          {/* Header du menu */}
-          <div className="flex justify-between items-center px-6 py-4 border-b">
-            <Link 
-              to="/" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-lg font-semibold uppercase tracking-tight"
-            >
-              REBOULSTORE 2.0*
-            </Link>
-            <button 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors"
-              aria-label="Fermer le menu"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                strokeWidth={2} 
-                stroke="currentColor" 
-                className="w-4 h-4"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+            Shop All
+          </Link>
 
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto px-4 py-2">
-            {/* CATALOGUE avec accordéon */}
-            <div>
-              <button
-                onClick={() => setIsMobileCatalogueOpen(!isMobileCatalogueOpen)}
-                className="w-full flex justify-between items-center py-3 px-2 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                <span>CATALOGUE</span>
-                <svg 
-                  className={`w-4 h-4 transition-transform ${isMobileCatalogueOpen ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
+          {/* Catégories — scrollable, 5 visibles à la fois */}
+          <div className="max-h-[340px] overflow-y-auto">
+            {categoriesLoading ? null : categoriesError ? null : (
+              categories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={`/catalog?category=${category.slug}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block mb-[16px] text-[16px] font-normal leading-[18px] text-black capitalize hover:opacity-50 transition-opacity"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <ul 
-                ref={mobileCatalogueRef}
-                className="overflow-hidden"
-                style={{ height: 0, opacity: 0 }}
-              >
-                {categoriesLoading ? (
-                  <li className="py-2 px-4 text-sm text-gray-500">Chargement...</li>
-                ) : categoriesError ? (
-                  <li className="py-2 px-4 text-sm text-red-500">Erreur</li>
-                ) : (
-                  categories.map((category) => (
-                    <li key={category.id}>
-                      <Link
-                        to={`/catalog?category=${category.slug}`}
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          setIsMobileCatalogueOpen(false);
-                        }}
-                        className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-
-            {/* BRANDS avec accordéon */}
-            <div>
-              <button
-                onClick={() => setIsMobileBrandsOpen(!isMobileBrandsOpen)}
-                className="w-full flex justify-between items-center py-3 px-2 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                <span>BRANDS</span>
-                <svg 
-                  className={`w-4 h-4 transition-transform ${isMobileBrandsOpen ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-                <ul 
-                  ref={mobileBrandsRef}
-                  className="overflow-hidden"
-                  style={{ height: 0, opacity: 0, display: 'block' }}
-                >
-                {brandsLoading ? (
-                  <li className="py-2 px-4 text-sm text-gray-500">Chargement...</li>
-                ) : brandsError ? (
-                  <li className="py-2 px-4 text-sm text-red-500">Erreur</li>
-                ) : (
-                  brands.map((brand) => (
-                    <li key={brand.id}>
-                      <Link
-                        to={`/catalog?brand=${brand.slug}`}
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          setIsMobileBrandsOpen(false);
-                        }}
-                        className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-                      >
-                        {brand.name}
-                      </Link>
-                    </li>
-                  ))
-                )}
-                <li>
-                  <Link
-                    to="/catalog"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setIsMobileBrandsOpen(false);
-                    }}
-                    className="block py-2 px-4 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-                  >
-                    Shop All Brands
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-          </nav>
-
-          {/* Footer du menu */}
-          <div className="border-t px-4 py-4 space-y-2">
-            {/* Compte */}
-            {isAuthenticated ? (
-              <Link
-                to="/profile"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                Mon compte
-              </Link>
-            ) : (
-              <Link
-                to="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                Connexion
-              </Link>
+                  {category.name}
+                </Link>
+              ))
             )}
-
-            {/* Panier */}
-            <Link
-              to="/cart"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Panier ({cartLoading ? '...' : cartItemsCount})
-            </Link>
           </div>
-        </div>
-      </>
+
+          <div className="mb-[16px] border-t border-gray-200" />
+
+          {/* Marques — scrollable, 5 visibles à la fois */}
+          <div className="max-h-[340px] overflow-y-auto">
+            {brandsLoading ? null : brandsError ? null : (
+              brands.map((brand) => (
+                <Link
+                  key={brand.id}
+                  to={`/catalog?brand=${brand.slug}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block mb-[16px] text-[16px] font-normal leading-[18px] text-black capitalize hover:opacity-50 transition-opacity"
+                >
+                  {brand.name}
+                </Link>
+              ))
+            )}
+          </div>
+        </nav>
+      </div>
     )}
     </>
   );

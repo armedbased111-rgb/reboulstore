@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 from pydantic import BaseModel
 from dotenv import dotenv_values
 
@@ -34,10 +35,10 @@ class HeroSlideCreate(BaseModel):
 
 
 class HeroSlideUpdate(BaseModel):
-    title: str | None = None
-    subtitle: str | None = None
-    buttonText: str | None = None
-    buttonLink: str | None = None
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    buttonText: Optional[str] = None
+    buttonLink: Optional[str] = None
 
 
 @router.get("/hero")

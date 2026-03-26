@@ -33,8 +33,6 @@ import { FeaturedProducts } from '../components/home/FeaturedProducts';
 import { CategorySection } from '../components/home/CategorySection';
 import { BrandCarousel } from '../components/home/BrandCarousel';
 import { useProducts } from '../hooks/useProducts';
-import { HeroSectionVideo } from '@/components/home/HeroSectionVideo';
-import { PromoCard } from '@/components/home/PromoCard';
 import { animateRevealUp, animateStaggerFadeIn } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 
@@ -44,6 +42,8 @@ import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 export const Home = () => {
   const query = useMemo(() => ({ limit: 10 }), []);
   const { products, loading } = useProducts(query);
+  const queryBestSellers = useMemo(() => ({ brand: 'stone-island', limit: 10 }), []);
+  const { products: bestSellers } = useProducts(queryBestSellers);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(FALLBACK_SLIDES);
 
   useEffect(() => {
@@ -72,13 +72,10 @@ export const Home = () => {
     }, { threshold: 0.1, rootMargin: '150px' });
 
   const heroImageRef = createRevealUp(1.5, 50);
-  const heroVideoRef = createRevealUp(1.5, 50);
   const categorySectionRef = createRevealUp();
   const brandCarouselRef = createRevealUp();
-  const promoCardRef = createRevealUp();
   const featuredProductsRef1 = createStaggerFade(true);
-  const featuredProductsRef2 = createStaggerFade();
-  const featuredProductsRef3 = createStaggerFade();
+  const featuredProductsRef4 = createStaggerFade();
 
   return (
     <div className='px-[4px]'>
@@ -88,13 +85,15 @@ export const Home = () => {
           slides={heroSlides}
           autoplayInterval={6000}
         />
+
       </div>
 
       {/* Featured Products Carousel */}
       {!loading && products.length > 0 && (
-        <div ref={featuredProductsRef1}>
+        <div ref={featuredProductsRef1} className="mt-[32px]">
           <FeaturedProducts
-            title="SS26 Pre Release"
+            title="NOUVEAUTÉS"
+            viewAllLink="/catalog"
             products={products}
           />
         </div>
@@ -105,59 +104,22 @@ export const Home = () => {
         <CategorySection />
       </div>
 
+      {/* Featured Products - avant les marques */}
+      {bestSellers.length > 0 && (
+        <div ref={featuredProductsRef4}>
+          <FeaturedProducts
+            title="BEST SELLERS — STONE ISLAND"
+            products={bestSellers}
+            viewAllLink="/catalog?brand=stone-island"
+          />
+        </div>
+      )}
+
       {/* Brand Carousel - Nos Marques */}
       <div ref={brandCarouselRef}>
         <BrandCarousel title="Nos Marques" />
       </div>
 
-      
-      {/* Hero Section with video */}
-      <div ref={heroVideoRef}>
-        <HeroSectionVideo
-          title="SS26 Pre Release"
-          subtitle="Up To 50% Off"
-          buttonText="Shop now"
-          buttonLink="/catalog"
-          videoSrc="https://res.cloudinary.com/dxen69pdo/video/upload/v1768255804/homepage/homepage/acw-video.mp4"
-        />
-      </div>
-      {/* Featured Products pour une catégorie spécifique */}
-      <div ref={featuredProductsRef2}>
-        <FeaturedProducts
-          title="COLLECTION ENFANTS"
-          categorySlug="kids"
-          limit={10}
-        />
-      </div>
-      <div ref={promoCardRef}>
-        <PromoCard
-      gridImage1='https://res.cloudinary.com/dxen69pdo/image/upload/v1768255806/homepage/homepage/addon.jpg'
-      gridImage1Alt='VISAG3'
-      gridImage1Link='/page1'
-      gridImage1Description='VISAG3'
-      gridImage2='https://res.cloudinary.com/dxen69pdo/image/upload/v1768255807/homepage/homepage/addon2.jpg'
-      gridImage2Alt='VISAG3'
-      gridImage2Link='/page2'
-      gridImage2Description='VISAG3'
-  imageUrl="https://res.cloudinary.com/dxen69pdo/image/upload/v1768255808/homepage/homepage/promoimage.jpg"
-  imageAlt="Material Study"
-  overlayTopText="A-COLD-WALL* MATERIAL STUDY"
-  overlayTitle="Alaska Alaska"
-  overlayNumber="003"
-  title="Material Study 03: Alaska Alaska"
-  description={[
-    "Episode 03, curated by Tawanda Chiweshe and Francisco Gaspar of Alaska Alaska, whose practice is rooted in what they call \"contemporary landscapes\".",
-    "Their work reflects a convergence of diverse worldviews, resulting in outcomes that are both deeply considered and open-ended. Objects, spaces, and ideas become vessels for conversation across disciplines."
-  ]}
-        />
-      </div>
-      <div ref={featuredProductsRef3}>
-        <FeaturedProducts
-          title="OUTERWEAR WINTER SALE"
-          categorySlug="vestes"
-          limit={10}
-        />
-      </div>
     </div>
   );
 };

@@ -36,9 +36,8 @@ class BatchStartRequest(BaseModel):
     use_flash: bool = True
     flash_attempts: int = 4
     delay: int = 30
-    product_type: str = "garment"
+    product_type: Optional[str] = None
     refs_dir: str = "refs_empty"
-<<<<<<< HEAD
     target_refs: Optional[list[str]] = None
 
 
@@ -54,5 +53,3 @@ class CampaignRequest(BaseModel):
     scene: str = "urban"        # clé dans CAMPAIGN_SCENES ou "custom"
     custom_prompt: Optional[str] = None
     model: Literal["pro", "flash"] = "pro"
-=======
->>>>>>> 13352e957ee49dc96dc57f1e5d05db5286374c16
