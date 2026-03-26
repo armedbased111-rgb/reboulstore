@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsBoolean, MaxLength, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateCollectionDto {
   @IsString()
@@ -20,4 +26,3 @@ export class UpdateCollectionDto {
   @IsOptional()
   isActive?: boolean;
 }
-

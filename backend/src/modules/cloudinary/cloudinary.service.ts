@@ -115,13 +115,25 @@ export class CloudinaryService {
 
     return {
       small: this.getTransformedImageUrl(publicId, [
-        { ...baseTransformation, width: 200, height: 200 } as TransformationOptions,
+        {
+          ...baseTransformation,
+          width: 200,
+          height: 200,
+        } as TransformationOptions,
       ]),
       medium: this.getTransformedImageUrl(publicId, [
-        { ...baseTransformation, width: 400, height: 400 } as TransformationOptions,
+        {
+          ...baseTransformation,
+          width: 400,
+          height: 400,
+        } as TransformationOptions,
       ]),
       large: this.getTransformedImageUrl(publicId, [
-        { ...baseTransformation, width: 1200, height: 1200 } as TransformationOptions,
+        {
+          ...baseTransformation,
+          width: 1200,
+          height: 1200,
+        } as TransformationOptions,
       ]),
     };
   }

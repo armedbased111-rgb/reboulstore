@@ -226,16 +226,36 @@ export class InitialSchema1734739200000 implements MigrationInterface {
     `);
 
     // Créer index pour améliorer les performances
-    await queryRunner.query(`CREATE INDEX "IDX_products_categoryId" ON "products" ("categoryId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_products_shopId" ON "products" ("shopId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_products_brandId" ON "products" ("brandId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_images_productId" ON "images" ("productId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_variants_productId" ON "variants" ("productId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_cart_items_cartId" ON "cart_items" ("cartId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_cart_items_variantId" ON "cart_items" ("variantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_orders_userId" ON "orders" ("userId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_orders_cartId" ON "orders" ("cartId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_order_emails_orderId" ON "order_emails" ("orderId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_products_categoryId" ON "products" ("categoryId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_products_shopId" ON "products" ("shopId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_products_brandId" ON "products" ("brandId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_images_productId" ON "images" ("productId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_variants_productId" ON "variants" ("productId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_cart_items_cartId" ON "cart_items" ("cartId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_cart_items_variantId" ON "cart_items" ("variantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_orders_userId" ON "orders" ("userId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_orders_cartId" ON "orders" ("cartId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_order_emails_orderId" ON "order_emails" ("orderId")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

@@ -25,7 +25,7 @@ export const QuickSearch = ({ open, onOpenChange }: QuickSearchProps) => {
     if (!overlayRef.current || !contentRef.current) return;
 
     if (open) {
-      setIsAnimating(true);
+      requestAnimationFrame(() => setIsAnimating(true));
       // Animation overlay (fade in)
       anime.animate(overlayRef.current, {
         opacity: [0, 1],
@@ -44,7 +44,7 @@ export const QuickSearch = ({ open, onOpenChange }: QuickSearchProps) => {
         },
       });
     } else {
-      setIsAnimating(true);
+      requestAnimationFrame(() => setIsAnimating(true));
       // Animation de fermeture
       const timeline = anime.createTimeline();
 

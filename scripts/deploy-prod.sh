@@ -495,11 +495,24 @@ if [ "$DRY_RUN" = false ]; then
         cat > "$EXCLUDE_FILE" <<EOF
 node_modules/
 .git/
+.claude/
+.cursor/
+.obsidian/
+agent-transcripts/
+mcps/
+terminals/
 .env.local
 .env.development
 *.log
 .DS_Store
 dist/
+cli/venv/
+cli/__pycache__/
+**/__pycache__/
+*.pyc
+tools/image-ui/frontend/node_modules/
+tools/image-ui/dist/
+output_batch_*/
 nginx/ssl/*.pem
 admin-central/.env.production
 EOF

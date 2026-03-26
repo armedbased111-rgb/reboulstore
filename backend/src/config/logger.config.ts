@@ -1,13 +1,13 @@
 /**
  * Configuration Winston pour les logs centralisés
- * 
+ *
  * ⚠️ INSTALLATION REQUISE :
  * npm install winston nest-winston
- * 
+ *
  * Formats :
  * - Development : Console avec couleurs
  * - Production : JSON structuré dans fichiers
- * 
+ *
  * Pour activer :
  * 1. Installer : npm install winston nest-winston
  * 2. Importer dans app.module.ts : WinstonModule.forRoot(getLoggerConfig())

@@ -23,7 +23,10 @@ export class MulterExceptionFilter implements ExceptionFilter {
     }
 
     // Gérer les erreurs multer (fichier non-image, taille trop grande, etc.)
-    if (exception.message && exception.message.includes('Only image files are allowed')) {
+    if (
+      exception.message &&
+      exception.message.includes('Only image files are allowed')
+    ) {
       response.status(400).json({
         statusCode: 400,
         message: 'Only image files are allowed!',
@@ -48,4 +51,3 @@ export class MulterExceptionFilter implements ExceptionFilter {
     });
   }
 }
-

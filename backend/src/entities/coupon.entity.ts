@@ -39,7 +39,13 @@ export class Coupon {
   @Column({ type: 'int', default: 0, name: 'used_count' })
   usedCount: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, name: 'min_purchase_amount' })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+    name: 'min_purchase_amount',
+  })
   minPurchaseAmount: number | null;
 
   @Column({ type: 'boolean', default: true, name: 'is_active' })
@@ -51,4 +57,3 @@ export class Coupon {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
-

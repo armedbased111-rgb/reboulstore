@@ -20,9 +20,6 @@ import { ServerError } from './pages/ServerError'
 // import { ErrorBoundary } from './components/ErrorBoundary'
 import { NavigationLoader } from './components/loaders/NavigationLoader'
 import { PageLoader } from './components/loaders/PageLoader'
-import { LoaderPlayground } from './pages/LoaderPlayground'
-import ProductStitchDemo from './pages/ProductStitchDemo'
-import { HeaderPlayground } from './pages/HeaderPlayground'
 function App() {
   const [showInitialLoader, setShowInitialLoader] = useState(true)
 
@@ -180,11 +177,6 @@ function App() {
             </Layout>
           } 
         />
-        
-        {/* Pages de test sans Layout */}
-        <Route path="/loader-playground" element={<LoaderPlayground />} />
-        <Route path="/product-stitch-demo" element={<ProductStitchDemo />} />
-        <Route path="/header-playground" element={<HeaderPlayground />} />
       </Routes>
     </BrowserRouter>
   )

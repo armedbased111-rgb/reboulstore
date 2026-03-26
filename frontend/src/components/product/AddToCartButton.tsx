@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from '../../contexts/CartContext';
 import { useToast } from '../../contexts/ToastContext';
-import { QuantitySelector } from './QuantitySelector';
 import type { Variant } from '../../types';
 
 interface AddToCartButtonProps {
   variant: Variant | null;
   quantity: number;
-  onQuantityChange: (quantity: number) => void;
 }
 
 /**
@@ -20,28 +18,11 @@ interface AddToCartButtonProps {
  * - Toast notification après succès
  * - Vérification stock
  */
-export const AddToCartButton = ({
-  variant,
-  quantity,
-  onQuantityChange,
-}: AddToCartButtonProps) => {
+export const AddToCartButton = ({ variant, quantity }: AddToCartButtonProps) => {
   const { addToCart } = useCartContext();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
-
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      onQuantityChange(quantity - 1);
-    }
-  };
-
-  const handleIncrease = () => {
-    const maxQuantity = variant ? (variant.stock || 0) : 1;
-    if (!maxQuantity || quantity < maxQuantity) {
-      onQuantityChange(quantity + 1);
-    }
-  };
 
   const handleAddToCart = async () => {
     if (!variant) {
@@ -91,7 +72,6 @@ export const AddToCartButton = ({
     }
   };
 
-  const maxQuantity = variant ? (variant.stock || 0) : 1;
   const isOutOfStock = variant ? (variant.stock || 0) === 0 : false;
 
   return (

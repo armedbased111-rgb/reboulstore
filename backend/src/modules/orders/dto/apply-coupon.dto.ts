@@ -11,4 +11,3 @@ export class ApplyCouponDto {
   @Min(1)
   cartId: number;
 }
-

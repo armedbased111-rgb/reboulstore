@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { StockNotification } from '../../entities/stock-notification.entity';
@@ -59,16 +64,18 @@ export class StockNotificationsService {
       email: subscribeDto.email,
       isNotified: false, // Seulement si pas encore notifié
     };
-    
+
     if (subscribeDto.variantId) {
       whereCondition.variantId = subscribeDto.variantId;
     } else {
       whereCondition.variantId = IsNull();
     }
-    
-    const existingSubscription = await this.stockNotificationRepository.findOne({
-      where: whereCondition,
-    });
+
+    const existingSubscription = await this.stockNotificationRepository.findOne(
+      {
+        where: whereCondition,
+      },
+    );
 
     if (existingSubscription) {
       throw new ConflictException(
@@ -95,19 +102,22 @@ export class StockNotificationsService {
     productId: number,
     email: string,
     variantId?: number,
-  ): Promise<{ isSubscribed: boolean; notification: StockNotification | null }> {
+  ): Promise<{
+    isSubscribed: boolean;
+    notification: StockNotification | null;
+  }> {
     const whereCondition: any = {
       productId,
       email,
       isNotified: false,
     };
-    
+
     if (variantId) {
       whereCondition.variantId = variantId;
     } else {
       whereCondition.variantId = IsNull();
     }
-    
+
     const notification = await this.stockNotificationRepository.findOne({
       where: whereCondition,
     });
@@ -126,13 +136,13 @@ export class StockNotificationsService {
       productId,
       isNotified: false,
     };
-    
+
     if (variantId) {
       whereCondition.variantId = variantId;
     } else {
       whereCondition.variantId = IsNull();
     }
-    
+
     const notifications = await this.stockNotificationRepository.find({
       where: whereCondition,
       relations: ['product', 'variant'],
@@ -145,7 +155,8 @@ export class StockNotificationsService {
           order: { order: 'ASC' },
           take: 1,
         });
-        const productImageUrl = productImages.length > 0 ? productImages[0].url : null;
+        const productImageUrl =
+          productImages.length > 0 ? productImages[0].url : null;
 
         // Envoyer l'email de notification
         await this.emailService.sendStockAvailableNotification(
@@ -183,7 +194,9 @@ export class StockNotificationsService {
       relations: ['product', 'variant'],
     });
 
-    this.logger.log(`Found ${activeNotifications.length} active notifications to check`);
+    this.logger.log(
+      `Found ${activeNotifications.length} active notifications to check`,
+    );
 
     for (const notification of activeNotifications) {
       // Vérifier le stock
@@ -197,7 +210,9 @@ export class StockNotificationsService {
         });
         currentStock = variant?.stock || 0;
         isInStock = currentStock > 0;
-        this.logger.debug(`Checking variant ${notification.variantId} for product ${notification.productId}: stock=${currentStock}, isInStock=${isInStock}`);
+        this.logger.debug(
+          `Checking variant ${notification.variantId} for product ${notification.productId}: stock=${currentStock}, isInStock=${isInStock}`,
+        );
       } else {
         // Vérifier le stock du produit (toutes les variantes)
         const variants = await this.variantRepository.find({
@@ -205,18 +220,23 @@ export class StockNotificationsService {
         });
         const totalStock = variants.reduce((sum, v) => sum + v.stock, 0);
         isInStock = variants.some((v) => v.stock > 0);
-        this.logger.debug(`Checking product ${notification.productId} (all variants): totalStock=${totalStock}, isInStock=${isInStock}`);
+        this.logger.debug(
+          `Checking product ${notification.productId} (all variants): totalStock=${totalStock}, isInStock=${isInStock}`,
+        );
       }
 
       // Si en stock, notifier
       if (isInStock) {
-        this.logger.log(`Product ${notification.productId} is in stock, sending notifications...`);
+        this.logger.log(
+          `Product ${notification.productId} is in stock, sending notifications...`,
+        );
         const productImages = await this.imageRepository.find({
           where: { productId: notification.productId },
           order: { order: 'ASC' },
           take: 1,
         });
-        const productImageUrl = productImages.length > 0 ? productImages[0].url : null;
+        const productImageUrl =
+          productImages.length > 0 ? productImages[0].url : null;
 
         // Notifier avec l'image du produit
         await this.notifyAllWithImage(
@@ -225,11 +245,15 @@ export class StockNotificationsService {
           productImageUrl,
         );
       } else {
-        this.logger.debug(`Product ${notification.productId} is out of stock (stock=${currentStock}), skipping notification`);
+        this.logger.debug(
+          `Product ${notification.productId} is out of stock (stock=${currentStock}), skipping notification`,
+        );
       }
     }
 
-    this.logger.log(`Stock check completed for ${activeNotifications.length} notifications`);
+    this.logger.log(
+      `Stock check completed for ${activeNotifications.length} notifications`,
+    );
   }
 
   /**
@@ -244,13 +268,13 @@ export class StockNotificationsService {
       productId,
       isNotified: false,
     };
-    
+
     if (variantId) {
       whereCondition.variantId = variantId;
     } else {
       whereCondition.variantId = IsNull();
     }
-    
+
     const notifications = await this.stockNotificationRepository.find({
       where: whereCondition,
       relations: ['product', 'variant'],
@@ -304,7 +328,8 @@ export class StockNotificationsService {
       order: { order: 'ASC' },
       take: 1,
     });
-    const productImageUrl = productImages.length > 0 ? productImages[0].url : null;
+    const productImageUrl =
+      productImages.length > 0 ? productImages[0].url : null;
 
     // Envoyer l'email de test
     await this.emailService.sendStockAvailableNotification(
@@ -321,4 +346,3 @@ export class StockNotificationsService {
     this.logger.log(`Test email sent to ${email}`);
   }
 }
-

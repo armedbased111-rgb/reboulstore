@@ -20,4 +20,3 @@ export class AddProductReference1767633000000 implements MigrationInterface {
     await queryRunner.dropColumn('products', 'reference');
   }
 }
-

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { websocketService } from '../services/websocket.service';
 import type { Notification } from '../types/notifications';
 
@@ -17,6 +17,10 @@ export const useWebSocket = (
   notificationTypes?: string[],
 ) => {
   const callbackRef = useRef(onNotification);
+  const notificationTypesKey = useMemo(
+    () => (notificationTypes ? notificationTypes.join(',') : ''),
+    [notificationTypes],
+  );
 
   // Mettre à jour la référence du callback
   useEffect(() => {
@@ -53,7 +57,7 @@ export const useWebSocket = (
       cleanupFunctions.forEach((cleanup) => cleanup());
       // Ne pas déconnecter complètement car d'autres composants peuvent utiliser le service
     };
-  }, [userId, role, notificationTypes?.join(',')]);
+  }, [userId, role, notificationTypes, notificationTypesKey]);
 
   return {
     isConnected: websocketService.isConnected(),

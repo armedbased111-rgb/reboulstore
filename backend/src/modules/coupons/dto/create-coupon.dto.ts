@@ -41,4 +41,3 @@ export class CreateCouponDto {
   @IsOptional()
   isActive?: boolean;
 }
-

@@ -76,7 +76,10 @@ export class CollectionsService {
     const collection = await this.findOne(id);
 
     // Si on change le nom, vérifier qu'il n'existe pas déjà
-    if (updateCollectionDto.name && updateCollectionDto.name !== collection.name) {
+    if (
+      updateCollectionDto.name &&
+      updateCollectionDto.name !== collection.name
+    ) {
       const existing = await this.findByName(updateCollectionDto.name);
       if (existing) {
         throw new BadRequestException(
@@ -153,7 +156,9 @@ export class CollectionsService {
    * Utilisé avant d'activer une nouvelle collection
    */
   private async deactivateAll(): Promise<void> {
-    await this.collectionRepository.update({ isActive: true }, { isActive: false });
+    await this.collectionRepository.update(
+      { isActive: true },
+      { isActive: false },
+    );
   }
 }
-

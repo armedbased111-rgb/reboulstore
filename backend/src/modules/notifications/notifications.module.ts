@@ -3,7 +3,7 @@ import { NotificationsGateway } from './notifications.gateway';
 
 /**
  * Module pour les notifications WebSocket en temps réel
- * 
+ *
  * Fournit :
  * - Gateway WebSocket pour les notifications push
  * - Événements : commandes créées, statuts changés, stocks bas
@@ -13,4 +13,3 @@ import { NotificationsGateway } from './notifications.gateway';
   exports: [NotificationsGateway], // Exporter pour utilisation dans d'autres modules
 })
 export class NotificationsModule {}
-

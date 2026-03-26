@@ -13,4 +13,3 @@ export class CouponResponseDto {
   createdAt: Date;
   updatedAt: Date;
 }
-

@@ -24,17 +24,7 @@ export const useProducts = (query?: ProductQuery): UseProductsReturn => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    const queryString = useMemo(() => JSON.stringify(query || {}), [
-        query?.category,
-        query?.brand,
-        query?.minPrice,
-        query?.maxPrice,
-        query?.search,
-        query?.page,
-        query?.limit,
-        query?.sortBy,
-        query?.sortOrder,
-    ]);
+    const queryString = useMemo(() => JSON.stringify(query || {}), [query]);
     
     // Garder une référence de la dernière query exécutée
     const lastQueryRef = useRef<string>('');

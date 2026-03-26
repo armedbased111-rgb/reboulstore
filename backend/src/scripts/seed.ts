@@ -34,9 +34,17 @@ console.log(`   DB_HOST: ${process.env.DB_HOST || 'NON DÉFINI'}`);
 console.log(`   DB_PORT: ${process.env.DB_PORT || 'NON DÉFINI'}`);
 console.log(`   DB_DATABASE: ${process.env.DB_DATABASE || 'NON DÉFINI'}`);
 console.log(`   DB_USERNAME: ${process.env.DB_USERNAME || 'NON DÉFINI'}`);
-if (!process.env.DB_HOST || process.env.DB_HOST === 'postgres' || process.env.DB_HOST === 'localhost') {
-  console.error('   ⚠️  ATTENTION: DB_HOST pointe vers localhost/postgres au lieu du VPS!');
-  console.error('   ⚠️  Vérifiez votre fichier .env.production - il doit contenir l\'adresse du VPS');
+if (
+  !process.env.DB_HOST ||
+  process.env.DB_HOST === 'postgres' ||
+  process.env.DB_HOST === 'localhost'
+) {
+  console.error(
+    '   ⚠️  ATTENTION: DB_HOST pointe vers localhost/postgres au lieu du VPS!',
+  );
+  console.error(
+    "   ⚠️  Vérifiez votre fichier .env.production - il doit contenir l'adresse du VPS",
+  );
 }
 
 async function seed() {
@@ -50,8 +58,12 @@ async function seed() {
 
   // Vérifier que toutes les variables sont définies
   if (!dbHost || !dbUsername || !dbPassword || !dbDatabase) {
-    console.error('❌ Variables d\'environnement manquantes pour la connexion à la base de données');
-    console.error('   Variables requises: DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE');
+    console.error(
+      "❌ Variables d'environnement manquantes pour la connexion à la base de données",
+    );
+    console.error(
+      '   Variables requises: DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE',
+    );
     console.error('   Vérifiez votre fichier .env');
     process.exit(1);
   }
@@ -69,10 +81,10 @@ async function seed() {
     logging: process.env.NODE_ENV === 'development',
   });
 
+  console.log(`🔌 Connexion à PostgreSQL: ${dbHost}:${dbPort}/${dbDatabase}`);
   console.log(
-    `🔌 Connexion à PostgreSQL: ${dbHost}:${dbPort}/${dbDatabase}`,
+    `   📍 Utilisation de la base de données du serveur VPS (pas de localhost)`,
   );
-  console.log(`   📍 Utilisation de la base de données du serveur VPS (pas de localhost)`);
 
   try {
     await dataSource.initialize();
@@ -389,30 +401,35 @@ async function seed() {
     }
 
     // 3. Créer 1 produit pour CHAQUE marque avec la même image
-    console.log('\n🏷️  Création d\'un produit pour chaque marque (même image)...');
-    
+    console.log(
+      "\n🏷️  Création d'un produit pour chaque marque (même image)...",
+    );
+
     const brands = await brandRepository.find({
       order: { name: 'ASC' },
     });
 
     if (brands.length === 0) {
-      console.log('  ⚠️  Aucune marque trouvée. Créez d\'abord des marques.');
+      console.log("  ⚠️  Aucune marque trouvée. Créez d'abord des marques.");
     } else {
-      const defaultCategory = categories.find(c => c.slug === 'adult') || categories[0];
-      
+      const defaultCategory =
+        categories.find((c) => c.slug === 'adult') || categories[0];
+
       if (!defaultCategory) {
-        console.log('  ⚠️  Aucune catégorie trouvée. Créez d\'abord des catégories.');
+        console.log(
+          "  ⚠️  Aucune catégorie trouvée. Créez d'abord des catégories.",
+        );
       } else {
         // Lire l'URL de l'image depuis le fichier seed-image-url.txt ou utiliser une variable d'environnement
         let productImageUrl: string | null = null;
-        
+
         // Essayer de lire depuis le fichier (plusieurs chemins possibles)
         const possiblePaths = [
           path.join(__dirname, '..', '..', 'scripts', 'seed-image-url.txt'), // Depuis src/scripts vers backend/scripts
           path.join(__dirname, '..', 'scripts', 'seed-image-url.txt'), // Depuis src/scripts vers backend/src/scripts
           path.join(process.cwd(), 'scripts', 'seed-image-url.txt'), // Depuis la racine backend
         ];
-        
+
         for (const imageUrlPath of possiblePaths) {
           if (fs.existsSync(imageUrlPath)) {
             productImageUrl = fs.readFileSync(imageUrlPath, 'utf-8').trim();
@@ -420,14 +437,18 @@ async function seed() {
             break;
           }
         }
-        
+
         // Si pas trouvé dans les fichiers, essayer depuis la variable d'environnement
         if (!productImageUrl) {
           productImageUrl = process.env.SEED_PRODUCT_IMAGE_URL || null;
           if (productImageUrl) {
-            console.log(`  📷 Image depuis variable d'environnement: ${productImageUrl}`);
+            console.log(
+              `  📷 Image depuis variable d'environnement: ${productImageUrl}`,
+            );
           } else {
-            console.log('  ⚠️  Aucune image trouvée. Utilisez npm run upload-seed-image pour uploader une image.');
+            console.log(
+              '  ⚠️  Aucune image trouvée. Utilisez npm run upload-seed-image pour uploader une image.',
+            );
             console.log('  ⚠️  Ou définissez SEED_PRODUCT_IMAGE_URL dans .env');
           }
         }
@@ -447,7 +468,7 @@ async function seed() {
           where: { name: productName },
           relations: ['images', 'variants'],
         });
-        
+
         for (const oldProduct of oldProducts) {
           // Supprimer les images
           await imageRepository.delete({ productId: oldProduct.id });
@@ -456,11 +477,13 @@ async function seed() {
           // Supprimer le produit
           await productRepository.remove(oldProduct);
         }
-        console.log(`    → ${oldProducts.length} ancien(s) produit(s) supprimé(s)`);
+        console.log(
+          `    → ${oldProducts.length} ancien(s) produit(s) supprimé(s)`,
+        );
 
         for (const brand of brands) {
           console.log(`\n  📦 Marque: ${brand.name}`);
-          
+
           // Créer le produit pour cette marque (on a déjà supprimé les anciens)
           const product = productRepository.create({
             name: productName, // Même nom pour toutes les marques
@@ -492,12 +515,19 @@ async function seed() {
           const sizes = ['S', 'M', 'L'];
           for (const size of sizes) {
             // Générer un SKU unique avec le slug de la marque
-            const brandSlugPrefix = brand.slug.substring(0, 5).toUpperCase().replace(/[^A-Z0-9]/g, '');
-            const productTypePrefix = defaultProductType.name.substring(0, 3).toUpperCase();
-            const colorPrefix = defaultProductType.color.substring(0, 3).toUpperCase();
+            const brandSlugPrefix = brand.slug
+              .substring(0, 5)
+              .toUpperCase()
+              .replace(/[^A-Z0-9]/g, '');
+            const productTypePrefix = defaultProductType.name
+              .substring(0, 3)
+              .toUpperCase();
+            const colorPrefix = defaultProductType.color
+              .substring(0, 3)
+              .toUpperCase();
             const productIdShort = String(savedProduct.id).padStart(8, '0');
             const sku = `${productTypePrefix}-${colorPrefix}-${size}-${brandSlugPrefix}-${productIdShort}`;
-            
+
             const variant = variantRepository.create({
               productId: savedProduct.id,
               color: defaultProductType.color,

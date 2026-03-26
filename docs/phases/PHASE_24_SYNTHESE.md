@@ -2,7 +2,7 @@
 
 **Date de création** : 2025-01-XX  
 **Date cible** : Février 2025 (sortie officielle)  
-**Statut** : 🟡 En préparation (brainstorming complété)
+**Statut** : ⚠️ Archivé / obsolète (phase clôturée). Voir `docs/context/ROADMAP_COMPLETE.md` pour l'état actuel.
 
 ---
 

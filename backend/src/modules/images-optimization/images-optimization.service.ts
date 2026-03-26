@@ -20,7 +20,7 @@ export interface OptimizationStats {
 
 /**
  * Service d'optimisation automatique des images
- * 
+ *
  * Convertit les images JPG/PNG en WebP via Cloudinary
  * Met à jour les URLs pour utiliser les versions optimisées
  */
@@ -75,7 +75,7 @@ export class ImagesOptimizationService {
 
   /**
    * Générer l'URL WebP optimisée depuis un publicId Cloudinary
-   * 
+   *
    * Note : Cloudinary sert automatiquement WebP si le navigateur le supporte
    * via fetch_format: 'auto', mais on force WebP ici pour garantir l'optimisation.
    * Les navigateurs modernes supportent WebP nativement.
@@ -124,7 +124,7 @@ export class ImagesOptimizationService {
       if (!publicId) {
         return {
           success: false,
-          error: 'Impossible d\'extraire le publicId',
+          error: "Impossible d'extraire le publicId",
         };
       }
 
@@ -198,7 +198,10 @@ export class ImagesOptimizationService {
           stats.optimized++;
           stats.details.optimized.push(image.id);
           this.logger.debug(`✅ Optimisé: ${image.id}`);
-        } else if (result.error === 'Déjà en WebP' || result.error === 'URL non Cloudinary') {
+        } else if (
+          result.error === 'Déjà en WebP' ||
+          result.error === 'URL non Cloudinary'
+        ) {
           stats.skipped++;
           stats.details.skipped.push(`${image.id}: ${result.error}`);
         } else {
@@ -214,7 +217,7 @@ export class ImagesOptimizationService {
 
       return stats;
     } catch (error) {
-      this.logger.error('❌ Erreur lors de l\'optimisation:', error);
+      this.logger.error("❌ Erreur lors de l'optimisation:", error);
       throw error;
     }
   }
@@ -257,7 +260,10 @@ export class ImagesOptimizationService {
           await this.imageRepository.save(image);
           stats.optimized++;
           stats.details.optimized.push(image.id);
-        } else if (result.error === 'Déjà en WebP' || result.error === 'URL non Cloudinary') {
+        } else if (
+          result.error === 'Déjà en WebP' ||
+          result.error === 'URL non Cloudinary'
+        ) {
           stats.skipped++;
           stats.details.skipped.push(`${image.id}: ${result.error}`);
         } else {
@@ -268,9 +274,8 @@ export class ImagesOptimizationService {
 
       return stats;
     } catch (error) {
-      this.logger.error('❌ Erreur lors de l\'optimisation:', error);
+      this.logger.error("❌ Erreur lors de l'optimisation:", error);
       throw error;
     }
   }
 }
-

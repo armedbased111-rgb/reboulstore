@@ -25,12 +25,12 @@ info() {
 
 warn() {
     echo -e "${YELLOW}[WARN]${NC} $1"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 }
 
 error() {
     echo -e "${RED}[ERROR]${NC} $1"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 }
 
 section() {
@@ -163,8 +163,13 @@ if [ -d "frontend" ]; then
             info "📊 Taille du bundle: $BUNDLE_SIZE"
             
             # Avertir si le bundle est trop gros (> 5MB)
-            BUNDLE_SIZE_BYTES=$(du -sb dist | cut -f1)
-            if [ "$BUNDLE_SIZE_BYTES" -gt 5242880 ]; then
+            if du -sb dist > /dev/null 2>&1; then
+                BUNDLE_SIZE_BYTES=$(du -sb dist | cut -f1)
+            else
+                # macOS/BSD fallback (du -sk disponible partout)
+                BUNDLE_SIZE_BYTES=$(( $(du -sk dist | cut -f1) * 1024 ))
+            fi
+            if [ "${BUNDLE_SIZE_BYTES:-0}" -gt 5242880 ]; then
                 warn "⚠️  Bundle frontend > 5MB, considérer l'optimisation"
             fi
         fi

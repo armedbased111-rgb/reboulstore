@@ -47,7 +47,9 @@ export const CategorySection = () => {
         const img = sorted[0] || pick.images![0];
         const url = getImageUrl(img.url);
         if (url) setCategoryImages(prev => ({ ...prev, [cat.id]: url }));
-      } catch (_) {}
+      } catch (error) {
+        console.error('Error loading category image', error);
+      }
     });
   }, [categories]);
 

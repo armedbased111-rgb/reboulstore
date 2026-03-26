@@ -101,6 +101,8 @@ export const PageLoader = ({ state = 'default', steps }: PageLoaderProps) => {
       easing: convertEasing('power1.out'),
     }, 0) // Démarre en même temps que la barre
 
+    const centerBar = centerBarRef.current
+    const logo = logoRef.current
     return () => {
       // Annuler la mise à jour du pourcentage
       isCancelled = true
@@ -108,8 +110,8 @@ export const PageLoader = ({ state = 'default', steps }: PageLoaderProps) => {
         cancelAnimationFrame(animationFrameId)
       }
       // Nettoyer toutes les animations
-      if (centerBarRef.current) anime.remove(centerBarRef.current)
-      if (logoRef.current) anime.remove(logoRef.current)
+      if (centerBar) anime.remove(centerBar)
+      if (logo) anime.remove(logo)
     }
   }, [state])
 

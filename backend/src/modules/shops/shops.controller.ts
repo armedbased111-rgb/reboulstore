@@ -40,7 +40,10 @@ export class ShopsController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateShopDto: UpdateShopDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateShopDto: UpdateShopDto,
+  ) {
     return this.shopsService.update(id, updateShopDto);
   }
 

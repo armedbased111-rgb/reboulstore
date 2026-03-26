@@ -4,8 +4,9 @@
 
 Cette procédure garantit un déploiement propre et fiable en :
 1. **Testant les builds localement** avant déploiement
-2. **Supprimant les volumes** sur le serveur pour éviter les conflits
-3. **Vérifiant** que les fichiers sont correctement copiés
+2. **Préservant les volumes base de données** sur le serveur
+3. **Supprimant uniquement les volumes de build frontend** si nécessaire
+4. **Vérifiant** que les fichiers sont correctement copiés
 
 ## 🔄 Procédure Complète
 
@@ -50,20 +51,19 @@ docker rmi reboulstore-frontend-test reboulstore-backend-test
    docker rmi -f reboulstore-frontend:latest reboulstore-backend:latest
    ```
 
-   **c) ⚠️ SUPPRESSION DES VOLUMES (CRITIQUE)**
+   **c) ⚠️ GESTION DES VOLUMES (CRITIQUE)**
    ```bash
-   # Arrêt avec suppression des volumes
-   docker compose -f docker-compose.prod.yml --env-file .env.production down -v
-   
-   # Suppression explicite des volumes de build
+   # INTERDIT: ne jamais utiliser down -v en production
+   # docker compose -f docker-compose.prod.yml --env-file .env.production down -v
+
+   # Autorisé: suppression explicite des volumes de build frontend uniquement
    docker volume rm reboulstore_frontend_build admin_central_frontend_build
    ```
    
    **Pourquoi ?**
-   - Les volumes contiennent les anciens fichiers
-   - Si on ne les supprime pas, ils écrase les nouveaux fichiers de l'image
-   - Le volume sera recréé **vide** au démarrage
-   - Le script d'init du Dockerfile copiera les fichiers depuis l'image vers le volume
+   - Les volumes de base de données ne doivent jamais être supprimés
+   - Les volumes de build frontend peuvent être régénérés sans perte de données
+   - Le script d'init du Dockerfile recopie les fichiers statiques dans un volume propre
 
    **d) Build des nouvelles images**
    ```bash
@@ -95,7 +95,7 @@ docker rmi reboulstore-frontend-test reboulstore-backend-test
 **Causes possibles** :
 1. **Cache Cloudflare** : Purger le cache dans Cloudflare Dashboard
 2. **Cache navigateur** : Hard refresh (`Ctrl+Shift+R` ou `Cmd+Shift+R`)
-3. **Volume non supprimé** : Vérifier que le volume a bien été supprimé avant le build
+3. **Volume frontend build non réinitialisé** : Vérifier que seuls les volumes de build ont été supprimés
 
 **Solution** :
 ```bash
@@ -130,7 +130,7 @@ docker exec reboulstore-frontend-prod ls -la /usr/share/nginx/html/
 - [ ] Test Docker local (optionnel)
 - [ ] Commit et push vers `main`
 - [ ] Exécution `./scripts/deploy-prod.sh`
-- [ ] Vérification que les volumes sont supprimés
+- [ ] Vérification que seuls les volumes de build frontend sont supprimés (jamais les volumes DB)
 - [ ] Vérification que les builds Docker réussissent
 - [ ] Vérification que les fichiers sont copiés dans le volume
 - [ ] Test du site en production
@@ -142,8 +142,8 @@ docker exec reboulstore-frontend-prod ls -la /usr/share/nginx/html/
 LOCAL                          SERVEUR
 ─────────────────────────────────────────────────
 1. npm run build          →    2. Upload (rsync)
-                              3. docker compose down
-                              4. Supprimer volumes ⚠️
+3. docker compose down
+4. Supprimer volumes build frontend uniquement ⚠️
                               5. Supprimer images
                               6. Build images (--no-cache)
                               7. docker compose up -d
@@ -153,10 +153,11 @@ LOCAL                          SERVEUR
 
 ## ⚠️ Points Critiques
 
-1. **Toujours supprimer les volumes** avant de builder
-2. **Utiliser `--no-cache`** pour garantir un build propre
-3. **Vérifier les logs** du container frontend pour confirmer la copie
-4. **Purger le cache Cloudflare** après déploiement si nécessaire
+1. **Ne jamais utiliser `down -v`** sur la stack de production
+2. **Supprimer uniquement les volumes de build frontend** avant rebuild
+3. **Utiliser `--no-cache`** pour garantir un build propre
+4. **Vérifier les logs** du container frontend pour confirmer la copie
+5. **Purger le cache Cloudflare** après déploiement si nécessaire
 
 ## 📚 Fichiers Clés
 

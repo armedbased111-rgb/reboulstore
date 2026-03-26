@@ -51,4 +51,3 @@ export class StockNotification {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
-

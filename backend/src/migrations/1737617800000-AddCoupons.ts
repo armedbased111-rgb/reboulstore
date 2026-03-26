@@ -79,4 +79,3 @@ export class AddCoupons1737617800000 implements MigrationInterface {
     `);
   }
 }
-

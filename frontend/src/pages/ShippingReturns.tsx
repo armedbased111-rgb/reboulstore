@@ -5,14 +5,15 @@ import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
  * Page ShippingReturns - Politiques de livraison et retours
  */
 export const ShippingReturns = () => {
-  const createRevealUp = (threshold: number = 0.2) =>
-    useScrollAnimation((element) => {
-      animateRevealUp(element, { duration: 1.2, distance: 40 });
-    }, { threshold });
-
-  const heroRef = createRevealUp(0.1);
-  const shippingRef = createRevealUp();
-  const returnsRef = createRevealUp();
+  const heroRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.2, distance: 40 });
+  }, { threshold: 0.1 });
+  const shippingRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.2, distance: 40 });
+  }, { threshold: 0.2 });
+  const returnsRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.2, distance: 40 });
+  }, { threshold: 0.2 });
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">

@@ -42,4 +42,3 @@ export class UpdateCouponDto {
   @IsOptional()
   isActive?: boolean;
 }
-

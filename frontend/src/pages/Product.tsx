@@ -302,11 +302,7 @@ export const Product = () => {
 
                         {/* Bouton Add to cart avec compteur quantité */}
                         <div className="flex items-center flex-1">
-                          <AddToCartButton 
-                            variant={selectedVariant} 
-                            quantity={quantity}
-                            onQuantityChange={setQuantity}
-                          />
+                          <AddToCartButton variant={selectedVariant} quantity={quantity} />
                         </div>
                       </div>
 

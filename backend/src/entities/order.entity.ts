@@ -104,7 +104,13 @@ export class Order {
   @Column({ type: 'int', nullable: true, name: 'coupon_id' })
   couponId: number | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, name: 'discount_amount' })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+    name: 'discount_amount',
+  })
   discountAmount: number | null;
 
   // Dates de suivi

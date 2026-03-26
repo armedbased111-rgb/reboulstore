@@ -1,8 +1,8 @@
 /**
  * Configuration Sentry pour le monitoring d'erreurs
- * 
+ *
  * Installation : npm install @sentry/node @sentry/integrations
- * 
+ *
  * Usage :
  * 1. Installer : npm install @sentry/node @sentry/integrations
  * 2. Ajouter SENTRY_DSN dans .env.production

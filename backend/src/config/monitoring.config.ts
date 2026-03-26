@@ -19,7 +19,7 @@ export interface HealthCheckResponse {
  */
 export const getHealthStatus = async (): Promise<HealthCheckResponse> => {
   const startTime = process.uptime();
-  
+
   return {
     status: 'ok',
     timestamp: new Date().toISOString(),

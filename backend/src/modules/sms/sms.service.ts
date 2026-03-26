@@ -4,7 +4,7 @@ import twilio from 'twilio';
 
 /**
  * Service pour l'envoi de SMS via Twilio
- * 
+ *
  * Configuration requise dans .env :
  * - TWILIO_ACCOUNT_SID : Account SID Twilio
  * - TWILIO_AUTH_TOKEN : Auth Token Twilio
@@ -54,7 +54,9 @@ export class SmsService {
 
     // Valider le format du numéro (doit commencer par +)
     if (!to.startsWith('+')) {
-      this.logger.error(`Invalid phone number format: ${to}. Must start with +`);
+      this.logger.error(
+        `Invalid phone number format: ${to}. Must start with +`,
+      );
       return null;
     }
 
@@ -126,4 +128,3 @@ export class SmsService {
     return this.isEnabled;
   }
 }
-

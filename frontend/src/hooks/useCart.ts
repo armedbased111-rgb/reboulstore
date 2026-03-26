@@ -22,7 +22,7 @@ const generateSessionId = (): string => {
 
 export const useCart = (): UseCartReturn => {
   // Persister sessionId dans localStorage
-  const [sessionId, _setSessionId] = useLocalStorage<string>('cart_session_id', generateSessionId());
+  const [sessionId] = useLocalStorage<string>('cart_session_id', generateSessionId());
   
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

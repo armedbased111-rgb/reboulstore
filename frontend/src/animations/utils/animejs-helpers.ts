@@ -24,25 +24,25 @@ export const useAnimeJS = (
 ): RefObject<HTMLDivElement | null> => {
   const scopeRef = useRef<HTMLDivElement>(null);
   const animationsRef = useRef<ReturnType<typeof anime.animate>[]>([]);
+  const depsKey = JSON.stringify(deps);
 
   useEffect(() => {
-    if (scopeRef.current) {
+    const scope = scopeRef.current;
+    if (scope) {
       // Exécuter le callback (créer les animations)
       callback();
 
       // Nettoyage au démontage
       return () => {
         // Nettoyer toutes les animations créées dans le scope
-        if (scopeRef.current) {
-          anime.remove(scopeRef.current);
-        }
+        anime.remove(scope);
         animationsRef.current.forEach(anim => {
           if (anim) anime.remove(anim);
         });
         animationsRef.current = [];
       };
     }
-  }, deps);
+  }, [callback, depsKey]);
 
   return scopeRef;
 };

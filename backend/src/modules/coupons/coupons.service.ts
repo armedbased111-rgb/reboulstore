@@ -35,16 +35,17 @@ export class CouponsService {
 
     // Valider la valeur de réduction selon le type
     if (createCouponDto.discountType === DiscountType.PERCENTAGE) {
-      if (createCouponDto.discountValue < 0 || createCouponDto.discountValue > 100) {
+      if (
+        createCouponDto.discountValue < 0 ||
+        createCouponDto.discountValue > 100
+      ) {
         throw new BadRequestException(
           'Percentage discount must be between 0 and 100',
         );
       }
     } else if (createCouponDto.discountType === DiscountType.FIXED_AMOUNT) {
       if (createCouponDto.discountValue < 0) {
-        throw new BadRequestException(
-          'Fixed amount discount must be positive',
-        );
+        throw new BadRequestException('Fixed amount discount must be positive');
       }
     }
 
@@ -55,7 +56,10 @@ export class CouponsService {
         ? new Date(createCouponDto.expiresAt)
         : null,
       maxUses: createCouponDto.maxUses || 0,
-      isActive: createCouponDto.isActive !== undefined ? createCouponDto.isActive : true,
+      isActive:
+        createCouponDto.isActive !== undefined
+          ? createCouponDto.isActive
+          : true,
     });
 
     const savedCoupon = await this.couponRepository.save(coupon);
@@ -256,9 +260,7 @@ export class CouponsService {
         updateCouponDto.discountValue !== undefined &&
         updateCouponDto.discountValue < 0
       ) {
-        throw new BadRequestException(
-          'Fixed amount discount must be positive',
-        );
+        throw new BadRequestException('Fixed amount discount must be positive');
       }
     }
 
@@ -325,4 +327,3 @@ export class CouponsService {
     };
   }
 }
-

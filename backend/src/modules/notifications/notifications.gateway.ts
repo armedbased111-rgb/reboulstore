@@ -10,12 +10,12 @@ import { Logger } from '@nestjs/common';
 
 /**
  * Gateway WebSocket pour les notifications en temps réel
- * 
+ *
  * Événements émis :
  * - order.created : Nouvelle commande créée (admin)
  * - order.status.changed : Statut de commande changé (user)
  * - product.stock.low : Produit en rupture de stock (admin)
- * 
+ *
  * Rooms :
  * - admin : Pour les administrateurs
  * - user:{userId} : Pour un utilisateur spécifique
@@ -54,13 +54,15 @@ export class NotificationsGateway
     } else if (userId) {
       const userRoom = `user:${userId}`;
       client.join(userRoom);
-      
+
       if (!this.userClients.has(userId)) {
         this.userClients.set(userId, new Set());
       }
       this.userClients.get(userId)!.add(client.id);
-      
-      this.logger.log(`User client connected: ${client.id} (userId: ${userId})`);
+
+      this.logger.log(
+        `User client connected: ${client.id} (userId: ${userId})`,
+      );
     }
   }
 
@@ -127,7 +129,9 @@ export class NotificationsGateway
       data: order,
       timestamp: new Date(),
     });
-    this.logger.log(`Order status changed notification sent: ${order.orderNumber} to user ${order.userId}`);
+    this.logger.log(
+      `Order status changed notification sent: ${order.orderNumber} to user ${order.userId}`,
+    );
   }
 
   /**
@@ -173,4 +177,3 @@ export class NotificationsGateway
     return { event: 'pong', data: 'WebSocket connection is working!' };
   }
 }
-

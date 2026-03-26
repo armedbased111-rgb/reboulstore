@@ -65,7 +65,7 @@ export class ProductsService {
 
     // Générer une clé de cache unique basée sur les paramètres de requête
     const cacheKey = `products:${JSON.stringify(query)}`;
-    
+
     // Vérifier le cache
     const cached = await this.cacheManager.get(cacheKey);
     if (cached) {
@@ -94,21 +94,23 @@ export class ProductsService {
 
     // Filtre par catégorie
     if (category) {
-      const categoryId = typeof category === 'string' ? parseInt(category, 10) : category;
+      const categoryId =
+        typeof category === 'string' ? parseInt(category, 10) : category;
       if (!isNaN(categoryId)) where.categoryId = categoryId;
     }
 
     // Filtre par marque (accepte id ou slug)
     if (brand) {
-      const brandIdNum = typeof brand === 'string' ? parseInt(brand, 10) : brand;
+      const brandIdNum =
+        typeof brand === 'string' ? parseInt(brand, 10) : brand;
       if (!isNaN(brandIdNum)) {
         where.brandId = brandIdNum;
       } else {
         // C'est un slug, chercher la marque par slug
         const brandEntity = await this.brandRepository.findOne({
-          where: { slug: brand as string },
+          where: { slug: brand },
         });
-        
+
         if (brandEntity) {
           where.brandId = brandEntity.id;
         } else {
@@ -136,7 +138,14 @@ export class ProductsService {
 
     const [products, total] = await this.productRepository.findAndCount({
       where,
-      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
+      relations: [
+        'category',
+        'shop',
+        'brand',
+        'collection',
+        'images',
+        'variants',
+      ],
       order: { [sortBy]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
@@ -153,7 +162,7 @@ export class ProductsService {
 
   async findOne(id: number): Promise<Product> {
     const cacheKey = `product:${id}`;
-    
+
     // Vérifier le cache
     const cached = await this.cacheManager.get<Product>(cacheKey);
     if (cached) {
@@ -162,7 +171,14 @@ export class ProductsService {
 
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
+      relations: [
+        'category',
+        'shop',
+        'brand',
+        'collection',
+        'images',
+        'variants',
+      ],
     });
 
     if (!product) {
@@ -217,7 +233,14 @@ export class ProductsService {
 
     const [products, total] = await this.productRepository.findAndCount({
       where,
-      relations: ['category', 'shop', 'brand', 'collection', 'images', 'variants'],
+      relations: [
+        'category',
+        'shop',
+        'brand',
+        'collection',
+        'images',
+        'variants',
+      ],
       order: { [sortBy]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
@@ -274,10 +297,10 @@ export class ProductsService {
       collectionId,
     });
     const savedProduct = await this.productRepository.save(product);
-    
+
     // Note: Le cache expire automatiquement après 5 minutes (TTL)
     // Pour une invalidation complète, on pourrait utiliser redis directement avec un pattern
-    
+
     return savedProduct;
   }
 
@@ -315,18 +338,18 @@ export class ProductsService {
 
     Object.assign(product, updateProductDto);
     const savedProduct = await this.productRepository.save(product);
-    
+
     // Invalider le cache du produit spécifique
     await this.cacheManager.del(`product:${id}`);
     // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
-    
+
     return savedProduct;
   }
 
   async remove(id: number): Promise<void> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);
-    
+
     // Invalider le cache du produit spécifique
     await this.cacheManager.del(`product:${id}`);
     // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
@@ -527,9 +550,7 @@ export class ProductsService {
       );
 
       const order =
-        dto.order !== undefined && dto.order !== null
-          ? dto.order
-          : nextOrder;
+        dto.order !== undefined && dto.order !== null ? dto.order : nextOrder;
 
       if (dto.order === undefined || dto.order === null) {
         nextOrder += 1;

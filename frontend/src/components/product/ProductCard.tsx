@@ -34,7 +34,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const secondImageUrl = secondImage ? getImageUrl(secondImage.url) : null;
 
   const originalPrice = product.price;
-  const hasSale = false;
 
   return (
     <li className="product-card">

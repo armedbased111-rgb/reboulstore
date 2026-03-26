@@ -11,7 +11,17 @@ import { Brand } from '../../entities/brand.entity';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, Category, Image, Variant, Collection, Brand]), CloudinaryModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Product,
+      Category,
+      Image,
+      Variant,
+      Collection,
+      Brand,
+    ]),
+    CloudinaryModule,
+  ],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports: [ProductsService],

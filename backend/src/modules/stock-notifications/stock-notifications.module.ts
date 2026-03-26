@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { StockNotificationsController, StockNotificationsAdminController, StockNotificationsTestController } from './stock-notifications.controller';
+import {
+  StockNotificationsController,
+  StockNotificationsAdminController,
+} from './stock-notifications.controller';
 import { StockNotificationsService } from './stock-notifications.service';
 import { StockNotificationsScheduler } from './stock-notifications.scheduler';
 import { StockNotification } from '../../entities/stock-notification.entity';
@@ -14,9 +17,11 @@ import { OrdersModule } from '../orders/orders.module'; // Pour accéder à Emai
     TypeOrmModule.forFeature([StockNotification, Product, Variant, Image]),
     OrdersModule, // Pour utiliser EmailService
   ],
-  controllers: [StockNotificationsController, StockNotificationsAdminController, StockNotificationsTestController],
+  controllers: [
+    StockNotificationsController,
+    StockNotificationsAdminController,
+  ],
   providers: [StockNotificationsService, StockNotificationsScheduler],
   exports: [StockNotificationsService],
 })
 export class StockNotificationsModule {}
-

@@ -3,4 +3,3 @@ export class CouponValidationDto {
   discountAmount: number;
   message?: string;
 }
-

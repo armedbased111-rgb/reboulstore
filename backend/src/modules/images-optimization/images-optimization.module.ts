@@ -7,13 +7,9 @@ import { Image } from '../../entities/image.entity';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Image]),
-    CloudinaryModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Image]), CloudinaryModule],
   providers: [ImagesOptimizationService, ImagesOptimizationScheduler],
   controllers: [ImagesOptimizationController],
   exports: [ImagesOptimizationService],
 })
 export class ImagesOptimizationModule {}
-

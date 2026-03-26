@@ -101,6 +101,7 @@ export const AnimationProvider = ({ children }: AnimationProviderProps) => {
  * }, [prefersReducedMotion, cleanup]);
  * ```
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAnimation = () => {
   const context = useContext(AnimationContext);
   if (context === undefined) {

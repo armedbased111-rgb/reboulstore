@@ -53,29 +53,40 @@ export const Home = () => {
       .catch(() => {}); // garde le fallback si image-ui off
   }, []);
 
-  const createRevealUp = (duration: number = 1.4, distance: number = 40) =>
-    useScrollAnimation((element) => {
-      animateRevealUp(element, { duration, distance });
-    }, { threshold: 0.2, rootMargin: '100px' });
+  const heroImageRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.5, distance: 50 });
+  }, { threshold: 0.2, rootMargin: '100px' });
 
-  const createStaggerFade = (checkLoading: boolean = false) =>
-    useScrollAnimation((element) => {
-      if (checkLoading && (loading || products.length === 0)) return;
-      const cards = element.querySelectorAll('.product-card');
-      if (cards.length > 0) {
-        animateStaggerFadeIn(cards, {
-          duration: 1.2,
-          stagger: 0.15,
-          distance: 30
-        });
-      }
-    }, { threshold: 0.1, rootMargin: '150px' });
+  const categorySectionRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.4, distance: 40 });
+  }, { threshold: 0.2, rootMargin: '100px' });
 
-  const heroImageRef = createRevealUp(1.5, 50);
-  const categorySectionRef = createRevealUp();
-  const brandCarouselRef = createRevealUp();
-  const featuredProductsRef1 = createStaggerFade(true);
-  const featuredProductsRef4 = createStaggerFade();
+  const brandCarouselRef = useScrollAnimation((element) => {
+    animateRevealUp(element, { duration: 1.4, distance: 40 });
+  }, { threshold: 0.2, rootMargin: '100px' });
+
+  const featuredProductsRef1 = useScrollAnimation((element) => {
+    if (loading || products.length === 0) return;
+    const cards = element.querySelectorAll('.product-card');
+    if (cards.length > 0) {
+      animateStaggerFadeIn(cards, {
+        duration: 1.2,
+        stagger: 0.15,
+        distance: 30
+      });
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
+
+  const featuredProductsRef4 = useScrollAnimation((element) => {
+    const cards = element.querySelectorAll('.product-card');
+    if (cards.length > 0) {
+      animateStaggerFadeIn(cards, {
+        duration: 1.2,
+        stagger: 0.15,
+        distance: 30
+      });
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
 
   return (
     <div className='px-[4px]'>

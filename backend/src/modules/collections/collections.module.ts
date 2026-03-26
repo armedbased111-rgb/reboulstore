@@ -11,4 +11,3 @@ import { Collection } from '../../entities/collection.entity';
   exports: [CollectionsService],
 })
 export class CollectionsModule {}
-

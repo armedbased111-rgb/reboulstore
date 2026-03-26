@@ -35,11 +35,7 @@ export class InvoiceService {
         doc
           .fontSize(10)
           .font('Helvetica')
-          .text(
-            `Numéro de commande: ${String(order.id)}`,
-            50,
-            150,
-          )
+          .text(`Numéro de commande: ${String(order.id)}`, 50, 150)
           .text(
             `Date: ${new Date(order.createdAt).toLocaleDateString('fr-FR')}`,
             50,

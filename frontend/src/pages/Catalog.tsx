@@ -3,10 +3,8 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { ProductGrid } from '../components/catalog/ProductGrid';
 import { Pagination } from '../components/catalog/Pagination';
-import { HeroSectionImage } from '../components/home/HeroSectionImage';
 import { getCategoryBySlug } from '../services/categories';
 import { getBrandBySlug } from '../services/brands';
-import { getImageUrl } from '../utils/imageUtils';
 import { useCategories } from '../hooks/useCategories';
 import { useBrands } from '../hooks/useBrands';
 import { SlidersHorizontal, X, Search as SearchIcon, ChevronDown } from 'lucide-react';
@@ -62,10 +60,10 @@ export const Catalog = () => {
   const [category, setCategory] = useState<Category | null>(null);
   // Initialiser à true si categorySlug présent — évite une requête sans filtre au premier render
   const [categoryLoading, setCategoryLoading] = useState(!!categorySlug);
-  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [, setCategoryError] = useState<string | null>(null);
   const [brand, setBrand] = useState<Brand | null>(null);
   const [brandLoading, setBrandLoading] = useState(!!brandSlug);
-  const [brandError, setBrandError] = useState<string | null>(null);
+  const [, setBrandError] = useState<string | null>(null);
 
   // Filtres
   const [searchQuery, setSearchQuery] = useState<string>('');

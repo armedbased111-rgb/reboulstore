@@ -22,7 +22,6 @@ export const Header = () => {
   const [loadingProductImage, setLoadingProductImage] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [randomProductImageCategory, setRandomProductImageCategory] = useState<string | null>(null);
-  const [randomProductImageCategory2, setRandomProductImageCategory2] = useState<string | null>(null);
   const [loadingProductImageCategory, setLoadingProductImageCategory] = useState(false);
   
   // État pour le slider des brands (afficher 10 à la fois)
@@ -247,7 +246,6 @@ export const Header = () => {
   useEffect(() => {
     if (!hoveredCategory) {
       setRandomProductImageCategory(null);
-      setRandomProductImageCategory2(null);
       setLoadingProductImageCategory(false);
       return;
     }
@@ -275,15 +273,12 @@ export const Header = () => {
         if (productsWithImages.length > 0) {
           const idx = Math.floor(Math.random() * productsWithImages.length);
           setRandomProductImageCategory(getProductImage(productsWithImages[idx]));
-          setRandomProductImageCategory2(null);
         } else {
           setRandomProductImageCategory(null);
-          setRandomProductImageCategory2(null);
         }
       } catch (error) {
         console.error('Error fetching random product image for category:', error);
         setRandomProductImageCategory(null);
-        setRandomProductImageCategory2(null);
       } finally {
         setLoadingProductImageCategory(false);
       }

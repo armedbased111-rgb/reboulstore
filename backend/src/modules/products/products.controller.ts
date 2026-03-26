@@ -86,13 +86,13 @@ export class ProductsController {
     const ordersRaw =
       ordersQuery !== undefined && ordersQuery !== ''
         ? ordersQuery.split(',').map((s) => s.trim())
-        : body.orders ?? body['orders[]'];
+        : (body.orders ?? body['orders[]']);
 
     const altsArray: (string | undefined)[] = Array.isArray(altsRaw)
       ? altsRaw
       : altsRaw
-      ? [altsRaw]
-      : [];
+        ? [altsRaw]
+        : [];
 
     const ordersArray: (number | undefined)[] = Array.isArray(ordersRaw)
       ? ordersRaw.map((value: string) =>
@@ -101,12 +101,8 @@ export class ProductsController {
             : undefined,
         )
       : ordersRaw
-      ? [
-          ordersRaw !== ''
-            ? Number(ordersRaw as string)
-            : undefined,
-        ]
-      : [];
+        ? [ordersRaw !== '' ? Number(ordersRaw as string) : undefined]
+        : [];
 
     const createImageDtos: CreateImageDto[] = files.map((_, index) => ({
       alt: altsArray[index],
@@ -168,7 +164,10 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
     return this.productsService.update(id, updateProductDto);
   }
 

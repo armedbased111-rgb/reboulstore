@@ -92,16 +92,14 @@ export const FeaturedProducts = ({
 
   // État pour stocker l'ID de la catégorie (récupéré depuis le slug)
   const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [categoryLoading, setCategoryLoading] = useState(!!categorySlug);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
   // Si categorySlug est fourni, récupérer l'ID de la catégorie
   useEffect(() => {
     if (categorySlug) {
       console.log('🔍 FeaturedProducts: Récupération catégorie avec slug:', categorySlug);
-      // Utiliser des fonctions de mise à jour pour éviter les warnings
-      setCategoryLoading(true);
-      setCategoryError(null);
+      queueMicrotask(() => setCategoryError(null));
       getCategoryBySlug(categorySlug)
         .then((category: Category) => {
           console.log('✅ FeaturedProducts: Catégorie trouvée:', category);
@@ -119,7 +117,10 @@ export const FeaturedProducts = ({
           setCategoryLoading(false);
         });
     } else {
-      setCategoryId(null);
+      queueMicrotask(() => {
+        setCategoryId(null);
+        setCategoryLoading(false);
+      });
     }
   }, [categorySlug]);
 

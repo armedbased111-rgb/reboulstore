@@ -76,4 +76,3 @@ export class AddCollections1767024676000 implements MigrationInterface {
     `);
   }
 }
-

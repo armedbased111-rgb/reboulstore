@@ -1,5 +1,7 @@
 # 🎬 Guide des Animations AnimeJS
 
+> ⚠️ Document conservé pour historique. La version de référence est `docs/animations/ANIMATIONS_GUIDE.md`.
+
 **Version** : 1.0  
 **Date** : 20 décembre 2025  
 **Bibliothèque** : AnimeJS

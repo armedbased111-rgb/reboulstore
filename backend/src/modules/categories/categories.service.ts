@@ -17,7 +17,7 @@ export class CategoriesService {
 
   async findAll(): Promise<Category[]> {
     const cacheKey = 'categories:all';
-    
+
     // Vérifier le cache
     const cached = await this.cacheManager.get<Category[]>(cacheKey);
     if (cached) {
@@ -36,7 +36,7 @@ export class CategoriesService {
 
   async findOne(id: number): Promise<Category> {
     const cacheKey = `category:${id}`;
-    
+
     // Vérifier le cache
     const cached = await this.cacheManager.get<Category>(cacheKey);
     if (cached) {
@@ -59,7 +59,7 @@ export class CategoriesService {
 
   async findBySlug(slug: string): Promise<Category> {
     const cacheKey = `category:slug:${slug}`;
-    
+
     // Vérifier le cache
     const cached = await this.cacheManager.get<Category>(cacheKey);
     if (cached) {
@@ -83,10 +83,10 @@ export class CategoriesService {
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const category = this.categoryRepository.create(createCategoryDto);
     const savedCategory = await this.categoryRepository.save(category);
-    
+
     // Invalider le cache des catégories
     await this.invalidateCategoriesCache();
-    
+
     return savedCategory;
   }
 
@@ -97,21 +97,21 @@ export class CategoriesService {
     const category = await this.findOne(id);
     Object.assign(category, updateCategoryDto);
     const savedCategory = await this.categoryRepository.save(category);
-    
+
     // Invalider le cache de la catégorie spécifique et de la liste
     await this.cacheManager.del(`category:${id}`);
     if (category.slug) {
       await this.cacheManager.del(`category:slug:${category.slug}`);
     }
     await this.invalidateCategoriesCache();
-    
+
     return savedCategory;
   }
 
   async remove(id: number): Promise<void> {
     const category = await this.findOne(id);
     await this.categoryRepository.remove(category);
-    
+
     // Invalider le cache de la catégorie spécifique et de la liste
     await this.cacheManager.del(`category:${id}`);
     if (category.slug) {

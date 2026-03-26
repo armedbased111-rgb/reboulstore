@@ -11,13 +11,17 @@ export const useSearch = (query: string, enabled: boolean = true) => {
 
   useEffect(() => {
     if (!enabled || !debouncedQuery || debouncedQuery.trim() === '') {
-      setSuggestions([]);
-      setLoading(false);
+      queueMicrotask(() => {
+        setSuggestions([]);
+        setLoading(false);
+      });
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    queueMicrotask(() => {
+      setLoading(true);
+      setError(null);
+    });
 
     getSearchSuggestions(debouncedQuery)
       .then((data) => {

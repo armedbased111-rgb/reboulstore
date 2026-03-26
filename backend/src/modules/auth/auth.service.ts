@@ -14,12 +14,25 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<{ user: User; access_token: string }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ user: User; access_token: string }> {
     const { email, password } = loginDto;
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'firstName', 'lastName', 'phone', 'role', 'isVerified', 'createdAt', 'updatedAt'],
+      select: [
+        'id',
+        'email',
+        'password',
+        'firstName',
+        'lastName',
+        'phone',
+        'role',
+        'isVerified',
+        'createdAt',
+        'updatedAt',
+      ],
     });
 
     if (!user || !user.password) {

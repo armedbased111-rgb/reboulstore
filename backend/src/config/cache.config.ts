@@ -20,4 +20,3 @@ export const getCacheConfig = (
     max: 1000, // Nombre maximum d'éléments en cache
   } as CacheModuleOptions<RedisClientOptions>;
 };
-

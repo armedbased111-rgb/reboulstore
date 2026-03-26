@@ -60,7 +60,10 @@ export class CouponsController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateCouponDto: UpdateCouponDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCouponDto: UpdateCouponDto,
+  ) {
     return this.couponsService.update(id, updateCouponDto);
   }
 
@@ -74,4 +77,3 @@ export class CouponsController {
     return this.couponsService.remove(id);
   }
 }
-

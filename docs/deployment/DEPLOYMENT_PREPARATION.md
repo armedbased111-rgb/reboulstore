@@ -16,14 +16,14 @@
 
 ## 🔐 Secrets Générés
 
-Les secrets ont été générés et stockés dans `.secrets.production.local` (local, non commité).
+Les secrets doivent être générés et stockés localement dans `.secrets.production.local` (fichier local, non commité).
 
-**⚠️ Important** : Ces secrets doivent être copiés dans les fichiers `.env.production` sur le serveur.
+**⚠️ Important** : Ne jamais exposer les valeurs des secrets dans la documentation, les commits ou les captures.
 
-**Secrets générés** :
-- `JWT_SECRET_REBOUL` : vB7bs5kgqJI9HZkyGs2FZJnLZ91+MgxnKxgH6F+ybGM=
-- `JWT_SECRET_ADMIN` : /sYZaXhqg41LjU4TQjIhywytG9FH7CqvtE1k+JA8SfM=
-- `DB_PASSWORD` : G/7gmqndFFm9qKEDaN3+Ldpf/ztt84Jx
+**Secrets attendus** :
+- `JWT_SECRET_REBOUL` : `<generate_secure_value>`
+- `JWT_SECRET_ADMIN` : `<generate_secure_value>`
+- `DB_PASSWORD` : `<generate_secure_value>`
 
 ---
 
@@ -32,7 +32,7 @@ Les secrets ont été générés et stockés dans `.secrets.production.local` (l
 ### Connexion SSH
 
 ```bash
-ssh deploy@152.228.218.35
+ssh <deploy_user>@<server_host>
 ```
 
 ### Cloner le Repository
@@ -76,13 +76,13 @@ nano .env.production
 ```env
 # Database
 DB_USERNAME=reboulstore
-DB_PASSWORD=G/7gmqndFFm9qKEDaN3+Ldpf/ztt84Jx
+DB_PASSWORD=<db_password>
 DB_DATABASE=reboulstore_db
 DB_HOST=reboulstore-postgres-prod
 DB_PORT=5432
 
 # JWT
-JWT_SECRET=vB7bs5kgqJI9HZkyGs2FZJnLZ91+MgxnKxgH6F+ybGM=
+JWT_SECRET=<jwt_secret_reboul>
 
 # Stripe (à remplir avec tes vraies clés depuis Stripe Dashboard)
 STRIPE_SECRET_KEY=sk_live_...
@@ -123,11 +123,11 @@ FRONTEND_URL=https://admin.reboulstore.com
 VITE_API_URL=https://admin.reboulstore.com/api
 
 # JWT
-JWT_SECRET=/sYZaXhqg41LjU4TQjIhywytG9FH7CqvtE1k+JA8SfM=
+JWT_SECRET=<jwt_secret_admin>
 
 # Connexion Reboul Database (via réseau Docker)
 REBOUL_DB_USER=reboulstore
-REBOUL_DB_PASSWORD=G/7gmqndFFm9qKEDaN3+Ldpf/ztt84Jx
+REBOUL_DB_PASSWORD=<db_password>
 REBOUL_DB_NAME=reboulstore_db
 REBOUL_DB_HOST=reboulstore-postgres-prod
 REBOUL_DB_PORT=5432
@@ -171,21 +171,16 @@ docker compose version
 
 ---
 
-## 📝 Étape 5 : Vérifier les Scripts de Déploiement
+## 📝 Étape 5 : Vérifier le Script de Déploiement Canonique
 
-Les scripts de déploiement sont déjà dans le repository :
-- `/opt/reboulstore/scripts/deploy-reboul.sh`
-- `/opt/reboulstore/admin-central/scripts/deploy-admin.sh`
+Le script de déploiement de référence est :
+- `/opt/reboulstore/scripts/deploy-prod.sh`
 
 **Vérifier les permissions** :
 ```bash
 cd /opt/reboulstore
-chmod +x scripts/deploy-reboul.sh
-chmod +x scripts/backup-db.sh
-chmod +x scripts/rollback.sh
-
-cd admin-central
-chmod +x scripts/deploy-admin.sh
+chmod +x scripts/deploy-prod.sh
+chmod +x scripts/check-build.sh
 ```
 
 ---

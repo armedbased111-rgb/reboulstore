@@ -28,3 +28,10 @@ factures/
 export-facture.sh
 facture-template.html
 .claude/skills/playwright/screenshots/
+
+# Build artifacts and OS files
+**/.DS_Store
+**/*.tsbuildinfo
+backend/dist/
+output_batch_*/
+output_batch_*/**

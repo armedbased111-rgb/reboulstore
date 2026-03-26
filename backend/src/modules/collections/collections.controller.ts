@@ -64,4 +64,3 @@ export class CollectionsController {
     return this.collectionsService.remove(id);
   }
 }
-

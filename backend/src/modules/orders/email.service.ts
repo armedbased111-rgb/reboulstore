@@ -342,7 +342,12 @@ export class EmailService {
    */
   async sendStockAvailableNotification(
     email: string,
-    product: { id: number; name: string; slug: string; imageUrl?: string | null },
+    product: {
+      id: number;
+      name: string;
+      slug: string;
+      imageUrl?: string | null;
+    },
     variant?: { id: number; color?: string; size?: string },
   ): Promise<void> {
     const productUrl = `${this.frontendUrl}/products/${product.slug}`;
@@ -351,10 +356,13 @@ export class EmailService {
       : product.name;
 
     // Logo Reboul Store (utiliser le logo noir depuis Cloudinary)
-    const logoUrl = 'https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png';
+    const logoUrl =
+      'https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png';
 
     try {
-      this.logger.debug(`Sending stock notification email to ${email} with logoUrl: ${logoUrl}`);
+      this.logger.debug(
+        `Sending stock notification email to ${email} with logoUrl: ${logoUrl}`,
+      );
       const result = await this.mailerService.sendMail({
         to: email,
         subject: `Votre produit est de nouveau disponible - ${productName}`,
@@ -370,7 +378,9 @@ export class EmailService {
         },
       });
 
-      this.logger.log(`Stock available notification sent to ${email} for product ${product.id}`);
+      this.logger.log(
+        `Stock available notification sent to ${email} for product ${product.id}`,
+      );
       this.logger.debug(`Email result: ${JSON.stringify(result)}`);
     } catch (error: any) {
       this.logger.error(
