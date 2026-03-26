@@ -49,11 +49,11 @@ export const BrandCarousel = ({
               <SwiperSlide key={pageIndex}>
                 <div className="grid grid-cols-3 gap-[2px] pb-8">
                   {page.map((brand) => (
-                    <div key={brand.id} className="h-[120px] flex items-center justify-center px-10">
+                    <div key={brand.id} className="h-[100px] md:h-[120px] flex items-center justify-center px-8 md:px-16 lg:px-20">
                       <img
                         src={brand.logoUrl!}
                         alt={brand.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain max-h-[48px] md:max-h-[52px]"
                         loading="lazy"
                         onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       />

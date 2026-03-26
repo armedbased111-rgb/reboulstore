@@ -8,9 +8,7 @@ import { ProductTabs } from '../components/product/ProductTabs';
 import { ProductInfo } from '../components/product/ProductInfo';
 import { RelatedProducts } from '../components/product/RelatedProducts';
 import { StockBadge } from '../components/product/StockBadge';
-import { ProductBadge } from '../components/product/ProductBadge';
 import { StockNotificationModal } from '../components/product/StockNotificationModal';
-import { Breadcrumbs } from '../components/ui/breadcrumbs';
 import { useToast } from '../contexts/ToastContext';
 import type { Variant } from '../types';
 import * as anime from 'animejs';
@@ -33,7 +31,6 @@ export const Product = () => {
   
   // Refs pour les animations
   const pageRef = useRef<HTMLDivElement>(null);
-  const breadcrumbsRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const productInfoRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
@@ -51,17 +48,7 @@ export const Product = () => {
         easing: ANIMATION_EASES.DEFAULT,
       });
 
-      // 2. Slide-up breadcrumbs (commence 0.2s avant la fin de l'animation précédente)
-      if (breadcrumbsRef.current) {
-        tl.add(breadcrumbsRef.current, {
-          opacity: [0, 1],
-          translateY: [20, 0],
-          duration: toMilliseconds(0.5),
-          easing: ANIMATION_EASES.DEFAULT,
-        }, '-=200'); // -200ms = commence 0.2s avant la fin
-      }
-
-      // 3. Slide-up galerie (commence 0.3s avant la fin de l'animation précédente)
+      // 2. Slide-up galerie (commence 0.3s avant la fin de l'animation précédente)
       if (galleryRef.current) {
         tl.add(galleryRef.current, {
           opacity: [0, 1],
@@ -165,116 +152,43 @@ export const Product = () => {
 
   const sizeChart = getSizeChart();
 
-  // Préparer les breadcrumbs
-  const breadcrumbItems = [
-    { label: 'Accueil', href: '/' },
-    { label: 'Catalogue', href: '/catalog' },
-    ...(product.category
-      ? [{ label: product.category.name, href: `/catalog?category=${product.category.id}` }]
-      : []),
-    { label: product.name },
-  ];
-
   // Préparer les onglets avec les vraies données
   const tabs = [
     {
-      id: 'details',
-      label: 'DETAILS',
-      content: (
-        <div>
-          <p className="mb-2 uppercase">{product.description || 'AUCUN DÉTAIL DISPONIBLE.'}</p>
-          {(product.materials || product.madeIn || product.careInstructions) && (
-            <div className="mt-4 space-y-1">
-              {product.materials && (
-                <p className="text-sm uppercase">
-                  <strong>MATIÈRES :</strong> {String(product.materials).toUpperCase()}
-                </p>
-              )}
-              {product.madeIn && (
-                <p className="text-sm uppercase">
-                  <strong>FABRIQUÉ EN :</strong> {String(product.madeIn).toUpperCase()}
-                </p>
-              )}
-              {product.careInstructions && (
-                <p className="text-sm uppercase">
-                  <strong>ENTRETIEN :</strong> {String(product.careInstructions).toUpperCase()}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
       id: 'sizing',
-      label: 'TAILLES',
+      label: 'Tailles',
       content: sizeChart ? (
-        <div>
-          <p className="mb-4 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] uppercase">Guide des tailles</p>
-          {/* Container avec scroll horizontal sur mobile */}
-          <div className="overflow-x-auto -mx-2 px-2 md:mx-0 md:px-0">
-            <table className="w-full min-w-[500px] text-left border-collapse">
-              <thead>
-                <tr className="border-b border-gray-300">
-                  <th className="py-2 pr-4 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Taille</th>
-                  {sizeChart.some((s) => s.chest) && (
-                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de poitrine (cm)</th>
-                  )}
-                  {sizeChart.some((s) => s.length) && (
-                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Longueur (cm)</th>
-                  )}
-                  {sizeChart.some((s) => s.waist) && (
-                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de taille (cm)</th>
-                  )}
-                  {sizeChart.some((s) => s.hip) && (
-                    <th className="py-2 px-2 font-[Geist] font-medium text-[12px] leading-[16px] tracking-[-0.35px] uppercase text-black">Tour de hanches (cm)</th>
-                  )}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-black">
+                <td className="pb-2 pr-8 text-[12px] font-medium text-black">Taille</td>
+                {sizeChart.some((s) => s.chest) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Poitrine (cm)</td>}
+                {sizeChart.some((s) => s.length) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Longueur (cm)</td>}
+                {sizeChart.some((s) => s.waist) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Taille (cm)</td>}
+                {sizeChart.some((s) => s.hip) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Hanches (cm)</td>}
+              </tr>
+            </thead>
+            <tbody>
+              {sizeChart.map((entry) => (
+                <tr key={entry.size} className="border-b border-black/10">
+                  <td className="py-2 pr-8 text-[12px] font-medium text-black">{entry.size}</td>
+                  {sizeChart.some((s) => s.chest) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.chest ?? '—'}</td>}
+                  {sizeChart.some((s) => s.length) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.length ?? '—'}</td>}
+                  {sizeChart.some((s) => s.waist) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.waist ?? '—'}</td>}
+                  {sizeChart.some((s) => s.hip) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.hip ?? '—'}</td>}
                 </tr>
-              </thead>
-              <tbody>
-                {sizeChart.map((entry, index) => (
-                  <tr
-                    key={entry.size}
-                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
-                  >
-                    <td className="py-3 pr-4 font-[Geist] font-medium text-[14px] leading-[20px] tracking-[-0.35px] text-black">
-                      {entry.size}
-                    </td>
-                    {sizeChart.some((s) => s.chest) && (
-                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
-                        {entry.chest || '-'}
-                      </td>
-                    )}
-                    {sizeChart.some((s) => s.length) && (
-                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
-                        {entry.length || '-'}
-                      </td>
-                    )}
-                    {sizeChart.some((s) => s.waist) && (
-                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
-                        {entry.waist || '-'}
-                      </td>
-                    )}
-                    {sizeChart.some((s) => s.hip) && (
-                      <td className="py-3 px-2 font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-700">
-                        {entry.hip || '-'}
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
-        <p className="font-[Geist] text-[14px] leading-[20px] tracking-[-0.35px] text-gray-600 uppercase">
-          GUIDE DES TAILLES BIENTÔT DISPONIBLE.
-        </p>
+        <p className="text-[12px] text-black/60">Guide des tailles bientôt disponible.</p>
       ),
     },
     {
       id: 'shipping',
-      label: 'LIVRAISON',
+      label: 'Livraison',
       content: product.shop?.shippingPolicy ? (
         <div>
           {product.shop.shippingPolicy.description ? (
@@ -309,7 +223,7 @@ export const Product = () => {
     },
     {
       id: 'returns',
-      label: 'RETOURS',
+      label: 'Retours',
       content: product.shop?.returnPolicy ? (
         <div>
           {product.shop.returnPolicy.conditions ? (
@@ -340,35 +254,27 @@ export const Product = () => {
   return (
     <main ref={pageRef} id="MainContent" role="main" tabIndex={-1} className="grow flex">
       <div className="w-full">
-        {/* Breadcrumbs */}
-        <div ref={breadcrumbsRef} className="px-4 md:px-0 ml-[4px]">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
-
         <section className="m-[2px] last:mb-0">
           <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
-            {/* Layout 2 colonnes */}
+            {/* Layout 2 colonnes — galerie 42% / info 58% (ratio ACW*) */}
             <div className="lg:flex">
-              {/* Colonne gauche : Galerie (40%) */}
-              <div ref={galleryRef} className="lg:min-w-[40%] lg:basis-[40%] lg:mr-8">
+              {/* Colonne gauche : Galerie (42%) */}
+              <div ref={galleryRef} className="lg:min-w-[42%] lg:basis-[42%]">
                 {product.images && product.images.length > 0 ? (
                   <ProductGallery
                     images={product.images}
                     productName={product.name}
-                    product={product}
                   />
                 ) : (
-                  <div className="bg-gray-200 aspect-[3/4] flex items-center justify-center relative">
-                    {/* Badge produit (overlay) */}
-                    <ProductBadge product={product} />
-                    <span className="text-gray-400 uppercase">AUCUNE IMAGE</span>
+                  <div className="bg-gray-100 aspect-[3/4] flex items-center justify-center">
+                    <span className="text-gray-400 uppercase text-[12px]">AUCUNE IMAGE</span>
                   </div>
                 )}
               </div>
 
-              {/* Colonne droite : Infos produit (60%, sticky) */}
-              <div className="basis-[60%]">
-                <div className="lg:sticky pt-2" style={{ top: '78px' }}>
+              {/* Colonne droite : Infos produit (58%, sticky) */}
+              <div className="lg:flex-1">
+                <div className="lg:sticky pt-2 px-4 lg:pl-10 lg:pr-6" style={{ top: '78px' }}>
                   {/* Titre + Prix */}
                   <div ref={productInfoRef}>
                     <ProductInfo product={product} />
@@ -378,11 +284,11 @@ export const Product = () => {
                   <div ref={actionsRef} className="mt-8">
                     {/* Container fixe pour éviter le décalage des boutons */}
                     <div className="flex flex-col gap-3">
-                      {/* Ligne 1 : Sélecteur de variante + Bouton Add to cart (côte à côte, même hauteur) */}
-                      <div className="flex flex-col items-start md:flex-row md:items-stretch gap-2 max-h-[48px] md:max-h-[40px]">
+                      {/* Ligne 1 : Sélecteur de variante + Bouton Add to cart (côte à côte, h-[34px]) */}
+                      <div className="flex flex-row items-center gap-0 h-[34px]">
                         {/* Sélecteur de variante */}
                         {product.variants && product.variants.length > 0 && (
-                          <div className="flex items-center h-full">
+                          <div className="flex items-center">
                             <VariantSelector
                               variants={product.variants}
                               selectedVariant={selectedVariant}
@@ -395,7 +301,7 @@ export const Product = () => {
                         )}
 
                         {/* Bouton Add to cart avec compteur quantité */}
-                        <div className="flex items-center h-full flex-1 md:flex-initial">
+                        <div className="flex items-center flex-1">
                           <AddToCartButton 
                             variant={selectedVariant} 
                             quantity={quantity}
@@ -435,6 +341,13 @@ export const Product = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Description — après size/CTA comme sur ACW* */}
+                  {product.description && (
+                    <p className="mt-8 text-[20px] leading-[1.6] text-black/80">
+                      {product.description}
+                    </p>
+                  )}
 
                   {/* Onglets */}
                   <div ref={tabsRef}>

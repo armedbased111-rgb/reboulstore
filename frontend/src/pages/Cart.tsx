@@ -24,8 +24,10 @@ export const Cart = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-16">
-        <EmptyCart />
+      <div className="w-full flex items-start justify-center text-left text-[11.4px] text-black font-[Geist]">
+        <div className="flex-1 flex flex-col items-start pt-4 pb-8 px-4 sm:pt-1 sm:pb-[39px] sm:pl-1 sm:pr-0 max-w-full">
+          <EmptyCart />
+        </div>
       </div>
     );
   }

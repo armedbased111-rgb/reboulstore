@@ -43,7 +43,7 @@ export const VariantSelector = ({
           name="variant"
           value={selectedVariant?.id || ''}
           onChange={handleChange}
-          className="appearance-none focus:outline-none border border-black rounded-md pl-4 pr-10 text-t2 bg-transparent py-[9px] md:py-[5px] cursor-pointer"
+          className="appearance-none focus:outline-none border border-black border-r-0 rounded-l-md pl-4 pr-10 text-[12px] font-medium bg-transparent h-[34px] cursor-pointer"
         >
           <option value="" disabled>
             SÉLECTIONNER UNE TAILLE

@@ -451,20 +451,6 @@ export const Catalog = () => {
                 </div>
               )}
 
-              {brand && !brandLoading && !brandError && !category && (
-                <div ref={heroRef} className="mb-8">
-                  <HeroSectionImage
-                    title={brand.name}
-                    subtitle={brand.description || 'Découvrez notre collection'}
-                    buttonText="Shop now"
-                    buttonLink={`/catalog?brand=${brand.slug}`}
-                    videoSrc={brand.megaMenuVideo1?.trim() || undefined}
-                    imageSrc={getImageUrl(brand.megaMenuImage1 || brand.logoUrl) || '/placeholder-hero.jpg'}
-                    aspectRatioMobile="4/5"
-                    heightClass="md:h-[500px]"
-                  />
-                </div>
-              )}
 
               {/* Grille produits */}
               {loading && (

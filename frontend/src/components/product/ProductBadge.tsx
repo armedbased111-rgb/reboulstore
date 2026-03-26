@@ -28,8 +28,8 @@ export const ProductBadge = ({ product }: ProductBadgeProps) => {
     return daysSinceCreation <= 30;
   })();
 
-  // Vérifier si le produit est en promo (hasSale - pour l'instant toujours true selon ProductInfo)
-  const hasSale = true; // Même logique que ProductInfo
+  // Vérifier si le produit est en promo (champ discountedPrice à venir)
+  const hasSale = false;
 
   // Afficher "Stocks insuffisants" en priorité absolue
   if (isSoldOut) {

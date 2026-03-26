@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCartContext } from '../../contexts/CartContext';
 import { useCategories } from '../../hooks/useCategories';
 import { useBrands } from '../../hooks/useBrands';
-import { useQuickSearchContext } from '../../contexts/QuickSearchContext';
 import type { Brand, Product, Category } from '../../types';
 import { animateSlideDown, animateStaggerFadeIn, animateFadeOut, animateScalePulse } from '../../animations';
 import * as anime from 'animejs';
@@ -16,7 +15,6 @@ export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { brands, loading: brandsLoading, error: brandsError } = useBrands();
-  const { open: openQuickSearch } = useQuickSearchContext();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isBrandsMenuOpen, setIsBrandsMenuOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<Brand | null>(null);
@@ -457,15 +455,6 @@ export const Header = () => {
 
           {/* Utilitaires à droite — style ACW* : icônes épurées */}
           <div className="hidden md:flex items-center gap-5">
-            {/* Search */}
-            <button
-              onClick={() => openQuickSearch()}
-              className="flex items-center justify-center w-8 h-8 hover:opacity-60 transition-opacity"
-              aria-label="Rechercher"
-            >
-              <Search className="w-[18px] h-[18px] text-black" strokeWidth={1.5} />
-            </button>
-
             {/* Cart */}
             <Link
               to="/cart"
@@ -482,15 +471,8 @@ export const Header = () => {
             </Link>
           </div>
 
-          {/* Icônes mobiles — Search + Cart */}
+          {/* Icônes mobiles — Cart */}
           <div className="md:hidden flex items-center gap-1 relative z-[100]">
-            <button
-              onClick={() => openQuickSearch()}
-              className="flex items-center justify-center w-10 h-10"
-              aria-label="Rechercher"
-            >
-              <Search className="w-5 h-5 text-black" strokeWidth={1.5} />
-            </button>
             <Link
               to="/cart"
               className="relative flex items-center justify-center w-10 h-10"
@@ -505,7 +487,7 @@ export const Header = () => {
             </Link>
           </div>
         </div>
-        
+
         {/* Mega Menu CATALOGUE - Style A-COLD-WALL* - Enfant du header pour être sticky */}
         {isShopMenuOpen && (
           <>

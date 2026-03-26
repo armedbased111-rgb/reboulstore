@@ -2,19 +2,11 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import type { Product } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
+import { formatPrice } from '../../utils/priceFormatter';
 
 interface ProductCardProps {
   product: Product;
 }
-
-/**
- * Formate un prix en euros (format A-COLD-WALL* : €XX,XX)
- */
-const formatPrice = (price: number): string => {
-  const priceInEuros = price / 100;
-  const formatted = priceInEuros.toFixed(2).replace('.', ',');
-  return `€${formatted}`;
-};
 
 /**
  * Composant ProductCard - Carte produit style A-COLD-WALL*

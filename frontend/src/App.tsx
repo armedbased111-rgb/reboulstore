@@ -23,12 +23,8 @@ import { PageLoader } from './components/loaders/PageLoader'
 import { LoaderPlayground } from './pages/LoaderPlayground'
 import ProductStitchDemo from './pages/ProductStitchDemo'
 import { HeaderPlayground } from './pages/HeaderPlayground'
-import { QuickSearch } from './components/search/QuickSearch'
-import { useQuickSearchContext } from './contexts/QuickSearchContext'
-
 function App() {
   const [showInitialLoader, setShowInitialLoader] = useState(true)
-  const { isOpen: isQuickSearchOpen, close: closeQuickSearch, open: openQuickSearch } = useQuickSearchContext()
 
   useEffect(() => {
     // Précharger le logo du loader (ressource critique)
@@ -44,16 +40,6 @@ function App() {
 
   return (
     <BrowserRouter>
-      <QuickSearch 
-        open={isQuickSearchOpen} 
-        onOpenChange={(open) => {
-          if (open) {
-            openQuickSearch();
-          } else {
-            closeQuickSearch();
-          }
-        }} 
-      />
       {showInitialLoader && (
         <PageLoader
           state="default"

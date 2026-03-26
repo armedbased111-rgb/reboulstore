@@ -1,17 +1,16 @@
 import {
   IsArray,
-  IsNotEmpty,
-  IsString,
   IsInt,
   Min,
   ValidateNested,
   IsOptional,
+  IsString,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 class CheckoutItemDto {
-  @IsString()
-  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
   variantId: number;
 
   @IsInt()

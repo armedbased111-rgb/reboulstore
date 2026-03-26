@@ -95,30 +95,15 @@ export const AddToCartButton = ({
   const isOutOfStock = variant ? (variant.stock || 0) === 0 : false;
 
   return (
-    <div className="inline-flex items-center gap-3 w-full md:w-auto h-full">
-      {/* Compteur quantité à gauche */}
-      <div className="flex items-center">
-        <QuantitySelector
-          quantity={quantity}
-          onDecrease={handleDecrease}
-          onIncrease={handleIncrease}
-          min={1}
-          max={maxQuantity || undefined}
-          disabled={!variant || isOutOfStock}
-        />
-      </div>
-
-      {/* Bouton principal */}
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={!variant || isAdding || isOutOfStock || (variant && variant.stock < quantity)}
-        className="flex-1 inline-flex items-center justify-center gap-4 py-[9px] md:py-[5px] px-6 rounded-[10px] md:rounded-md outline-none disabled:opacity-50 disabled:cursor-not-allowed text-t2 text-white bg-black cursor-pointer transition-opacity h-full"
-      >
-        <span className="whitespace-nowrap">
-          {isAdding ? 'AJOUT EN COURS...' : isOutOfStock ? 'RUPTURE DE STOCK' : 'AJOUTER AU PANIER'}
-        </span>
+    <button
+      type="button"
+      onClick={handleAddToCart}
+      disabled={!variant || isAdding || isOutOfStock}
+      className="inline-flex items-center justify-center h-[34px] w-auto py-[6px] px-6 rounded-r-md outline-none disabled:opacity-50 disabled:cursor-not-allowed text-[12px] font-medium text-white bg-black cursor-pointer transition-opacity whitespace-nowrap"
+    >
+      <span className="whitespace-nowrap">
+        {isAdding ? 'AJOUT EN COURS...' : isOutOfStock ? 'RUPTURE DE STOCK' : 'AJOUTER AU PANIER'}
+      </span>
     </button>
-    </div>
   );
 };

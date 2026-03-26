@@ -3583,6 +3583,72 @@ except ImportError as e:
     # Les commandes serveur sont optionnelles si les dépendances ne sont pas installées
     pass
 
+@cli.group()
+def shop():
+    """Gérer les shops (livraison, retours)"""
+    pass
+
+
+@shop.command('list')
+@click.option('--backend', 'backend_url', default='http://localhost:3001', help='URL du backend')
+def shop_list(backend_url):
+    """Lister les shops et leurs politiques"""
+    from commands.shop import list_shops
+    shops = list_shops(backend_url)
+    t = Table(title='Shops')
+    t.add_column('ID', style='cyan', width=4)
+    t.add_column('Nom', style='white')
+    t.add_column('Livraison', style='green')
+    t.add_column('Retours', style='yellow')
+    for s in shops:
+        ship = s.get('shippingPolicy') or {}
+        ret = s.get('returnPolicy') or {}
+        ship_str = f"gratuit dès {ship['freeShippingThreshold']}€ · {ship.get('deliveryTime','?')}" if ship else '—'
+        ret_str = f"{ret['returnWindow']}j" if ret.get('returnWindow') else ('—' if not ret else 'configuré')
+        t.add_row(str(s['id']), s['name'], ship_str, ret_str)
+    console.print(t)
+
+
+@shop.command('set-shipping')
+@click.argument('shop_id', type=int)
+@click.option('--free-above', type=float, help='Livraison gratuite au-dessus de X€')
+@click.option('--cost', help='Frais de port (ex: "€4,90")')
+@click.option('--delay', help='Délai de livraison (ex: "3-5 jours ouvrés")')
+@click.option('--international/--no-international', default=None, help='Livraison internationale')
+@click.option('--description', help='Texte libre (remplace tout)')
+@click.option('--backend', 'backend_url', default='http://localhost:3001')
+def shop_set_shipping(shop_id, free_above, cost, delay, international, description, backend_url):
+    """Configurer la politique de livraison d'un shop"""
+    from commands.shop import get_shop, patch_shop
+    current = get_shop(backend_url, shop_id).get('shippingPolicy') or {}
+    if free_above is not None: current['freeShippingThreshold'] = free_above
+    if cost: current['shippingCost'] = cost
+    if delay: current['deliveryTime'] = delay
+    if international is not None: current['internationalShipping'] = international
+    if description: current['description'] = description
+    result = patch_shop(backend_url, shop_id, {'shippingPolicy': current})
+    console.print(f"[green]✓ Livraison mise à jour — shop {shop_id}[/green]")
+    console.print(json.dumps(result.get('shippingPolicy'), indent=2, ensure_ascii=False))
+
+
+@shop.command('set-returns')
+@click.argument('shop_id', type=int)
+@click.option('--window', type=int, help='Délai de retour en jours (ex: 14)')
+@click.option('--free/--no-free', default=None, help='Frais de retour offerts')
+@click.option('--conditions', help='Conditions texte libre')
+@click.option('--backend', 'backend_url', default='http://localhost:3001')
+def shop_set_returns(shop_id, window, free, conditions, backend_url):
+    """Configurer la politique de retour d'un shop"""
+    from commands.shop import get_shop, patch_shop
+    current = get_shop(backend_url, shop_id).get('returnPolicy') or {}
+    if window is not None: current['returnWindow'] = window
+    if free is not None: current['returnShippingFree'] = free
+    if conditions: current['conditions'] = conditions
+    result = patch_shop(backend_url, shop_id, {'returnPolicy': current})
+    console.print(f"[green]✓ Retours mis à jour — shop {shop_id}[/green]")
+    console.print(json.dumps(result.get('returnPolicy'), indent=2, ensure_ascii=False))
+
+
 if __name__ == '__main__':
     cli()
 
