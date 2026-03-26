@@ -50,7 +50,7 @@ export class OrdersService {
     const stripeSecretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
     if (stripeSecretKey) {
       this.stripe = new Stripe(stripeSecretKey, {
-        apiVersion: '2025-11-17.clover',
+        apiVersion: '2026-02-25.clover',
       });
     }
   }
@@ -150,7 +150,7 @@ export class OrdersService {
       try {
         // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
         const orderNumber = `ORD-${String(orderResponse.id)}`;
-        
+
         // Extraire firstName et lastName depuis customerInfo.name
         const customerName = orderResponse.customerInfo?.name || 'Client';
         const nameParts = customerName.split(' ');
@@ -416,7 +416,7 @@ export class OrdersService {
       if (orderWithRelations.userId) {
         // Générer un numéro de commande basé sur l'ID (premiers 8 caractères)
         const orderNumber = `ORD-${String(orderWithRelations.id)}`;
-        
+
         this.notificationsGateway.notifyOrderStatusChanged({
           id: orderWithRelations.id,
           orderNumber,
@@ -430,7 +430,9 @@ export class OrdersService {
         this.emailService.sendShippingNotification(orderWithRelations);
 
         // Envoyer SMS de notification d'expédition si numéro de téléphone disponible
-        const phoneNumber = orderWithRelations.customerInfo?.phone || orderWithRelations.user?.phone;
+        const phoneNumber =
+          orderWithRelations.customerInfo?.phone ||
+          orderWithRelations.user?.phone;
         if (phoneNumber) {
           try {
             const orderNumber = `ORD-${String(orderWithRelations.id)}`;
@@ -947,7 +949,8 @@ export class OrdersService {
       code,
       discountAmount: validation.discountAmount,
       totalBeforeDiscount: cartTotal,
-      totalAfterDiscount: Math.round((cartTotal - validation.discountAmount) * 100) / 100,
+      totalAfterDiscount:
+        Math.round((cartTotal - validation.discountAmount) * 100) / 100,
     };
   }
 }

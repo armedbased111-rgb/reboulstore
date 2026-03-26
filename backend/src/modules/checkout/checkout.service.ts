@@ -35,7 +35,7 @@ export class CheckoutService {
     }
 
     this.stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2025-11-17.clover',
+      apiVersion: '2026-02-25.clover',
     });
   }
 
@@ -122,7 +122,8 @@ export class CheckoutService {
           couponId = coupon.id;
           discountAmount = validation.discountAmount;
           // Calculer le pourcentage de réduction pour l'appliquer proportionnellement
-          totalDiscountPercentage = subtotal > 0 ? (discountAmount / subtotal) * 100 : 0;
+          totalDiscountPercentage =
+            subtotal > 0 ? (discountAmount / subtotal) * 100 : 0;
         } else {
           throw new BadRequestException(
             validation.message || 'Invalid coupon code',
@@ -154,11 +155,14 @@ export class CheckoutService {
 
         // Appliquer la réduction proportionnellement si un coupon est appliqué
         if (totalDiscountPercentage > 0) {
-          const itemSubtotal = parseFloat(product.price.toString()) * item.quantity;
+          const itemSubtotal =
+            parseFloat(product.price.toString()) * item.quantity;
           const itemDiscount = (itemSubtotal * totalDiscountPercentage) / 100;
           const itemPriceAfterDiscount = itemSubtotal - itemDiscount;
           // Prix unitaire après réduction
-          priceInCents = Math.round((itemPriceAfterDiscount / item.quantity) * 100);
+          priceInCents = Math.round(
+            (itemPriceAfterDiscount / item.quantity) * 100,
+          );
         }
 
         // Trouver l'image du produit
@@ -235,13 +239,14 @@ export class CheckoutService {
       success_url: `${frontendUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${frontendUrl}/cart`,
       // Afficher un message personnalisé si un coupon est appliqué
-      ...(dto.couponCode && discountAmount > 0 && {
-        custom_text: {
-          submit: {
-            message: `Code promo ${dto.couponCode} appliqué : -${discountAmount.toFixed(2)}€ de réduction`,
+      ...(dto.couponCode &&
+        discountAmount > 0 && {
+          custom_text: {
+            submit: {
+              message: `Code promo ${dto.couponCode} appliqué : -${discountAmount.toFixed(2)}€ de réduction`,
+            },
           },
-        },
-      }),
+        }),
       metadata: {
         userId: userId || 'anonymous',
         subtotal: subtotal.toString(),
