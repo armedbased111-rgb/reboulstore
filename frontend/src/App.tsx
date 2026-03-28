@@ -14,6 +14,9 @@ import { Stores } from './pages/Stores'
 import { ShippingReturns } from './pages/ShippingReturns'
 import { Terms } from './pages/Terms'
 import { Privacy } from './pages/Privacy'
+import { Livraison } from './pages/Livraison'
+import { MentionsLegales } from './pages/MentionsLegales'
+import { Cookies } from './pages/Cookies'
 import { NotFound } from './pages/NotFound'
 import { ServerError } from './pages/ServerError'
 // ErrorBoundary importé mais non utilisé pour l'instant
@@ -21,6 +24,9 @@ import { ServerError } from './pages/ServerError'
 import { NavigationLoader } from './components/loaders/NavigationLoader'
 import { PageLoader } from './components/loaders/PageLoader'
 import { NewsletterEntryModal } from './components/newsletter/NewsletterEntryModal'
+import { CookieConsentBanner } from './components/consent/CookieConsentBanner'
+import { AnalyticsRouteTracker } from './components/consent/AnalyticsRouteTracker'
+
 function App() {
   const [showInitialLoader, setShowInitialLoader] = useState(true)
 
@@ -38,6 +44,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AnalyticsRouteTracker />
+      <CookieConsentBanner />
       {showInitialLoader && (
         <PageLoader
           state="default"
@@ -158,7 +166,55 @@ function App() {
             </Layout>
           } 
         />
-        
+        <Route
+          path="/politique-de-confidentialite"
+          element={
+            <Layout>
+              <Privacy />
+            </Layout>
+          }
+        />
+        <Route
+          path="/livraison"
+          element={
+            <Layout>
+              <Livraison />
+            </Layout>
+          }
+        />
+        <Route
+          path="/cgv"
+          element={
+            <Layout>
+              <Terms />
+            </Layout>
+          }
+        />
+        <Route
+          path="/conditions-generales-de-vente"
+          element={
+            <Layout>
+              <Terms />
+            </Layout>
+          }
+        />
+        <Route
+          path="/mentions-legales"
+          element={
+            <Layout>
+              <MentionsLegales />
+            </Layout>
+          }
+        />
+        <Route
+          path="/cookies"
+          element={
+            <Layout>
+              <Cookies />
+            </Layout>
+          }
+        />
+
         {/* Pages d'erreur */}
         <Route 
           path="/500" 

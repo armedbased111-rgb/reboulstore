@@ -1,6 +1,8 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
+import { HOME_BRANDS_DECOR } from '../../copy/homeSectionsDecor';
 import { useBrands } from '../../hooks/useBrands';
+import { TechnicalDecorFrame } from '../decorative';
 
 import 'swiper/swiper-bundle.css';
 
@@ -31,11 +33,20 @@ export const BrandCarousel = ({
 
   return (
     <section className="m-[2px] last:mb-0">
-      <div className="p-[2px] relative w-full">
-        <div className="pb-4">
-          <h2 className="text-[28px] font-normal leading-none mb-4">
-            {title}
-          </h2>
+      <div className="relative w-full p-[2px]">
+        <TechnicalDecorFrame
+          datum={HOME_BRANDS_DECOR.frameDatum}
+          datumClassName="bottom-2 left-2 max-w-[min(72%,14rem)] sm:bottom-2.5 sm:left-3"
+          insetClassName="inset-2 sm:inset-3"
+          omitCorners={['br', 'bl']}
+        />
+        <div className="relative z-[3] pb-4">
+          <div className="mb-[16px]">
+            <h2 className="text-[28px] font-normal leading-none">{title}</h2>
+            <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+              {HOME_BRANDS_DECOR.hudLine}
+            </p>
+          </div>
 
           <Swiper
             modules={[Autoplay, Pagination]}

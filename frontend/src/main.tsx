@@ -9,22 +9,25 @@ import { ToastProvider } from './contexts/ToastContext'
 import { AnimationProvider } from './contexts/AnimationContext'
 import { QuickSearchProvider } from './contexts/QuickSearchContext'
 import { NotificationsProvider } from './components/notifications/NotificationsProvider'
+import { CookieConsentProvider } from './contexts/CookieConsentContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
       <ErrorBoundary>
-        <CartProvider>
-          <ToastProvider>
-            <AnimationProvider>
-              <QuickSearchProvider>
-                <NotificationsProvider position="top-right">
-                  <App />
-                </NotificationsProvider>
-              </QuickSearchProvider>
-            </AnimationProvider>
-          </ToastProvider>
-        </CartProvider>
+        <CookieConsentProvider>
+          <CartProvider>
+            <ToastProvider>
+              <AnimationProvider>
+                <QuickSearchProvider>
+                  <NotificationsProvider position="top-right">
+                    <App />
+                  </NotificationsProvider>
+                </QuickSearchProvider>
+              </AnimationProvider>
+            </ToastProvider>
+          </CartProvider>
+        </CookieConsentProvider>
       </ErrorBoundary>
     </HelmetProvider>
   </StrictMode>,

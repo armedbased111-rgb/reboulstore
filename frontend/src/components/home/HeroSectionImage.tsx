@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroSectionDecor } from '../decorative';
 
 interface HeroSlide {
   imageSrc?: string;
@@ -96,8 +97,6 @@ export const HeroSectionImage = ({
 
   return (
     <section className={`relative w-full overflow-hidden ${isMobile && slide.imageSrcMobile ? 'aspect-[9/16]' : 'h-[60vh] md:h-[80vh]'}`}>
-
-      {/* Media */}
       <div
         className="absolute inset-0 transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}
@@ -123,9 +122,11 @@ export const HeroSectionImage = ({
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
+      <HeroSectionDecor />
+
       {/* Content — copie exacte ACW* : positionné à ~55% du haut */}
       <div
-        className="absolute left-0 bottom-[6%] md:bottom-[8%] px-[16px] md:px-[20px] transition-opacity duration-400"
+        className="absolute left-0 bottom-[6%] z-[3] md:bottom-[8%] px-[16px] md:px-[20px] transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}
       >
         <h1 className="text-[32px] md:text-[44px] lg:text-[54px] font-light text-white uppercase tracking-normal leading-none mb-[16px] md:mb-[24px]">
@@ -141,7 +142,7 @@ export const HeroSectionImage = ({
 
       {/* Dots — seulement si plusieurs slides */}
       {visibleSlides.length > 1 && (
-        <div className="absolute bottom-8 right-8 md:bottom-10 md:right-14 flex gap-2 items-center">
+        <div className="absolute bottom-8 right-8 z-[10] md:bottom-10 md:right-14 flex gap-2 items-center">
           {visibleSlides.map((_, i) => (
             <button
               key={i}

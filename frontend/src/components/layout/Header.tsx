@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCartContext } from '../../contexts/CartContext';
@@ -10,6 +10,28 @@ import * as anime from 'animejs';
 import { toMilliseconds, convertEasing } from '../../animations/utils/constants';
 import { getProducts } from '../../services/products';
 import { getImageUrl } from '../../utils/imageUtils';
+import { HeaderBarDecor, MegaMenuDecor } from '../decorative';
+
+/** Ligne menu mobile : libellé + fil technique à droite (réagit au hover du groupe, pas de calque absolu). */
+function MobileNavRow({
+  trail,
+  children,
+}: {
+  trail: string
+  children: ReactNode
+}) {
+  return (
+    <div className="group mb-[16px] flex items-center justify-between gap-3 pr-3">
+      {children}
+      <span
+        aria-hidden
+        className="pointer-events-none shrink-0 font-mono text-[7px] uppercase tracking-[0.22em] text-black/20 transition-colors duration-200 group-hover:text-black/50"
+      >
+        {trail}
+      </span>
+    </div>
+  )
+}
 
 export const Header = () => {
   const { cart, loading: cartLoading } = useCartContext();
@@ -351,7 +373,9 @@ export const Header = () => {
     <>
     <header ref={headerRef} className="bg-white relative z-[9999]">
       <div className="w-full relative">
-        <div className="flex items-center justify-between min-h-[46px] px-[4px]">
+        <div className="relative">
+          <HeaderBarDecor />
+          <div className="relative z-10 flex items-center justify-between min-h-[46px] px-[4px]">
           {/* Section gauche : Menu hamburger mobile (gauche) + Logo (centré mobile) + Navigation (desktop) */}
           <div className="flex items-center gap-[50px] flex-1 md:flex-none">
             {/* Menu mobile hamburger - À gauche avant le logo */}
@@ -482,6 +506,7 @@ export const Header = () => {
             </Link>
           </div>
         </div>
+        </div>
 
         {/* Mega Menu CATALOGUE - Style A-COLD-WALL* - Enfant du header pour être sticky */}
         {isShopMenuOpen && (
@@ -495,13 +520,14 @@ export const Header = () => {
             {/* Menu */}
             <div 
               ref={shopMenuRef}
-              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[80]"
+              className="absolute top-full left-0 right-0 z-[80] w-full bg-[#FFFFFF] h-auto relative"
               onMouseLeave={() => {
                 setIsShopMenuOpen(false);
                 setHoveredCategory(null);
               }}
             >
-              <div className="flex">
+              <MegaMenuDecor channel="CAT" />
+              <div className="relative z-[2] flex">
                 {/* Colonne gauche : Catégories - Paginé 10/page, style ACW* compact */}
                 <div
                   className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
@@ -669,13 +695,14 @@ export const Header = () => {
             {/* Menu */}
             <div 
               ref={brandsMenuRef}
-              className="absolute top-full left-0 right-0 w-full h-auto bg-[#FFFFFF] z-[80]"
+              className="absolute top-full left-0 right-0 z-[80] w-full bg-[#FFFFFF] h-auto relative"
               onMouseLeave={() => {
                 setIsBrandsMenuOpen(false);
                 setHoveredBrand(null);
               }}
             >
-              <div className="flex">
+              <MegaMenuDecor channel="BRD" />
+              <div className="relative z-[2] flex">
                 {/* Colonne gauche : Marques - Large espace avec slider vertical */}
                 <div
                   className="w-[500px] px-[4px] py-[1px] flex-shrink-0 relative"
@@ -919,31 +946,34 @@ export const Header = () => {
     {isMobileMenuOpen && (
       <div
         ref={mobileMenuRef}
-        className="fixed inset-0 z-[9998] bg-white overflow-y-auto md:hidden"
+        className="fixed inset-0 z-[9998] overflow-y-auto bg-white md:hidden"
         style={{ opacity: 0 }}
       >
         <nav className="pl-[5px] pt-[96px] pb-10">
-          <Link
-            to="/catalog"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block mb-[16px] text-[16px] font-normal leading-[18px] uppercase hover:opacity-50 transition-opacity"
-            style={{ color: 'rgb(0, 0, 245)' }}
-          >
-            Shop All
-          </Link>
+          <MobileNavRow trail="ALL //">
+            <Link
+              to="/catalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block min-w-0 flex-1 truncate text-[16px] font-normal leading-[18px] uppercase hover:opacity-50 transition-opacity"
+              style={{ color: 'rgb(0, 0, 245)' }}
+            >
+              Shop All
+            </Link>
+          </MobileNavRow>
 
           {/* Catégories — scrollable, 5 visibles à la fois */}
           <div className="max-h-[340px] overflow-y-auto">
             {categoriesLoading ? null : categoriesError ? null : (
               categories.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/catalog?category=${category.slug}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block mb-[16px] text-[16px] font-normal leading-[18px] text-black capitalize hover:opacity-50 transition-opacity"
-                >
-                  {category.name}
-                </Link>
+                <MobileNavRow key={category.id} trail="CAT //">
+                  <Link
+                    to={`/catalog?category=${category.slug}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block min-w-0 flex-1 truncate text-[16px] font-normal leading-[18px] capitalize text-black hover:opacity-50 transition-opacity"
+                  >
+                    {category.name}
+                  </Link>
+                </MobileNavRow>
               ))
             )}
           </div>
@@ -954,14 +984,15 @@ export const Header = () => {
           <div className="max-h-[340px] overflow-y-auto">
             {brandsLoading ? null : brandsError ? null : (
               brands.map((brand) => (
-                <Link
-                  key={brand.id}
-                  to={`/catalog?brand=${brand.slug}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block mb-[16px] text-[16px] font-normal leading-[18px] text-black capitalize hover:opacity-50 transition-opacity"
-                >
-                  {brand.name}
-                </Link>
+                <MobileNavRow key={brand.id} trail="BRD //">
+                  <Link
+                    to={`/catalog?brand=${brand.slug}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block min-w-0 flex-1 truncate text-[16px] font-normal leading-[18px] capitalize text-black hover:opacity-50 transition-opacity"
+                  >
+                    {brand.name}
+                  </Link>
+                </MobileNavRow>
               ))
             )}
           </div>

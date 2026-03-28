@@ -14,6 +14,8 @@ import type { Variant } from '../types';
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
 import { SeoHead } from '../components/seo/SeoHead';
+import { PRODUCT_PAGE_DECOR } from '../copy/productPageDecor';
+import { TechnicalDecorFrame } from '../components/decorative';
 
 /**
  * Page Product - Fiche produit style A-COLD-WALL*
@@ -280,15 +282,23 @@ export const Product = () => {
       />
       <div className="w-full">
         <section className="m-[2px] last:mb-0">
-          <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
-            {/* Layout 2 colonnes — galerie 42% / info 58% (ratio ACW*) */}
-            <div className="lg:flex">
+          <div className="relative w-full bg-grey p-[2px] light:bg-inherit">
+            <TechnicalDecorFrame
+              datum={PRODUCT_PAGE_DECOR.frameDatum}
+              datumClassName="bottom-2 left-2 max-w-[min(72%,14rem)] sm:bottom-2.5 sm:left-3"
+              insetClassName="inset-2 sm:inset-3"
+              omitCorners={['tl', 'bl', 'br']}
+            />
+            <div className="relative z-[3] lg:flex">
               {/* Colonne gauche : Galerie (42%) */}
               <div ref={galleryRef} className="lg:min-w-[42%] lg:basis-[42%]">
                 {product.images && product.images.length > 0 ? (
                   <ProductGallery
                     images={product.images}
                     productName={product.name}
+                    imageDecorBase={
+                      product.variants?.[0]?.sku?.trim() || `IDX // ${product.id}`
+                    }
                   />
                 ) : (
                   <div className="bg-gray-100 aspect-[3/4] flex items-center justify-center">

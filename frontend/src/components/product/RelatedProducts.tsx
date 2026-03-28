@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PRODUCT_PAGE_DECOR } from '../../copy/productPageDecor';
 import { ProductCard } from './ProductCard';
 import { getProducts } from '../../services/products';
 import type { Product } from '../../types';
@@ -62,9 +63,14 @@ export const RelatedProducts = ({
 
   return (
     <section className="m-[2px] last:mb-0">
-      <div className="p-[2px] bg-grey light:bg-inherit relative w-full pt-2">
-        <h2 className="text-h2 mb-4">Related Products</h2>
-        <ul className="grid gap-[2px] grid-cols-2 sm:[grid-template-columns:repeat(auto-fit,minmax(0,222px))] md:[grid-template-columns:repeat(auto-fit,minmax(0,254px))] mb-4">
+      <div className="relative w-full bg-grey p-[2px] pt-2 light:bg-inherit">
+        <div className="mb-4">
+          <h2 className="text-h2">Related Products</h2>
+          <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+            {PRODUCT_PAGE_DECOR.relatedHudLine}
+          </p>
+        </div>
+        <ul className="mb-4 grid grid-cols-2 gap-[2px] sm:[grid-template-columns:repeat(auto-fit,minmax(0,222px))] md:[grid-template-columns:repeat(auto-fit,minmax(0,254px))]">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

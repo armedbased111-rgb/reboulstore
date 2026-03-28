@@ -2,10 +2,16 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { useToast } from '../../contexts/ToastContext'
+import { EARLY_ACCESS } from '../../copy/earlyAccess'
 import { SITE_NAME } from '../../seo/siteSeo'
+import { TechnicalDecorFrame } from '../decorative'
 
 const STORAGE_KEY = 'reboul_newsletter_modal_v1'
 const OPEN_DELAY_MS = 1400
+
+/** Même asset que le footer (Layout) — monochrome forcé en noir pour le panneau clair */
+const REBOUL_LOGO_SRC =
+  'https://res.cloudinary.com/dxen69pdo/image/upload/v1753365190/logo_w_hzhfoc.png'
 
 type NewsletterEntryModalProps = {
   appReady: boolean
@@ -74,8 +80,7 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
 
   return (
     <div
-      className="fixed inset-0 z-[100000] flex items-center justify-center p-4 sm:p-6"
-      style={{ backgroundColor: 'rgba(20, 20, 20, 0.6)' }}
+      className="fixed inset-0 z-[100000] flex items-center justify-center bg-black/55 p-4 sm:p-6"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) persistClose('dismiss')
@@ -87,66 +92,109 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
-        className="relative w-full max-w-[420px] bg-white px-6 pb-8 pt-10 shadow-none sm:max-w-[440px] sm:px-8 sm:pb-10 sm:pt-12"
+        className="relative flex w-full max-w-[520px] flex-col overflow-hidden rounded-xl border border-black/10 bg-white md:max-w-[min(92vw,760px)] md:flex-row"
       >
-        <button
-          type="button"
-          onClick={() => persistClose('dismiss')}
-          className="absolute right-3 top-3 p-2 text-black/70 transition-opacity hover:opacity-100"
-          aria-label="Fermer"
+        <TechnicalDecorFrame
+          datum={EARLY_ACCESS.frameDatum}
+          datumClassName="max-md:right-5 max-md:top-[3.25rem] max-md:left-auto max-md:bottom-auto max-md:text-right md:bottom-5 md:left-8"
+          omitCorners={['tr', 'bl']}
+          sideTicks={false}
+          insetClassName="inset-5 sm:inset-6 md:inset-6"
+        />
+        <div
+          className="relative z-[1] flex min-h-[min(32vh,200px)] w-full shrink-0 items-center justify-center px-10 py-10 md:min-h-[min(72vh,440px)] md:w-[42%] md:max-w-[300px] md:py-14"
+          style={{ backgroundColor: '#F3F3F3' }}
         >
-          <X className="size-5 stroke-[1.5]" aria-hidden />
-        </button>
-
-        <p
-          id={titleId}
-          className="text-center text-[11px] font-medium uppercase tracking-[0.2em] text-black"
-        >
-          {SITE_NAME.replace(' ', '\u00a0')}
-        </p>
-
-        <p id={descId} className="mt-6 text-center text-[15px] font-light leading-snug text-black sm:text-base">
-          Soyez les premiers informés des lancements, collections et événements {SITE_NAME}.
-        </p>
-
-        <form onSubmit={handleSubmit} className="mt-8">
-          <label htmlFor="newsletter-email" className="sr-only">
-            E-mail
-          </label>
-          <input
-            id="newsletter-email"
-            type="email"
-            name="email"
-            autoComplete="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
-            className="w-full border-0 border-b border-black/30 bg-transparent px-0 py-3 text-[15px] font-light text-black placeholder:text-black/45 focus:border-black focus:outline-none focus:ring-0"
+          <img
+            src={REBOUL_LOGO_SRC}
+            alt=""
+            width={400}
+            height={120}
+            className="h-32 w-auto max-w-[95%] object-contain [filter:brightness(0)] sm:h-36 md:h-48 md:max-w-[min(95%,17rem)] lg:h-52"
+            decoding="async"
           />
+        </div>
+
+        <div className="relative z-[3] flex flex-1 flex-col px-6 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-12">
+          <button
+            type="button"
+            onClick={() => persistClose('dismiss')}
+            className="absolute right-3 top-3 z-10 p-2 text-black transition-opacity hover:opacity-60"
+            aria-label="Fermer"
+          >
+            <X className="size-5 stroke-[1]" aria-hidden />
+          </button>
+
+          <p
+            id={titleId}
+            className="text-center text-sm font-bold uppercase tracking-tight text-black sm:text-base"
+          >
+            REBOULSTORE&nbsp;2.0
+          </p>
+
+          <div id={descId} className="mt-6 space-y-4 text-center">
+            <p className="font-mono text-[8px] uppercase tracking-[0.22em] text-black/30 sm:text-[9px]">
+              {EARLY_ACCESS.hudLine}
+            </p>
+            <p className="text-[11px] font-medium uppercase leading-relaxed tracking-[0.12em] text-black/75 sm:text-xs sm:tracking-[0.14em]">
+              Soyez les premiers informés des lancements, collections et événements{' '}
+              {SITE_NAME.toUpperCase()}.
+            </p>
+            <div
+              className="mx-auto mt-1 max-w-[min(100%,24rem)] rounded-md border border-black/10 border-l-[3px] border-l-black bg-[#E8E8E8] px-3.5 py-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] sm:px-4 sm:py-3.5"
+              role="note"
+            >
+              <p className="font-mono text-[8px] font-medium uppercase tracking-[0.28em] text-black/40">
+                {EARLY_ACCESS.noteLabel}
+              </p>
+              <p className="mt-2 text-[10px] font-medium uppercase leading-relaxed tracking-[0.09em] text-black/60 sm:text-[11px] sm:tracking-[0.1em]">
+                {EARLY_ACCESS.summary.toUpperCase()}
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-10">
+            <label htmlFor="newsletter-email" className="sr-only">
+              Adresse e-mail
+            </label>
+            <input
+              id="newsletter-email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="E-MAIL"
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+              className="w-full border-0 border-b border-black/25 bg-transparent px-0 py-3 text-[13px] font-medium uppercase tracking-[0.08em] text-black placeholder:text-black/40 focus:border-black focus:outline-none focus-visible:ring-0"
+            />
+
+            <button
+              type="submit"
+              className="mt-6 w-full rounded-[6px] bg-black py-3 text-center text-[13px] font-normal uppercase tracking-wide text-white transition-opacity hover:opacity-80"
+            >
+              S’INSCRIRE
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-[10px] font-medium uppercase leading-relaxed tracking-[0.1em] text-black/45">
+            En vous inscrivant, vous acceptez de recevoir des e-mails marketing.{' '}
+            <Link
+              to="/privacy"
+              className="text-black/55 underline decoration-black/30 underline-offset-[3px] transition-colors hover:text-black hover:decoration-black"
+            >
+              Politique de confidentialité
+            </Link>
+            .
+          </p>
 
           <button
-            type="submit"
-            className="mt-5 w-full bg-black py-3.5 text-center text-[13px] font-normal uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
+            type="button"
+            onClick={() => persistClose('dismiss')}
+            className="mt-8 w-full text-center text-[11px] font-medium uppercase tracking-[0.14em] text-black underline decoration-black/35 underline-offset-[5px] transition-colors hover:decoration-black"
           >
-            S’inscrire
+            Non merci
           </button>
-        </form>
-
-        <p className="mt-5 text-center text-[11px] font-light leading-relaxed text-black/55">
-          En vous inscrivant, vous acceptez de recevoir des e-mails marketing.{' '}
-          <Link to="/privacy" className="underline underline-offset-2 hover:text-black">
-            Politique de confidentialité
-          </Link>
-          .
-        </p>
-
-        <button
-          type="button"
-          onClick={() => persistClose('dismiss')}
-          className="mt-6 w-full text-center text-[13px] font-light text-black underline underline-offset-4 decoration-black/40 hover:decoration-black"
-        >
-          Non merci
-        </button>
+        </div>
       </div>
     </div>
   )

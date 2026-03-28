@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { HOME_CATEGORY_DECOR } from '../../copy/homeSectionsDecor';
 import { useCategories } from '../../hooks/useCategories';
 import { getImageUrl } from '../../utils/imageUtils';
+import { TechnicalDecorFrame } from '../decorative';
 import { getProducts } from '../../services/products';
 import type { Product } from '../../types';
 
@@ -106,17 +108,25 @@ export const CategorySection = () => {
 
   return (
     <section className="m-[2px] last:mb-0">
-      <div className="p-[2px] relative w-full">
-        <div className="pb-4">
-          {/* Header avec titre et navigation */}
-          <div className="flex gap-x-2 justify-between">
-            {/* Titre */}
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 uppercase tracking-tight">
-              Shop by category
-            </h2>
+      <div className="relative w-full p-[2px]">
+        <TechnicalDecorFrame
+          datum={HOME_CATEGORY_DECOR.frameDatum}
+          datumClassName="bottom-2 left-2 max-w-[min(72%,14rem)] sm:bottom-2.5 sm:left-3"
+          insetClassName="inset-2 sm:inset-3"
+          omitCorners={['tr', 'bl']}
+        />
+        <div className="relative z-[3] pb-4">
+          <div className="mb-[16px] flex items-center justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-2xl font-medium uppercase tracking-tight md:text-3xl lg:text-4xl">
+                Shop by category
+              </h2>
+              <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+                {HOME_CATEGORY_DECOR.hudLine}
+              </p>
+            </div>
 
-            {/* Boutons de navigation */}
-            <div className="my-1 flex gap-2 mr-3">
+            <div className="mr-3 flex shrink-0 gap-2">
               {/* Bouton Previous */}
               <button
                 ref={prevButtonRef}
@@ -157,7 +167,6 @@ export const CategorySection = () => {
             </div>
           </div>
 
-          {/* Carousel de catégories avec Swiper */}
           <Swiper
             onSwiper={(swiper) => {
               swiperRef.current = swiper;

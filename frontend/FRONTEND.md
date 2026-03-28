@@ -30,6 +30,13 @@ Le design s'inspire **fortement** du site [A-COLD-WALL*](https://www.a-cold-wall
 - **Layout** : Épuré, espacement généreux, focus sur le produit
 - **Aesthetic** : Premium streetwear, moderne, épuré
 
+### Décorations techniques (HUD / datasheet)
+
+Repères discrets inspirés des interfaces « techniques » (Marathon, Stone Island, univers SCP, crosshairs) : **équerres d’angle**, **micro-crosshairs (+)**, **ticks** sur les bords, **ligne `datum`** en mono (ex. `COMMS // RBL-NS-01`). Toujours en **noir très bas contraste** sur fond clair, sans animation, `pointer-events-none`.
+
+- **Composant** : `src/components/decorative/TechnicalDecorFrame.tsx` — à placer en premier enfant d’un conteneur `relative` + `rounded-*` + `overflow-hidden` pour hériter du rayon. Props : `omitCorners`, `datum` / `datumClassName`, `insetClassName`, `sideTicks` (défaut `true`). Calque décor `z-[2]` : prévoir panneaux contenu en `z-[3]` si besoin par-dessus.
+- **Usage** : overlays, modales, cartes premium ; rester **subtil** (lisibilité et accessibilité avant tout).
+
 ### Workflow Design → Code ✅ APPROCHE ADOPTÉE
 
 **Méthode adoptée** : Inspiration A-COLD-WALL* → Création directe en React/TailwindCSS
@@ -82,6 +89,7 @@ frontend/
 │   │   ├── product/      # Composants produits
 │   │   ├── cart/         # Composants panier
 │   │   ├── ui/           # Composants UI génériques
+│   │   ├── decorative/   # HUD — TechnicalDecorFrame, TechnicalAmbientDecor (header / menus)
 │   │   └── ui/shadcn/    # Composants shadcn/ui
 │   ├── services/         # Services API
 │   │   ├── api.ts        # Client API
@@ -90,6 +98,7 @@ frontend/
 │   │   ├── cart.ts       # Service panier
 │   │   ├── auth.ts       # Service authentification
 │   │   └── orders.ts     # Service commandes
+│   ├── copy/               # Textes transverses (ex. EARLY_ACCESS)
 │   ├── hooks/            # Custom hooks
 │   ├── types/            # Types TypeScript
 │   ├── utils/            # Utilitaires

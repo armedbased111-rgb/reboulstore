@@ -509,6 +509,7 @@ Voir et éditer les articles rapidement depuis le terminal (base Reboul sur VPS 
 - **Brainstorming** : Voir [`BRAINSTORMING_ROADMAP.md`](./BRAINSTORMING_ROADMAP.md)
 - **Clarifications** : Voir [`CLARIFICATIONS_BRAINSTORMING.md`](./CLARIFICATIONS_BRAINSTORMING.md)
 - **Politiques à finaliser** : Voir [`POLICIES_TODO.md`](./POLICIES_TODO.md)
+- **Légal, cookies, GA4, déploiement** : Voir [`LEGAL_SITE_GUIDE.md`](../legal/LEGAL_SITE_GUIDE.md)
 
 ---
 

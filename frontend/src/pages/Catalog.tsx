@@ -12,6 +12,8 @@ import type { Category, Brand } from '../types';
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
 import { SeoHead } from '../components/seo/SeoHead';
+import { CATALOG_DECOR } from '../copy/catalogDecor';
+import { TechnicalDecorFrame } from '../components/decorative';
 
 const PRODUCTS_PER_PAGE = 24;
 
@@ -375,27 +377,45 @@ export const Catalog = () => {
         <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex gap-8">
             {/* Sidebar Desktop */}
-            <aside className="hidden md:block w-56 flex-shrink-0">
+            <aside className="hidden w-56 flex-shrink-0 md:block">
               <div className="sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto pr-1">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-900">
-                    Filtres
-                  </span>
-                  {hasActiveFilters && (
-                    <button
-                      onClick={clearFilters}
-                      className="text-xs text-gray-400 hover:text-black uppercase tracking-wide"
-                    >
-                      Réinitialiser
-                    </button>
-                  )}
+                <div className="relative p-[2px]">
+                  <TechnicalDecorFrame insetClassName="inset-2" omitCorners={['tl', 'tr']} />
+                  <div className="relative z-[3]">
+                    <div className="mb-6 flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-xs font-semibold uppercase tracking-widest text-gray-900">
+                          Filtres
+                        </span>
+                        <p className="mt-1 font-mono text-[7px] uppercase tracking-[0.2em] text-black/25">
+                          {CATALOG_DECOR.filtersHudLine}
+                        </p>
+                      </div>
+                      {hasActiveFilters && (
+                        <button
+                          type="button"
+                          onClick={clearFilters}
+                          className="shrink-0 text-xs uppercase tracking-wide text-gray-400 hover:text-black"
+                        >
+                          Réinitialiser
+                        </button>
+                      )}
+                    </div>
+                    {filtersContent}
+                  </div>
                 </div>
-                {filtersContent}
               </div>
             </aside>
 
             {/* Contenu principal */}
-            <div className="flex-1 min-w-0">
+            <div className="relative min-w-0 flex-1 p-[2px]">
+              <TechnicalDecorFrame
+                datum={CATALOG_DECOR.frameDatum}
+                datumClassName="bottom-2 left-2 max-w-[min(72%,14rem)] sm:bottom-2.5 sm:left-3"
+                insetClassName="inset-2 sm:inset-3"
+                omitCorners={['tl', 'bl', 'br']}
+              />
+              <div className="relative z-[3]">
               {/* Breadcrumb */}
               <nav className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-gray-400 mb-4">
                 <Link to="/" className="hover:text-black transition-colors">Accueil</Link>
@@ -407,11 +427,14 @@ export const Catalog = () => {
 
               {/* Banner titre */}
               <div ref={bannerRef} className="mb-4">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium uppercase">
+                <h1 className="text-2xl font-medium uppercase md:text-3xl lg:text-4xl">
                   {category ? category.name : brand ? brand.name : 'Shop All'}
                 </h1>
+                <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+                  {CATALOG_DECOR.hudLine}
+                </p>
                 {!loading && (
-                  <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">
+                  <p className="mt-1 text-xs uppercase tracking-widest text-gray-400">
                     {total} produit{total > 1 ? 's' : ''}
                   </p>
                 )}
@@ -479,6 +502,7 @@ export const Catalog = () => {
                   />
                 </div>
               )}
+              </div>
             </div>
           </div>
         </div>
@@ -490,26 +514,40 @@ export const Catalog = () => {
               className="absolute inset-0 bg-black/50"
               onClick={() => setIsFiltersOpen(false)}
             />
-            <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-xl overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest">Filtres</span>
-                  <button
-                    onClick={() => setIsFiltersOpen(false)}
-                    className="p-1 hover:bg-gray-100"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+            <div className="absolute right-0 top-0 h-full w-72 overflow-y-auto bg-white shadow-xl">
+              <div className="relative p-6">
+                <TechnicalDecorFrame insetClassName="inset-3" omitCorners={['tl', 'tr']} />
+                <div className="relative z-[3]">
+                  <div className="mb-6 flex items-start justify-between gap-2">
+                    <div className="min-w-0 pr-2">
+                      <span className="text-xs font-semibold uppercase tracking-widest">Filtres</span>
+                      <p className="mt-1 font-mono text-[7px] uppercase tracking-[0.2em] text-black/25">
+                        {CATALOG_DECOR.filtersHudLine}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsFiltersOpen(false)}
+                      className="shrink-0 p-1 hover:bg-gray-100"
+                      aria-label="Fermer les filtres"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        clearFilters();
+                        setIsFiltersOpen(false);
+                      }}
+                      className="mb-4 text-xs uppercase tracking-wide text-gray-400 hover:text-black"
+                    >
+                      Réinitialiser tous les filtres
+                    </button>
+                  )}
+                  {filtersContent}
                 </div>
-                {hasActiveFilters && (
-                  <button
-                    onClick={() => { clearFilters(); setIsFiltersOpen(false); }}
-                    className="mb-4 text-xs text-gray-400 hover:text-black uppercase tracking-wide"
-                  >
-                    Réinitialiser tous les filtres
-                  </button>
-                )}
-                {filtersContent}
               </div>
             </div>
           </div>

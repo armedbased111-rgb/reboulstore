@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { useCookieConsent } from '../../contexts/CookieConsentContext';
+import { LEGAL_SITE_INFO } from '../../copy/legalSiteInfo';
 import { PromoBanner } from './PromoBanner';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -14,6 +17,8 @@ interface LayoutProps {
  * TODO: Remplacer le styling placeholder par les maquettes Figma/Framer
  */
 export const Layout = ({ children }: LayoutProps) => {
+  const { showBanner } = useCookieConsent();
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Bannière promotionnelle — z-[10000] en root context pour rester au-dessus du menu mobile (z-9999) */}
@@ -27,7 +32,7 @@ export const Layout = ({ children }: LayoutProps) => {
       </div>
       
       {/* Contenu principal - prend tout l'espace disponible */}
-      <main className="flex-1">
+      <main className={cn('flex-1', showBanner && 'pb-36 sm:pb-28')}>
         {children}
       </main>
       
@@ -43,9 +48,8 @@ export const Layout = ({ children }: LayoutProps) => {
   }
   customerServiceLinks={[
     { label: 'Livraison', to: '/livraison' },
-    { label: 'CGV', to: '/cgv' },
+    { label: 'CGV & vente en ligne', to: '/cgv' },
     { label: 'Politique de confidentialité', to: '/politique-de-confidentialite' },
-    { label: 'Conditions générales de vente', to: '/conditions-generales-de-vente' },
     { label: 'Mentions légales', to: '/mentions-legales' },
     { label: 'Cookies', to: '/cookies' },
   ]}
@@ -55,9 +59,9 @@ export const Layout = ({ children }: LayoutProps) => {
   ]}
   slogan="REBOUL STORE - Votre boutique de vêtements et accessoires"
   legalInfo={{
-    companyName: 'REBOUL STORE',
-    registeredCompany: 'Société enregistrée en France - SIRET: 92802711500012',
-    vat: 'TVA: FR92802711500012',
+    companyName: LEGAL_SITE_INFO.raisonSociale,
+    registeredCompany: `Société enregistrée en France - SIRET: ${LEGAL_SITE_INFO.siret}`,
+    vat: `TVA: ${LEGAL_SITE_INFO.tvaIntracommunautaire}`,
   }}
 />
     </div>

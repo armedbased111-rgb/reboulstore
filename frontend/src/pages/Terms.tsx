@@ -1,12 +1,17 @@
-// useRef utilisé via useScrollAnimation
+import { useLocation } from 'react-router-dom';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 import { SeoHead } from '../components/seo/SeoHead';
 
+const CGV_PATHS = ['/terms', '/cgv', '/conditions-generales-de-vente'];
+
 /**
- * Page Terms - Conditions Générales de Vente (CGV)
+ * Page Terms — CGV (routes : /terms, /cgv, /conditions-generales-de-vente)
  */
 export const Terms = () => {
+  const { pathname } = useLocation();
+  const seoPath = CGV_PATHS.includes(pathname) ? pathname : '/terms';
+
   const heroRef = useScrollAnimation((element) => {
     animateRevealUp(element, { duration: 1.2, distance: 40 });
   }, { threshold: 0.1 });
@@ -20,7 +25,7 @@ export const Terms = () => {
       <SeoHead
         title="Conditions generales de vente | Reboul Store"
         description="Consultez les CGV de Reboul Store pour les achats en ligne."
-        path="/terms"
+        path={seoPath}
       />
       <div className="w-full">
         {/* Hero Section */}

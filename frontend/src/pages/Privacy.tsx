@@ -1,12 +1,20 @@
-// useRef utilisé via useScrollAnimation
+import { Link, useLocation } from 'react-router-dom';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
 import { SeoHead } from '../components/seo/SeoHead';
+import { LEGAL_SITE_INFO } from '../copy/legalSiteInfo';
+
+const PRIVACY_PATHS = ['/privacy', '/politique-de-confidentialite'];
 
 /**
- * Page Privacy - Mentions légales et RGPD
+ * Page Privacy — mentions légales, RGPD & politique de confidentialité
+ * Routes : /privacy, /politique-de-confidentialite
  */
 export const Privacy = () => {
+  const { pathname } = useLocation();
+  const isPolitique = pathname === '/politique-de-confidentialite';
+  const seoPath = PRIVACY_PATHS.includes(pathname) ? pathname : '/privacy';
+
   const heroRef = useScrollAnimation((element) => {
     animateRevealUp(element, { duration: 1.2, distance: 40 });
   }, { threshold: 0.1 });
@@ -18,19 +26,29 @@ export const Privacy = () => {
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
       <SeoHead
-        title="Confidentialite et mentions legales | Reboul Store"
-        description="Mentions legales, RGPD et politique de confidentialite Reboul Store."
-        path="/privacy"
+        title={
+          isPolitique
+            ? 'Politique de confidentialite | Reboul Store'
+            : 'Confidentialite et mentions legales | Reboul Store'
+        }
+        description={
+          isPolitique
+            ? 'Politique de confidentialite et protection des donnees personnelles — Reboul Store.'
+            : 'Mentions legales, RGPD et politique de confidentialite Reboul Store.'
+        }
+        path={seoPath}
       />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium uppercase tracking-tight mb-6">
-              Mentions légales & Confidentialité
+              {isPolitique ? 'Politique de confidentialité' : 'Mentions légales & Confidentialité'}
             </h1>
             <p className="text-base sm:text-lg text-black/70 max-w-3xl uppercase leading-relaxed">
-              Protection de vos données personnelles et informations légales.
+              {isPolitique
+                ? 'Comment nous collectons, utilisons et protégeons vos données personnelles.'
+                : 'Protection de vos données personnelles et informations légales.'}
             </p>
           </div>
         </section>
@@ -44,13 +62,13 @@ export const Privacy = () => {
                   Éditeur du site
                 </h2>
                 <div className="text-sm text-black/70 uppercase leading-relaxed space-y-2">
-                  <p><strong>Raison sociale :</strong> Reboul Store</p>
-                  <p><strong>Forme juridique :</strong> [À compléter]</p>
-                  <p><strong>Siège social :</strong> [Adresse complète]</p>
-                  <p><strong>SIRET :</strong> [Numéro SIRET]</p>
-                  <p><strong>RCS :</strong> [Numéro RCS]</p>
-                  <p><strong>TVA Intracommunautaire :</strong> [Numéro TVA]</p>
-                  <p><strong>Directeur de publication :</strong> [Nom]</p>
+                  <p><strong>Raison sociale :</strong> {LEGAL_SITE_INFO.raisonSociale}</p>
+                  <p><strong>Forme juridique :</strong> {LEGAL_SITE_INFO.formeJuridique}</p>
+                  <p><strong>Siège social :</strong> {LEGAL_SITE_INFO.siegeSocial}</p>
+                  <p><strong>SIRET :</strong> {LEGAL_SITE_INFO.siret}</p>
+                  <p><strong>RCS :</strong> {LEGAL_SITE_INFO.rcs}</p>
+                  <p><strong>TVA intracommunautaire :</strong> {LEGAL_SITE_INFO.tvaIntracommunautaire}</p>
+                  <p><strong>Directeur de publication :</strong> {LEGAL_SITE_INFO.directeurPublication}</p>
                 </div>
               </div>
 
@@ -59,8 +77,9 @@ export const Privacy = () => {
                   Hébergement
                 </h2>
                 <div className="text-sm text-black/70 uppercase leading-relaxed space-y-2">
-                  <p><strong>Hébergeur :</strong> [Nom de l'hébergeur]</p>
-                  <p><strong>Adresse :</strong> [Adresse de l'hébergeur]</p>
+                  <p><strong>Hébergeur :</strong> {LEGAL_SITE_INFO.hebergeur.nom}</p>
+                  <p><strong>Adresse :</strong> {LEGAL_SITE_INFO.hebergeur.adresse}</p>
+                  <p><strong>Site :</strong> {LEGAL_SITE_INFO.hebergeur.siteWeb}</p>
                 </div>
               </div>
 
@@ -122,7 +141,7 @@ export const Privacy = () => {
                       <li>Droit à la limitation du traitement</li>
                     </ul>
                     <p className="text-sm text-black/70 uppercase leading-relaxed mt-4">
-                      Pour exercer ces droits, contactez-nous à : contact@reboulstore.com
+                      Pour exercer ces droits, contactez-nous à : {LEGAL_SITE_INFO.emailContact}
                     </p>
                   </div>
                 </div>
@@ -133,16 +152,21 @@ export const Privacy = () => {
                   Cookies
                 </h2>
                 <p className="text-sm text-black/70 uppercase leading-relaxed mb-4">
-                  Le site utilise des cookies pour améliorer votre expérience de navigation. 
-                  Vous pouvez configurer votre navigateur pour refuser les cookies, 
-                  mais certaines fonctionnalités du site peuvent ne plus être accessibles.
+                  Détail des traceurs et du stockage local : voir la page dédiée{' '}
+                  <Link to="/cookies" className="underline hover:text-black">
+                    Cookies & traceurs
+                  </Link>
+                  . Le panier et certaines préférences utilisent le stockage local du navigateur ; le
+                  paiement passe par Stripe ; une mesure d’audience Google Analytics 4 peut être activée
+                  ultérieurement avec consentement si besoin.
                 </p>
                 <p className="text-sm text-black/70 uppercase leading-relaxed">
-                  Types de cookies utilisés :
+                  En résumé :
                 </p>
                 <ul className="list-disc list-inside text-sm text-black/70 uppercase space-y-1 ml-4 mt-2">
-                  <li>Cookies de session (nécessaires au fonctionnement du site)</li>
-                  <li>Cookies d'analyse (pour améliorer nos services)</li>
+                  <li>Stockage local (panier, session, préférences UI)</li>
+                  <li>Cookies / traceurs du prestataire de paiement sur les pages Stripe</li>
+                  <li>Pas de cookies d’analyse Reboul tant que GA4 n’est pas activé côté site</li>
                 </ul>
               </div>
 

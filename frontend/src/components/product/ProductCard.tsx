@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Product } from '../../types';
 import { getImageUrl } from '../../utils/imageUtils';
 import { formatPrice } from '../../utils/priceFormatter';
+import { ProductCardFigureDecor } from '../decorative';
 
 interface ProductCardProps {
   product: Product;
@@ -34,6 +35,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const secondImageUrl = secondImage ? getImageUrl(secondImage.url) : null;
 
   const originalPrice = product.price;
+  const cardDatum =
+    product.variants?.[0]?.sku?.trim() || `IDX // ${product.id}`;
 
   return (
     <li className="product-card">
@@ -43,7 +46,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       >
         <article>
           {/* Figure avec images et effet hover */}
-          <figure className="mb-[2px] relative aspect-[3/4] overflow-hidden">
+          <figure className="relative mb-[2px] aspect-[3/4] overflow-hidden">
+            <ProductCardFigureDecor label={cardDatum} />
             {/* Image principale - visible par défaut, disparaît au hover sur desktop */}
             <div className="absolute inset-0 w-full h-full object-cover md:group-hover:opacity-0 transition-opacity">
               {firstImageUrl && !imageError ? (

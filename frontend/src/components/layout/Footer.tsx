@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { TechnicalDecorFrame } from '../decorative';
+import { CookiePreferencesButton } from '../consent/CookiePreferencesButton';
 
 /**
  * Interface pour les liens de navigation interne (Customer Service)
@@ -99,7 +101,9 @@ export const Footer = ({
 
   return (
     <footer className={`uppercase pb-4 text-black bg-white text-[11px] tracking-wide ${className}`}>
-      <div className="p-[2px]">
+      <div className="relative p-[2px]">
+        <TechnicalDecorFrame insetClassName="inset-2 sm:inset-3" omitCorners={['bl']} />
+        <div className="relative z-[3]">
         {/* Grille exacte depuis A-COLD-WALL* : grid 2 colonnes mobile, flex horizontal desktop */}
         <div className="grid grid-cols-2 gap-y-6 items-start md:flex md:gap-x-12 md:auto-cols-auto">
           
@@ -176,6 +180,8 @@ export const Footer = ({
               <p>{legal.vat}</p>
             </>
           )}
+          <CookiePreferencesButton />
+        </div>
         </div>
       </div>
     </footer>

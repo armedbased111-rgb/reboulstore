@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product, Category } from '../../types';
+import { HOME_FEATURED_DECOR } from '../../copy/homeSectionsDecor';
 import { getImageUrl } from '../../utils/imageUtils';
+import { TechnicalDecorFrame } from '../decorative';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -236,20 +238,30 @@ export const FeaturedProducts = ({
 
   return (
     <section className="m-[2px] last:mb-0">
-      <div className="p-[2px] relative w-full">
-        <div className="pb-4">
-          {/* Header — titre gauche + flèche voir tout + nav droite */}
-          <div className="flex justify-between items-center mb-[16px]">
-            {viewAllLink ? (
-              <Link to={viewAllLink} className="hover:opacity-60 transition-opacity">
+      <div className="relative w-full p-[2px]">
+        <TechnicalDecorFrame
+          datum={HOME_FEATURED_DECOR.frameDatum}
+          datumClassName="bottom-2 left-2 max-w-[min(72%,14rem)] sm:bottom-2.5 sm:left-3"
+          insetClassName="inset-2 sm:inset-3"
+          omitCorners={['tr', 'bl']}
+        />
+        <div className="relative z-[3] pb-4">
+          {/* Header — titre + fil HUD + nav */}
+          <div className="mb-[16px] flex items-center justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              {viewAllLink ? (
+                <Link to={viewAllLink} className="block hover:opacity-60 transition-opacity">
+                  <h2 className="text-[28px] font-normal leading-none">{title}</h2>
+                </Link>
+              ) : (
                 <h2 className="text-[28px] font-normal leading-none">{title}</h2>
-              </Link>
-            ) : (
-              <h2 className="text-[28px] font-normal leading-none">{title}</h2>
-            )}
+              )}
+              <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+                {HOME_FEATURED_DECOR.hudLine}
+              </p>
+            </div>
 
-            {/* Boutons de navigation */}
-            <div className="flex gap-2 mr-3">
+            <div className="mr-3 flex shrink-0 gap-2">
               <button
                 ref={prevButtonRef}
                 onClick={slidePrev}
@@ -273,7 +285,6 @@ export const FeaturedProducts = ({
             </div>
           </div>
 
-          {/* Liste de produits - Carousel horizontal avec Swiper */}
           <Swiper
             onSwiper={(swiper) => {
               swiperRef.current = swiper;

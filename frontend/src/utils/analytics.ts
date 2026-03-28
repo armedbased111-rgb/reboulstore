@@ -10,11 +10,14 @@ declare global {
   }
 }
 
+let analyticsScriptInjected = false;
+
 /**
- * Initialise Google Analytics 4
- * Doit être appelé une fois au démarrage de l'application
+ * Initialise Google Analytics 4 (une seule fois ; appeler seulement après consentement analytics).
  */
 export const initAnalytics = (): void => {
+  if (analyticsScriptInjected) return;
+
   const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
   // Ne rien faire si pas de Measurement ID configuré
@@ -25,7 +28,8 @@ export const initAnalytics = (): void => {
     return;
   }
 
-  // Charger le script Google Analytics
+  analyticsScriptInjected = true;
+
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;

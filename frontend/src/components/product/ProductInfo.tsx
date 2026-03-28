@@ -1,4 +1,5 @@
 import type { Product } from '../../types';
+import { PRODUCT_PAGE_DECOR } from '../../copy/productPageDecor';
 import { formatPrice } from '../../utils/priceFormatter';
 
 interface ProductInfoProps {
@@ -20,6 +21,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       <p className="text-[32px] lg:text-[54px] font-medium leading-none">
         {formatPrice(product.price)}
+      </p>
+
+      <p className="mt-3 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+        {PRODUCT_PAGE_DECOR.hudLine}
       </p>
     </div>
   );
