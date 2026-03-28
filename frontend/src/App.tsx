@@ -20,6 +20,7 @@ import { ServerError } from './pages/ServerError'
 // import { ErrorBoundary } from './components/ErrorBoundary'
 import { NavigationLoader } from './components/loaders/NavigationLoader'
 import { PageLoader } from './components/loaders/PageLoader'
+import { NewsletterEntryModal } from './components/newsletter/NewsletterEntryModal'
 function App() {
   const [showInitialLoader, setShowInitialLoader] = useState(true)
 
@@ -178,6 +179,7 @@ function App() {
           } 
         />
       </Routes>
+      <NewsletterEntryModal appReady={!showInitialLoader} />
     </BrowserRouter>
   )
 }
