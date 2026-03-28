@@ -1,6 +1,7 @@
 // useRef utilisé via useScrollAnimation
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Terms - Conditions Générales de Vente (CGV)
@@ -16,6 +17,11 @@ export const Terms = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="Conditions generales de vente | Reboul Store"
+        description="Consultez les CGV de Reboul Store pour les achats en ligne."
+        path="/terms"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

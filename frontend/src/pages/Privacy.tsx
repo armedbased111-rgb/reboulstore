@@ -1,6 +1,7 @@
 // useRef utilisé via useScrollAnimation
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Privacy - Mentions légales et RGPD
@@ -16,6 +17,11 @@ export const Privacy = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="Confidentialite et mentions legales | Reboul Store"
+        description="Mentions legales, RGPD et politique de confidentialite Reboul Store."
+        path="/privacy"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

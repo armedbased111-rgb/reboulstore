@@ -1,5 +1,6 @@
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page About - À propos de Reboul Store
@@ -20,6 +21,11 @@ export const About = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="A propos | Reboul Store"
+        description="L'histoire, la vision et l'ADN premium streetwear de Reboul Store."
+        path="/about"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

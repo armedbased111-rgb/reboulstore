@@ -35,6 +35,7 @@ import { BrandCarousel } from '../components/home/BrandCarousel';
 import { useProducts } from '../hooks/useProducts';
 import { animateRevealUp, animateStaggerFadeIn } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Home - Page d'accueil
@@ -90,6 +91,11 @@ export const Home = () => {
 
   return (
     <div className='px-[4px]'>
+      <SeoHead
+        title="Reboul Store | Concept Store Premium Streetwear"
+        description="Decouvrez la selection premium Reboul Store: streetwear, pieces exclusives et collections pointues."
+        path="/"
+      />
       {/* Hero Section avec slideshow */}
       <div ref={heroImageRef}>
         <HeroSectionImage

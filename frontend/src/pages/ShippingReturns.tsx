@@ -1,5 +1,6 @@
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page ShippingReturns - Politiques de livraison et retours
@@ -17,6 +18,11 @@ export const ShippingReturns = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="Livraison et retours | Reboul Store"
+        description="Consultez les conditions de livraison, de retour et de remboursement Reboul Store."
+        path="/shipping-returns"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

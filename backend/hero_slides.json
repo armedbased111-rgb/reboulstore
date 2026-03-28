@@ -1,33 +1,10 @@
 [
   {
-    "id": "slide_1773351718",
-    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1773351718/homepage/homepage/hero.png",
-    "title": "SS26 Pre Release",
-    "subtitle": "Stone Island SS26",
-    "buttonText": "Shop now",
-    "buttonLink": "/catalog"
-  },
-  {
-    "id": "slide_1773352040",
-    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1773352040/homepage/homepage/hero_2.png",
-    "title": "SS26 Pre Release",
-    "subtitle": "Stone Island SS26",
-    "buttonText": "Shop now",
-    "buttonLink": "/catalog"
-  },
-  {
-    "id": "slide_1773406178",
-    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1773406179/homepage/hero/slide_1773406178.png",
-    "title": "SS26 Pre Release",
-    "subtitle": "Stone Island SS26",
-    "buttonText": "Shop now",
-    "buttonLink": "/catalog"
-  }
-  ,{
-    "id": "slide_1773409073",
-    "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1773409078/homepage/hero/slide_1773409073_mobile.png",
-    "title": "SS26 Pre Release",
-    "subtitle": "Stone Island SS26",
+    "id": "slide_1774722129",
+    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1774722130/homepage/hero/slide_1774722129.png",
+    "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1774722131/homepage/hero/slide_1774722129_mobile.png",
+    "title": "Reboul SS26 Collection",
+    "subtitle": "",
     "buttonText": "Shop now",
     "buttonLink": "/catalog"
   }

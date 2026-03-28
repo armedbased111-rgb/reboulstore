@@ -95,7 +95,7 @@ export const HeroSectionImage = ({
   }, [nextRandom, visibleSlides.length, autoplayInterval]);
 
   return (
-    <section className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
+    <section className={`relative w-full overflow-hidden ${isMobile && slide.imageSrcMobile ? 'aspect-[9/16]' : 'h-[60vh] md:h-[80vh]'}`}>
 
       {/* Media */}
       <div
@@ -120,15 +120,15 @@ export const HeroSectionImage = ({
         )}
       </div>
 
-      {/* Gradient overlay — subtil */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
       {/* Content — copie exacte ACW* : positionné à ~55% du haut */}
       <div
-        className="absolute left-0 right-0 bottom-[36%] md:bottom-[42%] px-[16px] md:px-[20px] transition-opacity duration-400"
+        className="absolute left-0 bottom-[6%] md:bottom-[8%] px-[16px] md:px-[20px] transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}
       >
-        <h1 className="text-[32px] md:text-[44px] lg:text-[54px] font-light text-white tracking-normal leading-none mb-[16px] md:mb-[24px]">
+        <h1 className="text-[32px] md:text-[44px] lg:text-[54px] font-light text-white uppercase tracking-normal leading-none mb-[16px] md:mb-[24px]">
           {slide.title}
         </h1>
         <Link

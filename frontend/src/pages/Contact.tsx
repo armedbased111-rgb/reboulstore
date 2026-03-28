@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Contact - Formulaire de contact + informations boutique
@@ -48,6 +49,11 @@ export const Contact = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="Contact | Reboul Store"
+        description="Contactez l'equipe Reboul Store pour toute question commande, produit ou service."
+        path="/contact"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

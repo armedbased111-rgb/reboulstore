@@ -11,6 +11,7 @@ import { SlidersHorizontal, X, Search as SearchIcon, ChevronDown } from 'lucide-
 import type { Category, Brand } from '../types';
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
+import { SeoHead } from '../components/seo/SeoHead';
 
 const PRODUCTS_PER_PAGE = 24;
 
@@ -312,6 +313,11 @@ export const Catalog = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
+      <SeoHead
+        title="Catalogue | Reboul Store"
+        description="Parcourez le catalogue Reboul Store: vetements premium, marques iconiques et nouveautes selectionnees."
+        path={searchParams.toString() ? `/catalog?${searchParams.toString()}` : '/catalog'}
+      />
       <div className="w-full">
         {/* Barre sticky : recherche + tri */}
         <div className="border-b border-gray-200 bg-white sticky top-[46px] z-40">

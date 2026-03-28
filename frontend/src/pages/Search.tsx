@@ -8,6 +8,7 @@ import { useBrands } from '../hooks/useBrands';
 // Category et Brand non utilisés directement dans ce fichier
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Search - Résultats de recherche avec filtres et tri
@@ -177,6 +178,12 @@ export const Search = () => {
   if (!query) {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <SeoHead
+          title="Recherche | Reboul Store"
+          description="Recherchez une piece, une marque ou une categorie dans l'univers Reboul Store."
+          path="/search"
+          noindex
+        />
         <div className="text-center">
           <SearchIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -192,6 +199,12 @@ export const Search = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SeoHead
+        title={`Recherche "${query}" | Reboul Store`}
+        description={`Resultats de recherche pour ${query} sur Reboul Store.`}
+        path={`/search?q=${encodeURIComponent(query)}`}
+        noindex
+      />
       {/* Header avec recherche et tri */}
       <div className="border-b border-gray-200 bg-white sticky top-[46px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

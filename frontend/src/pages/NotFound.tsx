@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page 404 - Page non trouvée
@@ -19,6 +20,12 @@ export const NotFound = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="404 | Page non trouvee | Reboul Store"
+        description="La page demandee est introuvable sur Reboul Store."
+        path="/404"
+        noindex
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">

@@ -13,6 +13,7 @@ import { useToast } from '../contexts/ToastContext';
 import type { Variant } from '../types';
 import * as anime from 'animejs';
 import { toMilliseconds, ANIMATION_EASES } from '../animations/utils/constants';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Product - Fiche produit style A-COLD-WALL*
@@ -93,6 +94,11 @@ export const Product = () => {
   if (loading) {
     return (
       <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
+        <SeoHead
+          title="Produit | Reboul Store"
+          description="Fiche produit Reboul Store."
+          path={id ? `/product/${id}` : '/product'}
+        />
         <div className="w-full">
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
@@ -108,6 +114,12 @@ export const Product = () => {
   if (error) {
     return (
       <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
+        <SeoHead
+          title="Produit indisponible | Reboul Store"
+          description="Le produit demande est temporairement indisponible."
+          path={id ? `/product/${id}` : '/product'}
+          noindex
+        />
         <div className="w-full">
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
@@ -125,6 +137,12 @@ export const Product = () => {
   if (!product) {
     return (
       <main id="MainContent" role="main" tabIndex={-1} className="grow flex">
+        <SeoHead
+          title="Produit introuvable | Reboul Store"
+          description="Le produit demande est introuvable."
+          path={id ? `/product/${id}` : '/product'}
+          noindex
+        />
         <div className="w-full">
           <section className="m-[2px] last:mb-0">
             <div className="p-[2px] bg-grey light:bg-inherit relative w-full">
@@ -253,6 +271,13 @@ export const Product = () => {
 
   return (
     <main ref={pageRef} id="MainContent" role="main" tabIndex={-1} className="grow flex">
+      <SeoHead
+        title={`${product.name} | Reboul Store`}
+        description={product.description?.slice(0, 155) || `${product.name} disponible sur Reboul Store.`}
+        path={`/product/${product.id}`}
+        type="product"
+        image={product.images?.[0]?.url || undefined}
+      />
       <div className="w-full">
         <section className="m-[2px] last:mb-0">
           <div className="p-[2px] bg-grey light:bg-inherit relative w-full">

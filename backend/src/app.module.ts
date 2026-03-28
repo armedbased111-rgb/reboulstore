@@ -24,6 +24,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { SmsModule } from './modules/sms/sms.module';
 import { StockNotificationsModule } from './modules/stock-notifications/stock-notifications.module';
 import { HeroModule } from './modules/hero/hero.module';
+import { OgModule } from './modules/og/og.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -65,6 +66,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SmsModule,
     StockNotificationsModule,
     HeroModule,
+    OgModule,
   ],
   controllers: [AppController],
   providers: [AppService],

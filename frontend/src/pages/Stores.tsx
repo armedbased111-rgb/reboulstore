@@ -2,6 +2,7 @@
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { animateRevealUp } from '../animations';
 import { useScrollAnimation } from '../animations/utils/useScrollAnimation';
+import { SeoHead } from '../components/seo/SeoHead';
 
 /**
  * Page Stores - Localisation des boutiques
@@ -61,6 +62,11 @@ export const Stores = () => {
 
   return (
     <main id="MainContent" role="main" tabIndex={-1} className="grow">
+      <SeoHead
+        title="Boutiques | Reboul Store"
+        description="Retrouvez Reboul Store a Marseille, Cassis et Sanary-sur-Mer."
+        path="/stores"
+      />
       <div className="w-full">
         {/* Hero Section */}
         <section ref={heroRef} className="border-b border-black/10">
