@@ -32,6 +32,7 @@ RUN npm ci --only=production --legacy-peer-deps && \
 # Copier le build depuis le stage builder
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/hero_slides.json ./hero_slides.json
 
 # Créer un utilisateur non-root pour la sécurité
 RUN addgroup -g 1001 -S nodejs && \

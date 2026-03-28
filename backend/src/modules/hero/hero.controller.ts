@@ -2,8 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
-// En dev Docker : le backend est monté dans /app, hero_slides.json est à la racine du backend
-const SLIDES_PATH = join(__dirname, '..', '..', '..', '..', 'hero_slides.json');
+// Racine du processus (/app en Docker) : évite __dirname depuis dist/ qui pointait hors du conteneur
+const SLIDES_PATH = join(process.cwd(), 'hero_slides.json');
 
 @Controller('hero')
 export class HeroController {

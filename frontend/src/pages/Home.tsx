@@ -5,6 +5,7 @@ import { HeroSectionImage } from '../components/home/HeroSectionImage';
 interface HeroSlide {
   id: string;
   imageSrc: string;
+  imageSrcMobile?: string;
   title: string;
   subtitle: string;
   buttonText: string;
