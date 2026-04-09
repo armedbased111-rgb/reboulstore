@@ -40,11 +40,12 @@ export class CouponsController {
   }
 
   /**
-   * Récupère les coupons actifs (public - pour affichage page d'accueil)
+   * Récupère les coupons actifs pour la bannière promo (public).
+   * Retourne uniquement code + type + valeur — aucune donnée interne exposée.
    */
   @Get('active')
   async findActive() {
-    return this.couponsService.findActive();
+    return this.couponsService.findActivePublic();
   }
 
   /**

@@ -77,6 +77,28 @@ Historique des améliorations apportées au vault Obsidian.
 - Toutes les intégrations liées
 - Tous les contextes accessibles
 
+## 2026-03-29 — Flow Paiement + Fix Cart Bug
+
+### Canvas paiement créés
+- **Workflow-Paiement-Client.canvas** — Flow complet côté navigateur (11 étapes, Playwright validé)
+- **Workflow-Paiement-Serveur.canvas** — Architecture NestJS + Stripe (capture manuelle, webhook, PENDING → PAID/CANCELLED)
+
+### Test Playwright réel
+- Flow complet simulé avec `armedbased111@gmail.com`
+- Produit : Arte Jacket Green M — 145€ (ref 231J/GREEN, variantId 1180)
+- Carte test `4242 4242 4242 4242` → paiement soumis → `/order-confirmation` ✅
+- Script : `.claude/skills/playwright/scripts/payment-flow-test.js`
+
+### Bug corrigé — `useLocalStorage` sessionId non persisté
+- **Fichier** : `frontend/src/hooks/useLocalStorage.ts`
+- **Symptôme** : `cart_session_id` généré mais jamais écrit en localStorage → panier perdu à chaque rechargement
+- **Fix** : écriture de la valeur initiale dans localStorage si la clé est absente
+- **Validé** : même sessionId avant et après navigation inter-pages
+
+### Intégrations/Stripe.md mis à jour
+- Architecture capture manuelle documentée
+- Bug cart résolu documenté
+
 ## Prochaines améliorations possibles
 
 - Créer des Canvas supplémentaires (ex: Workflow Design détaillé)

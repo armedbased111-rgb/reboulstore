@@ -1,6 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import {
+  ValidationPipe,
+  Logger,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import { getPublicSiteUrl } from './config/public-site-url';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { MulterExceptionFilter } from './filters/multer-exception.filter';
@@ -29,8 +36,8 @@ async function bootstrap() {
     // Filtre d'exception global pour gérer les erreurs multer
     app.useGlobalFilters(new MulterExceptionFilter());
 
-    // Configuration CORS pour le frontend
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const configService = app.get(ConfigService);
+    const frontendUrl = getPublicSiteUrl(configService);
     const allowedOrigins = [
       frontendUrl,
       'https://reboulstore.com',
@@ -49,9 +56,36 @@ async function bootstrap() {
         }
 
         // En production, accepter seulement les origines autorisées
-        callback(new Error('Not allowed by CORS'));
+        callback(new HttpException('CORS non autorisé', HttpStatus.FORBIDDEN));
       },
       credentials: true,
+    });
+
+    // Headers de sécurité HTTP
+    app.use((_req: any, res: any, next: any) => {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=63072000; includeSubDomains; preload',
+      );
+      res.setHeader(
+        'Content-Security-Policy',
+        [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: blob: https://res.cloudinary.com",
+          "connect-src 'self' https://api.stripe.com https://www.google-analytics.com",
+          'frame-src https://js.stripe.com',
+          "font-src 'self'",
+          "object-src 'none'",
+          "base-uri 'self'",
+        ].join('; '),
+      );
+      res.setHeader(
+        'Permissions-Policy',
+        'camera=(), microphone=(), geolocation=()',
+      );
+      next();
     });
 
     // Servir les fichiers statiques pour les images

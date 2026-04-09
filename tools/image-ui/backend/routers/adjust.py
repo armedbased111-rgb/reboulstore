@@ -13,14 +13,18 @@ router = APIRouter()
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CLI_PATH = PROJECT_ROOT / "cli"
+BRAND_ASSETS_DIR = PROJECT_ROOT / "brand_assets"
 
 
-async def _run_adjust_handler(image_path: Path, output_dir: Path, ref: str, req: AdjustRequest, request: Request):
+async def _run_adjust_handler(image_path: Path, output_dir: Path, ref: str, req: AdjustRequest, request: Request, brand: str = ""):
     """Handler commun pour ajuster une image."""
     if not image_path.exists():
         raise HTTPException(404, f"Image introuvable : {image_path.name}")
 
-    if req.overwrite:
+    if req.output_filename:
+        output_path = output_dir / ref / req.output_filename
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+    elif req.overwrite:
         output_path = image_path
     else:
         stem = image_path.stem
@@ -28,8 +32,12 @@ async def _run_adjust_handler(image_path: Path, output_dir: Path, ref: str, req:
 
     ref_path = None
     if req.ref_image:
-        # cherche dans campaign/ ou dossier principal
-        for candidate in [output_dir / ref / "campaign" / req.ref_image, output_dir / ref / req.ref_image]:
+        # cherche dans campaign/, dossier principal, puis brand_assets/
+        for candidate in [
+            output_dir / ref / "campaign" / req.ref_image,
+            output_dir / ref / req.ref_image,
+            BRAND_ASSETS_DIR / brand / req.ref_image,
+        ]:
             if candidate.exists():
                 ref_path = candidate
                 break
@@ -107,7 +115,7 @@ async def run_adjust(brand: str, ref: str, filename: str, req: AdjustRequest, re
     image_path = output_dir / ref / filename
     if not image_path.exists():
         image_path = input_dir / ref / filename
-    return await _run_adjust_handler(image_path, output_dir, ref, req, request)
+    return await _run_adjust_handler(image_path, output_dir, ref, req, request, brand=brand)
 
 
 @router.post("/adjust/{brand}/{ref}/campaign/{filename}")
@@ -118,4 +126,4 @@ async def run_adjust_campaign(brand: str, ref: str, filename: str, req: AdjustRe
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
     image_path = output_dir / ref / "campaign" / filename
-    return await _run_adjust_handler(image_path, output_dir, ref, req, request)
+    return await _run_adjust_handler(image_path, output_dir, ref, req, request, brand=brand)

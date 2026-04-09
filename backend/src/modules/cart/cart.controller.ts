@@ -83,11 +83,7 @@ export class CartController {
     return this.cartService.clear(sessionId);
   }
 
-  /**
-   * Génère un sessionId temporaire (pour les tests)
-   * En production, cela devrait venir du frontend (cookie, localStorage, etc.)
-   */
   private generateSessionId(): string {
-    return `session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+    return crypto.randomUUID();
   }
 }

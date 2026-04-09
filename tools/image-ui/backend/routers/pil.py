@@ -85,9 +85,20 @@ def pil_cadrage(brand: str, ref: str, filename: str):
         resized = crop.resize((max(1, int(crop.width * scale)), max(1, int(crop.height * scale))), Image.LANCZOS)
         canvas.paste(resized, (int(W * rule["left"]), int(H * rule["top"])))
     else:
-        pad = 50
-        crop_p = img.crop((max(0, cmin - pad), max(0, rmin - pad), min(W, cmax + pad + 1), min(H, rmax + pad + 1)))
-        canvas.paste(crop_p, ((W - crop_p.width) // 2, (H - crop_p.height) // 2))
+        # Garment : resize pour remplir 88% de la hauteur, centré horizontalement, 6% de marge en haut
+        target_h = int(H * 0.88)
+        scale = target_h / crop.height
+        new_w = max(1, int(crop.width * scale))
+        new_h = max(1, int(crop.height * scale))
+        # Si le produit redimensionné dépasse la largeur, on contrainte sur la largeur
+        if new_w > int(W * 0.92):
+            scale = (W * 0.92) / crop.width
+            new_w = max(1, int(crop.width * scale))
+            new_h = max(1, int(crop.height * scale))
+        resized = crop.resize((new_w, new_h), Image.LANCZOS)
+        x = (W - new_w) // 2
+        y = int(H * 0.06)
+        canvas.paste(resized, (x, y))
 
     canvas.save(path)
     return {"ok": True, "action": "cadrage", "view": view, "file": filename}

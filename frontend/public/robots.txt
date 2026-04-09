@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /cart
+Disallow: /checkout
 
 Sitemap: https://www.reboulstore.com/sitemap.xml

@@ -46,6 +46,7 @@ class AdjustRequest(BaseModel):
     model: Literal["pro", "flash"] = "pro"
     ref_image: Optional[str] = None  # filename in same ref dir, e.g. "1_face.png"
     overwrite: bool = False
+    output_filename: Optional[str] = None  # si défini, sauvegarde dans output_dir/{ref}/{output_filename}
 
 
 class CampaignRequest(BaseModel):

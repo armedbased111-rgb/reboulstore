@@ -24,8 +24,9 @@ services:
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      # HTTPS canonique du storefront (liens e-mails, logo via Cloudinary si pas d’EMAIL_LOGO_URL, Stripe)
       - FRONTEND_URL=${FRONTEND_URL:-https://reboulstore.com}
-      # Configuration SMTP
+      # SMTP — aussi dans .env.production (env_file) ; ici interpolation pour CI/scripts
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER}
@@ -103,6 +104,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - frontend_build:/usr/share/nginx/html:ro
+      - ./nginx/maintenance.html:/usr/share/nginx/html/maintenance.html:ro
     depends_on:
       - frontend
       - backend

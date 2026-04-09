@@ -72,34 +72,24 @@ cp env.production.example .env.production
 nano .env.production
 ```
 
-**Variables à configurer** :
-```env
-# Database
-DB_USERNAME=reboulstore
-DB_PASSWORD=<db_password>
-DB_DATABASE=reboulstore_db
-DB_HOST=reboulstore-postgres-prod
-DB_PORT=5432
+**Variables à configurer** : copier depuis la racine du repo **`env.production.example`** → `.env.production`, puis éditer. Ce fichier inclut notamment :
 
-# JWT
-JWT_SECRET=<jwt_secret_reboul>
+- **DB_***, **JWT_SECRET**, **Stripe**, **Cloudinary**
+- **`FRONTEND_URL`** : URL **HTTPS** canonique du site (même host que dans le navigateur) — liens e-mails, Stripe, CORS ; pas de `localhost` en prod.
+- **SMTP_*** : obligatoire pour les e-mails transactionnels (commandes, inscription, **newsletter**, alertes stock). Mot de passe d’application si compte Gmail.
+- **`EMAIL_LOGO_URL`** (optionnel) : PNG/JPG pour l’en-tête mail ; sinon défaut Cloudinary dans le code (ratio conservé).
+- **`NODE_ENV=production`**
 
-# Stripe (à remplir avec tes vraies clés depuis Stripe Dashboard)
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+**E-mails & newsletter (prod)** :
 
-# Cloudinary (à remplir avec tes vraies clés depuis Cloudinary Dashboard)
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
+1. Renseigner **SMTP_*** dans `.env.production`.
+2. Vérifier **FRONTEND_URL** (HTTPS).
+3. Après backup DB : appliquer la migration **`newsletter_subscriptions`** si pas encore faite (`AddNewsletterSubscriptions` dans `backend/src/migrations/`).
+4. Déployer le backend pour embarquer les templates Handlebars (`dist/templates/...`).
 
-# URLs
-FRONTEND_URL=https://www.reboulstore.com
-VITE_API_URL=https://www.reboulstore.com/api
-
-# Node Environment
-NODE_ENV=production
-```
+**Docker Compose** : lancer avec  
+`docker compose -f docker-compose.prod.yml --env-file .env.production up -d`  
+pour que les variables du fichier servent aussi à l’interpolation `${...}` du compose.
 
 #### Admin Central
 

@@ -107,6 +107,11 @@ Index complet de tous les documents du projet organisés par catégories.
 - [[Canvas/Regle-Deploiement.canvas|Règle Déploiement]] - Protection volumes DB
 - [[Canvas/Workflow-Database-Securite.canvas|Workflow Database & Sécurité]] - Workflow complet database et sécurité
 
+### Paiement & Commandes (Playwright validé 29/03/2026)
+- [[Canvas/Workflow-Paiement-Client.canvas|Flow Paiement Client]] - 11 étapes côté navigateur
+- [[Canvas/Workflow-Paiement-Serveur.canvas|Flow Paiement Serveur]] - NestJS + Stripe capture manuelle
+- [[Canvas/Workflow-Commande-Livraison.canvas|Commande → Livraison]] - Toutes les étapes nous & le client
+
 ## Intégrations
 
 ### Stripe

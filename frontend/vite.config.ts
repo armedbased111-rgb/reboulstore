@@ -11,6 +11,16 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'animations': ['framer-motion', 'animejs'],
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 3000,

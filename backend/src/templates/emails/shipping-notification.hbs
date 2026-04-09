@@ -1,38 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Votre commande a été expédiée - Reboul Store</title>
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background-color: #000; color: #fff; padding: 20px; text-align: center;">
-    <h1 style="margin: 0;">REBOUL STORE</h1>
-  </div>
-  
-  <div style="padding: 30px 20px; background-color: #f9f9f9;">
-    <h2 style="color: #000; margin-top: 0;">Votre commande a été expédiée !</h2>
-    
-    <p>Bonjour {{customerName}},</p>
-    
-    <p>Bonne nouvelle ! Votre commande <strong>#{{orderId}}</strong> a été expédiée.</p>
-    
-    {{#if trackingNumber}}
-    <div style="background-color: #fff; padding: 20px; margin: 20px 0; border-left: 4px solid #000;">
-      <p style="margin: 0;"><strong>Numéro de suivi :</strong> {{trackingNumber}}</p>
-      <p style="margin: 5px 0 0 0;">Vous pouvez suivre votre colis directement depuis le site du transporteur.</p>
-    </div>
-    {{/if}}
-    
-    <p>Votre commande devrait vous parvenir sous peu.</p>
-    
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="{{orderUrl}}" style="display: inline-block; background-color: #000; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 4px;">Suivre ma commande</a>
-    </div>
-  </div>
-  
-  <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
-    <p>© {{currentYear}} Reboul Store. Tous droits réservés.</p>
-  </div>
-</body>
-</html>
+{{> rbl-shell-start}}
+<h2 style="margin:0 0 18px;font-size:13px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#0a0a0a;">Commande expédiée</h2>
+<p style="margin:0 0 16px;color:#3d3d3d;">Bonjour {{customerName}},</p>
+<p style="margin:0 0 16px;color:#3d3d3d;">Votre commande <strong style="color:#0a0a0a;">#{{orderId}}</strong> a été expédiée.</p>
+{{#if trackingNumber}}
+<div style="margin:20px 0;padding:18px 20px;background:#f8f8f8;border-left:2px solid #1a1a1a;">
+  <p style="margin:0 0 6px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:#6b6b6b;text-transform:uppercase;">Suivi transporteur</p>
+  <p style="margin:0;color:#0a0a0a;font-weight:600;font-family:'Geist Mono',monospace;font-size:14px;">{{trackingNumber}}</p>
+</div>
+{{/if}}
+<p style="margin:0 0 20px;color:#5a5a5a;font-size:14px;">Votre colis devrait vous parvenir sous peu.</p>
+<div style="text-align:center;margin:28px 0 8px 0;">
+  <a href="{{orderUrl}}" style="display:inline-block;background:#1a1a1a;color:#ffffff;padding:14px 32px;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:0.16em;border:1px solid #1a1a1a;">Suivre ma commande</a>
+</div>
+{{> rbl-shell-end}}

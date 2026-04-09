@@ -5,10 +5,13 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { Order, OrderStatus } from '../../entities/order.entity';
 import { OrderEmail, EmailType } from '../../entities/order-email.entity';
+import { getPublicSiteUrl } from '../../config/public-site-url';
+import { getEmailLogoUrl } from '../../config/email-assets';
 
 @Injectable()
 export class EmailService {
   private frontendUrl: string;
+  private readonly emailLogoUrl: string;
   private readonly logger = new Logger(EmailService.name);
 
   constructor(
@@ -17,8 +20,12 @@ export class EmailService {
     @InjectRepository(OrderEmail)
     private orderEmailRepository: Repository<OrderEmail>,
   ) {
-    this.frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    this.frontendUrl = getPublicSiteUrl(this.configService);
+    this.emailLogoUrl = getEmailLogoUrl(this.configService);
+  }
+
+  private withLogo(ctx: Record<string, unknown>) {
+    return { ...ctx, emailLogoUrl: this.emailLogoUrl };
   }
 
   /**
@@ -33,12 +40,14 @@ export class EmailService {
         to: email,
         subject: 'Bienvenue sur Reboul Store',
         template: 'registration-confirmation',
-        context: {
+        context: this.withLogo({
           firstName,
           email,
           frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Bienvenue · Reboul Store',
+          datum: 'AUTH // RBL-REG-OK',
+        }),
       });
     } catch (error) {
       console.error('Error sending registration confirmation email:', error);
@@ -63,7 +72,7 @@ export class EmailService {
         to: customerEmail,
         subject,
         template: 'order-received',
-        context: {
+        context: this.withLogo({
           customerName: order.customerInfo?.name || 'Client',
           orderId: String(order.id),
           orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
@@ -71,7 +80,9 @@ export class EmailService {
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
           frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Commande reçue · Reboul Store',
+          datum: 'ORDER // RBL-OR-RCV',
+        }),
       });
 
       // Persister l'email envoyé
@@ -115,15 +126,18 @@ export class EmailService {
         to: customerEmail,
         subject,
         template: 'order-confirmation',
-        context: {
+        context: this.withLogo({
           customerName: order.customerInfo?.name || 'Client',
           orderId: String(order.id),
           orderDate: new Date(order.createdAt).toLocaleDateString('fr-FR'),
           total: parseFloat(order.total.toString()).toFixed(2),
           status: this.getStatusLabel(order.status),
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Confirmation de commande · Reboul Store',
+          datum: 'ORDER // RBL-OR-CNF',
+        }),
       });
 
       // Persister l'email envoyé
@@ -167,13 +181,16 @@ export class EmailService {
         to: customerEmail,
         subject,
         template: 'shipping-notification',
-        context: {
+        context: this.withLogo({
           customerName: order.customerInfo?.name || 'Client',
           orderId: String(order.id),
           trackingNumber: order.trackingNumber || null,
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
+          frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Expédition · Reboul Store',
+          datum: 'ORDER // RBL-OR-SHP',
+        }),
       });
 
       // Persister l'email envoyé
@@ -216,13 +233,15 @@ export class EmailService {
         to: customerEmail,
         subject,
         template: 'order-delivered',
-        context: {
+        context: this.withLogo({
           customerName: order.customerInfo?.name || 'Client',
           orderId: String(order.id),
           orderUrl: `${this.frontendUrl}/orders/${order.id}`,
           frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Livraison · Reboul Store',
+          datum: 'ORDER // RBL-OR-DLV',
+        }),
       });
 
       // Persister l'email envoyé
@@ -270,14 +289,16 @@ export class EmailService {
         to: customerEmail,
         subject,
         template: 'order-cancelled',
-        context: {
+        context: this.withLogo({
           customerName: order.customerInfo?.name || 'Client',
           orderId: String(order.id),
           cancellationDate: new Date().toLocaleDateString('fr-FR'),
           refundAmount,
           frontendUrl: this.frontendUrl,
           currentYear: new Date().getFullYear(),
-        },
+          emailTitle: 'Commande annulée · Reboul Store',
+          datum: 'ORDER // RBL-OR-CXL',
+        }),
       });
 
       // Persister l'email envoyé
@@ -355,27 +376,23 @@ export class EmailService {
       ? `${product.name} - ${variant.color || ''} ${variant.size || ''}`.trim()
       : product.name;
 
-    // Logo Reboul Store (utiliser le logo noir depuis Cloudinary)
-    const logoUrl =
-      'https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png';
-
     try {
-      this.logger.debug(
-        `Sending stock notification email to ${email} with logoUrl: ${logoUrl}`,
-      );
       const result = await this.mailerService.sendMail({
         to: email,
         subject: `Votre produit est de nouveau disponible - ${productName}`,
         template: 'stock-available',
-        context: {
+        context: this.withLogo({
           productName,
           productUrl,
           productImageUrl: product.imageUrl || null,
-          logoUrl: logoUrl || null,
           variant: variant
             ? `${variant.color || ''} ${variant.size || ''}`.trim()
             : null,
-        },
+          frontendUrl: this.frontendUrl,
+          currentYear: new Date().getFullYear(),
+          emailTitle: 'Stock disponible · Reboul Store',
+          datum: 'STOCK // RBL-STK-AVL',
+        }),
       });
 
       this.logger.log(

@@ -41,9 +41,9 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   );
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const consentRef = useRef(consent);
-  consentRef.current = consent;
 
   useEffect(() => {
+    consentRef.current = consent;
     if (consent === 'analytics') {
       initAnalytics();
     }
@@ -105,6 +105,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   return <CookieConsentContext.Provider value={value}>{children}</CookieConsentContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCookieConsent(): CookieConsentContextValue {
   const ctx = useContext(CookieConsentContext);
   if (!ctx) {

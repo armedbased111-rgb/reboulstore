@@ -117,6 +117,7 @@ ADJUST_SYSTEM = (
     "Change ONLY what the instruction asks (e.g. shadow, fold, lighting, remove a tag). Do not substitute a different product or view. "
     "Apply ONLY this change: {prompt}. "
     "Background must be plain solid #F3F3F3 (light grey) only. "
+    "DIMENSIONS: Output image must have the EXACT same width and height in pixels as the input image. Do not crop, resize, zoom in or zoom out. The product must occupy the exact same position and scale in the frame as in the input. "
     "Output only the modified image, no text."
 )
 
@@ -1037,14 +1038,39 @@ def run_adjust(
     ref_b64, ref_mime = None, None
     if ref_path is not None:
         ref_path = Path(ref_path).resolve()
-        ref_b64, ref_mime = encode_image(ref_path)
-        prompt_text = (
-            "First image = image to modify. Second image = reference. "
-            + prompt_text
-            + " Use the second image as reference for colors or style where the instruction says so."
+        # Incruster la ref dans un coin du produit → 1 seule image envoyée à Gemini
+        # Évite le bug de format quand Gemini reçoit 2 images de tailles différentes
+        from PIL import Image as _PIL
+        import io as _io
+        prod_img = _PIL.open(image_path).convert("RGB")
+        ref_img = _PIL.open(ref_path).convert("RGB")
+        W, H = prod_img.size
+        # Ref : max 22% de la largeur, dans le coin bas-droit
+        max_ref_w = int(W * 0.22)
+        scale = max_ref_w / ref_img.width
+        ref_resized = ref_img.resize(
+            (max_ref_w, max(1, int(ref_img.height * scale))), _PIL.LANCZOS
         )
+        composite = prod_img.copy()
+        margin = int(W * 0.02)
+        x = W - ref_resized.width - margin
+        y = H - ref_resized.height - margin
+        composite.paste(ref_resized, (x, y))
+        buf = _io.BytesIO()
+        composite.save(buf, format="PNG")
+        buf.seek(0)
+        import base64 as _b64
+        img_b64 = _b64.b64encode(buf.read()).decode()
+        mime = "image/png"
+        prompt_text = (
+            "The image contains the product to modify AND a small reference inset in the bottom-right corner. "
+            "Use the inset as the exact visual reference where the instruction mentions a reference. "
+            "CRITICAL: your output must NOT include the inset — output only the full product at its original dimensions, without the corner inset. "
+            + prompt_text
+        )
+    else:
+        img_b64, mime = encode_image(image_path)
 
-    img_b64, mime = encode_image(image_path)
     use_ref_model = (use_pro or bool(ref_b64)) and not use_flash
 
     log(f"Ajustement : {image_path.name}…")

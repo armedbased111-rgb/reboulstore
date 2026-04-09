@@ -10,10 +10,7 @@ export class OgController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get('product/:id')
-  async productOg(
-    @Param('id', ParseIntPipe) id: number,
-    @Res() res: Response,
-  ) {
+  async productOg(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     try {
       const product = await this.productsService.findOne(id);
 

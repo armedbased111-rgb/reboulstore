@@ -1,17 +1,10 @@
 import { api } from './api';
 
+// Données publiques uniquement — pas de champs internes (maxUses, usedCount, etc.)
 export interface Coupon {
-  id: number;
   code: string;
   discountType: 'percentage' | 'fixed_amount';
   discountValue: number;
-  expiresAt: string | null;
-  maxUses: number;
-  usedCount: number;
-  minPurchaseAmount: number | null;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CouponValidation {

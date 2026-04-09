@@ -172,6 +172,15 @@ export const Product = () => {
 
   const sizeChart = getSizeChart();
 
+  // Conversion pointures US → EU pour les chaussures
+  const US_TO_EU: Record<string, string> = {
+    '4': '36', '4.5': '37', '5': '38', '5.5': '38.5',
+    '6': '39', '6.5': '40', '7': '40.5', '7.5': '41.5',
+    '8': '42', '8.5': '42.5', '9': '43', '9.5': '44',
+    '10': '44.5', '10.5': '45',
+  };
+  const isShoeCategory = product.category?.slug === 'basket';
+
   // Préparer les onglets avec les vraies données
   const tabs = [
     {
@@ -182,21 +191,23 @@ export const Product = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-black">
-                <td className="pb-2 pr-8 text-[12px] font-medium text-black">Taille</td>
-                {sizeChart.some((s) => s.chest) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Poitrine (cm)</td>}
-                {sizeChart.some((s) => s.length) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Longueur (cm)</td>}
-                {sizeChart.some((s) => s.waist) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Taille (cm)</td>}
-                {sizeChart.some((s) => s.hip) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Hanches (cm)</td>}
+                <td className="pb-2 pr-8 text-[12px] font-medium text-black">{isShoeCategory ? 'US' : 'Taille'}</td>
+                {isShoeCategory && <td className="pb-2 pr-8 text-[12px] font-medium text-black">EU / FR</td>}
+                {!isShoeCategory && sizeChart.some((s) => s.chest) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Poitrine (cm)</td>}
+                {!isShoeCategory && sizeChart.some((s) => s.length) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Longueur (cm)</td>}
+                {!isShoeCategory && sizeChart.some((s) => s.waist) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Taille (cm)</td>}
+                {!isShoeCategory && sizeChart.some((s) => s.hip) && <td className="pb-2 pr-8 text-[12px] font-medium text-black">Hanches (cm)</td>}
               </tr>
             </thead>
             <tbody>
               {sizeChart.map((entry) => (
                 <tr key={entry.size} className="border-b border-black/10">
                   <td className="py-2 pr-8 text-[12px] font-medium text-black">{entry.size}</td>
-                  {sizeChart.some((s) => s.chest) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.chest ?? '—'}</td>}
-                  {sizeChart.some((s) => s.length) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.length ?? '—'}</td>}
-                  {sizeChart.some((s) => s.waist) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.waist ?? '—'}</td>}
-                  {sizeChart.some((s) => s.hip) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.hip ?? '—'}</td>}
+                  {isShoeCategory && <td className="py-2 pr-8 text-[12px] text-black/70">{US_TO_EU[entry.size] ?? '—'}</td>}
+                  {!isShoeCategory && sizeChart.some((s) => s.chest) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.chest ?? '—'}</td>}
+                  {!isShoeCategory && sizeChart.some((s) => s.length) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.length ?? '—'}</td>}
+                  {!isShoeCategory && sizeChart.some((s) => s.waist) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.waist ?? '—'}</td>}
+                  {!isShoeCategory && sizeChart.some((s) => s.hip) && <td className="py-2 pr-8 text-[12px] text-black/70">{entry.hip ?? '—'}</td>}
                 </tr>
               ))}
             </tbody>

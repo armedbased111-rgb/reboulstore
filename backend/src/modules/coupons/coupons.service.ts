@@ -77,29 +77,38 @@ export class CouponsService {
   }
 
   /**
-   * Récupère uniquement les coupons actifs (public - pour affichage page d'accueil)
+   * Récupère les coupons actifs pour affichage public (bannière promo).
+   * Retourne uniquement les champs nécessaires à l'affichage — pas de données internes.
    */
-  async findActive(): Promise<CouponResponseDto[]> {
+  async findActivePublic(): Promise<
+    { code: string; discountType: string; discountValue: number }[]
+  > {
     const now = new Date();
     const coupons = await this.couponRepository.find({
       where: { isActive: true },
+      select: [
+        'code',
+        'discountType',
+        'discountValue',
+        'expiresAt',
+        'maxUses',
+        'usedCount',
+      ],
       order: { createdAt: 'DESC' },
     });
 
-    // Filtrer les coupons valides (non expirés, pas atteint limite)
     return coupons
       .filter((coupon) => {
-        // Vérifier expiration
-        if (coupon.expiresAt && new Date(coupon.expiresAt) <= now) {
+        if (coupon.expiresAt && new Date(coupon.expiresAt) <= now) return false;
+        if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses)
           return false;
-        }
-        // Vérifier limite d'utilisations
-        if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) {
-          return false;
-        }
         return true;
       })
-      .map((coupon) => this.toResponseDto(coupon));
+      .map((coupon) => ({
+        code: coupon.code,
+        discountType: coupon.discountType,
+        discountValue: parseFloat(coupon.discountValue.toString()),
+      }));
   }
 
   /**

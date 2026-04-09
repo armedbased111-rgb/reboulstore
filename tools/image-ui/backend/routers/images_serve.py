@@ -5,6 +5,27 @@ from services.brand_config import load_configs, resolve_output_dir
 
 router = APIRouter()
 
+BRAND_ASSETS_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent / "brand_assets"
+IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
+
+
+@router.get("/assets/{brand}")
+def list_brand_assets(brand: str):
+    """Liste les fichiers dans brand_assets/{brand}/"""
+    folder = BRAND_ASSETS_DIR / brand
+    if not folder.exists():
+        return []
+    return sorted(f.name for f in folder.iterdir() if f.suffix.lower() in IMAGE_EXTS)
+
+
+@router.get("/assets/{brand}/{filename}")
+def serve_brand_asset(brand: str, filename: str):
+    """Sert un fichier depuis brand_assets/{brand}/"""
+    file_path = BRAND_ASSETS_DIR / brand / filename
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(404, "Asset introuvable")
+    return FileResponse(str(file_path))
+
 
 @router.get("/images/{brand}/{ref}/{filename}")
 def serve_image(brand: str, ref: str, filename: str):

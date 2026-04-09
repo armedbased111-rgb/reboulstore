@@ -1,122 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Votre produit est de nouveau disponible</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background-color: #ffffff;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #eee;
-    }
-    .logo {
-      max-width: 150px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-    .header h1 {
-      color: #000;
-      font-size: 24px;
-      margin: 0;
-      font-weight: 600;
-    }
-    .content {
-      margin-bottom: 30px;
-    }
-    .product-image-container {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .product-image {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .product-name {
-      font-size: 20px;
-      font-weight: 600;
-      color: #000;
-      margin-bottom: 10px;
-    }
-    .variant {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-    .cta-button {
-      display: inline-block;
-      background-color: #000;
-      color: #ffffff;
-      padding: 12px 30px;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: 600;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .footer {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <img src="https://res.cloudinary.com/dxen69pdo/image/upload/v1767632540/logo_black_lbwe46.png" alt="Reboul Store" class="logo" style="max-width: 150px; height: auto; display: block; margin: 0 auto 20px auto;" width="150" />
-      <h1>Votre produit est de nouveau disponible</h1>
-    </div>
-    
-    <div class="content">
-      <p>Bonjour,</p>
-      
-      <p>Nous avons le plaisir de vous informer que le produit que vous suivez est de nouveau en stock :</p>
-      
-      {{#if productImageUrl}}
-      <div class="product-image-container">
-        <img src="{{productImageUrl}}" alt="{{productName}}" class="product-image" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: block; margin: 20px auto;" />
-      </div>
-      {{/if}}
-      
-      <div class="product-name">{{productName}}</div>
+{{> rbl-shell-start}}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px 0;">
+  <tr>
+    <td style="width:3px;background:#d93434;font-size:0;line-height:0;padding:0;">&nbsp;</td>
+    <td style="padding-left:16px;">
+      <p style="margin:0;font-family:'Geist Mono','SF Mono',Consolas,monospace;font-size:8px;letter-spacing:0.2em;color:#8a8a8a;text-transform:uppercase;">Alerte stock</p>
+      <h2 style="margin:6px 0 0;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;line-height:1.25;">De nouveau disponible</h2>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 14px;color:#3d3d3d;">Bonjour,</p>
+<p style="margin:0 0 22px;color:#3d3d3d;">Le produit que vous suiviez est de retour en stock.</p>
+{{#if productImageUrl}}
+<div style="text-align:center;margin:0 0 22px 0;padding:12px;background:#fafafa;border:1px solid #ebebeb;">
+  <img src="{{productImageUrl}}" alt="{{productName}}" width="520" style="max-width:100%;height:auto;display:block;margin:0 auto;border:1px solid #e0e0e0;" />
+</div>
+{{/if}}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px 0;background:#f8f8f8;border:1px solid #eaeaea;border-left:2px solid #1a1a1a;">
+  <tr>
+    <td style="padding:18px 20px;">
+      <p style="margin:0 0 4px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#7a7a7a;text-transform:uppercase;">Article</p>
+      <p style="margin:0 0 10px;font-size:18px;font-weight:600;color:#0a0a0a;letter-spacing:-0.02em;line-height:1.3;">{{productName}}</p>
       {{#if variant}}
-      <div class="variant">Variante : {{variant}}</div>
+      <p style="margin:0;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#5a5a5a;text-transform:uppercase;">Variante · {{variant}}</p>
       {{/if}}
-      
-      <p>N'hésitez pas à le commander dès maintenant, les stocks sont limités !</p>
-      
-      <div style="text-align: center;">
-        <a href="{{productUrl}}" class="cta-button">Voir le produit</a>
-      </div>
-    </div>
-    
-    <div class="footer">
-      <p>Reboul Store</p>
-      <p>Vous recevez cet email car vous vous êtes inscrit aux notifications de disponibilité pour ce produit.</p>
-    </div>
-  </div>
-</body>
-</html>
-
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 22px;color:#5a5a5a;font-size:14px;line-height:1.5;">Stocks limités — ne tardez pas.</p>
+<div style="text-align:center;margin:30px 0 10px 0;">
+  <a href="{{productUrl}}" style="display:inline-block;background:#1a1a1a;color:#ffffff;padding:16px 36px;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:0.18em;border:1px solid #1a1a1a;">Voir le produit</a>
+</div>
+<p style="margin:22px 0 0;padding-top:18px;border-top:1px solid #eeeeee;font-size:10px;color:#9a9a9a;line-height:1.55;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">Vous recevez cet e-mail car vous êtes inscrit aux alertes de disponibilité pour cet article.</p>
+{{> rbl-shell-end}}

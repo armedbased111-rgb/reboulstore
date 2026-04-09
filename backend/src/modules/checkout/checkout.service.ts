@@ -13,6 +13,7 @@ import { StockService } from '../orders/stock.service';
 import { OrdersService } from '../orders/orders.service';
 import { CouponsService } from '../coupons/coupons.service';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
+import { getPublicSiteUrl } from '../../config/public-site-url';
 
 @Injectable()
 export class CheckoutService {
@@ -73,9 +74,7 @@ export class CheckoutService {
       );
     }
 
-    // URL de base pour les images
-    const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl = getPublicSiteUrl(this.configService);
     // URL de l'API backend pour construire les URLs d'images complètes
     const port = this.configService.get<string>('PORT') || '3001';
     const apiBaseUrl = `http://localhost:${port}`;

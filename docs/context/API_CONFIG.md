@@ -49,7 +49,8 @@ DB_DATABASE=reboulstore_db
 # JWT Auth
 JWT_SECRET=your-secret-key-change-in-production
 
-# Frontend (CORS)
+# Frontend — URL publique boutique (CORS, e-mails : logo /favicon.svg, Stripe, SMS)
+# Production : https://votre-domaine (jamais localhost)
 FRONTEND_URL=http://localhost:3000
 
 # Cloudinary (Phase 15+)
@@ -67,6 +68,7 @@ FRONTEND_URL=http://localhost:3000
 # SMTP_PORT=
 # SMTP_USER=
 # SMTP_PASSWORD=
+# EMAIL_LOGO_URL= (optionnel, PNG — défaut Cloudinary aligné sur le site ; pas de SVG dans les mails)
 ```
 
 ### Backend Admin (`admin-central/backend/.env`)

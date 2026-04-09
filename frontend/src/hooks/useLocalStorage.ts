@@ -10,7 +10,12 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
 
     try {
       const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
+      if (item) {
+        return JSON.parse(item) as T;
+      }
+      // Persister la valeur initiale si la clé n'existe pas encore
+      window.localStorage.setItem(key, JSON.stringify(initialValue));
+      return initialValue;
     } catch (error) {
       console.warn(`Erreur lors de la lecture de ${key} dans localStorage:`, error);
       return initialValue;

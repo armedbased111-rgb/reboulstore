@@ -56,6 +56,11 @@ Point d'entrée principal du vault Obsidian pour le projet Reboul Store.
 - [[Canvas/Regle-Database.canvas|Règle Database]] - Configuration base de données
 - [[Canvas/Regle-Deploiement.canvas|Règle Déploiement]] - Protection volumes DB
 
+### Paiement & Commandes (Playwright validé 29/03/2026)
+- [[Canvas/Workflow-Paiement-Client.canvas|Flow Paiement Client]] - 11 étapes côté navigateur
+- [[Canvas/Workflow-Paiement-Serveur.canvas|Flow Paiement Serveur]] - NestJS + Stripe capture manuelle
+- [[Canvas/Workflow-Commande-Livraison.canvas|Commande → Livraison]] - Toutes les étapes nous & le client
+
 ## Intégrations
 - [[Integrations/Stripe.md|Stripe]] - Paiements Stripe
 - [[Integrations/Cloudflare.md|Cloudflare]] - CDN et SSL

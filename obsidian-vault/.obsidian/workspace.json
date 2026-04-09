@@ -13,15 +13,27 @@
             "state": {
               "type": "canvas",
               "state": {
-                "file": "Canvas/Architecture.canvas",
+                "file": "Canvas/Workflow-Commande-Livraison.canvas",
                 "viewState": {
-                  "x": 1146.5076293730674,
-                  "y": 457.27564954788886,
-                  "zoom": -0.8112757305406256
+                  "x": 449.0731928066356,
+                  "y": 486.58275156815745,
+                  "zoom": -1.3442097787664302
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "Architecture"
+              "title": "Workflow-Commande-Livraison"
+            }
+          },
+          {
+            "id": "67f4d028a1c96984",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.12.7"
+              },
+              "icon": "lucide-book-up",
+              "title": "Notes de version 1.12.7"
             }
           }
         ]
@@ -177,23 +189,24 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:Créer une nouvelle base": false,
       "switcher:Ouvrir le sélecteur rapide": false,
       "graph:Ouvrir la vue graphique": false,
       "canvas:Créer une nouvelle toile": false,
-      "daily-notes:Ouvrir la note quotidienne": false,
-      "templates:Insérer le modèle": false,
-      "command-palette:Ouvrir la palette de commandes": false,
-      "bases:Create new base": false
+      "command-palette:Ouvrir la palette de commandes": false
     }
   },
-  "active": "7865cbe7ddd26038",
+  "active": "9bef561bb9ac069e",
   "lastOpenFiles": [
-    "Canvas/Workflow-Deploy.canvas",
-    "Canvas/Workflow-Dev.canvas",
+    "Canvas/Workflow-Paiement-Serveur.canvas",
+    "Canvas/Workflow-Paiement-Client.canvas",
     "Index.md",
-    "Canvas/Architecture.canvas",
+    "Canvas/Workflow-Commande-Livraison.canvas",
     "Home.md",
     "Architecture/Overview.md",
+    "Canvas/Workflow-Deploy.canvas",
+    "Canvas/Workflow-Dev.canvas",
+    "Canvas/Architecture.canvas",
     "Workflows/Deployment.md",
     "Workflows/Design.md"
   ]

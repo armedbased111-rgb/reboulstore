@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import twilio from 'twilio';
+import { getPublicSiteUrl } from '../../config/public-site-url';
 
 /**
  * Service pour l'envoi de SMS via Twilio
@@ -112,8 +113,7 @@ export class SmsService {
     phoneNumber: string,
     resetToken: string,
   ): Promise<string | null> {
-    const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl = getPublicSiteUrl(this.configService);
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     const message = `Réinitialisation de mot de passe Reboul Store. Cliquez sur: ${resetUrl} (valable 1h)`;

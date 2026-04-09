@@ -53,35 +53,22 @@ export function CookieConsentBanner() {
               Fermer
             </Button>
           )}
-          {hasGa ? (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                className="h-8 rounded-md border-black text-[10px] uppercase tracking-wide"
-                onClick={acceptNecessary}
-              >
-                Tout refuser
-              </Button>
-              <Button
-                type="button"
-                variant="default"
-                className="h-8 rounded-md bg-black text-[10px] uppercase tracking-wide text-white hover:bg-black/90"
-                onClick={acceptAnalytics}
-              >
-                Accepter la mesure d’audience
-              </Button>
-            </>
-          ) : (
-            <Button
-              type="button"
-              variant="default"
-              className="h-8 rounded-md bg-black text-[10px] uppercase tracking-wide text-white hover:bg-black/90"
-              onClick={acceptNecessary}
-            >
-              Continuer
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="outline"
+            className="h-8 rounded-md border-black text-[10px] uppercase tracking-wide hover:bg-black/5"
+            onClick={acceptNecessary}
+          >
+            Tout refuser
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-8 rounded-md border-black text-[10px] uppercase tracking-wide hover:bg-black/5"
+            onClick={hasGa ? acceptAnalytics : acceptNecessary}
+          >
+            Tout accepter
+          </Button>
         </div>
       </div>
     </div>

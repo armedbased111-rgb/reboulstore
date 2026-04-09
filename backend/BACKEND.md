@@ -266,7 +266,8 @@ backend/
   - Persistance BDD : Entité OrderEmail pour tracker tous les emails
   - Logging : Logger NestJS pour tous les événements
   - Gestion erreurs : Emails persistés même en cas d'échec (avec message erreur)
-  - Templates Handlebars : registration-confirmation, order-received, order-confirmation, shipping-notification, order-delivered, order-cancelled
+  - Templates Handlebars : registration-confirmation, order-received, order-confirmation, shipping-notification, order-delivered, order-cancelled, stock-available ; coque commune `partials/rbl-shell-*` (DA Reboul, logo PNG)
+  - **Prod** : `SMTP_*`, `FRONTEND_URL` (HTTPS) dans `.env.production` — voir `env.production.example` à la racine ; optionnel `EMAIL_LOGO_URL`. Newsletter : module `newsletter` + migration `newsletter_subscriptions`.
 
 - Entité OrderEmail créée :
   - Tracking complet emails envoyés

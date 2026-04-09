@@ -38,20 +38,17 @@ export class NotificationsGateway
   private userClients = new Map<string, Set<string>>(); // userId -> Set<socketId>
 
   /**
-   * Gestion de la connexion d'un client
+   * Gestion de la connexion d'un client.
+   * Le rôle admin N'est jamais accordé via les query params client —
+   * il doit être vérifié côté serveur via JWT (à implémenter avec l'auth).
    */
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
 
-    // Authentification basique via query params ou headers
-    const userRole = client.handshake.query.role as string;
+    // userId uniquement pour les rooms utilisateur — jamais de role depuis le client
     const userId = client.handshake.query.userId as string;
 
-    if (userRole === 'admin' || userRole === 'super_admin') {
-      this.adminClients.add(client.id);
-      client.join('admin');
-      this.logger.log(`Admin client connected: ${client.id}`);
-    } else if (userId) {
+    if (userId && /^\d+$/.test(userId)) {
       const userRoom = `user:${userId}`;
       client.join(userRoom);
 

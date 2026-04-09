@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { useToast } from '../../contexts/ToastContext'
+import { subscribeNewsletter } from '../../services/newsletterService'
 import { EARLY_ACCESS } from '../../copy/earlyAccess'
 import { SITE_NAME } from '../../seo/siteSeo'
 import { TechnicalDecorFrame } from '../decorative'
@@ -21,6 +22,7 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
   const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   const descId = useId()
@@ -62,18 +64,31 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
     }
   }, [open, persistClose])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const v = email.trim()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
       showToast({ message: 'Adresse e-mail invalide.', duration: 4000 })
       return
     }
-    persistClose('subscribed')
-    showToast({
-      message: 'Merci. L’inscription sera finalisée lorsque le service e-mail sera branché.',
-      duration: 6000,
-    })
+    setSubmitting(true)
+    try {
+      const res = await subscribeNewsletter(v, 'modal_v1')
+      persistClose('subscribed')
+      showToast({
+        message: res.alreadySubscribed
+          ? 'Cette adresse est déjà inscrite. Merci pour votre intérêt.'
+          : 'Merci. Vérifiez votre boîte mail : un message de confirmation vous a été envoyé.',
+        duration: 6500,
+      })
+    } catch {
+      showToast({
+        message: 'Envoi impossible pour le moment. Réessayez plus tard.',
+        duration: 5000,
+      })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (!open) return null
@@ -151,6 +166,23 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
                 {EARLY_ACCESS.summary.toUpperCase()}
               </p>
             </div>
+
+            <div className="mx-auto mt-5 max-w-[min(100%,26rem)] text-left">
+              <p className="font-mono text-[8px] uppercase tracking-[0.26em] text-black/35">
+                {EARLY_ACCESS.yearlyComms.kicker}
+              </p>
+              <ul className="mt-2.5 list-none space-y-2 pl-0">
+                {EARLY_ACCESS.yearlyComms.lines.map((line) => (
+                  <li
+                    key={line}
+                    className="flex gap-2 text-[10px] font-medium uppercase leading-relaxed tracking-[0.08em] text-black/55 sm:text-[11px] sm:tracking-[0.09em]"
+                  >
+                    <span className="mt-[0.35em] size-1 shrink-0 rounded-full bg-black/25" aria-hidden />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-10">
@@ -170,16 +202,17 @@ export const NewsletterEntryModal = ({ appReady }: NewsletterEntryModalProps) =>
 
             <button
               type="submit"
-              className="mt-6 w-full rounded-[6px] bg-black py-3 text-center text-[13px] font-normal uppercase tracking-wide text-white transition-opacity hover:opacity-80"
+              disabled={submitting}
+              className="mt-6 w-full rounded-[6px] bg-black py-3 text-center text-[13px] font-normal uppercase tracking-wide text-white transition-opacity hover:opacity-80 disabled:opacity-50"
             >
-              S’INSCRIRE
+              {submitting ? 'ENVOI…' : 'S’INSCRIRE'}
             </button>
           </form>
 
           <p className="mt-6 text-center text-[10px] font-medium uppercase leading-relaxed tracking-[0.1em] text-black/45">
             En vous inscrivant, vous acceptez de recevoir des e-mails marketing.{' '}
             <Link
-              to="/privacy"
+              to="/politique-de-confidentialite"
               className="text-black/55 underline decoration-black/30 underline-offset-[3px] transition-colors hover:text-black hover:decoration-black"
             >
               Politique de confidentialité

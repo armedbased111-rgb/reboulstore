@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getDatabaseConfig } from './config/database.config';
@@ -25,6 +27,7 @@ import { SmsModule } from './modules/sms/sms.module';
 import { StockNotificationsModule } from './modules/stock-notifications/stock-notifications.module';
 import { HeroModule } from './modules/hero/hero.module';
 import { OgModule } from './modules/og/og.module';
+import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -48,8 +51,15 @@ import { ScheduleModule } from '@nestjs/schedule';
       imports: [ConfigModule],
       useFactory: getCacheConfig,
       inject: [ConfigService],
-      isGlobal: true, // Cache disponible globalement
+      isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000, // 1 minute
+        limit: 100, // 100 requêtes/min par IP (endpoints classiques)
+      },
+    ]),
     CategoriesModule,
     ProductsModule,
     CartModule,
@@ -67,8 +77,15 @@ import { ScheduleModule } from '@nestjs/schedule';
     StockNotificationsModule,
     HeroModule,
     OgModule,
+    NewsletterModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

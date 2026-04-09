@@ -1,31 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenue sur Reboul Store</title>
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background-color: #000; color: #fff; padding: 20px; text-align: center;">
-    <h1 style="margin: 0;">REBOUL STORE</h1>
-  </div>
-  
-  <div style="padding: 30px 20px; background-color: #f9f9f9;">
-    <h2 style="color: #000; margin-top: 0;">Bienvenue {{firstName}} !</h2>
-    
-    <p>Merci de vous être inscrit sur <strong>Reboul Store</strong>.</p>
-    
-    <p>Votre compte a été créé avec succès avec l'adresse email : <strong>{{email}}</strong></p>
-    
-    <p>Vous pouvez dès maintenant découvrir notre collection et passer vos premières commandes.</p>
-    
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="{{frontendUrl}}" style="display: inline-block; background-color: #000; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 4px;">Découvrir la collection</a>
-    </div>
-  </div>
-  
-  <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
-    <p>© {{currentYear}} Reboul Store. Tous droits réservés.</p>
-  </div>
-</body>
-</html>
+{{> rbl-shell-start}}
+<h2 style="margin:0 0 18px;font-size:13px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#0a0a0a;">Bienvenue {{firstName}}</h2>
+<p style="margin:0 0 16px;color:#3d3d3d;">Merci de vous être inscrit sur <strong style="color:#0a0a0a;">Reboul Store</strong>.</p>
+<p style="margin:0 0 16px;color:#3d3d3d;">Votre compte est associé à <strong style="color:#0a0a0a;">{{email}}</strong>.</p>
+<p style="margin:0 0 20px;color:#3d3d3d;">Découvrez la collection et passez vos premières commandes quand vous voulez.</p>
+<div style="text-align:center;margin:28px 0 8px 0;">
+  <a href="{{frontendUrl}}" style="display:inline-block;background:#1a1a1a;color:#ffffff;padding:14px 32px;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:0.16em;border:1px solid #1a1a1a;">Découvrir la collection</a>
+</div>
+{{> rbl-shell-end}}

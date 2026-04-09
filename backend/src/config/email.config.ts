@@ -12,6 +12,12 @@ export const getEmailConfig = (configService: ConfigService): MailerOptions => {
     process.env.NODE_ENV === 'production'
       ? join(rootDir, 'dist', 'templates', 'emails')
       : join(rootDir, 'src', 'templates', 'emails');
+  const partialsDir = join(templateDir, 'partials');
+
+  const smtpPass = (configService.get<string>('SMTP_PASSWORD') || '').replace(
+    /\s+/g,
+    '',
+  );
 
   return {
     transport: {
@@ -20,7 +26,7 @@ export const getEmailConfig = (configService: ConfigService): MailerOptions => {
       secure: false, // true for 465, false for other ports
       auth: {
         user: configService.get<string>('SMTP_USER'),
-        pass: configService.get<string>('SMTP_PASSWORD'),
+        pass: smtpPass,
       },
     },
     defaults: {
@@ -31,6 +37,11 @@ export const getEmailConfig = (configService: ConfigService): MailerOptions => {
       adapter: new HandlebarsAdapter(),
       options: {
         strict: true,
+      },
+    },
+    options: {
+      partials: {
+        dir: partialsDir,
       },
     },
   };

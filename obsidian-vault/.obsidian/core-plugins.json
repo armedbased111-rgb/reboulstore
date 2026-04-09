@@ -19,5 +19,19 @@
   "slides": false,
   "tag-pane": true,
   "starred": true,
-  "random-note": false
+  "random-note": false,
+  "graph": true,
+  "outgoing-link": true,
+  "footnotes": false,
+  "properties": true,
+  "slash-command": false,
+  "editor-status": true,
+  "bookmarks": true,
+  "zk-prefixer": false,
+  "audio-recorder": false,
+  "workspaces": false,
+  "publish": false,
+  "sync": true,
+  "bases": true,
+  "webviewer": false
 }

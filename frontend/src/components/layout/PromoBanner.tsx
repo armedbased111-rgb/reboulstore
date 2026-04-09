@@ -81,7 +81,7 @@ export const PromoBanner = () => {
         ) : (
           <span 
             className="uppercase text-xs font-medium tracking-wide transition-opacity duration-500"
-            key={currentCoupon?.id} // Force le re-render pour l'animation
+            key={currentCoupon?.code} // Force le re-render pour l'animation
           >
             {displayText}
           </span>

@@ -12,7 +12,13 @@ import { User } from '../../entities/user.entity';
     TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+      secret:
+        process.env.JWT_SECRET ||
+        (process.env.NODE_ENV === 'production'
+          ? (() => {
+              throw new Error('JWT_SECRET must be set in production');
+            })()
+          : 'dev-secret-not-for-production'),
       signOptions: { expiresIn: '7d' },
     }),
   ],

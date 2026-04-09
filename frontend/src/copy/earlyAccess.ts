@@ -18,4 +18,16 @@ export const EARLY_ACCESS = {
    */
   summary:
     'Accès anticipé année un : le site et le catalogue évoluent en continu. Nouvelles pièces ajoutées chaque semaine.',
+  /**
+   * Engagement transparent sur le contenu des e-mails sur le cycle annuel
+   * (à ajuster si la stratégie COMMS change).
+   */
+  yearlyComms: {
+    kicker: 'SUR L’ANNÉE — CONTENU DES ENVOIS',
+    lines: [
+      'Dépôts et nouveautés : rythme hebdomadaire en année 1, avec le fil des réassorts.',
+      'Saisons : avant-goûts et jalons pour les grosses entrées (SS / AW) et capsules.',
+      'Actu ponctuelle : boutique, événements, éditos — uniquement quand il y a matière.',
+    ],
+  },
 } as const

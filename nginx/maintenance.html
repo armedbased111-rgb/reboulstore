@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reboul — Bientôt disponible</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --fg: #f0ede8;
+      --muted: #5a5754;
+      --accent: #c8b89a;
+      --border: rgba(200, 184, 154, 0.15);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 2rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Fine horizontal rule top */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.5;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    /* Wordmark */
+    .wordmark {
+      font-size: clamp(2.8rem, 8vw, 4.5rem);
+      font-weight: 200;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--fg);
+      line-height: 1;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Divider */
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 2.5rem;
+      opacity: 0.6;
+    }
+
+    /* Status */
+    .status {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+      margin-bottom: 1.4rem;
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      letter-spacing: 0.04em;
+      max-width: 340px;
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 2rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+    }
+
+    .footer a {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover { color: var(--accent); }
+
+    /* Subtle animated dot */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-right: 8px;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+
+  <div class="container">
+    <h1 class="wordmark">Reboul</h1>
+    <div class="divider"></div>
+    <p class="status">
+      <span class="pulse-dot"></span>Bientôt disponible
+    </p>
+    <p class="tagline">
+      Nous préparons quelque chose.<br />
+      Revenez très bientôt.
+    </p>
+  </div>
+
+  <footer class="footer">
+    <a href="mailto:contact@reboulstore.com">Contact</a>
+    <a href="https://www.instagram.com/reboulstore" target="_blank" rel="noopener">Instagram</a>
+  </footer>
+</body>
+</html>
