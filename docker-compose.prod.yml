@@ -104,7 +104,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - frontend_build:/usr/share/nginx/html:ro
-      - ./nginx/maintenance.html:/usr/share/nginx/html/maintenance.html:ro
+      - ./nginx/maintenance.html:/etc/nginx/maintenance.html:ro
     depends_on:
       - frontend
       - backend
