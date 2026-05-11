@@ -34,8 +34,8 @@ Modules concernés : [[Backend/auth]] · [[Backend/checkout]] · [[Backend/produ
 - Ports ouverts :
   - `80/443` — Reboul Store nginx
   - `4000/4443` — Admin Central nginx
-  - `22000` — Syncthing sync (intentionnel, user `musicadmin`)
-  - `8384/53` — localhost uniquement (Syncthing GUI + systemd-resolved)
+  - `8384/53` — localhost uniquement (systemd-resolved)
+- Syncthing supprimé le 11/05/2026 (port 22000 fermé, service désactivé)
 - **SSL** : 3 certificats valides (reboulstore.com, www, admin) — exp. 17/07/2026 (66j)
 - `.env.production` permissions : **600** (corrigé 11/05/2026, était 644)
 - PostgreSQL non exposé (accès dev via tunnel SSH `:5433`)
