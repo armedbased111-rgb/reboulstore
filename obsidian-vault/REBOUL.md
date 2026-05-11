@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-05-07
+maj: 2026-05-11
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -26,19 +26,18 @@ Admin Centrale mutualisée pour tous les sites.
 |------|--------|
 | Backend NestJS | Stable et complet — 18 modules |
 | Admin Centrale | Fonctionnelle — import, gestion quotidienne |
-| Infrastructure prod | En place — scripts deploy + protections volumes |
-| Frontend | Phase 25 — finition page par page en cours |
+| Infrastructure prod | En place — sécurité renforcée (11/05/2026) |
+| Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
+| Sécurité | ✅ Helmet, rate limiting, VPS durci, Syncthing supprimé |
 
-Phase active : **[[Projet/phase-25]]**
+Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ---
 
 ## Phases
 
-- [[Projet/phase-25]] — Finalisation frontend (en cours)
-- [[Projet/phase-26]] — Sécurité + tests + pré-lancement
-- [[Projet/phase-27]] — Stripe Live + go-live
+- [[Projet/roadmap]] — Roadmap thématique (Images, Frontend, SEO, Sécurité, Lancement)
 - [[Projet/regles-critiques]] — Règles non-négociables du projet
 
 ---
@@ -81,7 +80,7 @@ Phase active : **[[Projet/phase-25]]**
 
 ## Dernière session
 
-Aucune session enregistrée. Créer depuis `_templates/session`.
+[[Sessions/2026-05-11-securite]]
 
 ---
 
