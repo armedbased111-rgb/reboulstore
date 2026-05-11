@@ -39,7 +39,7 @@ Modules concernés : [[Backend/auth]] · [[Backend/checkout]] · [[Backend/produ
 - **SSL** : 3 certificats valides (reboulstore.com, www, admin) — exp. 17/07/2026 (66j)
 - `.env.production` permissions : **600** (corrigé 11/05/2026, était 644)
 - PostgreSQL non exposé (accès dev via tunnel SSH `:5433`)
-- **35 updates apt disponibles** dont Docker 29.4.3 — à appliquer hors prod
+- **35 updates apt appliquées** dont Docker 29.4.3 — ✅ 11/05/2026
 
 Référence infra : [[Architecture/vps]]
 

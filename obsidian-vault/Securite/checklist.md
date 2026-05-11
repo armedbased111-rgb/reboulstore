@@ -25,7 +25,7 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 - [x] Permissions `.env.production` corrigées — 644→600 ✅ 11/05/2026
 - [x] Ports ouverts vérifiés — 80/443 (Reboul), 4000/4443 (Admin), 8384/53 localhost only ✅ — Syncthing supprimé (port 22000 fermé)
 - [x] SSL Let's Encrypt valide 66 jours (exp. 17/07/2026), 3 domaines ✅
-- [ ] `apt upgrade` — 35 updates disponibles dont Docker 29.4.3 (à faire hors prod)
+- [x] `apt upgrade` — 35 packages mis à jour dont Docker 29.4.3 ✅ 11/05/2026
 - [ ] Backup automatique quotidien vérifié et testé
 
 ## Frontend
