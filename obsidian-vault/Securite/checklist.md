@@ -36,9 +36,9 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 
 ## Paiement
 
-- [ ] Clés Stripe basculées de test → live
-- [ ] Webhook Stripe vérifié en prod
-- [ ] Test flux paiement complet (live)
+- [ ] Clés Stripe basculées de test → live — ⏳ en attente Julie
+- [ ] Webhook Stripe vérifié en prod — ⏳ en attente Julie
+- [ ] Test flux paiement complet (live) — ⏳ en attente Julie
 
 ## AS400 (si intégré avant lancement)
 

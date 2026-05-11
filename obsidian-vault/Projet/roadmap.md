@@ -97,11 +97,11 @@ Détail complet → [[Securite/Securite]]
 
 ## Lancement
 
-- [ ] Basculer clés Stripe test → live
-- [ ] Valider webhooks Stripe en prod
-- [ ] Test flux paiement complet mode live (PaymentIntent → success → commande créée)
+- [ ] Basculer clés Stripe test → live — ⏳ en attente Julie
+- [ ] Valider webhooks Stripe en prod — ⏳ en attente Julie
+- [ ] Test flux paiement complet mode live (PaymentIntent → success → commande créée) — ⏳ en attente Julie
 - [ ] Smoke tests prod : catalog → produit → panier → checkout → confirmation
 - [ ] Smoke tests auth : login / register / profile
-- [ ] Smoke tests pages légales / contact
+- [ ] Smoke tests pages légales / contact — ⏳ en attente Julie
 - [ ] Monitoring en place (logs, alertes)
 - [ ] Ouverture publique
