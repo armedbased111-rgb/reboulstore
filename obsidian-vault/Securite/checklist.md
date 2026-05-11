@@ -31,9 +31,9 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 
 ## Frontend
 
-- [ ] CSP headers configurés
-- [ ] HSTS activé
-- [ ] Aucun secret dans les variables `VITE_*` du bundle
+- [x] CSP headers configurés — ajouté dans nginx `www.reboulstore.com` ✅ 11/05/2026
+- [x] HSTS activé — `max-age=63072000; includeSubDomains; preload` dans nginx ✅ 11/05/2026
+- [x] Aucun secret dans les variables `VITE_*` — uniquement `VITE_API_URL` ✅
 
 ## Paiement
 
