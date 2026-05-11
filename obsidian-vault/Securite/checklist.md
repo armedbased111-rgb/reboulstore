@@ -27,6 +27,7 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 - [x] SSL Let's Encrypt valide 66 jours (exp. 17/07/2026), 3 domaines ✅
 - [x] `apt upgrade` — 35 packages mis à jour dont Docker 29.4.3 ✅ 11/05/2026
 - [x] Backup automatique quotidien vérifié et testé ✅ 11/05/2026 — script OK, log `/var/log/reboulstore-backup.log` créé avec permissions deploy
+- [ ] Backup 12/05/2026 — vérifier ce soir : `./rcli server exec "tail -5 /var/log/reboulstore-backup.log && ls -lht /var/www/reboulstore/backups/ | head -5"`
 
 ## Frontend
 
