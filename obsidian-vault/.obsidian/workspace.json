@@ -376,6 +376,7 @@
   },
   "active": "b583d5104be992ef",
   "lastOpenFiles": [
+    "Sessions/2026-05-12-backup-verification.md",
     "Projet/roadmap.md",
     "Sessions/2026-05-11-securite.md",
     "Securite/checklist.md",
@@ -401,7 +402,6 @@
     "Frontend/Login.md",
     "Frontend/OrderConfirmation.md",
     "Frontend/Checkout.md",
-    "Frontend/Cart.md",
     "Securite",
     "Database/tables",
     "Database",
