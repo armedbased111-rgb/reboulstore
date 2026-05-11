@@ -69,15 +69,16 @@ Revue pages, corrections UI, responsive, copywriting.
 Détail complet → [[Securite/Securite]]
 
 ### Hardening
-- [ ] Helmet — headers HTTP sécurisés (NestJS)
-- [ ] Rate limiting — throttler NestJS (100 req/min par IP)
-- [ ] CORS strict — whitelist `reboulstore.com` uniquement
-- [ ] fail2ban — brute force SSH sur VPS
-- [ ] Audit permissions `/opt/reboulstore/`
-- [ ] `nmap` — vérifier ports ouverts VPS
-- [ ] `npm audit` — 0 critical (backend + frontend)
-- [ ] CSP + HSTS headers frontend
-- [ ] Logs structurés — auth échouées, erreurs 500
+- [x] Helmet — headers HTTP sécurisés (NestJS) ✅ 11/05/2026
+- [x] Rate limiting — throttler NestJS (100 req/min par IP) ✅ déjà en place
+- [x] CORS strict — whitelist `reboulstore.com` uniquement ✅
+- [x] fail2ban — brute force SSH sur VPS ✅ jail sshd actif
+- [x] Audit permissions `/opt/reboulstore/` — `.env` 644→600 ✅ 11/05/2026
+- [x] Ports ouverts VPS vérifiés — Syncthing supprimé (port 22000 fermé) ✅ 11/05/2026
+- [x] `npm audit` — 0 critical/high (1 moderate restant nodemailer, breaking change) ✅
+- [x] CSP + HSTS headers — configurés manuellement dans `main.ts` ✅
+- [x] `apt upgrade` VPS — 35 packages dont Docker 29.4.3 ✅ 11/05/2026
+- [ ] Logs structurés — auth échouées, erreurs 500 (après lancement)
 
 ### AS400 — Connexion ERP ↔ Site
 - [ ] Réunion expert cyber AS400 — **12/05/2026** → [[Architecture/securite#AS400]]
