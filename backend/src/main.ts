@@ -11,6 +11,7 @@ import { getPublicSiteUrl } from './config/public-site-url';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { MulterExceptionFilter } from './filters/multer-exception.filter';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -23,6 +24,10 @@ async function bootstrap() {
         ? ['error', 'warn', 'log'] // Production : moins de logs
         : ['error', 'warn', 'log', 'debug', 'verbose'], // Dev : tous les logs
     });
+
+    // Helmet — headers sécurité HTTP (X-Frame-Options, X-Content-Type-Options, etc.)
+    // CSP et HSTS désactivés : configurés manuellement plus bas
+    app.use(helmet({ contentSecurityPolicy: false, hsts: false }));
 
     // Configuration globale de la validation
     app.useGlobalPipes(

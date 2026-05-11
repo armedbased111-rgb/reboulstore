@@ -1,39 +1,117 @@
 {
   "main": {
-    "id": "e0817f542fd5010c",
+    "id": "df276f8daca2533b",
     "type": "split",
     "children": [
       {
-        "id": "5e7f11f30a7948bd",
+        "id": "7a9dc9e74909418b",
         "type": "tabs",
+        "dimension": 57.037943696450434,
         "children": [
           {
-            "id": "9bef561bb9ac069e",
+            "id": "8682eee776361d53",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "Canvas/Workflow-Commande-Livraison.canvas",
-                "viewState": {
-                  "x": 449.0731928066356,
-                  "y": 486.58275156815745,
-                  "zoom": -1.3442097787664302
-                }
+                "file": "Sessions/2026-05-07-birkenstock-csv.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "Workflow-Commande-Livraison"
+              "icon": "lucide-file",
+              "title": "2026-05-07-birkenstock-csv"
             }
           },
           {
-            "id": "67f4d028a1c96984",
+            "id": "af1472da292159aa",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.12.7"
+                "file": "Sessions/2026-05-07-hologram-rrd.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Notes de version 1.12.7"
+              "icon": "lucide-file",
+              "title": "2026-05-07-hologram-rrd"
+            }
+          },
+          {
+            "id": "656d927ad8f631cc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Collections/hologram.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "hologram"
+            }
+          },
+          {
+            "id": "621f403a0aa631d5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Collections/autry.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "autry"
+            }
+          },
+          {
+            "id": "df2bb5165fcb87c4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Projet/roadmap.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "roadmap"
+            }
+          },
+          {
+            "id": "97e58890e15770df",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Securite/etat-actuel.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "etat-actuel"
+            }
+          }
+        ],
+        "currentTab": 5
+      },
+      {
+        "id": "deab4b4e1dbd8115",
+        "type": "tabs",
+        "dimension": 42.96205630354957,
+        "children": [
+          {
+            "id": "3cc5825e8e0fbce5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "TODO.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "TODO"
             }
           }
         ]
@@ -42,15 +120,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "64a9e693fa456eaa",
+    "id": "0feb513c1eb6db4b",
     "type": "split",
     "children": [
       {
-        "id": "d8c59e86dc2c7950",
+        "id": "6e89bce16946f51a",
         "type": "tabs",
         "children": [
           {
-            "id": "7865cbe7ddd26038",
+            "id": "43ef9f66d590f1d7",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -63,7 +141,7 @@
             }
           },
           {
-            "id": "f674f7ede825f9b8",
+            "id": "f6ce4780a07bb821",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -80,7 +158,7 @@
             }
           },
           {
-            "id": "4505ed3e3d9a5f03",
+            "id": "f6754b535a9be54d",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -93,23 +171,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 260.5,
+    "collapsed": true
   },
   "right": {
-    "id": "4bdbe8e0a60771df",
+    "id": "1d716bae38284fbd",
     "type": "split",
     "children": [
       {
-        "id": "59cf1a174e694128",
+        "id": "1e2748743336efaf",
         "type": "tabs",
         "children": [
           {
-            "id": "5474c241c9c36dc7",
+            "id": "4ff1aed3e9376673",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Canvas/Architecture.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,25 +197,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Rétrolien pour Architecture"
+              "title": "Rétroliens"
             }
           },
           {
-            "id": "a612ef2ec96eb165",
+            "id": "d9d58feae47bb366",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Canvas/Architecture.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Liens sortants de Architecture"
+              "title": "Liens sortants"
             }
           },
           {
-            "id": "3947105b4395a8fe",
+            "id": "94e3170ad3eaa26b",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -152,7 +229,7 @@
             }
           },
           {
-            "id": "b0eefacf2eb6f09e",
+            "id": "c07523e546159830",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -166,18 +243,17 @@
             }
           },
           {
-            "id": "dd4b453e213288db",
+            "id": "26457489b9cc5ea8",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Canvas/Architecture.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Plan de Architecture"
+              "title": "Plan"
             }
           }
         ]
@@ -189,25 +265,115 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "bases:Créer une nouvelle base": false,
       "switcher:Ouvrir le sélecteur rapide": false,
-      "graph:Ouvrir la vue graphique": false,
       "canvas:Créer une nouvelle toile": false,
-      "command-palette:Ouvrir la palette de commandes": false
+      "daily-notes:Ouvrir la note quotidienne": false,
+      "templates:Insérer le modèle": false,
+      "command-palette:Ouvrir la palette de commandes": false,
+      "bases:Créer une nouvelle base": false,
+      "templater-obsidian:Templater": false,
+      "graph:Ouvrir la vue graphique": false
     }
   },
-  "active": "9bef561bb9ac069e",
+  "floating": {
+    "id": "5727a0935f9207a3",
+    "type": "floating",
+    "children": [
+      {
+        "id": "97d86d68313e7537",
+        "type": "window",
+        "children": [
+          {
+            "id": "f81e11b2e7d93033",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "b583d5104be992ef",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "Securite/checklist.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "checklist"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 1198,
+        "y": 38,
+        "width": 722,
+        "height": 638,
+        "maximize": false,
+        "zoom": 0
+      },
+      {
+        "id": "e7fea1d50a53e06c",
+        "type": "window",
+        "children": [
+          {
+            "id": "b6f58ddaffa75869",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "976da8a734aae2b5",
+                "type": "leaf",
+                "state": {
+                  "type": "graph",
+                  "state": {},
+                  "icon": "lucide-git-fork",
+                  "title": "Vue graphique"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 1198,
+        "y": 677,
+        "width": 722,
+        "height": 493,
+        "maximize": false,
+        "zoom": 0
+      }
+    ]
+  },
+  "active": "976da8a734aae2b5",
   "lastOpenFiles": [
-    "Canvas/Workflow-Paiement-Serveur.canvas",
-    "Canvas/Workflow-Paiement-Client.canvas",
-    "Index.md",
-    "Canvas/Workflow-Commande-Livraison.canvas",
-    "Home.md",
-    "Architecture/Overview.md",
-    "Canvas/Workflow-Deploy.canvas",
-    "Canvas/Workflow-Dev.canvas",
-    "Canvas/Architecture.canvas",
-    "Workflows/Deployment.md",
-    "Workflows/Design.md"
+    "Securite/checklist.md",
+    "Frontend/design-system.md",
+    "Frontend/animations.md",
+    "Frontend/composants-cles.md",
+    "Frontend/ServerError.md",
+    "Frontend/NotFound.md",
+    "Frontend/Cookies.md",
+    "Frontend/MentionsLegales.md",
+    "Frontend/Privacy.md",
+    "Frontend/Terms.md",
+    "Frontend/Livraison.md",
+    "Frontend/ShippingReturns.md",
+    "Frontend/Stores.md",
+    "Frontend/Contact.md",
+    "Frontend/About.md",
+    "Frontend/OrderDetail.md",
+    "Frontend/Orders.md",
+    "Frontend/Profile.md",
+    "Frontend/Register.md",
+    "Frontend/Login.md",
+    "Frontend/OrderConfirmation.md",
+    "Frontend/Checkout.md",
+    "Frontend/Cart.md",
+    "Frontend/Search.md",
+    "Frontend/Product.md",
+    "Frontend/Catalog.md",
+    "Securite",
+    "Database/tables",
+    "Database",
+    "Projet/roadmap.md.tmp.26537.ca3aa21f0a89"
   ]
 }

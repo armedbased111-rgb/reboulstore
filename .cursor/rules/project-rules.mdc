@@ -1638,214 +1638,101 @@ Ce script :
 
 ---
 
-## 📓 Vault Obsidian - Utilisation et Maintenance
+## 📓 Vault Obsidian — Intelligence centrale du projet
 
-### Vue d'ensemble
+### Structure
 
-Le vault Obsidian (`obsidian-vault/`) contient tous les workflows et règles du projet sous forme visuelle (Canvas) et documentée. Il sert de référence pour comprendre les processus et suivre l'avancement.
+Le vault `obsidian-vault/` est la **source de vérité unique** du projet Reboul Store.
+Il remplace tous les anciens fichiers de contexte dispersés (Canvas, Home.md, Index.md, etc.).
 
-### Quand consulter Obsidian
+**Point d'entrée obligatoire : `obsidian-vault/REBOUL.md`**
 
-**L'IA DOIT consulter Obsidian dans ces cas** :
+```
+obsidian-vault/
+├── REBOUL.md          ← LIRE EN PREMIER — état global + liens vers tout
+├── TODO.md            ← tâches agrégées (plugin Tasks)
+├── Frontend/          ← 22 pages React (une page = un fichier)
+├── Backend/           ← 18 modules NestJS (un module = un fichier)
+├── Database/          ← PostgreSQL — entités, schéma, backup
+├── Collections/       ← 10 marques SS26 (data + pipeline images)
+├── Architecture/      ← stack, VPS, API, services tiers, pipeline images, sécurité
+├── Projet/            ← roadmap, phases, règles critiques
+├── Sessions/          ← logs de sessions de travail
+└── _templates/        ← modèles Templater
+```
 
-1. **Au début d'une session de travail** :
-   - ✅ Consulter `obsidian-vault/Home.md` pour voir l'état actuel
-   - ✅ Consulter les Canvas pertinents selon la tâche (ex: `Workflow-Dev.canvas` pour développement)
-   - ✅ Vérifier les workflows avant de commencer
+### 6 sections (points cardinaux du graphe)
 
-2. **Avant d'exécuter un workflow** :
-   - ✅ Consulter le Canvas correspondant (ex: `Workflow-Figma.canvas` avant design)
-   - ✅ Vérifier les règles critiques (ex: `Regle-Database.canvas` avant DB)
-   - ✅ Suivre les étapes définies dans le Canvas
+| Section | Hub | Contenu |
+|---------|-----|---------|
+| `Frontend/` | `Frontend/Frontend.md` | 22 pages React + hooks + composants |
+| `Backend/` | `Backend/Backend.md` | 18 modules NestJS + endpoints + entités |
+| `Database/` | `Database/Database.md` | PostgreSQL — entités, schéma, backup |
+| `Collections/` | `Collections/Collections.md` | 10 marques SS26 — data + pipeline images |
+| `Architecture/` | `Architecture/Architecture.md` | VPS, API, workflow, services tiers, sécurité, pipeline images |
+| `Projet/` | `Projet/Projet.md` | Roadmap, phases 25→27, règles non-négociables |
 
-3. **Quand l'utilisateur modifie un Canvas** :
-   - ✅ Lire les modifications dans le Canvas
-   - ✅ Comprendre les changements de workflow
-   - ✅ Adapter mon comportement selon les modifications
+### Règle de navigation
 
-4. **Quand l'utilisateur demande un workflow** :
-   - ✅ Consulter le Canvas correspondant
-   - ✅ Suivre les étapes définies
-   - ✅ Référencer le Canvas dans ma réponse
+1. Toujours lire `REBOUL.md` en premier
+2. Naviguer via les `[[wikilinks]]` vers le hub de section concerné
+3. Du hub → fichier individuel
 
-5. **Pour comprendre les règles critiques** :
-   - ✅ Consulter `Regle-Database.canvas` avant toute opération DB
-   - ✅ Consulter `Regle-Deploiement.canvas` avant déploiement
-   - ✅ Vérifier les interdictions et bonnes pratiques
+### Quand consulter le vault
 
-### Quand mettre à jour Obsidian
+- **Début de session** → `REBOUL.md` (état actuel du projet)
+- **Travail sur une page frontend** → `Frontend/Frontend.md` puis la page concernée
+- **Travail sur un module backend** → `Backend/Backend.md` puis le module concerné
+- **Opération DB** → `Database/Database.md` + règles connexion VPS
+- **Pipeline images** → `Architecture/pipeline-images.md`
+- **Déploiement** → `Architecture/vps.md` + `Projet/regles-critiques.md`
+- **Collection SS26** → `Collections/Collections.md` puis la marque
+- **Phase en cours** → `Projet/roadmap.md` → `Projet/phase-25.md`
 
-**L'IA DOIT mettre à jour Obsidian dans ces cas** :
+### Règles non-négociables (résumé — détail dans `Projet/regles-critiques.md`)
 
-1. **Après modification d'un fichier MD principal** :
-   - ✅ Si `ROADMAP_COMPLETE.md` est modifié → Vérifier si les Canvas doivent être mis à jour
-   - ✅ Si `CONTEXT.md` est modifié → Vérifier si les workflows ont changé
-   - ✅ Si `BACKEND.md` ou `FRONTEND.md` est modifié → Vérifier si les Canvas workflows sont à jour
+- **DB** : VPS uniquement — jamais Docker local (`host.docker.internal:5433` en dev)
+- **Deploy** : jamais `docker compose down -v` — toujours `./scripts/deploy-prod.sh`
+- **Backup** : `./rcli db backup --server` avant toute opération risquée
+- **Git** : `git add .` toujours — jamais commiter `.env` / `.env.production`
+- **Images** : resize `sips -Z` (jamais `-z`) — centrage PIL (jamais IA)
+- **CLI** : `./rcli` pour toutes opérations DB/images/docs/serveur
 
-2. **Après création d'un nouveau workflow** :
-   - ✅ Créer un nouveau Canvas pour le workflow
-   - ✅ Ajouter le lien dans `Home.md` et `Index.md`
-   - ✅ Documenter dans `Canvas/README.md`
+### Pages Frontend — statut rapide
 
-3. **Après modification d'une règle critique** :
-   - ✅ Mettre à jour le Canvas correspondant (ex: `Regle-Database.canvas`)
-   - ✅ Vérifier que les interdictions et bonnes pratiques sont à jour
+22 pages. 5 non encore créées dans le code (marquées `a-creer`) :
+Login, Register, Profile, Orders, OrderDetail.
+Détail complet : `Frontend/Frontend.md`
 
-4. **Après complétion d'une phase** :
-   - ✅ Vérifier si les Canvas doivent refléter les changements
-   - ✅ Mettre à jour les workflows si nécessaire
+### Backend — modules actifs
 
-**L'IA NE DOIT PAS mettre à jour Obsidian** :
-- ❌ Si l'utilisateur modifie un Canvas (c'est lui qui gère)
-- ❌ Sans demander confirmation si modification importante
-- ❌ Si les modifications sont mineures et n'affectent pas les workflows
+18 modules NestJS documentés. Tous complets.
+Détail complet : `Backend/Backend.md`
 
-### Comment suivre les workflows depuis Obsidian
+### Database — entités
 
-**Processus de suivi** :
+16 entités TypeORM. Connexion VPS uniquement (tunnel SSH en dev).
+Détail complet : `Database/Database.md`
 
-1. **Identifier le workflow** :
-   - L'utilisateur demande une tâche → Identifier le workflow concerné
-   - Consulter le Canvas correspondant dans `obsidian-vault/Canvas/`
+### Collections SS26
 
-2. **Lire le Canvas** :
-   - Ouvrir le fichier `.canvas` (format JSON)
-   - Comprendre les étapes définies
-   - Identifier les règles et interdictions
+| Marque | Slug | Statut images |
+|--------|------|---------------|
+| Stone Island | `stone-island` | 77 refs — 61 à uploader |
+| Autry | `autry` | 40 refs — tri à faire |
+| Bisous | `bisous` | 25/33 — 8 vides |
+| Arte Antwerp | `arte` | Photos dispo — pipeline à lancer |
+| Off-White | `off-white` | Shoes — pipeline à lancer |
+| Carhartt | `carhartt` | CSV prêt — photos à récupérer |
+| Saucony | `saucony` | CSV prêt |
+| Birkenstock | `birkenstock` | CSV prêt |
+| Asics | `asics` | À confirmer |
+| Salomon | `salomon` | À confirmer |
 
-3. **Suivre les étapes** :
-   - Exécuter les étapes dans l'ordre défini
-   - Respecter les règles critiques
-   - Vérifier les interdictions avant d'agir
+### Mise à jour du vault
 
-4. **Adapter selon modifications** :
-   - Si l'utilisateur a modifié le Canvas → Lire les modifications
-   - Adapter mon comportement selon les changements
-   - Suivre la nouvelle version du workflow
+Après chaque changement significatif :
+1. Mettre à jour le fichier individuel concerné (statut, tâches)
+2. Si état global change → mettre à jour `REBOUL.md`
+3. Sessions de travail → créer `Sessions/YYYY-MM-DD-sujet.md`
 
-**Exemples concrets** :
-
-- **Développement Backend** :
-  1. Consulter `Workflow-Dev.canvas` → Voir les étapes
-  2. Consulter `Workflow-Pedagogique.canvas` → Mode pédagogique
-  3. Suivre les étapes : donner code, expliquer, vérifier, corriger
-
-- **Déploiement** :
-  1. Consulter `Regle-Deploiement.canvas` → Voir les interdictions
-  2. Consulter `Workflow-Deploy.canvas` → Voir les étapes
-  3. Suivre : backup, arrêt (sans -v), build, vérification
-
-- **Design Figma** :
-  1. Consulter `Workflow-Figma.canvas` → Voir les phases
-  2. Consulter `Workflow-Pedagogique.canvas` → Mode guide
-  3. Suivre : guider, valider design, coder
-
-### Modification des Canvas par l'utilisateur
-
-**Quand l'utilisateur modifie un Canvas** :
-
-1. **Détecter les modifications** :
-   - ✅ Lire le fichier Canvas modifié
-   - ✅ Comparer avec ma compréhension précédente
-   - ✅ Identifier les changements (nouveaux nœuds, nouvelles connexions, texte modifié)
-
-2. **Comprendre les changements** :
-   - ✅ Analyser les modifications pour comprendre l'intention
-   - ✅ Adapter ma compréhension du workflow
-   - ✅ Suivre la nouvelle version du workflow
-
-3. **Appliquer les changements** :
-   - ✅ Utiliser la nouvelle version du workflow dans mes réponses
-   - ✅ Référencer les modifications si pertinent
-   - ✅ Ne pas revenir à l'ancienne version
-
-**Exemple** :
-- L'utilisateur modifie `Workflow-Pedagogique.canvas` pour ajouter une étape
-- Je dois lire le Canvas modifié
-- Comprendre la nouvelle étape
-- Suivre le nouveau workflow dans mes réponses futures
-
-### Structure Obsidian
-
-**Fichiers principaux** :
-- `obsidian-vault/Home.md` - Point d'entrée
-- `obsidian-vault/Index.md` - Index complet
-- `obsidian-vault/Canvas/` - Tous les Canvas visuels
-- `obsidian-vault/Workflows/` - Documentation workflows
-- `obsidian-vault/Integrations/` - Documentation intégrations
-
-**Canvas par catégorie** :
-- **Architecture** : `Architecture.canvas`, `Integrations.canvas`
-- **Workflows** : `Workflow-Dev.canvas`, `Workflow-Deploy.canvas`, `Workflow-Figma.canvas`, etc.
-- **Règles** : `Regle-Database.canvas`, `Regle-Deploiement.canvas`
-
-### Règles d'application
-
-✅ **À FAIRE** :
-- Consulter Obsidian au début de chaque session
-- Suivre les workflows définis dans les Canvas
-- Respecter les règles critiques documentées
-- Lire les modifications de Canvas par l'utilisateur
-- Adapter mon comportement selon les Canvas
-
-❌ **À ÉVITER** :
-- Ignorer les Canvas lors de l'exécution d'un workflow
-- Modifier les Canvas sans confirmation (sauf cas explicites)
-- Ne pas suivre les règles critiques documentées
-- Utiliser une ancienne version d'un workflow si le Canvas a été modifié
-
-### Création de nouveaux workflows
-
-**Processus de création d'un nouveau workflow** :
-
-1. **Phase 1 : Design dans Obsidian (PRIORITAIRE)**
-   - ✅ Créer un nouveau Canvas dans `obsidian-vault/Canvas/` pour visualiser le workflow
-   - ✅ Discuter et itérer sur le Canvas ensemble
-   - ✅ Valider le workflow visuellement avant de l'ajouter aux règles
-   - ✅ Avantage : Visualisation claire, itération facile, validation avant implémentation
-
-2. **Phase 2 : Documentation**
-   - ✅ Créer un document Markdown dans `obsidian-vault/Workflows/` expliquant le workflow
-   - ✅ Ajouter les liens dans `Home.md` et `Index.md`
-   - ✅ Documenter dans `Canvas/README.md`
-
-3. **Phase 3 : Ajout aux project-rules**
-   - ✅ Une fois le workflow validé dans Obsidian, l'ajouter aux `project-rules.mdc`
-   - ✅ Créer la section correspondante dans les règles
-   - ✅ Référencer le Canvas Obsidian dans les règles
-
-**Ordre recommandé** :
-1. **Obsidian d'abord** (Canvas + document) → Design et validation
-2. **Project-rules ensuite** → Ajout aux règles une fois validé
-3. **Utilisation** → Appliquer le workflow dans le projet
-
-**Avantages de cette approche** :
-- ✅ Visualisation claire du workflow avant implémentation
-- ✅ Itération facile sur le design (modification Canvas)
-- ✅ Validation ensemble avant d'ajouter aux règles
-- ✅ Trace visuelle permanente dans Obsidian
-- ✅ Séparation claire entre design (Obsidian) et règles (project-rules)
-
-**Exception** :
-- Si le workflow est très simple ou évident, on peut l'ajouter directement aux project-rules
-- Mais pour les workflows complexes, toujours commencer par Obsidian
-
-### Communication avec l'utilisateur
-
-**Quand je consulte Obsidian** :
-- ✅ Informer : "📓 Consultation du workflow dans Obsidian..."
-- ✅ Référencer : "Selon `Workflow-Dev.canvas`, les étapes sont..."
-
-**Quand je détecte une modification de Canvas** :
-- ✅ Informer : "📝 J'ai détecté des modifications dans `Workflow-X.canvas`"
-- ✅ Confirmer : "Je vais suivre la nouvelle version du workflow"
-
-**Quand je dois mettre à jour Obsidian** :
-- ✅ Demander confirmation : "Souhaitez-vous que je mette à jour le Canvas `X.canvas` pour refléter ces changements ?"
-- ✅ Informer : "✅ Canvas `X.canvas` mis à jour"
-
-**Quand vous proposez un nouveau workflow** :
-- ✅ Suggérer : "Créons d'abord un Canvas dans Obsidian pour visualiser ce workflow ?"
-- ✅ Créer le Canvas ensemble
-- ✅ Itérer sur le design
-- ✅ Une fois validé, proposer : "Souhaitez-vous que j'ajoute ce workflow aux project-rules ?"

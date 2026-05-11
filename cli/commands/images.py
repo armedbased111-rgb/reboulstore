@@ -21,7 +21,7 @@ console = Console()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # Règle commune : fond uni #F3F3F3, pas d’invention
-BG = " Plain solid #F3F3F3 light grey background only (no gradients). No props, no text, no extra elements. "
+BG = " Plain solid #F3F3F3 background only (no gradients). No props, no text, no extra elements. "
 NO_INVENTION = " Do NOT add any badge, logo, patch or hood that is not clearly visible in the source image. If the garment has no hood, output must have no hood. If it has no visible logo/badge, output must have none. CRITICAL: do NOT add any badge or patch on the sleeve or shoulder unless it is explicitly visible in the source photo — even if the brand typically uses one. Reproduce only what is visible, never invent. "
 
 # Vue 1 – Face : flat lay, face uniquement, même échelle que le dos
@@ -444,6 +444,7 @@ def _run_generate_one(
     only_face_back: bool = False,
     flash_attempts: int = 4,
     product_type: str = "garment",
+    adjust_fallback_attempts: int = 0,
 ) -> bool:
     """Génère 3 ou 4 images pour un dossier photos. Retourne True si au moins une image a été écrite."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -594,6 +595,28 @@ def _run_generate_one(
         elif last_valid:
             (output_dir / f"{name}.png").write_bytes(last_valid)
             written += 1
+        # ── Fallback adjust : tentatives supplémentaires via ADJUST depuis la photo source ──
+        if adjust_fallback_attempts > 0 and name in ("1_face", "2_back"):
+            _adj_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background completely. "
+                    "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
+                    "Center it on a pure #F3F3F3 background (near-white, NOT grey). "
+                    "Equal margins on all sides. Add a very subtle natural shadow beneath the garment only. "
+                    "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
+                    "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
+                )
+            )
+            for adj_i in range(adjust_fallback_attempts):
+                try:
+                    adj_bytes = _call_gemini(api_key, img_b64, mime, _adj_prompt, use_flash=use_flash)
+                    if adj_bytes:
+                        (output_dir / f"{name}_adj_{adj_i + 1}.png").write_bytes(adj_bytes)
+                        if delay_after_image > 0 and adj_i == 0:
+                            time.sleep(delay_after_image)
+                except Exception:
+                    pass
+        # ─────────────────────────────────────────────────────────────────────
         if delay_after_image > 0 and written < len(steps):
             time.sleep(delay_after_image)
     return written > 0
@@ -642,7 +665,8 @@ def check_api():
 @click.option("-o", "output_dir", default="./output", type=click.Path(path_type=Path), help="Dossier de sortie")
 @click.option("--only", "only_views", default=None, help="Régénérer uniquement ces vues (ex: 2_back ou 1_face,2_back)")
 @click.option("--product-type", "product_type", default="garment", type=click.Choice(["garment", "shoe"]), help="Type de produit : garment (défaut) ou shoe (baskets/sneakers)")
-def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempts, output_dir, only_views, product_type):
+@click.option("--adjust-fallback", "adjust_fallback_attempts", default=0, type=int, help="Nb de tentatives adjust (fond supprimé, flat lay) après les générations flash. Défaut 0 (désactivé).")
+def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempts, output_dir, only_views, product_type, adjust_fallback_attempts):
     """Génère 3 ou 4 images via Gemini. Par défaut Gemini 3 Pro (une run propre). --gemini-flash pour l'économique."""
     _load_env()
     api_key = os.getenv("GEMINI_API_KEY")
@@ -842,6 +866,28 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
             console.print(f"[green]✅ {out_path}[/green]")
         else:
             console.print(f"[yellow]⚠️ {name}: pas d'image après {num_calls} essais[/yellow]")
+        # ── Fallback adjust ──
+        if adjust_fallback_attempts > 0 and name in ("1_face", "2_back"):
+            _adj_prompt = ADJUST_SYSTEM.format(
+                prompt=(
+                    "Remove all background completely. "
+                    "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
+                    "Center it on a pure #F3F3F3 background (near-white, NOT grey). "
+                    "Equal margins on all sides. Add a very subtle natural shadow beneath the garment only. "
+                    "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
+                    "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
+                )
+            )
+            for adj_i in range(adjust_fallback_attempts):
+                try:
+                    adj_bytes = _call_gemini(api_key, img_b64, mime, _adj_prompt, use_flash=use_flash)
+                    if adj_bytes:
+                        out_path = output_dir / f"{name}_adj_{adj_i + 1}.png"
+                        out_path.write_bytes(adj_bytes)
+                        console.print(f"[dim]   ↳ adjust fallback {adj_i + 1}: {out_path.name}[/dim]")
+                except Exception as e:
+                    console.print(f"[dim]   ↳ adjust fallback {adj_i + 1} échoué: {e}[/dim]")
+        # ────────────────────
 
     console.print(f"\n[green]Terminé. Fichiers dans {output_dir}[/green]")
 
@@ -858,7 +904,8 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
 @click.option("--only-face-back", "only_face_back", is_flag=True, help="Générer uniquement 1_face et 2_back (économie quota, le reste plus tard)")
 @click.option("--delay", default=30, type=float, help="Délai en secondes après chaque image générée (chaque requête API). Recommandé 30 pour éviter 429. Défaut 30.")
 @click.option("--product-type", "product_type", default="garment", type=click.Choice(["garment", "shoe"]), help="Type de produit : garment (défaut) ou shoe (baskets/sneakers)")
-def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, backend_url, use_flash, flash_attempts, delay, only_face_back, product_type):
+@click.option("--adjust-fallback", "adjust_fallback_attempts", default=0, type=int, help="Nb de tentatives adjust (fond supprimé, flat lay) après les générations flash. Défaut 0 (désactivé).")
+def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, backend_url, use_flash, flash_attempts, delay, only_face_back, product_type, adjust_fallback_attempts):
     """Parcourt les sous-dossiers de --input-dir, génère les images pour chaque ref (un sous-dossier = une ref). --delay = pause après chaque image. --only-face-back = uniquement 1 et 2. Optionnel : --upload."""
     _load_env()
     api_key = os.getenv("GEMINI_API_KEY")
@@ -898,7 +945,7 @@ def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, ba
                     failed_refs.append(ref)
             continue
         console.print(f"[blue][{i}/{len(subdirs)}] {ref}[/blue]")
-        if _run_generate_one(api_key, subdir, refs_dir, out_dir, use_flash, delay_after_image=delay, only_face_back=only_face_back, flash_attempts=flash_attempts, product_type=product_type):
+        if _run_generate_one(api_key, subdir, refs_dir, out_dir, use_flash, delay_after_image=delay, only_face_back=only_face_back, flash_attempts=flash_attempts, product_type=product_type, adjust_fallback_attempts=adjust_fallback_attempts):
             if do_upload:
                 if _upload_one(ref, out_dir, backend_url, False, silent=True)[0]:
                     ok_count += 1

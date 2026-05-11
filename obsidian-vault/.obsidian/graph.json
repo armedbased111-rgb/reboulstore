@@ -1,18 +1,72 @@
 {
-  "collapse-filter": true,
+  "collapse-filter": false,
   "search": "",
-  "showTags": true,
+  "showTags": false,
   "showAttachments": false,
-  "hideUnresolved": false,
-  "showOrphans": true,
+  "hideUnresolved": true,
+  "showOrphans": false,
   "collapse-color-groups": true,
-  "colorGroups": [],
-  "collapse-display": true,
-  "showArrow": true,
-  "textFadeMultiplier": 0,
-  "nodeSizeMultiplier": 1,
-  "lineSizeMultiplier": 1,
-  "scale": 1,
-  "close": false
+  "colorGroups": [
+    {
+      "query": "path:Architecture  ",
+      "color": {
+        "a": 1,
+        "rgb": 13126732
+      }
+    },
+    {
+      "query": "path:Backend  ",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "path:Collections  ",
+      "color": {
+        "a": 1,
+        "rgb": 11657298
+      }
+    },
+    {
+      "query": "path:Frontend  ",
+      "color": {
+        "a": 1,
+        "rgb": 6856696
+      }
+    },
+    {
+      "query": "path:_templates  ",
+      "color": {
+        "a": 1,
+        "rgb": 16777215
+      }
+    },
+    {
+      "query": "path:Database  ",
+      "color": {
+        "a": 1,
+        "rgb": 16743941
+      }
+    },
+    {
+      "query": "path:Securite  ",
+      "color": {
+        "a": 1,
+        "rgb": 16712965
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -3,
+  "nodeSizeMultiplier": 1.35328559027778,
+  "lineSizeMultiplier": 1.0015234375,
+  "collapse-forces": false,
+  "centerStrength": 0.418793402777778,
+  "repelStrength": 12.9409722222222,
+  "linkStrength": 0.423046875,
+  "linkDistance": 156,
+  "scale": 0.24393478955736903,
+  "close": true
 }
-

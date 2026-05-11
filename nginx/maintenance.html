@@ -5,23 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reboul — Bientôt disponible</title>
   <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0c0c0c;
-      --fg: #f0ede8;
-      --muted: #5a5754;
-      --accent: #c8b89a;
-      --border: rgba(200, 184, 154, 0.15);
+      --bg: #ffffff;
+      --bg-subtle: #F3F3F3;
+      --fg: #1A1A1A;
+      --muted: #888888;
+      --muted-light: #C0C0C0;
+      --accent: #D93434;
+      --border: rgba(26, 26, 26, 0.1);
     }
 
     html, body {
       height: 100%;
       background: var(--bg);
       color: var(--fg);
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
@@ -31,68 +37,124 @@
       justify-content: center;
       min-height: 100dvh;
       padding: 2rem;
-      letter-spacing: 0.02em;
     }
 
-    /* Fine horizontal rule top */
+    /* Barre noire en haut comme le header */
     .top-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0.5;
+      height: 2px;
+      background: var(--fg);
     }
 
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0;
       width: 100%;
-      max-width: 480px;
+      max-width: 560px;
       text-align: center;
     }
 
-    /* Wordmark */
-    .wordmark {
-      font-size: clamp(2.8rem, 8vw, 4.5rem);
-      font-weight: 200;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--fg);
-      line-height: 1;
-      margin-bottom: 2.5rem;
+    /* Logo */
+    .logo {
+      width: auto;
+      height: clamp(52px, 9vw, 90px);
+      margin-bottom: 3.5rem;
+      filter: invert(1);
+      opacity: 1;
     }
 
-    /* Divider */
-    .divider {
-      width: 40px;
-      height: 1px;
-      background: var(--accent);
-      margin-bottom: 2.5rem;
-      opacity: 0.6;
+    /* Barre de progression — style loader du site */
+    .progress-wrap {
+      width: 160px;
+      height: 2px;
+      background: var(--border);
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+
+    @keyframes progress {
+      0%   { transform: scaleX(0) translateX(0); }
+      50%  { transform: scaleX(0.7) translateX(30%); }
+      100% { transform: scaleX(0) translateX(200%); }
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--fg);
+      transform-origin: 0% 50%;
+      animation: progress 2s ease-in-out infinite;
     }
 
     /* Status */
     .status {
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--accent);
-      font-weight: 400;
-      margin-bottom: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* Tagline */
-    .tagline {
-      font-size: 0.88rem;
+    @keyframes blink {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+    .blink-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: blink 1.8s ease-in-out infinite;
+    }
+
+    /* Headline */
+    .headline {
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      font-weight: 400;
+      color: var(--fg);
+      line-height: 1.6;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Description */
+    .description {
+      font-size: 0.8rem;
       font-weight: 300;
       color: var(--muted);
-      line-height: 1.7;
-      letter-spacing: 0.04em;
-      max-width: 340px;
+      line-height: 1.85;
+      letter-spacing: 0.02em;
+      max-width: 380px;
+    }
+
+    /* Tags marques */
+    .brands {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 2.4rem;
+    }
+
+    .brand-tag {
+      font-size: 0.5rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      font-weight: 400;
+      background: var(--bg-subtle);
     }
 
     /* Footer */
@@ -107,46 +169,68 @@
     }
 
     .footer a {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
+      font-size: 0.52rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--muted);
       text-decoration: none;
       transition: color 0.2s;
     }
 
-    .footer a:hover { color: var(--accent); }
+    .footer a:hover { color: var(--fg); }
 
-    /* Subtle animated dot */
-    @keyframes pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
+    /* Fade in */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .pulse-dot {
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
-      vertical-align: middle;
-      margin-right: 8px;
-      animation: pulse 2.4s ease-in-out infinite;
+    .container > * {
+      animation: fadeUp 0.7s ease forwards;
+      opacity: 0;
     }
+    .logo          { animation-delay: 0.05s; }
+    .progress-wrap { animation-delay: 0.15s; }
+    .status        { animation-delay: 0.25s; }
+    .headline      { animation-delay: 0.35s; }
+    .description   { animation-delay: 0.45s; }
+    .brands        { animation-delay: 0.55s; }
   </style>
 </head>
 <body>
   <div class="top-bar"></div>
 
   <div class="container">
-    <h1 class="wordmark">Reboul</h1>
-    <div class="divider"></div>
+    <img
+      class="logo"
+      src="https://res.cloudinary.com/dxen69pdo/image/upload/v1753365190/logo_w_hzhfoc.png"
+      alt="Reboul"
+    />
+
+    <div class="progress-wrap">
+      <div class="progress-bar"></div>
+    </div>
+
     <p class="status">
-      <span class="pulse-dot"></span>Bientôt disponible
+      <span class="blink-dot"></span>
+      Bientôt disponible
     </p>
-    <p class="tagline">
-      Nous préparons quelque chose.<br />
-      Revenez très bientôt.
+
+    <h1 class="headline">Concept-store premium<br />streetwear &amp; lifestyle</h1>
+
+    <p class="description">
+      Reboul, c'est une sélection pointue de marques internationales,<br />
+      disponible depuis Marseille. Vêtements, accessoires<br />
+      et éditions limitées — notre boutique en ligne arrive très bientôt.
     </p>
+
+    <div class="brands">
+      <span class="brand-tag">Stone Island</span>
+      <span class="brand-tag">CP Company</span>
+      <span class="brand-tag">Off-White</span>
+      <span class="brand-tag">Arte Antwerp</span>
+      <span class="brand-tag">Autry</span>
+      <span class="brand-tag">Bisous Skateboards</span>
+    </div>
   </div>
 
   <footer class="footer">

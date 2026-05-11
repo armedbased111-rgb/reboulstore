@@ -2125,7 +2125,7 @@ def db_export_csv(brand, collection, output):
         cond_parts.append("c.name = '%s'" % str(collection).replace("'", "''"))
     where_sql = " AND ".join(cond_parts)
     sql = (
-        "SELECT p.reference, p.name, v.sku, v.size, v.color, v.stock "
+        "SELECT p.reference, p.name, p.price, v.sku, v.size, v.color, v.stock "
         "FROM products p "
         "JOIN variants v ON v.product_id = p.id "
         "JOIN brands b ON b.id = p.brand_id "
@@ -2144,7 +2144,7 @@ def db_export_csv(brand, collection, output):
     import io
     buf = io.StringIO()
     w = csv.writer(buf, delimiter=";", lineterminator="\n")
-    w.writerow(["reference", "name", "sku", "size", "color", "stock"])
+    w.writerow(["reference", "name", "price", "sku", "size", "color", "stock"])
     for r in rows:
         w.writerow([(x or "").strip() for x in r])
     csv_content = buf.getvalue()

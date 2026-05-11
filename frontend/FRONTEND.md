@@ -1,10 +1,16 @@
 # 🎨 Frontend - Documentation
 
+## Statut de reference (06/05/2026)
+
+- Phase active: **Phase 25 - finalisation frontend detaillee**
+- Reference prioritaire: `obsidian-vault/Projet/phase-25.md`
+- Contexte global: `obsidian-vault/REBOUL.md`
+
 ## 📋 Vue d'ensemble
 
 Application frontend construite avec **React** (TypeScript), **Vite** comme build tool, et **TailwindCSS** pour le styling, containerisée avec Docker.
 
-Voir aussi : [[AUTH_USAGE.md|AUTH_USAGE]] - [[../docs/context/CONTEXT.md|CONTEXT]] - [[../docs/export/FIGMA_WORKFLOW.md|FIGMA_WORKFLOW]] - [[../docs/animations/ANIMATIONS_GUIDE.md|ANIMATIONS_GUIDE]]
+Voir aussi : `AUTH_USAGE.md` - `obsidian-vault/REBOUL.md` - `obsidian-vault/Architecture/design-system.md` - `obsidian-vault/Architecture/animations.md`
 
 ## 🛠️ Stack technique
 

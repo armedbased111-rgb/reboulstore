@@ -8,6 +8,21 @@ Liste complète des project commands disponibles dans Cursor.
 
 ## 🔍 Contexte & Recherche
 
+### `/vault-sync` ⭐
+Synchroniser le vault Obsidian apres une tache
+- Met a jour phase/page/module/collection impactes
+- Aligne `TODO.md` et `REBOUL.md`
+
+### `/vault-session` ⭐
+Tracer une session de travail dans Obsidian
+- Cree/maj un log dans `obsidian-vault/Sessions/`
+- Lie la session aux notes impactees
+
+### `/vault-page-review [PageName]` ⭐
+Revue complete d'une page frontend avec sync vault
+- Audit UI/UX + corrections code
+- MAJ `Frontend/...`, `Projet/phase-25.md`, `TODO.md`
+
 ### `/getcontext [sujet]`
 Recherche rapide de contexte dans le projet
 - Liste tous les fichiers de référence

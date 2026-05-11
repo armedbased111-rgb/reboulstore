@@ -1,10 +1,16 @@
 # 🔧 Backend - Documentation
 
+## Statut de reference (06/05/2026)
+
+- Backend considere stable pour le scope actuel
+- Phase active projet: **Phase 25 - finalisation frontend detaillee**
+- Roadmap active: `obsidian-vault/Projet/phase-25.md`
+
 ## 📋 Vue d'ensemble
 
 Backend API REST construite avec **NestJS** et **TypeORM**, connectée à une base de données **PostgreSQL** via Docker.
 
-Voir aussi : [[../docs/context/API_CONFIG.md|API_CONFIG]] - [[../docs/context/CONTEXT.md|CONTEXT]] - [[../docs/context/ROADMAP_COMPLETE.md|ROADMAP_COMPLETE]]
+Voir aussi : `obsidian-vault/REBOUL.md` - `obsidian-vault/Backend/products.md` - `obsidian-vault/Backend/orders.md`
 
 ## 🛠️ Stack technique
 

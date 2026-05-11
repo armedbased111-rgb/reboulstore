@@ -68,5 +68,35 @@
     "flash_attempts": 4,
     "delay": 30,
     "use_flash": true
+  },
+  "Carhartt": {
+    "name": "Carhartt",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /CARHARTT",
+    "output_dir": "./output_batch_carhartt",
+    "product_type": "garment",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  },
+  "Saucony": {
+    "name": "Saucony",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /SAUCONY",
+    "output_dir": "./output_batch_saucony",
+    "product_type": "shoe",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  },
+  "Birkenstock": {
+    "name": "Birkenstock",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /BIRKENSTOCK",
+    "output_dir": "./output_batch_birkenstock",
+    "product_type": "shoe",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
   }
 }
