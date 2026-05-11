@@ -51,7 +51,7 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 
 ## Monitoring & Ops
 
-- [ ] Alertes logs erreurs 500 en place
-- [ ] Alertes down containers Docker
-- [ ] Backup DB testé (restore vérifié)
-- [ ] Variables `.env.production` complètes et vérifiées
+- [ ] Alertes logs erreurs 500 — après lancement (logs structurés NestJS)
+- [ ] Alertes down containers — ⏳ configurer UptimeRobot (gratuit) sur `https://www.reboulstore.com` + `/api/health`
+- [x] Backup DB testé (restore vérifié) ✅ 11/05/2026 — 21 tables, 296 produits restaurés correctement
+- [x] Variables `.env.production` complètes ✅ — DB, JWT, Stripe, Cloudinary, SMTP présents. REDIS/NODE_ENV ont des défauts sûrs.
