@@ -29,9 +29,17 @@ Modules concernés : [[Backend/auth]] · [[Backend/checkout]] · [[Backend/produ
 ## VPS OVH (`152.228.218.35`)
 
 - SSH par clé uniquement (`~/.ssh/id_ed25519`) — mot de passe désactivé
-- UFW actif — ports ouverts : **22** (SSH), **80** (HTTP), **443** (HTTPS) uniquement
-- SSL Let's Encrypt (Certbot) — auto-renouvellement actif
+- **fail2ban** actif — jail `sshd` configuré
+- **iptables** configuré (UFW)
+- Ports ouverts :
+  - `80/443` — Reboul Store nginx
+  - `4000/4443` — Admin Central nginx
+  - `22000` — Syncthing sync (intentionnel, user `musicadmin`)
+  - `8384/53` — localhost uniquement (Syncthing GUI + systemd-resolved)
+- **SSL** : 3 certificats valides (reboulstore.com, www, admin) — exp. 17/07/2026 (66j)
+- `.env.production` permissions : **600** (corrigé 11/05/2026, était 644)
 - PostgreSQL non exposé (accès dev via tunnel SSH `:5433`)
+- **35 updates apt disponibles** dont Docker 29.4.3 — à appliquer hors prod
 
 Référence infra : [[Architecture/vps]]
 

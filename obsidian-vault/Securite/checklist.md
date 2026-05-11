@@ -20,12 +20,13 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 
 ## VPS
 
-- [ ] fail2ban actif
-- [ ] Clés SSH à jour
-- [ ] Permissions `/opt/reboulstore/` auditées
-- [ ] `nmap` — aucun port inattendu ouvert
+- [x] fail2ban actif — jail `sshd` configuré ✅ 11/05/2026
+- [x] Clés SSH à jour — auth par clé uniquement, mot de passe désactivé ✅
+- [x] Permissions `.env.production` corrigées — 644→600 ✅ 11/05/2026
+- [x] Ports ouverts vérifiés — 80/443 (Reboul), 4000/4443 (Admin), 22000 (Syncthing intentionnel), 8384/53 localhost only ✅
+- [x] SSL Let's Encrypt valide 66 jours (exp. 17/07/2026), 3 domaines ✅
+- [ ] `apt upgrade` — 35 updates disponibles dont Docker 29.4.3 (à faire hors prod)
 - [ ] Backup automatique quotidien vérifié et testé
-- [ ] SSL Let's Encrypt valide + auto-renouvellement actif
 
 ## Frontend
 
