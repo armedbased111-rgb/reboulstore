@@ -3,11 +3,11 @@ type: todo
 ---
 # TODO
 
-## Phase 25 — tâches ouvertes
+## Roadmap — tâches ouvertes
 
 ```tasks
 not done
-filter by function task.file.path.includes("Projet/phase-25")
+filter by function task.file.path.includes("Projet/roadmap")
 ```
 
 ## Frontend — pages à revoir
