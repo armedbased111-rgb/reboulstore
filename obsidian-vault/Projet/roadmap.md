@@ -92,7 +92,7 @@ Détail complet → [[Securite/Securite]]
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
 - [ ] Tests non-régression API — endpoints critiques
-- [ ] Checklist pré-lancement : domaine, SSL, monitoring, backup auto, variables prod
+- [x] Checklist pré-lancement : domaine ✅, SSL ✅, backup auto ✅, variables prod ✅ — monitoring + logs structurés après lancement
 
 ---
 

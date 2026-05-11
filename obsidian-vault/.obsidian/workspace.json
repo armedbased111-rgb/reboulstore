@@ -188,7 +188,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Securite/checklist.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -198,7 +198,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Rétrolien pour roadmap"
+              "title": "Rétrolien pour checklist"
             }
           },
           {
@@ -207,12 +207,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Securite/checklist.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Liens sortants de roadmap"
+              "title": "Liens sortants de checklist"
             }
           },
           {
@@ -250,13 +250,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Securite/checklist.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Plan de roadmap"
+              "title": "Plan de checklist"
             }
           }
         ]
@@ -332,8 +332,7 @@
                   "title": "roadmap"
                 }
               }
-            ],
-            "currentTab": 2
+            ]
           }
         ],
         "direction": "vertical",
@@ -375,8 +374,9 @@
       }
     ]
   },
-  "active": "e0736695771ffc9e",
+  "active": "b583d5104be992ef",
   "lastOpenFiles": [
+    "Projet/roadmap.md",
     "Sessions/2026-05-11-securite.md",
     "Securite/checklist.md",
     "Securite/etat-actuel.md",
@@ -402,7 +402,6 @@
     "Frontend/OrderConfirmation.md",
     "Frontend/Checkout.md",
     "Frontend/Cart.md",
-    "Frontend/Search.md",
     "Securite",
     "Database/tables",
     "Database",

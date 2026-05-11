@@ -26,7 +26,7 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 - [x] Ports ouverts vérifiés — 80/443 (Reboul), 4000/4443 (Admin), 8384/53 localhost only ✅ — Syncthing supprimé (port 22000 fermé)
 - [x] SSL Let's Encrypt valide 66 jours (exp. 17/07/2026), 3 domaines ✅
 - [x] `apt upgrade` — 35 packages mis à jour dont Docker 29.4.3 ✅ 11/05/2026
-- [ ] Backup automatique quotidien vérifié et testé
+- [x] Backup automatique quotidien vérifié et testé ✅ 11/05/2026 — script OK, log `/var/log/reboulstore-backup.log` créé avec permissions deploy
 
 ## Frontend
 
