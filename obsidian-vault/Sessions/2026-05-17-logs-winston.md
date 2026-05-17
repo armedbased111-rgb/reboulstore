@@ -2,8 +2,8 @@
 type: session
 date: 2026-05-17
 sujet: Logs Phase 1 — Winston structuré
-statut: en-cours
-note: tests locaux OK — prod + requestId restants
+statut: terminé
+note: Phase 1 OK prod+dev ; requestId restant ; incident entrypoint dev corrigé 17/05 soir
 ---
 # Session — Winston / logs structurés (Phase 1)
 
@@ -27,7 +27,7 @@ Activer les logs applicatifs NestJS avant la stack Loki/Grafana (Phase 3).
 | `auth_login_failed` | `auth.service.ts` (email + reason) |
 | `http_5xx` | `global-exception-logging.filter.ts` |
 | `stripe_webhook_failed` | `checkout.service.ts` (signature) |
-| `checkout_error` | `http-logging.interceptor.ts` (4xx sur `/checkout`) |
+| `checkout_error` | `http-logging.interceptor.ts` / filtre selon flux 4xx |
 
 ### Filtre unique
 - `global-exception-logging.filter.ts` remplace l’ancien `MulterExceptionFilter` (multer + 5xx + logging)
@@ -35,6 +35,8 @@ Activer les logs applicatifs NestJS avant la stack Loki/Grafana (Phase 3).
 ### Docker
 - `docker-compose.yml` : volume `./backend/logs:/app/logs`, `LOG_DIR=/app/logs`
 - `docker-compose.prod.yml` : volume `logs_data_prod` → `/app/logs`
+- **Prod** : `docker-entrypoint.sh` + `Dockerfile.prod` (`su-exec`, `chown` `/app/logs`)
+- **Dev** : `docker-entrypoint.dev.sh` + `Dockerfile` (exec direct, pas de user `nestjs`)
 
 ### Build
 - `npm run build` backend ✅
@@ -51,14 +53,43 @@ Activer les logs applicatifs NestJS avant la stack Loki/Grafana (Phase 3).
 
 **Fix interceptor** : `checkout_error` loggé via `GlobalExceptionLoggingFilter` (les 4xx Nest ne passent pas toujours par `finalize` de l’interceptor).
 
-## Reste à faire (Phase 1)
+## Prod ✅ 17/05/2026
 
-- [ ] Middleware `requestId`
-- [ ] Deploy prod + vérif `logs/error.log` dans le container
+Deploy Winston + redeploy entrypoint logs **OK**.
 
-## Commandes test
+| Vérif | Résultat |
+|-------|----------|
+| `GET https://reboulstore.com/api/health` | 200, `environment: production` |
+| Container `reboulstore-backend-prod` | Up (healthy) |
+| `docker logs` JSON | `auth_login_failed`, `checkout_error` visibles |
+| `/app/logs/combined.log` | ~19 Ko, owner `nestjs` |
+| `/app/dist/src/main.js` | présent (`start:prod` correct) |
 
-→ Référence complète : [[Architecture/commands-logs]]
+Commandes : [[Architecture/commands-logs]]
+
+## Incident dev (17/05 soir) — résolu
+
+**Symptôme** : container `reboulstore-backend` en crash — `chown: unknown user/group nestjs:nodejs`.
+
+**Cause** : l’entrypoint **prod** (`chown` + `su-exec nestjs`) était monté sur l’image **dev** (pas d’utilisateur `nestjs` dans `Dockerfile`).
+
+**Fix** :
+- `backend/docker-entrypoint.dev.sh` — `exec "$@"` uniquement
+- `backend/Dockerfile` → `ENTRYPOINT` dev
+- `docker-entrypoint.sh` (prod) — `chown` seulement si user `nestjs` existe
+
+Rebuild local : `docker compose build backend && docker compose up -d backend`
+
+## Phase 2 — Hygiène VPS ✅ 17/05/2026
+
+- `config/logrotate/reboulstore-backup` + `scripts/setup-logrotate-backup.sh`
+- Logrotate installé sur VPS (`/etc/logrotate.d/reboulstore-backup`)
+- Rétention documentée → [[Architecture/vps]]
+
+## Reste à faire
+
+- [ ] **Fin session** : redeploy prod (Phase 1 `requestId` + code récent)
+- [ ] Phases 3–4 : Loki/Grafana, alertes CLI
 
 ## Fichiers touchés
 
@@ -71,3 +102,4 @@ Activer les logs applicatifs NestJS avant la stack Loki/Grafana (Phase 3).
 - `backend/src/modules/checkout/checkout.service.ts`
 - `docker-compose.yml`, `docker-compose.prod.yml`
 - `backend/.gitignore` (`logs/`)
+- `backend/docker-entrypoint.sh`, `docker-entrypoint.dev.sh`, `Dockerfile`, `Dockerfile.prod`

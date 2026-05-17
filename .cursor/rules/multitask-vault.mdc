@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+---
+
+# Stratégie Multitask — Vault + Travail
+
+**Réalité** : les agents Cursor Task ne sont pas des daemons 24/7 ; ils s’exécutent jusqu’à fin de tâche, renvoient un résumé, puis s’arrêtent. Le **parent coordonne une séquence d’invocations** (dont `resume` pour enchaîner), pas un processus vivant en continu.
+
+### Quand l’utiliser
+
+Toute tâche non triviale (>5 min), déploiement, feature multi-fichiers, session de travail structurée.
+
+### Rôles
+
+| Agent | Rôle |
+|-------|------|
+| Vault | `obsidian-vault/` uniquement — aucun code prod sauf mise à jour doc explicite |
+| Travail | Code, déploiement, tests, CLI technique |
+
+### Workflow parent (coordinateur)
+
+1. **Début** : lancer l’agent Vault en arrière-plan — session `en-cours`, note dans la roadmap si utile, lire `REBOUL.md`.
+2. **En parallèle** : lancer l’agent Travail avec un prompt détaillé.
+3. **Pendant une tâche longue** (déploiement, build) : optionnel — `resume` l’agent Vault avec un statut intermédiaire.
+4. **Fin Travail** : lancer ou `resume` Vault — cases roadmap, bilan session, `REBOUL.md` si l’état global change, `./rcli context sync`.
+5. Ne pas résumer au user le sous-agent Vault sauf demande explicite.
+
+### Checklist agent Vault
+
+- `obsidian-vault/Sessions/YYYY-MM-DD-sujet.md`
+- `obsidian-vault/Projet/roadmap.md`
+- `obsidian-vault/REBOUL.md` si l’état global change
+- Fichier de section concerné (`Frontend/`, `Securite/`, etc.)
+- `obsidian-vault/Architecture/commands-logs.md`, section « Pendant une tâche longue », si déploiement
+- `./rcli context sync` à la fin
+
+### Agent Travail
+
+Ne modifie pas le vault sans consigne explicite.

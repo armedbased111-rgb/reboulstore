@@ -1,27 +1,11 @@
 #!/bin/sh
+set -e
 
-echo "=========================================="
-echo "🔧 BACKEND ENTRYPOINT - DÉBUT"
-echo "=========================================="
-echo "📍 Répertoire: $(pwd)"
-echo "📍 node_modules existe: $([ -d node_modules ] && echo 'OUI' || echo 'NON')"
-echo ""
-
-echo "📦 Installation des dépendances..."
-npm install --legacy-peer-deps || {
-  echo "❌ Erreur npm install, nouvelle tentative..."
-  npm install --legacy-peer-deps --force
-}
-
-echo ""
-echo "📍 Vérification @nestjs/mapped-types..."
-if [ ! -d "node_modules/@nestjs/mapped-types" ]; then
-  echo "❌ @nestjs/mapped-types MANQUANT - Installation..."
-  npm install @nestjs/mapped-types --legacy-peer-deps --save || npm install @nestjs/mapped-types --legacy-peer-deps --save --force
+# Prod uniquement (Dockerfile.prod crée l'utilisateur nestjs)
+if [ "$(id -u)" = "0" ] && id nestjs >/dev/null 2>&1 && command -v su-exec >/dev/null 2>&1; then
+  mkdir -p /app/logs
+  chown -R nestjs:nodejs /app/logs
+  exec su-exec nestjs:nodejs "$@"
 fi
 
-echo ""
-echo "✅ Installation terminée"
-echo "🚀 Démarrage: $@"
-echo "=========================================="
 exec "$@"

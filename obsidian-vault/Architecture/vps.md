@@ -1,6 +1,6 @@
 ---
 type: architecture
-maj: 2026-05-11 (soir)
+maj: 2026-05-17
 ---
 # VPS — Infrastructure serveur
 
@@ -80,6 +80,14 @@ ssh -L 5433:localhost:5432 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N
 Format : `reboulstore_db_YYYYMMDD_HHMMSS.sql.gz`
 Cron backup quotidien : 2h00, log → `/var/log/reboulstore-backup.log`
 
+**Logrotate** (Phase 2 — installé 17/05/2026) :
+```bash
+# Sur le VPS après git pull (ou déjà fait une fois via install manuelle)
+./scripts/setup-logrotate-backup.sh
+```
+Config repo : `config/logrotate/reboulstore-backup` → `/etc/logrotate.d/reboulstore-backup`  
+Rétention log cron : **30 jours**, `compress`, `copytruncate`, owner `deploy:deploy`
+
 ## Volumes critiques (NE JAMAIS supprimer)
 
 - `reboulstore_postgres_prod`
@@ -96,13 +104,25 @@ Cron backup quotidien : 2h00, log → `/var/log/reboulstore-backup.log`
 
 UptimeRobot : 2 moniteurs actifs (check toutes les 5 min) — alertes `armedbased111@gmail.com`
 
-## Logs applicatifs (Winston — depuis 17/05/2026)
+## Logs — politique de rétention (Phase 2)
+
+| Source | Mécanisme | Rétention effective | Notes |
+|--------|-----------|---------------------|--------|
+| Docker `json-file` (prod) | `max-size: 10m` × `max-file: 3` | ~30 Mo max / container | `docker-compose.prod.yml` — backend, redis, frontend, nginx |
+| Winston fichiers | `maxsize: 10m` × `maxFiles: 5` | ~50 Mo / fichier (`error.log`, `combined.log`) | Volume `logs_data_prod` |
+| Backup cron log | logrotate `daily` × `rotate 30` | 30 jours compressés | `/var/log/reboulstore-backup.log` |
+| Backups DB `.sql.gz` | script backup (cron 2h) | 30 derniers fichiers | `/var/www/reboulstore/backups/` |
+
+**Pourquoi ne pas augmenter Docker tout de suite ?** Suffisant avant Loki (Phase 3) ; `docker logs` + Winston couvrent le debug court terme. Ajuster `max-size` / `max-file` dans `docker-compose.prod.yml` si pic de trafic pré-lancement.
+
+## Logs applicatifs (Winston — Phase 1 ✅)
 
 | Couche | Détail |
 |--------|--------|
-| Docker | `json-file` 10m × 3 / container (rotation courte) |
-| NestJS prod | Volume `logs_data_prod` → `/app/logs` (`error.log`, `combined.log`) |
-| NestJS dev | `./backend/logs` monté sur `/app/logs` |
+| Docker | `json-file` 10m × 3 / container |
+| NestJS prod | Volume `logs_data_prod` → `/app/logs` |
+| NestJS dev | `./backend/logs` → `/app/logs` |
+| Corrélation | `requestId` + header `X-Request-Id` sur chaque requête |
 | Événements JSON | `auth_login_failed`, `http_5xx`, `stripe_webhook_failed`, `checkout_error` |
 
 Phase 3 prévue : Loki + Promtail + Grafana → [[Projet/roadmap#Logs & observabilité *(avant lancement)*]]

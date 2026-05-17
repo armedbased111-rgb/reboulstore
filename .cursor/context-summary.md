@@ -1,11 +1,11 @@
 # Résumé de contexte — Reboul Store
 
-**Généré le** : 17/05/2026 14:40
+**Généré le** : 17/05/2026 17:27
 **Source** : vault Obsidian (`obsidian-vault/`)
 
 ## Progression globale
 
-**Tâches** : 17/79 cochées dans `Projet/roadmap.md`
+**Tâches** : 24/81 cochées dans `Projet/roadmap.md`
 
 ## Sections roadmap
 
@@ -21,10 +21,10 @@
   - [ ] `react-helmet-async` sur toutes les pages principales
   - [ ] Titles + meta descriptions propres (FR) par page
   - [ ] Open Graph minimal (title, description, image) — s'appuie sur [[Backend/og]]
-- 🟡 **Technique & Sécurité** — 17/35
-  - [ ] `requestId` par requête (middleware — suivi corrélation logs)
-  - [ ] Vérifier en prod après deploy : `./rcli server logs backend --errors` + `logs/er…
-  - [ ] `logrotate` pour `/var/log/reboulstore-backup.log` (éviter fichier qui grossit s…
+- 🟡 **Technique & Sécurité** — 24/37
+  - [ ] Ajouter services Docker : **Loki** + **Promtail** (ou Grafana Alloy) + **Grafana…
+  - [ ] Promtail : collecter logs Reboul Store + Admin Central (backend, nginx, json-fil…
+  - [ ] Rétention Loki : **14–30 jours** sur volume dédié (configurable)
 - 🟡 **Lancement** — 0/8
   - [ ] Basculer clés Stripe test → live — ⏳ en attente Julie
   - [ ] Valider webhooks Stripe en prod — ⏳ en attente Julie

@@ -399,6 +399,10 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 | VPS / déploiement | `obsidian-vault/Architecture/vps.md` |
 | Pipeline images | `obsidian-vault/Architecture/pipeline-images.md` |
 
+### Multitask Vault + Travail (Cursor)
+
+Pour les travaux **>5 min**, déploiements ou features multi-fichiers : le parent lance **en parallèle** un agent dédié au vault (`obsidian-vault/` + `./rcli context sync`) et un agent **Travail** (code, CLI, déploiement). Les sous-agents ne sont pas des daemons — ils terminent après leur lot ; utiliser plusieurs invocations ou `resume` selon [`multitask-vault.mdc`](./multitask-vault.mdc). L’agent Travail ne touche pas au vault sauf demande.
+
 **Références techniques toujours valides** :
 - `docs/animations/ANIMATIONS_GUIDE.md` — guide animations AnimeJS
 - `frontend/FRONTEND.md` — stack + conventions frontend

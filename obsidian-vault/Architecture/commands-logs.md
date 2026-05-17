@@ -11,6 +11,49 @@ Liens : [[Architecture/vps]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs
 
 ---
 
+## Pendant une tâche longue (deploy prolongé, handoff IA)
+
+Pour ne pas perdre le fil entre agents ou après interruption partielle :
+
+### Avant deploy
+
+- [ ] **Session** — note objectif deploy (fix, branche ou script `./scripts/deploy-prod.sh`).
+- [ ] **Roadmap** — si la tâche change un statut (ex. « à confirmer » → déploiement lancé), ajuster ligne / sous-liste correspondante.
+- [ ] **REBOUL.md** — seulement si l’état global lisible hors session change (nouveau risque, phase bloquée).
+
+### Pendant deploy (attente, redeploy sibling, coupure SSH)
+
+- [ ] **Session** — `statut: en-cours` + courte **note** (ex. redeploy entrypoint en cours).
+- [ ] **Roadmap** — rappeler « en cours » dans la sous-section technique concernée si utile aux prochains passages.
+- [ ] **REBOUL.md** — optionnel : une formulation « en cours » dans le tableau d’état si quelqu’un ne lit pas la session.
+- [ ] **`./rcli context sync`** _(racine du repo Reboul)_ — après toute mise à jour vault significative pendant l’attente, pour refléter le contexte Cursor/CLI [[Projet/regles-critiques]].
+
+### Après deploy
+
+- [ ] **Session** — statut (terminé ou suite), résultats vérif prod ; cocher suites (ex. `/app/logs` non vides).
+- [ ] **Roadmap** — cocher ou reformuler les lignes vérif prod ; retirer « en cours » si clos.
+- [ ] **REBOUL.md** — aligner ligne **Logs** / état avec la vérité terrain.
+- [ ] **`./rcli context sync`** _(racine du repo)_ — obligatoire en fin de cycle vault pour garder aides et prompts alignés.
+
+**Session / commandes vault** — si nouveau pattern opérationnel : ajouter une phrase dans ce fichier (chemins docker, commandes `./rcli`).
+
+**Entrypoints Docker (ne pas mélanger)**
+
+| Fichier | Image | Rôle |
+|---------|-------|------|
+| `docker-entrypoint.dev.sh` | `Dockerfile` (dev) | `exec "$@"` — pas de `chown` / `nestjs` |
+| `docker-entrypoint.sh` | `Dockerfile.prod` | `chown` `/app/logs` + `su-exec nestjs` si user présent |
+
+**Fix entrypoint prod (volume `/app/logs` root-owned)** : `backend/docker-entrypoint.sh` + `su-exec` dans `Dockerfile.prod`.
+
+Rebuild dev après changement entrypoint :
+
+```bash
+docker compose build backend && docker compose up -d backend
+```
+
+---
+
 ## Prérequis local
 
 ```bash
@@ -54,7 +97,13 @@ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:3001/auth/login \
 docker logs reboulstore-backend --tail 15
 ```
 
-Attendu : HTTP **401** + ligne JSON `"event":"auth_login_failed"`.
+Attendu : HTTP **401** + ligne JSON `"event":"auth_login_failed"` + `"requestId":"..."`.
+
+```bash
+curl -sI -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"wrong"}' | grep -i x-request-id
+```
 
 ### 3. Checkout panier vide → `checkout_error`
 
@@ -81,6 +130,8 @@ docker logs reboulstore-backend -f --tail 30
 ---
 
 ## Événements structurés (JSON)
+
+Chaque ligne JSON inclut **`requestId`** (UUID) — header réponse `X-Request-Id` (réutilisé si le client/nginx l’envoie).
 
 | `event` | Quand |
 |---------|--------|
@@ -109,14 +160,18 @@ En **prod** (`NODE_ENV=production`) : aussi fichiers dans le container `/app/log
 
 ---
 
-## Vérif logs applicatifs en prod (après deploy Phase 1)
+## Vérif logs applicatifs en prod
 
 ```bash
 # Logs Docker live
 ./rcli server logs backend --errors --tail 50
 
-# Fichiers Winston dans le container
-./rcli server exec "ls -lh /app/logs/ && tail -20 /app/logs/error.log 2>/dev/null; tail -5 /app/logs/combined.log 2>/dev/null"
+# Health public
+curl -sL https://reboulstore.com/api/health
+
+# Fichiers Winston — dans le container (pas sur l'hôte VPS)
+./rcli server exec 'docker exec reboulstore-backend-prod ls -lh /app/logs/'
+./rcli server exec 'docker exec reboulstore-backend-prod tail -5 /app/logs/combined.log'
 ```
 
 ---
@@ -128,6 +183,16 @@ En **prod** (`NODE_ENV=production`) : aussi fichiers dans le container `/app/log
 ```
 
 Attendu : `✅ Backup terminé` + fichier `reboulstore_db_YYYYMMDD_020001.sql.gz`.
+
+**Logrotate** (une fois sur le VPS, ou après `git pull`) :
+
+```bash
+./scripts/setup-logrotate-backup.sh   # sur le VPS (sudo)
+# Vérif config :
+./rcli server exec "sudo logrotate -d /etc/logrotate.d/reboulstore-backup 2>&1 | head -5"
+```
+
+Rétention : 30 jours → [[Architecture/vps#Logs — politique de rétention (Phase 2)]]
 
 ---
 

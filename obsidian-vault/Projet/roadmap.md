@@ -82,21 +82,23 @@ Détail complet → [[Securite/Securite]]
 
 ### Logs & observabilité *(avant lancement)*
 
-> **17/05/2026** — Phase 1 Winston implémentée en code (dev : console ; prod : fichiers `/app/logs`). Stack Loki/Grafana = Phase 3. Détail session : [[Sessions/2026-05-17-logs-winston]] · **Commandes** : [[Architecture/commands-logs]]
+> **17/05/2026** — Phase 1 Winston **clôturée** : dev console ; prod JSON + `/app/logs` + `requestId`. Stack Loki/Grafana = Phase 3. Session : [[Sessions/2026-05-17-logs-winston]] · **Commandes** : [[Architecture/commands-logs]]
 
 **Phase 1 — Logs applicatifs NestJS (Winston)**
 - [x] Installer `winston` + `nest-winston`, activer `getLoggerConfig()` dans `app.module.ts` ✅ 17/05/2026
 - [x] Format JSON en prod — timestamp, level, context, message (`format.json` Winston) ✅ 17/05/2026
-- [ ] `requestId` par requête (middleware — suivi corrélation logs)
+- [x] `requestId` par requête (middleware `X-Request-Id` + `AsyncLocalStorage` dans `logEvent`) ✅ 17/05/2026
 - [x] Événements obligatoires : `auth_login_failed`, `http_5xx`, `stripe_webhook_failed`, `checkout_error` ✅ 17/05/2026
 - [x] Volume Docker : dev `./backend/logs` → `/app/logs` ; prod `logs_data_prod` ✅ 17/05/2026
-- [ ] Vérifier en prod après deploy : `./rcli server logs backend --errors` + `logs/error.log` / `combined.log` dans le container
+- [x] Entrypoint prod : `docker-entrypoint.sh` + `Dockerfile.prod` (`chown` `/app/logs`, `su-exec nestjs`) — redeploy ✅ 17/05/2026
+- [x] Entrypoint dev : `docker-entrypoint.dev.sh` (séparé du prod — évite `chown nestjs` sur image dev) ✅ 17/05/2026
+- [x] Vérif prod : `docker logs` JSON + `/app/logs/combined.log` écrit (`nestjs`, ~19 Ko) ; health API 200 ✅ 17/05/2026
 - [x] Test local validé : health 200, `auth_login_failed`, `checkout_error` dans `docker logs` ✅ 17/05/2026
 
-**Phase 2 — Hygiène logs VPS**
-- [ ] `logrotate` pour `/var/log/reboulstore-backup.log` (éviter fichier qui grossit sans limite)
-- [ ] Documenter politique de rétention actuelle Docker (10m × 3) dans [[Architecture/vps]]
-- [ ] (optionnel) Ajuster `max-size` / `max-file` dans `docker-compose.prod.yml` si besoin court terme
+**Phase 2 — Hygiène logs VPS** ✅ 17/05/2026
+- [x] `logrotate` pour `/var/log/reboulstore-backup.log` — `config/logrotate/reboulstore-backup` + `scripts/setup-logrotate-backup.sh` (install VPS ✅)
+- [x] Politique de rétention documentée dans [[Architecture/vps]] (Docker, Winston, backup log, dumps DB)
+- [x] Docker prod : conserver `10m × 3` (documenté ; ajustement différé jusqu’à Loki ou besoin trafic)
 
 **Phase 3 — Stack centralisée (containers dédiés)**
 - [ ] Ajouter services Docker : **Loki** + **Promtail** (ou Grafana Alloy) + **Grafana**
@@ -120,7 +122,7 @@ Détail complet → [[Securite/Securite]]
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
 - [ ] Tests non-régression API — endpoints critiques
 - [x] Checklist pré-lancement : domaine ✅, SSL ✅, backup auto ✅, variables prod ✅, UptimeRobot ✅
-- [ ] Checklist pré-lancement : stack logs (Winston + Loki/Grafana) → section **Logs & observabilité** ci-dessus
+- [ ] Checklist pré-lancement : stack logs centralisée (Loki/Grafana Phase 3) — Winston Phase 1 ✅
 
 ---
 

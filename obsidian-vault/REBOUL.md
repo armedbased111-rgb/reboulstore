@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| Logs | 🟡 Phase 1 Winston en code — test local + deploy prod à valider → [[Sessions/2026-05-17-logs-winston]] |
+| Logs | ✅ Phase 1 + 2 — Winston + rétention VPS (logrotate backup) · redeploy prod (`requestId`) en fin de session · Loki = Phase 3 · [[Sessions/2026-05-17-logs-winston]] · [[Architecture/vps]] |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 

@@ -19,7 +19,9 @@ export class HttpLoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       finalize(() => {
-        const res = context.switchToHttp().getResponse<{ statusCode: number }>();
+        const res = context
+          .switchToHttp()
+          .getResponse<{ statusCode: number }>();
         const status = res.statusCode;
         const path = req.url;
 
