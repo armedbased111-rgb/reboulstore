@@ -16,7 +16,8 @@ Liens : [[REBOUL]] · [[Architecture/Architecture]] · [[Projet/roadmap]]
 | [[Securite/etat-actuel]] | Ce qui est en place aujourd'hui (JWT, UFW, Stripe, RGPD) |
 | [[Securite/hardening]] | Roadmap hardening avant lancement (Helmet, rate limiting, fail2ban…) |
 | [[Securite/pentest]] | Outils, commandes, vecteurs OWASP à couvrir |
-| [[Securite/as400]] | Connexion ERP AS400 ↔ site — questions réunion 12/05/2026 |
+| [[Securite/as400]] | AS400 — P1 SFTP ✅ · P2 entrant ⏸️ · P3 sortant 🔜 |
+| [[Securite/as400-fiche-expert]] | Fiche à transmettre à l'expert AS400 (connexion + questions) |
 | [[Securite/checklist]] | Checklist complète pré-lancement |
 
 ---

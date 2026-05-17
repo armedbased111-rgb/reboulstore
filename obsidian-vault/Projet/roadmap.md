@@ -113,11 +113,19 @@ Détail complet → [[Securite/Securite]]
 - [x] CLI : `./rcli logs guide`, `logs events`, `server logs --events` — doc [[Architecture/commands-logs]] + [[Architecture/grafana]]
 - [x] Checklist pré-go-live : erreur de test visible dans Grafana (`auth_login_failed`) ✅ 17/05/2026
 
-### AS400 — Intégration SFTP bidirectionnel
-- [x] Réunion expert cyber AS400 ✅ 12/05/2026 — décision : SFTP bidirectionnel, batch horaire
-- [x] **Format fichiers** : CSV ✅ confirmé réunion 12/05
-- [ ] **Phase 1** — Setup SFTP basique : user `sftp-as400`, chroot, `entrant/` + `sortant/`, transmettre accès à l'expert → [[Securite/as400]]
-- [ ] **Phase 2** *(après premier CSV reçu)* — Parser NestJS adapté au format réel, cron horaire, logs, alertes, réconciliation hebdo
+### AS400 — Intégration SFTP bidirectionnel → [[Securite/as400]]
+
+| Phase | Dossier | Statut |
+|-------|---------|--------|
+| **1** SFTP | — | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
+| **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes |
+| **3** Mouvements sortant | `sortant/` | 🔜 spec CSV en cours → puis export NestJS + cron |
+
+- [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
+- [x] Phase 1 — SFTP VPS (chroot, test upload)
+- [ ] Phase 1 — Transmission fiche expert + mdp
+- [ ] Phase 2 — Import stocks `entrant/` *(après 1er CSV réel)*
+- [ ] Phase 3 — Export mouvements `sortant/` *(spec en cours dans as400.md)*
 
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)

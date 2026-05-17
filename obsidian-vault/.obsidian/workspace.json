@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sessions/2026-05-17-logs-winston.md",
+                "file": "Securite/as400.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-05-17-logs-winston"
+              "title": "as400"
             }
           }
         ],
@@ -137,7 +137,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Sessions/2026-05-17-logs-winston.md",
+                "file": "Securite/as400.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +147,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Rétrolien pour 2026-05-17-logs-winston"
+              "title": "Rétrolien pour as400"
             }
           },
           {
@@ -156,12 +156,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Sessions/2026-05-17-logs-winston.md",
+                "file": "Securite/as400.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Liens sortants de 2026-05-17-logs-winston"
+              "title": "Liens sortants de as400"
             }
           },
           {
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Sessions/2026-05-17-logs-winston.md",
+                "file": "Securite/as400.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Plan de 2026-05-17-logs-winston"
+              "title": "Plan de as400"
             }
           }
         ]
@@ -366,15 +366,20 @@
       }
     ]
   },
-  "active": "43ef9f66d590f1d7",
+  "active": "c46a2ed5e1221cbd",
   "lastOpenFiles": [
+    "Sessions/2026-05-17-vault-sync.md",
+    "Projet/roadmap.md",
+    "Securite/as400-mouvements-sortant.md",
+    "Securite/as400.md",
+    "Securite/as400-fiche-expert.md",
+    "Sessions/2026-05-17-as400-phase1-setup.md",
+    "Sessions/2026-05-17-logs-winston.md",
     "Architecture/grafana.md",
     "Architecture/observability.md",
     "Securite/Securite.md",
     "Securite/checklist.md",
-    "Sessions/2026-05-17-logs-winston.md",
     "Sessions/2026-05-07-hologram-rrd.md",
-    "Projet/roadmap.md",
     "Architecture/commands-logs.md",
     "Sessions/2026-05-17-as400-cursor-sync.md",
     "Securite/etat-actuel.md",
@@ -389,11 +394,6 @@
     "Frontend/ServerError.md",
     "Frontend/NotFound.md",
     "Frontend/Cookies.md",
-    "Frontend/MentionsLegales.md",
-    "Frontend/Privacy.md",
-    "Frontend/Terms.md",
-    "Frontend/Livraison.md",
-    "Frontend/ShippingReturns.md",
     "Securite",
     "Database/tables",
     "Database",

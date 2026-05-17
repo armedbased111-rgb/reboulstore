@@ -3,13 +3,61 @@ type: architecture
 node: grafana
 maj: 2026-05-17
 ---
-# Grafana — Guide d’utilisation (logs prod)
+# Grafana — Logs production Reboul Store
 
-Liens : [[Architecture/observability]] · [[Architecture/commands-logs]] · [[Architecture/vps]] · [[Projet/roadmap]]
+> **Nœud de référence** : accès, mot de passe, commandes, ce qu’on surveille.  
+> Infra Docker : [[Architecture/observability]] · CLI : [[Architecture/commands-logs]]
+
+Liens : [[Architecture/Architecture]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs-winston]]
 
 ---
 
-## À quoi ça sert ?
+## Référence rapide
+
+| Question | Réponse |
+|----------|---------|
+| **À quoi ça sert ?** | Voir et chercher les **logs du site** (erreurs, login, checkout) sur **30 jours**, sans `docker logs` à la main |
+| **Où ?** | Sur le VPS uniquement — **pas** sur Internet |
+| **Comment y aller ?** | Tunnel SSH puis navigateur |
+| **Login / mdp ?** | User `admin` · mdp dans `.env.observability` sur le VPS (jamais dans git) |
+| **Quoi qu’on ne track pas ?** | Pas les ventes / stocks / AS400 — uniquement **logs techniques** Winston |
+
+### Commandes essentielles
+
+```bash
+# 1. Tunnel (terminal ouvert)
+ssh -L 3030:127.0.0.1:3030 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N
+
+# 2. Navigateur
+# http://localhost:3030
+
+# 3. Mot de passe Grafana (sur le VPS)
+ssh -i ~/.ssh/id_ed25519 deploy@152.228.218.35 \
+  'grep GRAFANA_ADMIN /var/www/reboulstore/.env.observability'
+```
+
+| Action | Où dans Grafana |
+|--------|-----------------|
+| Vue d’ensemble | **Dashboards** → **Reboul Store — Logs** |
+| Recherche libre | **Explore** → Loki → `{job="winston"} \|= "checkout_error"` |
+| Période | En haut à droite → **Last 24 hours** |
+
+### Ce qu’on track (4 événements + tout le JSON)
+
+| `event` (champ JSON) | Signification |
+|----------------------|---------------|
+| `auth_login_failed` | Mauvais email / mot de passe |
+| `checkout_error` | Erreur checkout (ex. panier vide) |
+| `http_5xx` | Erreur serveur |
+| `stripe_webhook_failed` | Webhook Stripe invalide |
+
+Chaque ligne a un **`requestId`** → recouper avec l’en-tête HTTP `X-Request-Id` côté API.
+
+**Alertes email** (en plus de Grafana) : cron */15 sur le VPS si pic 5xx ou stack down → [[Architecture/commands-logs#Alertes]]
+
+---
+
+## À quoi ça sert ? (détail)
 
 **Grafana** = interface web pour **chercher et visualiser** les logs de production Reboul Store (et bientôt Admin), sans enchaîner des `docker logs` sur le VPS.
 

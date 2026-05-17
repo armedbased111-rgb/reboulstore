@@ -10,8 +10,9 @@ Guide d'intégration AS400 ↔ Reboul Store via **SFTP bidirectionnel** sur le V
 
 | Phase | Statut | Contenu |
 |-------|--------|---------|
-| **Phase 1** | 🔜 À faire | Setup SFTP : user `sftp-as400`, chroot, `entrant/` + `sortant/` |
-| **Phase 2** | ⏳ Après 1er CSV | Module NestJS `sync-as400`, cron horaire, logs, alertes |
+| **Phase 1** | ✅ VPS · ⏳ envoi fiche | SFTP : user `sftp-as400`, chroot, `entrant/` + `sortant/` |
+| **Phase 2** | ⏸️ Après 1er CSV | `entrant/` — parser stocks → DB |
+| **Phase 3** | 🔜 Spec en cours | `sortant/` — export commandes → CSV |
 
 **Source de vérité** : `obsidian-vault/Securite/as400.md`
 
@@ -52,14 +53,19 @@ Identifiants à transmettre : voir tableau dans `obsidian-vault/Securite/as400.m
 
 ---
 
-## Phase 2 — Backend (après premier fichier reçu)
+## Phase 2 — Entrant `entrant/` (après premier CSV stocks)
 
-**Ne pas implémenter avant d'avoir reçu un CSV réel** — adapter le parser au format réel.
+**Ne pas coder avant un CSV réel** dans `entrant/`.
 
-- Module NestJS `sync-as400` : parser CSV entrant → mise à jour stocks DB
-- Cron horaire : traitement entrant + génération sortant (mouvements/commandes)
-- Logs + alerte si aucun fichier depuis 2h
-- Réconciliation hebdomadaire AS400 ↔ DB
+- Parser CSV → mise à jour stocks DB
+- Cron horaire + archivage + alerte si pas de fichier 2h
+- Réconciliation hebdo AS400 ↔ DB
+
+## Phase 3 — Sortant `sortant/` (spec en cours)
+
+- Définir spec CSV dans `obsidian-vault/Securite/as400.md` (section Phase 3)
+- Puis module NestJS export commandes payées → `sortant/`
+- Cron horaire + anti-doublon
 
 Référence roadmap : `obsidian-vault/Projet/roadmap.md` → section « AS400 — Intégration SFTP »
 
