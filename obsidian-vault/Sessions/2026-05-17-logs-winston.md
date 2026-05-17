@@ -1,11 +1,11 @@
 ---
 type: session
 date: 2026-05-17
-sujet: Logs Phases 1–3 — Winston, Loki, Grafana
+sujet: Logs & observabilité — Phases 1–4 complètes
 statut: terminé
-note: Grafana OK VPS ; dashboard fix job=winston ; node [[Architecture/grafana]]
+note: Commit feat(logging) ; Grafana VPS validé ; guide [[Architecture/grafana]]
 ---
-# Session — Logs & observabilité (Phases 1–3)
+# Session — Logs & observabilité (Phases 1–4)
 
 ## Objectif
 
@@ -31,14 +31,21 @@ Logs structurés avant lancement + stack centralisée Loki/Grafana.
 - Fix requêtes : `{job="winston"}` (pas `container`)
 - **Guide** : [[Architecture/grafana]]
 
-## Reste (Phase 4)
+## Phase 4 — Alertes & CLI ✅
 
-- [ ] Alertes email 5xx
-- [ ] Aligner doc `./rcli server logs`
-- [ ] Commit + push repo (observability pas encore sur git remote)
+- `scripts/check-log-alerts.sh` + cron */15 sur VPS (`LOG_ALERT_EMAIL`)
+- `./rcli logs guide` · `logs events` · `server logs --events`
+- Commit : `feat(logging)` (observability, CLI, vault)
+
+## Bilan
+
+Section **Logs & observabilité** roadmap : **clôturée** avant lancement (hors évolutions futures type plus de dashboards).
+
+**Doc utilisateur** : [[Architecture/grafana]] (mdp, tunnel, LogQL, events, alertes).
 
 ## Fichiers clés
 
 - Backend : `logger.config.ts`, `log-event.ts`, `request-id.middleware.ts`, filters/interceptors
 - Docker : entrypoints, `docker-compose.prod.yml`, `docker-compose.observability.yml`
+- Scripts : `setup-observability.sh`, `check-log-alerts.sh`, logrotate backup
 - Vault : [[Architecture/grafana]], [[Architecture/observability]], [[Architecture/commands-logs]]

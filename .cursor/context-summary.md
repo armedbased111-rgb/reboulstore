@@ -1,11 +1,11 @@
 # Résumé de contexte — Reboul Store
 
-**Généré le** : 17/05/2026 18:33
+**Généré le** : 17/05/2026 18:39
 **Source** : vault Obsidian (`obsidian-vault/`)
 
 ## Progression globale
 
-**Tâches** : 33/82 cochées dans `Projet/roadmap.md`
+**Tâches** : 35/82 cochées dans `Projet/roadmap.md`
 
 ## Sections roadmap
 
@@ -21,11 +21,11 @@
   - [ ] `react-helmet-async` sur toutes les pages principales
   - [ ] Titles + meta descriptions propres (FR) par page
   - [ ] Open Graph minimal (title, description, image) — s'appuie sur [[Backend/og]]
-- 🟡 **Technique & Sécurité** — 33/38
+- 🟡 **Technique & Sécurité** — 34/38
   - [ ] **Phase 1** — Setup SFTP basique : user `sftp-as400`, chroot, `entrant/` + `sort…
   - [ ] **Phase 2** *(après premier CSV reçu)* — Parser NestJS adapté au format réel, cr…
   - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
-- 🟡 **Lancement** — 0/8
+- 🟡 **Lancement** — 1/8
   - [ ] Basculer clés Stripe test → live — ⏳ en attente Julie
   - [ ] Valider webhooks Stripe en prod — ⏳ en attente Julie
   - [ ] Test flux paiement complet mode live (PaymentIntent → success → commande créée) …

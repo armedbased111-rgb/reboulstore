@@ -1,7 +1,7 @@
 ---
 type: securite
 node: etat-actuel
-maj: 2026-05-11 (soir)
+maj: 2026-05-17
 ---
 # Sécurité — État actuel
 
@@ -50,6 +50,21 @@ Référence infra : [[Architecture/vps]]
   - `https://www.reboulstore.com/api/health` (API)
   - Alertes email : `armedbased111@gmail.com`
 - **Commande toggle maintenance** : `./rcli server maintenance [on|off|status]`
+
+## Logs & Observabilité ✅ 17/05/2026
+
+- **Winston** : logs JSON structurés en prod — `requestId`, `timestamp`, `level`, `context`
+  - Events trackés : `auth_login_failed`, `http_5xx`, `stripe_webhook_failed`, `checkout_error`
+  - Volume Docker : `logs_data_prod` → `/app/logs/combined.log` (backend prod)
+- **Loki + Promtail** : centralisation logs Docker + fichiers Winston — rétention 30 jours
+- **Grafana** : dashboard **Reboul Store — Logs** — 5xx, login_failed, checkout_error, volume
+  - Accès : tunnel SSH `ssh -L 3030:127.0.0.1:3030 deploy@152.228.218.35 -N` → `http://localhost:3030`
+  - Bind `127.0.0.1:3030` uniquement (non exposé sur Internet)
+  - Mdp dans `.env.observability` sur le VPS (jamais commité)
+- **Alertes email** : cron `*/15` — seuil 5× `http_5xx` / 15 min + silence Winston ≥ 6h + stack down
+- **CLI** : `./rcli logs guide` · `./rcli logs events --last 1h` · `./rcli server logs backend -f`
+
+Référence : [[Architecture/grafana]] · [[Architecture/observability]] · [[Architecture/commands-logs]]
 
 ## Frontend
 

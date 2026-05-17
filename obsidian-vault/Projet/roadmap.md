@@ -82,7 +82,7 @@ Détail complet → [[Securite/Securite]]
 
 ### Logs & observabilité *(avant lancement)*
 
-> **17/05/2026** — Logs Phases 1–3 ✅ · Guide Grafana : [[Architecture/grafana]] · Session : [[Sessions/2026-05-17-logs-winston]] · CLI : [[Architecture/commands-logs]]
+> **17/05/2026** — **Logs Phases 1–4 ✅ clôturées** · Guide : [[Architecture/grafana]] · Session : [[Sessions/2026-05-17-logs-winston]]
 
 **Phase 1 — Logs applicatifs NestJS (Winston)**
 - [x] Installer `winston` + `nest-winston`, activer `getLoggerConfig()` dans `app.module.ts` ✅ 17/05/2026
@@ -123,7 +123,7 @@ Détail complet → [[Securite/Securite]]
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
 - [ ] Tests non-régression API — endpoints critiques
 - [x] Checklist pré-lancement : domaine ✅, SSL ✅, backup auto ✅, variables prod ✅, UptimeRobot ✅
-- [ ] Checklist pré-lancement : stack logs centralisée (Loki/Grafana Phase 3) — Winston Phase 1 ✅
+- [x] Checklist pré-lancement : stack logs (Winston + Loki/Grafana + alertes cron) ✅ 17/05/2026
 
 ---
 
@@ -135,5 +135,5 @@ Détail complet → [[Securite/Securite]]
 - [ ] Smoke tests prod : catalog → produit → panier → checkout → confirmation
 - [ ] Smoke tests auth : login / register / profile
 - [ ] Smoke tests pages légales / contact — ⏳ en attente Julie
-- [ ] Monitoring en place — UptimeRobot ✅ + stack logs (Grafana/alertes 5xx) + `./rcli server monitor`
+- [x] Monitoring en place — UptimeRobot ✅ + Grafana/Loki + alertes email cron ✅ 17/05/2026 · `./rcli server monitor`
 - [ ] Ouverture publique
