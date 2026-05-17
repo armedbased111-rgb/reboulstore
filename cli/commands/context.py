@@ -1,142 +1,146 @@
-"""
-Commandes pour gérer le contexte
-"""
+"""Contexte Cursor — génération et sync depuis le vault Obsidian."""
 
-from pathlib import Path
+from __future__ import annotations
+
 from datetime import datetime
-import re
+from typing import Dict
 
-ROADMAP_PATH = Path(__file__).parent.parent.parent / "docs" / "context" / "ROADMAP_COMPLETE.md"
-CONTEXT_PATH = Path(__file__).parent.parent.parent / "docs" / "context" / "CONTEXT.md"
-BACKEND_PATH = Path(__file__).parent.parent.parent / "backend" / "BACKEND.md"
-FRONTEND_PATH = Path(__file__).parent.parent.parent / "frontend" / "FRONTEND.md"
+from utils.docs_syncer import synchronize_all_docs
+from utils.vault_paths import (
+    CURSOR_CONTEXT_SUMMARY,
+    REBOUL_PATH,
+    ROADMAP_PATH,
+    SESSIONS_DIR,
+    extract_sections,
+    global_task_stats,
+    resolve_roadmap_path,
+    touch_roadmap_maj,
+)
+
+
+def _read_reboul_excerpt(max_chars: int = 600) -> str:
+    if not REBOUL_PATH.exists():
+        return "_REBOUL.md introuvable_"
+    text = REBOUL_PATH.read_text(encoding="utf-8")
+    # Corps après premier titre
+    if "# " in text:
+        text = text.split("# ", 1)[-1]
+        text = "# " + text
+    return text.strip()[:max_chars] + ("..." if len(text) > max_chars else "")
+
+
+def _latest_sessions(n: int = 3) -> str:
+    if not SESSIONS_DIR.is_dir():
+        return ""
+    files = sorted(SESSIONS_DIR.glob("*.md"), reverse=True)[:n]
+    if not files:
+        return ""
+    lines = ["### Dernières sessions\n"]
+    for f in files:
+        lines.append(f"- `{f.name}`")
+    return "\n".join(lines) + "\n"
+
 
 class ContextGenerator:
-    """Générer un résumé de contexte pour Cursor"""
-    
     @staticmethod
-    def create_summary():
-        """Créer un résumé structuré du contexte"""
-        roadmap_content = ROADMAP_PATH.read_text(encoding='utf-8')
-        context_content = CONTEXT_PATH.read_text(encoding='utf-8')
-        
-        # Extraire les phases en cours
-        phase_pattern = r'## (.*Phase (\d+)[^✅]*?)(\s*✅)?\n(.*?)(?=## |$)'
-        phases_in_progress = []
-        phases_complete = []
-        
-        for match in re.finditer(phase_pattern, roadmap_content, re.DOTALL):
-            phase_num = match.group(2)
-            phase_title = match.group(1).strip()
-            is_complete = match.group(3) is not None
-            phase_content = match.group(4)
-            
-            # Compter les tâches
-            total_tasks = len(re.findall(r'- \[[ x]\]', phase_content))
-            completed_tasks = len(re.findall(r'- \[x\]', phase_content))
-            
-            phase_info = {
-                'num': phase_num,
-                'title': phase_title,
-                'completed': completed_tasks,
-                'total': total_tasks,
-                'progress': f"{completed_tasks}/{total_tasks}"
-            }
-            
-            if is_complete:
-                phases_complete.append(phase_info)
-            else:
-                phases_in_progress.append(phase_info)
-        
-        # Générer le résumé
-        summary = f"""# 📊 Résumé de contexte - Reboul Store
+    def create_summary() -> str:
+        roadmap_path = resolve_roadmap_path()
+        if not roadmap_path.exists():
+            return "# Erreur\n\nRoadmap vault introuvable.\n"
 
-**Généré le** : {datetime.now().strftime('%d/%m/%Y %H:%M')}
+        content = roadmap_path.read_text(encoding="utf-8")
+        sections = extract_sections(content)
+        done, total = global_task_stats(content)
 
-## 🎯 État actuel
+        summary = f"""# Résumé de contexte — Reboul Store
 
-### Phases en cours ({len(phases_in_progress)})
+**Généré le** : {datetime.now().strftime("%d/%m/%Y %H:%M")}
+**Source** : vault Obsidian (`obsidian-vault/`)
+
+## Progression globale
+
+**Tâches** : {done}/{total} cochées dans `Projet/roadmap.md`
+
+## Sections roadmap
+
 """
-        
-        for phase in phases_in_progress[:5]:  # Top 5
-            summary += f"- **Phase {phase['num']}** : {phase['title']} ({phase['progress']} tâches)\n"
-        
-        summary += f"\n### Phases complètes ({len(phases_complete)})\n"
-        summary += f"Dernières phases complétées : {', '.join([f'Phase {p['num']}' for p in phases_complete[-3:]])}\n"
-        
-        # Extraire l'objectif
-        objective_match = re.search(r'## 🎯 OBJECTIF.*?\n\n(.*?)\n\n', roadmap_content, re.DOTALL)
-        if objective_match:
-            summary += f"\n## 🎯 Objectif\n\n{objective_match.group(1).strip()}\n"
-        
-        # Extraire l'état actuel du contexte
-        current_state_match = re.search(r'## 📊 État actuel.*?\n\n(.*?)(?=## |$)', context_content, re.DOTALL)
-        if current_state_match:
-            summary += f"\n## 📊 État actuel\n\n{current_state_match.group(1).strip()[:500]}...\n"
-        
-        summary += """
-## 📚 Fichiers de référence
+        for title, sec in sections.items():
+            if sec.total == 0:
+                continue
+            icon = "✅" if sec.completed == sec.total else "🟡"
+            summary += f"- {icon} **{title}** — {sec.progress}\n"
+            for task in sec.pending_tasks[:3]:
+                summary += f"  - [ ] {task[:80]}{'…' if len(task) > 80 else ''}\n"
 
-- `docs/context/ROADMAP_COMPLETE.md` : Roadmap complète (source de vérité)
-- `docs/context/CONTEXT.md` : Contexte général
-- `backend/BACKEND.md` : Documentation backend
-- `frontend/FRONTEND.md` : Documentation frontend
+        summary += f"""
+## État projet (extrait REBOUL.md)
 
-## 🔗 Commandes Cursor utiles
+{_read_reboul_excerpt()}
 
-- `/getcontext [sujet]` : Recherche de contexte
-- `/roadmap-phase-workflow` : Créer/modifier une phase
-- `/implement-phase [numéro]` : Implémenter une phase
-- `/update-roadmap` : Mettre à jour la roadmap
+{_latest_sessions()}
+
+## Fichiers de référence
+
+| Besoin | Fichier |
+|--------|---------|
+| État global | `obsidian-vault/REBOUL.md` |
+| Roadmap | `obsidian-vault/Projet/roadmap.md` |
+| Tâches | `obsidian-vault/TODO.md` |
+| Backend | `backend/BACKEND.md` |
+| Frontend | `frontend/FRONTEND.md` |
+
+## Commandes utiles
+
+```bash
+./rcli roadmap update --task "libellé partiel de la tâche"
+./rcli context sync          # maj dates + BACKEND/FRONTEND
+./rcli context generate      # ce fichier
+./rcli docs sync             # alias sync technique
+```
+
+> Anciens fichiers obsolètes : `docs/context/ROADMAP_COMPLETE.md`, `CONTEXT.md`
 """
-        
         return summary
 
+
 class ContextSyncer:
-    """Synchroniser les fichiers de contexte"""
-    
     @staticmethod
-    def synchronize():
-        """Synchroniser tous les fichiers de contexte"""
-        results = {}
-        
-        # Synchroniser CONTEXT.md avec ROADMAP_COMPLETE.md
+    def synchronize() -> Dict[str, str]:
+        """Sync vault + docs techniques + résumé Cursor."""
+        results: Dict[str, str] = {}
+
+        roadmap_path = resolve_roadmap_path()
+        if roadmap_path.exists():
+            try:
+                content = roadmap_path.read_text(encoding="utf-8")
+                content = touch_roadmap_maj(content)
+                roadmap_path.write_text(content, encoding="utf-8")
+                results["obsidian-vault/Projet/roadmap.md"] = "✅ maj mise à jour"
+            except Exception as e:
+                results["obsidian-vault/Projet/roadmap.md"] = f"❌ {e}"
+        else:
+            results["obsidian-vault/Projet/roadmap.md"] = "❌ fichier absent"
+
+        # BACKEND.md / FRONTEND.md (dates)
+        doc_results = synchronize_all_docs()
+        results.update(doc_results)
+
+        # Résumé Cursor
         try:
-            roadmap_content = ROADMAP_PATH.read_text(encoding='utf-8')
-            context_content = CONTEXT_PATH.read_text(encoding='utf-8')
-            
-            # Extraire la phase actuelle de la roadmap
-            phase_pattern = r'## (.*Phase (\d+)[^✅]*?)(\s*✅)?\n(.*?)(?=## |$)'
-            last_incomplete = None
-            
-            for match in re.finditer(phase_pattern, roadmap_content, re.DOTALL):
-                is_complete = match.group(3) is None
-                if not is_complete:
-                    last_incomplete = match.group(2)
-            
-            # Mettre à jour CONTEXT.md si nécessaire
-            if last_incomplete:
-                # Pattern pour trouver "Phase actuelle"
-                context_pattern = r'(Phase actuelle.*?:.*?Phase )\d+'
-                if re.search(context_pattern, context_content):
-                    context_content = re.sub(
-                        context_pattern,
-                        f'\\g<1>{last_incomplete}',
-                        context_content
-                    )
-                    CONTEXT_PATH.write_text(context_content, encoding='utf-8')
-                    results['CONTEXT.md'] = '✅ Synchronisé'
-                else:
-                    results['CONTEXT.md'] = '⚠️  Pattern non trouvé'
-            else:
-                results['CONTEXT.md'] = '✅ Aucune mise à jour nécessaire'
-        
+            summary = ContextGenerator.create_summary()
+            CURSOR_CONTEXT_SUMMARY.parent.mkdir(parents=True, exist_ok=True)
+            CURSOR_CONTEXT_SUMMARY.write_text(summary, encoding="utf-8")
+            results[".cursor/context-summary.md"] = "✅ généré"
         except Exception as e:
-            results['CONTEXT.md'] = f'❌ Erreur: {str(e)}'
-        
+            results[".cursor/context-summary.md"] = f"❌ {e}"
+
+        if REBOUL_PATH.exists():
+            results["obsidian-vault/REBOUL.md"] = "✅ présent (mise à jour manuelle si besoin)"
+        else:
+            results["obsidian-vault/REBOUL.md"] = "⚠️ absent"
+
         return results
 
-# Export pour main.py
+
 generate_context = ContextGenerator()
 sync_context = ContextSyncer()
-

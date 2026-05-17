@@ -1,4 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { logEvent } from '../../common/log-event';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +9,8 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -36,11 +39,21 @@ export class AuthService {
     });
 
     if (!user || !user.password) {
+      logEvent(this.logger, 'warn', {
+        event: 'auth_login_failed',
+        email,
+        reason: 'user_not_found',
+      });
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      logEvent(this.logger, 'warn', {
+        event: 'auth_login_failed',
+        email,
+        reason: 'invalid_password',
+      });
       throw new UnauthorizedException('Invalid credentials');
     }
 

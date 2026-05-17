@@ -158,4 +158,4 @@ name,reference,price,brand,category,collection,color,size,stock,sku
 
 - **Document principal** : `docs/COLLECTION_REAL.md`
 - **Workflow Images** : `/images-workflow`
-- **Phase 24** : `docs/context/ROADMAP_COMPLETE.md` (Section Phase 24)
+- **Phase 24** : `obsidian-vault/Projet/roadmap.md` (Section Phase 24)

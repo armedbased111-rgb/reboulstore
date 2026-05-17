@@ -80,19 +80,24 @@ Voir `.cursor/commands/cli-server-workflow.md` pour toutes les commandes serveur
 # Vérifier la cohérence
 ./rcli roadmap check
 
-# Afficher les détails d'une phase
-./rcli roadmap phase 15
+# Vue d'ensemble des sections thématiques
+./rcli roadmap status
+
+# Détail d'une section
+./rcli roadmap section "Frontend & UX"
 ```
 
-### Context Generation
+### Context Generation (vault Obsidian)
 
 ```bash
-# Générer un résumé de contexte pour Cursor
-./rcli context generate
-
-# Synchroniser tous les fichiers de contexte
+# Sync vault + BACKEND/FRONTEND + .cursor/context-summary.md
 ./rcli context sync
+
+# Régénérer uniquement le résumé Cursor
+./rcli context generate
 ```
+
+> Source de vérité : `obsidian-vault/REBOUL.md` + `obsidian-vault/Projet/roadmap.md`
 
 ### Code Generation
 
@@ -132,37 +137,27 @@ Voir `.cursor/commands/cli-server-workflow.md` pour toutes les commandes serveur
 ### Après avoir terminé une tâche
 
 ```bash
-# 1. Cocher la tâche dans la roadmap
-./rcli roadmap update --task "15.1 Configuration Cloudinary"
+# 1. Cocher + sync auto (vault, BACKEND/FRONTEND, context-summary)
+./rcli roadmap update --task "Upload batch — Stone Island"
 
 # 2. Vérifier la cohérence
 ./rcli roadmap check
 
-# 3. Si la phase est complète, la marquer
-./rcli roadmap update --phase 15 --complete
+# 3. (optionnel) Toute une section d'un coup
+./rcli roadmap update --section "SEO & Métadonnées" --complete
 
-# 4. Synchroniser le contexte
+# 4. Sync manuel si --no-sync utilisé avant
 ./rcli context sync
-
-# 5. Générer un nouveau résumé pour Cursor
-./rcli context generate
 ```
 
-### Avant de commencer une nouvelle phase
+`roadmap update` lance **automatiquement** `context sync` sauf avec `--no-sync`.
+
+### Avant de commencer une session
 
 ```bash
-# 1. Vérifier l'état de la roadmap
-./rcli roadmap check
-
-# 2. Obtenir les détails de la phase précédente
-./rcli roadmap phase 14
-
-# 3. Générer un résumé de contexte à jour
-./rcli context generate
-
-# 4. Vérifier l'état du serveur (avant de commencer)
+./rcli roadmap status
+./rcli context generate    # ou ./rcli context sync
 ./rcli server status
-./rcli server monitor --once
 ```
 
 ### Créer un nouveau module backend

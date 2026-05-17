@@ -1,30 +1,20 @@
-/**
- * Configuration Winston pour les logs centralisés
- *
- * ⚠️ INSTALLATION REQUISE :
- * npm install winston nest-winston
- *
- * Formats :
- * - Development : Console avec couleurs
- * - Production : JSON structuré dans fichiers
- *
- * Pour activer :
- * 1. Installer : npm install winston nest-winston
- * 2. Importer dans app.module.ts : WinstonModule.forRoot(getLoggerConfig())
- * 3. Décommenter le code ci-dessous
- */
-
-// Décommenter quand Winston est installé
-/*
 import { WinstonModuleOptions } from 'nest-winston';
 import * as winston from 'winston';
 import { format } from 'winston';
+import { existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+
+const logDir = process.env.LOG_DIR || join(process.cwd(), 'logs');
+
+function ensureLogDir() {
+  if (!existsSync(logDir)) {
+    mkdirSync(logDir, { recursive: true });
+  }
+}
 
 export const getLoggerConfig = (): WinstonModuleOptions => {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isDevelopment = process.env.NODE_ENV !== 'production';
 
-  // Format pour développement (console colorée)
   const developmentFormat = format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.errors({ stack: true }),
@@ -33,60 +23,43 @@ export const getLoggerConfig = (): WinstonModuleOptions => {
       const contextStr = context ? `[${context}]` : '';
       const stackStr = stack ? `\n${stack}` : '';
       return `${timestamp} ${level} ${contextStr} ${message}${stackStr}`;
-    })
+    }),
   );
 
-  // Format pour production (JSON structuré)
   const productionFormat = format.combine(
     format.timestamp(),
     format.errors({ stack: true }),
-    format.json()
+    format.json(),
   );
 
-  const transports: winston.transport[] = [];
-
-  // Console (toujours actif)
-  transports.push(
+  const transports: winston.transport[] = [
     new winston.transports.Console({
       format: isDevelopment ? developmentFormat : productionFormat,
       level: isDevelopment ? 'debug' : 'info',
-    })
-  );
+    }),
+  ];
 
-  // Fichiers en production uniquement
-  if (isProduction) {
-    // Logs d'erreur
+  if (!isDevelopment) {
+    ensureLogDir();
     transports.push(
       new winston.transports.File({
-        filename: 'logs/error.log',
+        filename: join(logDir, 'error.log'),
         level: 'error',
         format: productionFormat,
-        maxsize: 10485760, // 10MB
+        maxsize: 10 * 1024 * 1024,
         maxFiles: 5,
-      })
-    );
-
-    // Tous les logs
-    transports.push(
+      }),
       new winston.transports.File({
-        filename: 'logs/combined.log',
+        filename: join(logDir, 'combined.log'),
         format: productionFormat,
-        maxsize: 10485760, // 10MB
+        maxsize: 10 * 1024 * 1024,
         maxFiles: 5,
-      })
+      }),
     );
   }
 
   return {
     transports,
-    // Niveau de log global
     level: isDevelopment ? 'debug' : 'info',
   };
-};
-*/
-
-// Export vide pour l'instant (sera utilisé quand Winston est installé)
-export const getLoggerConfig = () => {
-  // Configuration vide - sera remplie quand Winston est installé
-  return {};
 };

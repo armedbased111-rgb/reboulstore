@@ -2,16 +2,16 @@
 
 **Commande** : `/roadmap-phase-workflow`
 
-Workflow pour **concevoir, ajouter et contextualiser de nouvelles phases** dans `docs/context/ROADMAP_COMPLETE.md`, en restant cohérent avec tout le projet.
+Workflow pour **concevoir, ajouter et contextualiser de nouvelles phases** dans `obsidian-vault/Projet/roadmap.md`, en restant cohérent avec tout le projet.
 
 ---
 
 ## 📂 Fichiers impliqués
 
-- `docs/context/ROADMAP_COMPLETE.md` ⭐  
+- `obsidian-vault/Projet/roadmap.md` ⭐  
   → Roadmap complète, toutes les phases, **source de vérité**.
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Contexte général + “État actuel”.
 
 - `docs/context/BRAINSTORMING_ROADMAP.md`  
@@ -45,7 +45,7 @@ Utiliser `/roadmap-phase-workflow` quand :
 3. **Valider les décisions** dans :
    - `docs/context/CLARIFICATIONS_BRAINSTORMING.md`
 
-4. **Créer la phase** dans `docs/context/ROADMAP_COMPLETE.md` :
+4. **Créer la phase** dans `obsidian-vault/Projet/roadmap.md` :
    - Ajouter un bloc :
 
 ```markdown
@@ -60,7 +60,7 @@ Utiliser `/roadmap-phase-workflow` quand :
 - [ ] Tâche 2
 ```
 
-5. **Mettre à jour** `docs/context/CONTEXT.md` si ça change l’“État actuel” ou les objectifs globaux.
+5. **Mettre à jour** `obsidian-vault/REBOUL.md` si ça change l’“État actuel” ou les objectifs globaux.
 
 ---
 
@@ -69,8 +69,8 @@ Utiliser `/roadmap-phase-workflow` quand :
 Avant de créer une phase :
 
 1. Relire les sections **Objectifs** / **Phases suivantes** de :
-   - `docs/context/ROADMAP_COMPLETE.md`
-   - `docs/context/CONTEXT.md`
+   - `obsidian-vault/Projet/roadmap.md`
+   - `obsidian-vault/REBOUL.md`
 2. Vérifier :
    - Est‑ce que la nouvelle phase est vraiment nécessaire maintenant ?  
    - Est‑ce qu’elle ne duplique pas une phase déjà prévue ?  
@@ -87,7 +87,7 @@ Avant de créer une phase :
    - Noter les raisons dans `docs/context/CLARIFICATIONS_BRAINSTORMING.md`.
 4. Si tu termines la phase :
    - Ajouter un ✅ au titre de la phase.
-   - Mettre à jour `docs/context/CONTEXT.md` (“État actuel”).
+   - Mettre à jour `obsidian-vault/REBOUL.md` (“État actuel”).
 
 ---
 
@@ -96,8 +96,8 @@ Avant de créer une phase :
 Quand tu tapes `/roadmap-phase-workflow`, l’IA doit :
 
 1. Lire :
-   - `docs/context/ROADMAP_COMPLETE.md`
-   - `docs/context/CONTEXT.md`
+   - `obsidian-vault/Projet/roadmap.md`
+   - `obsidian-vault/REBOUL.md`
 2. Te poser des questions :
    - “Quel est l’objectif de la nouvelle phase ?”
    - “Côté backend, qu’est‑ce qu’il faut ?”

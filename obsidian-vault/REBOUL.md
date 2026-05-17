@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-05-11
+maj: 2026-05-17
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -26,10 +26,11 @@ Admin Centrale mutualisée pour tous les sites.
 |------|--------|
 | Backend NestJS | Stable et complet — 18 modules |
 | Admin Centrale | Fonctionnelle — import, gestion quotidienne |
-| Infrastructure prod | En place — sécurité renforcée (11/05/2026) |
+| Infrastructure prod | ✅ Stable — deploy OK, monitoring UptimeRobot actif (11/05/2026) |
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
-| Sécurité | ✅ Helmet, rate limiting, VPS durci, Syncthing supprimé |
+| Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
+| Logs | 🟡 Phase 1 Winston en code — test local + deploy prod à valider → [[Sessions/2026-05-17-logs-winston]] |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
@@ -80,7 +81,7 @@ Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ## Dernière session
 
-[[Sessions/2026-05-11-securite]]
+[[Sessions/2026-05-17-logs-winston]]
 
 ---
 

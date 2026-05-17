@@ -17,15 +17,15 @@ Dans le chat Cursor, tape :
 ## 📂 Mapping sujets → fichiers (version actuelle, rangée dans `docs/`)
 
 - **Architecture globale / multi‑sites / admin**  
-  - `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md`  
+  - `obsidian-vault/Architecture/Architecture.md`  
   - `docs/architecture/ARCHITECTURE_MULTI_SHOPS.md`  
-  - `docs/context/CONTEXT.md`
+  - `obsidian-vault/REBOUL.md`
 
 - **Roadmap & état du projet**  
-  - `docs/context/ROADMAP_COMPLETE.md` (source de vérité)  
-  - `docs/context/PROJECT_STATUS.md`  
-  - `docs/context/BRAINSTORMING_ROADMAP.md`  
-  - `docs/context/CLARIFICATIONS_BRAINSTORMING.md`
+  - `obsidian-vault/REBOUL.md` — état global (lire en premier)  
+  - `obsidian-vault/Projet/roadmap.md` — roadmap thématique (source de vérité)  
+  - `obsidian-vault/TODO.md` — tâches agrégées (plugin Tasks)  
+  - `obsidian-vault/Sessions/` — logs de sessions récentes
 
 - **Backend (API, entités, modules)**  
   - `backend/BACKEND.md`  
@@ -60,16 +60,16 @@ Recherche rapide de contexte dans le projet Reboul Store.
 ## 📚 Fichiers de référence principaux
 
 ### Architecture & Structure
-- **docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md** : Architecture complète admin centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
+- **obsidian-vault/Architecture/Architecture.md** : Architecture complète admin centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
 - **docs/architecture/ARCHITECTURE_MULTI_SHOPS.md** : Architecture multi-shops
-- **docs/context/CONTEXT.md** : Contexte général, état actuel du projet
+- **obsidian-vault/REBOUL.md** : Contexte général, état actuel du projet
 - **docs/context/API_CONFIG.md** : Configuration API (ports, endpoints, variables d'environnement)
 
-### Roadmap & Planning
-- **docs/context/ROADMAP_COMPLETE.md** : Roadmap détaillée (24 phases) - **RÉFÉRENCE PRINCIPALE** ⭐
-- **docs/context/BRAINSTORMING_ROADMAP.md** : Brainstorming & décisions
-- **docs/context/CLARIFICATIONS_BRAINSTORMING.md** : Clarifications validées
-- **docs/context/PROJECT_STATUS.md** : Statut global du projet
+### Roadmap & Planning (vault Obsidian)
+- **obsidian-vault/REBOUL.md** : État global du projet — **LIRE EN PREMIER** ⭐
+- **obsidian-vault/Projet/roadmap.md** : Roadmap thématique (Images, Frontend, SEO, Sécurité, Lancement) — **RÉFÉRENCE PRINCIPALE** ⭐
+- **obsidian-vault/TODO.md** : Vue tâches agrégées
+- **obsidian-vault/Sessions/** : Historique des sessions de travail
 
 ### Documentation Frontend
 - **frontend/FRONTEND.md** : Documentation frontend (pages, composants, services, état)
@@ -108,8 +108,8 @@ Recherche rapide de contexte dans le projet Reboul Store.
 
 ### 2. Par documentation
 
-**Architecture :** `ARCHITECTURE_ADMIN_CENTRAL.md`, `CONTEXT.md`  
-**Roadmap :** `ROADMAP_COMPLETE.md`  
+**Architecture :** `obsidian-vault/Architecture/Architecture.md`  
+**Roadmap :** `obsidian-vault/Projet/roadmap.md`  
 **Workflow :** `FIGMA_WORKFLOW.md`, `ANIMATIONS_GUIDE.md`  
 **API :** `API_CONFIG.md`, `backend/BACKEND.md`  
 **Frontend :** `frontend/FRONTEND.md`, `frontend/AUTH_USAGE.md`
@@ -160,7 +160,8 @@ Recherche rapide de contexte dans le projet Reboul Store.
 **Documentation :**
 - `python cli/main.py docs generate api` : Génère `docs/API.md`
 - `python cli/main.py docs generate components` : Génère `docs/COMPONENTS.md`
-- `python cli/main.py docs sync` : Synchronise ROADMAP ↔ BACKEND.md ↔ FRONTEND.md
+- `./rcli context sync` : Vault roadmap + BACKEND.md + FRONTEND.md + `.cursor/context-summary.md`
+- `./rcli docs sync` : Mise à jour dates docs techniques (alias partiel)
 - `python cli/main.py docs changelog` : Génère `docs/CHANGELOG.md`
 
 **Analyse :**
@@ -181,8 +182,8 @@ Recherche rapide de contexte dans le projet Reboul Store.
 
 ## ⚡ Astuces
 
-1. **Toujours commencer par ROADMAP_COMPLETE.md** pour connaître la phase en cours
-2. **Consulter CONTEXT.md** pour l'état actuel du projet
+1. **Toujours commencer par `obsidian-vault/REBOUL.md`** pour connaître l'état actuel
+2. **Roadmap** : `obsidian-vault/Projet/roadmap.md`
 3. **Utiliser les fichiers de règles** `.cursor/rules/project-rules.mdc` pour les workflows
 4. **Chercher dans les dossiers `src/`** pour le code actuel
 5. **Consulter les fichiers `*.md`** pour la documentation spécifique

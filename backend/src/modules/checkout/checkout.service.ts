@@ -14,6 +14,7 @@ import { OrdersService } from '../orders/orders.service';
 import { CouponsService } from '../coupons/coupons.service';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 import { getPublicSiteUrl } from '../../config/public-site-url';
+import { logEvent } from '../../common/log-event';
 
 @Injectable()
 export class CheckoutService {
@@ -306,10 +307,13 @@ export class CheckoutService {
         );
       }
     } catch (err) {
-      this.logger.error(
-        `Webhook signature verification failed: ${err.message}`,
-      );
-      throw new BadRequestException(`Webhook Error: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      logEvent(this.logger, 'error', {
+        event: 'stripe_webhook_failed',
+        reason: 'signature_verification',
+        message,
+      });
+      throw new BadRequestException(`Webhook Error: ${message}`);
     }
 
     // Gérer les différents types d'événements

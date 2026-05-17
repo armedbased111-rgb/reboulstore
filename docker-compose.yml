@@ -10,10 +10,12 @@ services:
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
+      - ./backend/logs:/app/logs
     env_file:
       - ./backend/.env
     environment:
       - NODE_ENV=development
+      - LOG_DIR=/app/logs
       # Configuration DB : Base de données UNIQUEMENT sur le VPS (via tunnel SSH)
       # Les variables sont chargées depuis ./backend/.env
       # DB_HOST doit être host.docker.internal (tunnel SSH) ou l'IP du VPS

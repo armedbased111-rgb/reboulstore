@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { getLoggerConfig } from './config/logger.config';
+import { GlobalExceptionLoggingFilter } from './common/filters/global-exception-logging.filter';
+import { HttpLoggingInterceptor } from './common/interceptors/http-logging.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getDatabaseConfig } from './config/database.config';
@@ -32,6 +36,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    WinstonModule.forRoot(getLoggerConfig()),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -85,6 +90,14 @@ import { ScheduleModule } from '@nestjs/schedule';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionLoggingFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpLoggingInterceptor,
     },
   ],
 })

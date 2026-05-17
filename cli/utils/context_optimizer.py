@@ -9,12 +9,15 @@ import re
 
 
 def _get_context_path() -> Path:
-    """Trouver le chemin de CONTEXT.md"""
+    """Fichier principal pour l'optimiseur — vault REBOUL.md puis legacy."""
     base = Path(__file__).parent.parent.parent
+    reboul = base / "obsidian-vault" / "REBOUL.md"
+    if reboul.exists():
+        return reboul
     context = base / "docs" / "context" / "CONTEXT.md"
     if context.exists():
         return context
-    return base.parent / "docs" / "context" / "CONTEXT.md"
+    return reboul
 
 
 def _analyze_context() -> Dict:

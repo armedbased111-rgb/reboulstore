@@ -245,7 +245,7 @@ backend/src/modules/[nom-module]/
 - [ ] Entité créée si nécessaire
 - [ ] Module enregistré dans `app.module.ts`
 - [ ] Endpoints testés
-- [ ] ROADMAP_COMPLETE.md mis à jour
+- [ ] obsidian-vault/Projet/roadmap.md mis à jour
 - [ ] backend/BACKEND.md mis à jour
 - [ ] API_CONFIG.md mis à jour
 

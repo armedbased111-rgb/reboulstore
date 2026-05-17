@@ -50,7 +50,7 @@ Bonjour ! Je démarre un nouveau projet e-commerce [Nom] et j'ai besoin que tu c
 
 1. Lire et analyser le brainstorming
 2. Créer la documentation de base :
-   - ROADMAP_COMPLETE.md
+   - obsidian-vault/Projet/roadmap.md
    - CONTEXT.md
    - ARCHITECTURE_[NOM].md
    - API_CONFIG.md
@@ -74,7 +74,7 @@ Bonjour ! Je démarre un nouveau projet e-commerce [Nom] et j'ai besoin que tu c
 
 Dans le **nouveau projet**, tu dois voir au minimum :
 
-- `ROADMAP_COMPLETE.md`
+- `obsidian-vault/Projet/roadmap.md`
 - `CONTEXT.md`
 - `ARCHITECTURE_[NOM].md`
 - `API_CONFIG.md`
@@ -92,7 +92,7 @@ Si quelque chose manque : le signaler à l’IA dans ce nouveau projet.
 Une fois la base créée :
 
 1. **Toujours** :
-   - Lire `ROADMAP_COMPLETE.md` avant de commencer
+   - Lire `obsidian-vault/Projet/roadmap.md` avant de commencer
    - Mettre à jour roadmap + contexte après chaque tâche
 2. Utiliser les mêmes commandes :
    - `/frontend-workflow`

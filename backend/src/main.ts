@@ -10,20 +10,19 @@ import { AppModule } from './app.module';
 import { getPublicSiteUrl } from './config/public-site-url';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { MulterExceptionFilter } from './filters/multer-exception.filter';
 import helmet from 'helmet';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const isProduction = process.env.NODE_ENV === 'production';
+  const bootstrapLogger = new Logger('Bootstrap');
 
   try {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-      rawBody: true, // Nécessaire pour les webhooks Stripe (vérification signature)
-      logger: isProduction
-        ? ['error', 'warn', 'log'] // Production : moins de logs
-        : ['error', 'warn', 'log', 'debug', 'verbose'], // Dev : tous les logs
+      rawBody: true,
+      bufferLogs: true,
     });
+    app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+    const logger = bootstrapLogger;
 
     // Helmet — headers sécurité HTTP (X-Frame-Options, X-Content-Type-Options, etc.)
     // CSP et HSTS désactivés : configurés manuellement plus bas
@@ -37,9 +36,6 @@ async function bootstrap() {
         transform: true,
       }),
     );
-
-    // Filtre d'exception global pour gérer les erreurs multer
-    app.useGlobalFilters(new MulterExceptionFilter());
 
     const configService = app.get(ConfigService);
     const frontendUrl = getPublicSiteUrl(configService);
@@ -105,7 +101,7 @@ async function bootstrap() {
     logger.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.log(`🏥 Health check: http://localhost:${port}/health`);
   } catch (error) {
-    logger.error('❌ Error starting application', error);
+    bootstrapLogger.error('❌ Error starting application', error);
     process.exit(1);
   }
 }

@@ -8,10 +8,10 @@ Workflow pour tout ce qui touche au **catalogue produits** (Product / Variant / 
 
 ## 1. Docs & fichiers à lire
 
-- `docs/context/ROADMAP_COMPLETE.md`  
+- `obsidian-vault/Projet/roadmap.md`  
   → Phases catalogue / produits / variants / images / brands.
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Résumé de l’état actuel du catalogue.
 
 - `backend/BACKEND.md`  
@@ -82,9 +82,9 @@ Quand tu ajoutes / modifies :
    - [ ] Composants (cards, tabs, selectors) mis à jour.  
 
 3. **Doc & roadmap** :
-   - [ ] `docs/context/ROADMAP_COMPLETE.md` : tâches cochées.  
+   - [ ] `obsidian-vault/Projet/roadmap.md` : tâches cochées.  
    - [ ] `frontend/FRONTEND.md` : pages / composants mis à jour.  
-   - [ ] `docs/context/CONTEXT.md` : si c’est un changement important de features.
+   - [ ] `obsidian-vault/REBOUL.md` : si c’est un changement important de features.
 
 ---
 

@@ -15,6 +15,7 @@ Liens : [[REBOUL]]
 | Fichier | Contenu |
 |---------|---------|
 | [[Architecture/vps]] | VPS OVH, Docker containers, Nginx, deploy, backup, monitoring |
+| [[Architecture/commands-logs]] | Commandes logs : tests Winston, docker logs, rcli prod, backup cron |
 | [[Architecture/stack]] | Stack technique complète (Frontend + Backend + ports) |
 | [[Architecture/infra]] | Dev local, tunnel SSH, variables d'environnement |
 

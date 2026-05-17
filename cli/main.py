@@ -67,21 +67,41 @@ def deploy(env):
     git_deploy(env)
 
 @roadmap.command()
-@click.option('--phase', type=int, help='Numéro de phase')
-@click.option('--task', type=str, help='Tâche à cocher (ex: "15.1 Configuration Cloudinary")')
-@click.option('--complete', is_flag=True, help='Marquer la phase comme complète')
-def update(phase, task, complete):
-    """Mettre à jour la roadmap"""
+@click.option('--phase', type=int, help='(legacy) Numéro de phase — obsolète, utiliser --section')
+@click.option('--section', type=str, help='Section roadmap à compléter (ex: "Images & Collections")')
+@click.option('--task', type=str, help='Tâche à cocher — libellé partiel (ex: "Upload batch — Stone Island")')
+@click.option('--complete', is_flag=True, help='Avec --section : cocher toutes les tâches de la section')
+@click.option('--no-sync', is_flag=True, help='Ne pas lancer context sync après la mise à jour')
+def update(phase, section, task, complete, no_sync):
+    """Mettre à jour obsidian-vault/Projet/roadmap.md (+ sync contexte par défaut)"""
     from commands.roadmap import update_roadmap
-    
-    if complete and phase:
-        update_roadmap.mark_phase_complete(phase)
-        console.print(f"[green]✅ Phase {phase} marquée comme complète[/green]")
+    from commands.context import sync_context
+
+    changed = False
+
+    if complete and section:
+        if update_roadmap.mark_section_complete(section):
+            console.print(f"[green]✅ Section '{section}' — tâches cochées[/green]")
+            changed = True
+        else:
+            console.print(f"[red]❌ Section '{section}' introuvable[/red]")
+    elif complete and phase:
+        console.print("[yellow]⚠️  --phase est obsolète. Utilisez --section \"Images & Collections\"[/yellow]")
     elif task:
-        update_roadmap.check_task(task)
-        console.print(f"[green]✅ Tâche '{task}' cochée[/green]")
+        if update_roadmap.check_task(task):
+            console.print(f"[green]✅ Tâche cochée (match: '{task}')[/green]")
+            changed = True
+        else:
+            console.print(f"[red]❌ Tâche non trouvée dans la roadmap (essayez un libellé plus court)[/red]")
     else:
-        console.print("[yellow]⚠️  Spécifiez --phase et --task ou --complete[/yellow]")
+        console.print("[yellow]⚠️  Spécifiez --task \"...\" ou --section \"...\" --complete[/yellow]")
+        return
+
+    if changed and not no_sync:
+        console.print("[cyan]🔄 Sync contexte (vault + BACKEND/FRONTEND + .cursor/context-summary.md)...[/cyan]")
+        results = sync_context.synchronize()
+        for file, status in results.items():
+            console.print(f"  {file}: {status}")
 
 @roadmap.command()
 def check():
@@ -103,25 +123,58 @@ def check():
         console.print(table)
 
 @roadmap.command()
-@click.argument('phase_num', type=int)
-def phase(phase_num):
-    """Afficher les détails d'une phase"""
+@click.argument('section_name', type=str)
+def section(section_name):
+    """Afficher le détail d'une section thématique (vault roadmap)"""
     from commands.roadmap import get_phase
-    
-    phase_info = get_phase.details(phase_num)
-    
-    if phase_info:
+
+    info = get_phase.section_details(section_name)
+    if info:
         panel = Panel(
-            f"[bold]Phase {phase_num}: {phase_info['title']}[/bold]\n\n"
-            f"État: {phase_info['status']}\n"
-            f"Tâches: {phase_info['completed']}/{phase_info['total']}\n\n"
-            f"{phase_info['description']}",
-            title=f"Phase {phase_num}",
-            border_style="blue"
+            f"[bold]{info['title']}[/bold]\n\n"
+            f"État: {info['status']}\n"
+            f"Tâches: {info['completed']}/{info['total']}\n\n"
+            f"Tâches en attente:\n{info['description']}",
+            title=info["title"],
+            border_style="blue",
         )
         console.print(panel)
     else:
-        console.print(f"[red]❌ Phase {phase_num} non trouvée[/red]")
+        console.print(f"[red]❌ Section '{section_name}' non trouvée[/red]")
+
+
+@roadmap.command(name='phase')
+@click.argument('phase_num', type=int)
+def phase_legacy(phase_num):
+    """(legacy) Utiliser: ./rcli roadmap section \"Frontend & UX\""""
+    console.print("[yellow]⚠️  Phases numérotées supprimées. Utilisez:[/yellow]")
+    console.print('  ./rcli roadmap section "Frontend & UX"')
+    console.print("  ./rcli roadmap status")
+
+
+@roadmap.command()
+def status():
+    """Vue d'ensemble des sections (obsidian-vault/Projet/roadmap.md)"""
+    from commands.roadmap import RoadmapStatus
+
+    try:
+        sections = RoadmapStatus.all_sections()
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        return
+
+    table = Table(title="Roadmap — sections")
+    table.add_column("Section", style="cyan")
+    table.add_column("Progression", style="green")
+    table.add_column("En attente", style="yellow")
+
+    for title, sec in sections.items():
+        if sec.total == 0:
+            continue
+        pending = str(len(sec.pending_tasks)) + " tâche(s)" if sec.pending_tasks else "—"
+        table.add_row(title, sec.progress, pending)
+
+    console.print(table)
 
 @cli.group()
 def context():

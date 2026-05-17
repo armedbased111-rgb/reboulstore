@@ -63,7 +63,7 @@ Workflow complet Figma → Frontend pour Reboul Store.
 ### Phase 4 : Documentation
 
 9. **Après implémentation** :
-   - Mettre à jour ROADMAP_COMPLETE.md (cocher tâche)
+   - Mettre à jour obsidian-vault/Projet/roadmap.md (cocher tâche)
    - Mettre à jour FRONTEND.md (ajouter page/composant)
    - Capturer screenshot si nécessaire
 

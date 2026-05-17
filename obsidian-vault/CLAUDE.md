@@ -57,10 +57,24 @@ _templates/             ← modèles Templater
 - Cocher : `- [x]` quand fait
 
 ## Slash-commands disponibles
-- `/vault` → sync global + mise à jour REBOUL.md
-- `/page-review` → workflow revue d'une page frontend
-- `/collection` → pipeline data + images d'une marque
-- `/session` → ouvrir une session de travail
+
+### Sync vault
+| Commande | Périmètre |
+|----------|-----------|
+| `/vault` | **Sync intégral** — lit TOUT, met à jour tous les clusters, rapport complet |
+| `/sync-frontend` | Cluster Frontend uniquement — pages, composants, design system |
+| `/sync-backend` | Cluster Backend uniquement — modules, endpoints, entités |
+| `/sync-collections` | Cluster Collections uniquement — marques, data, images |
+| `/sync-securite` | Cluster Sécurité uniquement — hardening, checklist, pentest |
+| `/sync-architecture` | Cluster Architecture uniquement — VPS, docker, CLI, services |
+| `/sync-projet` | Cluster Projet uniquement — roadmap, tâches, sessions |
+
+### Workflows
+| Commande | Usage |
+|----------|-------|
+| `/page-review` | Workflow revue complète d'une page frontend (capture → analyse → fix) |
+| `/collection` | Pipeline data + images d'une marque (CSV → import → génération → upload) |
+| `/session` | Ouvrir une session de travail (crée Sessions/YYYY-MM-DD-sujet.md) |
 
 ## Mise à jour après chaque session
 1. Mettre à jour le fichier individuel (statut, tâches cochées)

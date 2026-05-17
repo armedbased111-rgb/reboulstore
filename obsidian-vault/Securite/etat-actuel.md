@@ -1,7 +1,7 @@
 ---
 type: securite
 node: etat-actuel
-maj: 2026-05-11
+maj: 2026-05-11 (soir)
 ---
 # Sécurité — État actuel
 
@@ -42,6 +42,14 @@ Modules concernés : [[Backend/auth]] · [[Backend/checkout]] · [[Backend/produ
 - **35 updates apt appliquées** dont Docker 29.4.3 — ✅ 11/05/2026
 
 Référence infra : [[Architecture/vps]]
+
+## Monitoring
+
+- **UptimeRobot** : ✅ configuré (11/05/2026) — 2 moniteurs, vérification toutes les 5 min
+  - `https://www.reboulstore.com` (Frontend)
+  - `https://www.reboulstore.com/api/health` (API)
+  - Alertes email : `armedbased111@gmail.com`
+- **Commande toggle maintenance** : `./rcli server maintenance [on|off|status]`
 
 ## Frontend
 

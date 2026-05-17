@@ -8,10 +8,10 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ## 📂 Fichiers impliqués
 
-- `docs/context/ROADMAP_COMPLETE.md` ⭐  
+- `obsidian-vault/Projet/roadmap.md` ⭐  
   → Phase à implémenter, liste des tâches
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Contexte général, état actuel
 
 - `backend/BACKEND.md` ou `frontend/FRONTEND.md`  
@@ -23,7 +23,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ### 1. Préparation
 
-1. **Lire la phase** dans `ROADMAP_COMPLETE.md`
+1. **Lire la phase** dans `obsidian-vault/Projet/roadmap.md`
 2. **Identifier les dépendances** (phases précédentes à compléter)
 3. **Vérifier le contexte** dans `CONTEXT.md`
 4. **Consulter la documentation** technique (BACKEND.md ou FRONTEND.md)
@@ -55,7 +55,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ### 4. Mise à jour documentation
 
-1. **Cocher les tâches** dans `ROADMAP_COMPLETE.md` au fur et à mesure
+1. **Cocher les tâches** dans `obsidian-vault/Projet/roadmap.md` au fur et à mesure
    - **Recommandé** : Utiliser le CLI (`python cli/main.py roadmap update --task "..."`)
 2. **Mettre à jour** `CONTEXT.md` si changement d'état
    - **Recommandé** : Utiliser le CLI (`python cli/main.py context sync`)
@@ -69,7 +69,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ### 1. Préparation
 
-- Lire Phase 15 dans `ROADMAP_COMPLETE.md`
+- Lire Phase 15 dans `obsidian-vault/Projet/roadmap.md`
 - Vérifier que les phases précédentes sont complètes
 - Consulter `BACKEND.md` pour voir l'état actuel
 
@@ -89,7 +89,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ### 4. Documentation
 
-- Cocher toutes les tâches dans `ROADMAP_COMPLETE.md`
+- Cocher toutes les tâches dans `obsidian-vault/Projet/roadmap.md`
 - Ajouter ✅ au titre "Phase 15"
 - Mettre à jour `BACKEND.md` avec les nouveaux endpoints
 - Créer `IMAGES_UPLOAD.md` pour la documentation
@@ -122,7 +122,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ### Étape 4 : Documentation
 
-1. Cocher les tâches dans `ROADMAP_COMPLETE.md`
+1. Cocher les tâches dans `obsidian-vault/Projet/roadmap.md`
 2. Mettre à jour `CONTEXT.md`
 3. Mettre à jour `BACKEND.md` ou `FRONTEND.md`
 4. Ajouter ✅ au titre de la phase
@@ -152,7 +152,7 @@ Guide pour **implémenter une phase complète** de la roadmap, en suivant le wor
 
 ## ⚠️ Important
 
-- **Ne pas oublier** de cocher les tâches dans `ROADMAP_COMPLETE.md`
+- **Ne pas oublier** de cocher les tâches dans `obsidian-vault/Projet/roadmap.md`
 - **Toujours tester** avant de passer à la suite
 - **Mettre à jour la doc** après chaque étape
 - **Respecter le mode pédagogique** sauf demande explicite

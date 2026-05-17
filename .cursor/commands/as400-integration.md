@@ -2,88 +2,78 @@
 
 **Commande** : `/as400-integration`
 
-Guide d'intégration AS400 pour Reboul Store (⚠️ EN SUSPENS).
+Guide d'intégration AS400 ↔ Reboul Store via **SFTP bidirectionnel** sur le VPS.
 
-## ⚠️ Statut Actuel
+## Statut actuel (mai 2026)
 
-**AS400 Intégration** : **EN SUSPENS** - Trop de temps nécessaire
+**Intégration AS400 : EN COURS** — décision validée en réunion cyber du **12/05/2026**.
 
-**Approche alternative adoptée** : Import manuel via tables/CSV (voir `/collection-workflow`)
+| Phase | Statut | Contenu |
+|-------|--------|---------|
+| **Phase 1** | 🔜 À faire | Setup SFTP : user `sftp-as400`, chroot, `entrant/` + `sortant/` |
+| **Phase 2** | ⏳ Après 1er CSV | Module NestJS `sync-as400`, cron horaire, logs, alertes |
 
-## 📋 Exploration Effectuée
+**Source de vérité** : `obsidian-vault/Securite/as400.md`
 
-**Document d'analyse** : `docs/AS400_ANALYSIS_GUIDE.md`
+**Import collections manuel** (CSV Admin) reste en parallèle jusqu'à sync stocks opérationnelle → `/collection-workflow`
 
-### Informations Collectées
+---
 
-**Accès & Connexion** :
-- IP : 192.168.110.200
-- Port : 23 (Telnet)
-- Accès : Ordinateurs du magasin connectés à l'AS400
-- Menu Transfert : Envoi/réception fichiers (pas d'export CSV direct visible)
+## Architecture retenue
 
-**Structure Identifiée** :
-- Menu principal → Option 22 "Recherche article"
-- Colonnes visibles : Code, Marque, Référence, DPT, Act, Genr, HRE, HCP, HCS, SAN, BIR
-- Code : Identifiant unique produit (ex: 110900076)
-- Marque : Nom marque (ex: "CHAU chau nike")
-- Référence : Nom produit + taille (ex: "JORDAN/DARKMOC 41")
-- DPT : Département (ex: "1")
+**SFTP bidirectionnel** — fichiers CSV, batch horaire :
 
-**Limites Identifiées** :
-- Pas d'accès direct aux détails complets d'un article
-- Pas d'export CSV direct visible dans l'interface
-- Nécessite méthode d'extraction (CSV export, ODBC/JDBC, ou autre)
+| Flux | Direction | Fréquence | Dossier VPS |
+|------|-----------|-----------|-------------|
+| Stocks | AS400 → nous | Toutes les heures | `entrant/` |
+| Mouvements | Nous → AS400 | Toutes les heures | `sortant/` |
 
-## 🔄 Si Reprise Future
+- L'AS400 se connecte à **notre VPS** (`152.228.218.35:22`)
+- Toute l'implémentation technique est **de notre côté**
+- Format confirmé : **CSV** (structure exacte à valider sur le premier fichier reçu)
 
-### Questions à Résoudre
+---
 
-1. **Méthode d'extraction** :
-   - Comment exporter les données produits/stocks en CSV/Excel ?
-   - Connexion ODBC/JDBC possible ? Quel port ? (port 23 = Telnet uniquement)
-   - Y a-t-il un accès direct à la base de données pour extraction ?
+## Phase 1 — Setup SFTP (à faire maintenant)
 
-2. **Structure complète** :
-   - Tables disponibles (produits, stocks, marques, catégories)
-   - Champs détaillés (prix, descriptions, etc.)
-   - Relations entre tables
+1. Créer user `sftp-as400` (SFTP only, pas de shell)
+2. Chroot SSH → `/var/sftp/as400/`
+3. Créer `entrant/` (AS400 dépose) + `sortant/` (AS400 récupère)
+4. Générer identifiants, tester connexion
+5. Transmettre host / port / user / mot de passe à l'expert AS400
 
-3. **Mapping AS400 → DB** :
-   - Table produits AS400 → entité Product
-   - Table stocks AS400 → entité Variant
-   - Table marques AS400 → entité Brand
-   - Table catégories AS400 → entité Category
+```bash
+# Vérifier infra après setup (exemples)
+./rcli server exec "id sftp-as400"
+./rcli server exec "ls -la /var/sftp/as400/"
+```
 
-### Processus Si Reprise
+Identifiants à transmettre : voir tableau dans `obsidian-vault/Securite/as400.md`
 
-1. **Analyser structure complète** :
-   - Documenter toutes les tables AS400
-   - Documenter tous les champs disponibles
-   - Identifier relations entre tables
+---
 
-2. **Méthode d'extraction** :
-   - Tester export CSV (si disponible)
-   - Tester connexion ODBC/JDBC (si possible)
-   - Créer script d'extraction
+## Phase 2 — Backend (après premier fichier reçu)
 
-3. **Transformation données** :
-   - Créer script transformation AS400 → notre structure
-   - Mapping champs AS400 → DB
-   - Validation et nettoyage données
+**Ne pas implémenter avant d'avoir reçu un CSV réel** — adapter le parser au format réel.
 
-4. **Import données** :
-   - Script import données transformées
-   - Gérer création produits/variants
-   - Assigner collection active
-   - Gérer association marques/catégories
+- Module NestJS `sync-as400` : parser CSV entrant → mise à jour stocks DB
+- Cron horaire : traitement entrant + génération sortant (mouvements/commandes)
+- Logs + alerte si aucun fichier depuis 2h
+- Réconciliation hebdomadaire AS400 ↔ DB
 
-## 📚 Références
+Référence roadmap : `obsidian-vault/Projet/roadmap.md` → section « AS400 — Intégration SFTP »
 
-- **Guide d'analyse** : `docs/AS400_ANALYSIS_GUIDE.md`
-- **Workflow collection** : `/collection-workflow` (approche actuelle)
-- **Phase 24** : `docs/context/ROADMAP_COMPLETE.md` (Section 24.5)
+---
 
-## 💡 Recommandation
+## Exploration AS400 (historique)
 
-Pour l'instant, utiliser l'approche manuelle via tables/CSV (voir `/collection-workflow`). L'intégration AS400 peut être reprise plus tard si nécessaire et si le temps le permet.
+L'exploration menu Telnet (IP magasin, structure colonnes) reste documentée dans `docs/AS400_ANALYSIS_GUIDE.md` pour référence — **ce n'est plus l'approche retenue** pour la sync stocks.
+
+---
+
+## Références
+
+- **Vault** : `obsidian-vault/Securite/as400.md` ⭐
+- **Roadmap** : `obsidian-vault/Projet/roadmap.md`
+- **Sécurité globale** : `obsidian-vault/Securite/etat-actuel.md`
+- **Collections manuelles** : `/collection-workflow`

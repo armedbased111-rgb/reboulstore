@@ -1,7 +1,7 @@
 ---
 type: securite
 node: checklist
-maj: 2026-05-11
+maj: 2026-05-11 (soir)
 ---
 # Sécurité — Checklist pré-lancement
 
@@ -52,6 +52,6 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 ## Monitoring & Ops
 
 - [ ] Alertes logs erreurs 500 — après lancement (logs structurés NestJS)
-- [ ] Alertes down containers — ⏳ configurer UptimeRobot (gratuit) sur `https://www.reboulstore.com` + `/api/health`
+- [x] Alertes down containers — ✅ UptimeRobot configuré (11/05/2026) — 2 moniteurs actifs : `https://www.reboulstore.com` + `/api/health` — alertes email `armedbased111@gmail.com`
 - [x] Backup DB testé (restore vérifié) ✅ 11/05/2026 — 21 tables, 296 produits restaurés correctement
 - [x] Variables `.env.production` complètes ✅ — DB, JWT, Stripe, Cloudinary, SMTP présents. REDIS/NODE_ENV ont des défauts sûrs.

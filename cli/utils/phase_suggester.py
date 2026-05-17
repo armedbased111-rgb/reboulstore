@@ -9,12 +9,10 @@ import re
 
 
 def _get_roadmap_path() -> Path:
-    """Trouver le chemin de ROADMAP_COMPLETE.md"""
-    base = Path(__file__).parent.parent.parent
-    roadmap = base / "docs" / "context" / "ROADMAP_COMPLETE.md"
-    if roadmap.exists():
-        return roadmap
-    return base.parent / "docs" / "context" / "ROADMAP_COMPLETE.md"
+    """Roadmap vault Obsidian (fallback legacy)."""
+    from utils.vault_paths import resolve_roadmap_path
+
+    return resolve_roadmap_path()
 
 
 def _get_backend_path() -> Path:

@@ -9,10 +9,12 @@ from utils.api_doc_generator import generate_api_documentation
 from utils.components_doc_generator import generate_components_documentation
 from utils.docs_syncer import synchronize_all_docs, generate_changelog
 
-ROADMAP_PATH = Path(__file__).parent.parent.parent / "docs" / "context" / "ROADMAP_COMPLETE.md"
-CONTEXT_PATH = Path(__file__).parent.parent.parent / "docs" / "context" / "CONTEXT.md"
-BACKEND_PATH = Path(__file__).parent.parent.parent / "backend" / "BACKEND.md"
-FRONTEND_PATH = Path(__file__).parent.parent.parent / "frontend" / "FRONTEND.md"
+from utils.vault_paths import (
+    BACKEND_DOC as BACKEND_PATH,
+    FRONTEND_DOC as FRONTEND_PATH,
+    REBOUL_PATH,
+    ROADMAP_PATH,
+)
 
 class DocsValidator:
     """Valider la cohérence de la documentation"""

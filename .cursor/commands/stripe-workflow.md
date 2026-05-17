@@ -70,7 +70,7 @@ Quand tu modifies ou ajoutes des fonctionnalités checkout/paiement :
    - Webhooks
 
 4. Mettre à jour la doc :
-   - `docs/context/ROADMAP_COMPLETE.md` : cocher la tâche.
+   - `obsidian-vault/Projet/roadmap.md` : cocher la tâche.
    - `backend/BACKEND.md` : endpoints ou logique checkout si modifiés.
    - `docs/stripe/STRIPE_PAYMENT_FLOW.md` / `STRIPE_CHECKOUT_IMPROVEMENTS.md` : si le flow a été changé.
 

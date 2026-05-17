@@ -53,7 +53,7 @@ Ce message doit contenir :
 
 - Le **contenu complet** de `brainstorm_nouveauprojet.md`
 - La liste des tâches à faire pour l’IA :
-  - Créer `ROADMAP_COMPLETE.md`
+  - Créer `obsidian-vault/Projet/roadmap.md`
   - Créer `CONTEXT.md`
   - Créer `ARCHITECTURE_[NOM].md`
   - Créer `API_CONFIG.md`
@@ -69,7 +69,7 @@ L’IA doit, à partir du message :
 
 1. Lire et analyser le brainstorming.
 2. Créer tous les fichiers de documentation de base :
-   - `ROADMAP_COMPLETE.md`
+   - `obsidian-vault/Projet/roadmap.md`
    - `CONTEXT.md`
    - `ARCHITECTURE_[NOM].md`
    - `API_CONFIG.md`

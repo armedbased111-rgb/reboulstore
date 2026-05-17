@@ -7,8 +7,11 @@ services:
     container_name: reboulstore-backend-prod
     env_file:
       - .env.production
+    volumes:
+      - logs_data_prod:/app/logs
     environment:
       - NODE_ENV=production
+      - LOG_DIR=/app/logs
       # Configuration DB : Base de données UNIQUEMENT sur le VPS (connexion directe)
       # Les variables sont chargées depuis .env.production
       # DB_HOST doit être l'IP du VPS ou localhost si base sur même serveur
@@ -121,6 +124,8 @@ services:
 volumes:
   frontend_build:
     name: reboulstore_frontend_build
+  logs_data_prod:
+    name: reboulstore_logs_prod
   redis_data_prod:
     name: reboulstore_redis_prod
 

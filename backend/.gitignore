@@ -2,4 +2,5 @@ node_modules
 dist
 dist.env
 *.log
+logs/
 /uploads

@@ -11,10 +11,10 @@ Guide complet des **règles de développement, conventions de code et bonnes pra
 - **`.cursor/rules/project-rules.mdc`** ⭐  
   → Règles principales du projet (mode pédagogique, workflows, etc.)
 
-- **`docs/context/ROADMAP_COMPLETE.md`**  
+- **`obsidian-vault/Projet/roadmap.md`**  
   → Source de vérité pour savoir où on en est
 
-- **`docs/context/CONTEXT.md`**  
+- **`obsidian-vault/REBOUL.md`**  
   → Contexte général et état actuel
 
 ---
@@ -95,7 +95,7 @@ Guide complet des **règles de développement, conventions de code et bonnes pra
 
 ### Fichiers à maintenir
 
-- **`ROADMAP_COMPLETE.md`** : Roadmap complète (source de vérité)
+- **`obsidian-vault/Projet/roadmap.md — source de vérité)
 - **`CONTEXT.md`** : Contexte général et état actuel
 - **`FRONTEND.md`** : Documentation frontend
 - **`BACKEND.md`** : Documentation backend
@@ -103,7 +103,7 @@ Guide complet des **règles de développement, conventions de code et bonnes pra
 
 ### Quand mettre à jour
 
-- **À chaque étape complétée** : Cocher dans ROADMAP_COMPLETE.md
+- **À chaque étape complétée** : Cocher dans obsidian-vault/Projet/roadmap.md
 - **À chaque phase terminée** : Ajouter ✅ au titre de la phase
 - **Après chaque session** : Mettre à jour l'avancement
 
@@ -157,7 +157,7 @@ source venv/bin/activate
 
 ## ⚠️ Règles importantes
 
-1. **ROADMAP_COMPLETE.md = source de vérité** : Toujours le consulter avant de commencer
+1. **obsidian-vault/Projet/roadmap.md — source de vérité** : Toujours le consulter avant de commencer
 2. **Mode pédagogique par défaut** : L'IA guide, tu codes
 3. **Documentation à jour** : Mettre à jour les docs après chaque étape (utiliser le CLI)
 4. **Conventions respectées** : Suivre les conventions de nommage et structure

@@ -4,16 +4,22 @@
 
 Workflow pour maintenir la documentation à jour dans Reboul Store.
 
-## 🎯 Règle ROADMAP_COMPLETE.md - OBLIGATOIRE
+## 🎯 Règle vault Obsidian — OBLIGATOIRE
 
-**`docs/context/ROADMAP_COMPLETE.md` est la référence principale du projet.**
+**Le vault `obsidian-vault/` est la source de vérité du projet** (remplace `obsidian-vault/Projet/roadmap.md`, `CONTEXT.md`, etc.)
 
-### Quand mettre à jour ROADMAP_COMPLETE.md ?
+| Besoin | Fichier |
+|--------|---------|
+| État global | `obsidian-vault/REBOUL.md` |
+| Roadmap & tâches | `obsidian-vault/Projet/roadmap.md` |
+| Tâches agrégées | `obsidian-vault/TODO.md` |
+| Sessions | `obsidian-vault/Sessions/YYYY-MM-DD-sujet.md` |
 
-1. **À CHAQUE étape complétée** : Cocher `[ ]` → `[x]` immédiatement
-2. **À CHAQUE phase terminée** : Ajouter ✅ au titre de la phase
-3. **Avant de commencer une nouvelle phase** : Vérifier ROADMAP_COMPLETE.md pour savoir quoi faire
-4. **Après chaque session de travail** : Mettre à jour l'avancement
+### Quand mettre à jour la roadmap ?
+
+1. **À CHAQUE tâche complétée** : Cocher `[ ]` → `[x]` dans `obsidian-vault/Projet/roadmap.md`
+2. **Après chaque session** : Session log + `REBOUL.md` si état global change
+3. **Avant un nouveau bloc de travail** : Relire la section concernée dans la roadmap
 
 ### Comment mettre à jour ?
 
@@ -29,31 +35,31 @@ Workflow pour maintenir la documentation à jour dans Reboul Store.
 
 ### 1. Avant de commencer une tâche
 
-- ✅ **Consulter `docs/context/ROADMAP_COMPLETE.md`** (obligatoire)
+- ✅ **Consulter `obsidian-vault/Projet/roadmap.md`** (obligatoire)
 - ✅ **Identifier la phase et l'étape en cours**
 - ✅ **Vérifier les dépendances**
 
 ### 2. Pendant le développement
 
-- ✅ **Se référer à ROADMAP_COMPLETE.md** pour la liste des tâches
+- ✅ **Se référer à `obsidian-vault/Projet/roadmap.md`** pour la liste des tâches
 - ✅ **Noter mentalement ce qui est fait**
 
 ### 3. Après CHAQUE tâche complétée
 
-- ✅ **OBLIGATOIRE** : Mettre à jour `docs/context/ROADMAP_COMPLETE.md` (cocher `[x]`)
+- ✅ **OBLIGATOIRE** : Mettre à jour `obsidian-vault/Projet/roadmap.md` (cocher `[x]`)
   - **⭐ RECOMMANDÉ** : Utiliser le CLI (`python cli/main.py roadmap update --task "..."`)
-- ✅ **Mettre à jour `docs/context/CONTEXT.md`** (état actuel) si fin de phase
-  - **⭐ RECOMMANDÉ** : Utiliser le CLI (`python cli/main.py docs sync`) - synchronise automatiquement
+- ✅ **Mettre à jour `obsidian-vault/REBOUL.md`** (état actuel) si fin de phase
+  - **⭐ RECOMMANDÉ** : `./rcli context sync` (vault + BACKEND/FRONTEND + `.cursor/context-summary.md`)
 - ✅ **Mettre à jour `frontend/FRONTEND.md` ou `backend/BACKEND.md`** si nécessaire
-  - **⭐ RECOMMANDÉ** : Utiliser le CLI (`python cli/main.py docs sync`) - synchronise automatiquement
+  - **⭐ RECOMMANDÉ** : `./rcli context sync` (vault + BACKEND/FRONTEND + `.cursor/context-summary.md`)
 
 ## 📚 Fichiers de documentation à maintenir
 
 ### Documentation principale
 
-- **`docs/context/ROADMAP_COMPLETE.md`** : Roadmap complète (24 phases) - **RÉFÉRENCE PRINCIPALE** ⭐
-- **`docs/context/CONTEXT.md`** : Contexte général, état actuel du projet
-- **`docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md`** : Architecture complète admin centralisée ⭐ **RÉFÉRENCE ARCHITECTURE**
+- **`obsidian-vault/Projet/roadmap.md`** : Roadmap thématique (Images, Frontend, SEO, Sécurité, Lancement) - **RÉFÉRENCE PRINCIPALE** ⭐
+- **`obsidian-vault/REBOUL.md`** : Contexte général, état actuel du projet
+- **`obsidian-vault/Architecture/Architecture.md`** : Architecture complète admin centralisée ⭐ **RÉFÉRENCE ARCHITECTURE**
 
 ### Documentation technique
 
@@ -78,25 +84,25 @@ Workflow pour maintenir la documentation à jour dans Reboul Store.
 
 ### Après création d'une page frontend
 
-1. ✅ **`docs/context/ROADMAP_COMPLETE.md`** : Cocher la tâche
+1. ✅ **`obsidian-vault/Projet/roadmap.md`** : Cocher la tâche
 2. ✅ **`frontend/FRONTEND.md`** : Ajouter la page dans la section appropriée
-3. ✅ **`docs/context/CONTEXT.md`** : Mettre à jour "État Actuel" si phase terminée
+3. ✅ **`obsidian-vault/REBOUL.md`** : Mettre à jour "État Actuel" si phase terminée
 
 ### Après création d'un module backend
 
-1. ✅ **`docs/context/ROADMAP_COMPLETE.md`** : Cocher la tâche
+1. ✅ **`obsidian-vault/Projet/roadmap.md`** : Cocher la tâche
 2. ✅ **`backend/BACKEND.md`** : Ajouter module/endpoint/entité
 3. ✅ **`docs/context/API_CONFIG.md`** : Ajouter endpoint si nouveau
-4. ✅ **`docs/context/CONTEXT.md`** : Mettre à jour "État Actuel" si phase terminée
+4. ✅ **`obsidian-vault/REBOUL.md`** : Mettre à jour "État Actuel" si phase terminée
 
 ### Après création d'une animation
 
 1. ✅ **`docs/animations/ANIMATIONS_GUIDE.md`** : Ajouter exemple si nécessaire
-2. ✅ **`docs/context/ROADMAP_COMPLETE.md`** : Cocher la tâche si applicable
+2. ✅ **`obsidian-vault/Projet/roadmap.md`** : Cocher la tâche si applicable
 
 ### Après implémentation depuis Figma
 
-1. ✅ **`docs/context/ROADMAP_COMPLETE.md`** : Cocher la tâche
+1. ✅ **`obsidian-vault/Projet/roadmap.md`** : Cocher la tâche
 2. ✅ **`frontend/FRONTEND.md`** : Ajouter page/composant
 3. ✅ Capturer screenshot si nécessaire
 
@@ -134,8 +140,8 @@ Workflow pour maintenir la documentation à jour dans Reboul Store.
 
 Avant de finaliser une phase :
 
-1. ✅ **`docs/context/ROADMAP_COMPLETE.md`** : Toutes les tâches cochées
-2. ✅ **`docs/context/CONTEXT.md`** : Section "État Actuel" mise à jour
+1. ✅ **`obsidian-vault/Projet/roadmap.md`** : Toutes les tâches cochées
+2. ✅ **`obsidian-vault/REBOUL.md`** : Section "État Actuel" mise à jour
 3. ✅ **`frontend/FRONTEND.md` ou `backend/BACKEND.md`** : Nouvelle fonctionnalité documentée
 4. ✅ **Format cohérent** : Respecter la structure existante
 

@@ -113,7 +113,7 @@ const dbPort = process.env.DB_PORT; // 5433 (dev) ou 5432 (prod)
 **Pour vérifier la connexion** :
 ```bash
 # Vérifier les variables d'environnement du container
-docker exec reboulstore-backend printenv | grep DB_
+docker exec reboulstore-backend-prod printenv | grep DB_
 
 # Devrait afficher (en dev local) :
 # DB_HOST=host.docker.internal
@@ -264,28 +264,31 @@ Design (toi, Figma) → partage lien + composant ciblé → implémentation (moi
 
 ### 🔄 Intégration AS400
 
-**Document d'analyse** : `docs/AS400_ANALYSIS_GUIDE.md`  
-**Commande Cursor** : `/as400-integration`  
-**Statut** : ⚠️ **EN SUSPENS** - Trop de temps nécessaire
+**Document de référence** : `obsidian-vault/Securite/as400.md`
+**Statut** : 🟡 **EN COURS** — SFTP à mettre en place
 
-#### Approche alternative
+#### Architecture retenue (réunion 12/05/2026)
 
-**Import manuel via tables/CSV** adopté (voir Workflow Collection Réelle ci-dessus).
+**SFTP bidirectionnel** — fichiers CSV, batch horaire :
+- AS400 → VPS : fichier CSV stocks toutes les heures → dossier `entrant/`
+- VPS → AS400 : fichier CSV mouvements/commandes toutes les heures → dossier `sortant/`
+- Toute l'implémentation est de notre côté
 
-#### Exploration effectuée
+#### Plan en 2 phases
 
-- Interface AS400 explorée (Menu principal → Option 22 "Recherche article")
-- Structure colonnes identifiée (Code, Marque, Référence, DPT, etc.)
-- IP/Port notés (192.168.110.200:23)
-- Pas d'export CSV direct visible
-- Nécessite méthode d'extraction (CSV export, ODBC/JDBC, ou autre)
+**Phase 1 (à faire)** : Setup SFTP basique sur le VPS
+- User `sftp-as400`, chroot jail, répertoires `entrant/` + `sortant/`
+- Transmettre identifiants à l'expert AS400
 
-#### Si reprise future
+**Phase 2 (après premier fichier reçu)** : Adapter le backend
+- Module NestJS `sync-as400` — parser CSV entrant → mise à jour stocks DB
+- Cron horaire — génération CSV mouvements sortants
+- Logs + alertes si aucun fichier depuis 2h
 
-1. Analyser structure complète AS400
-2. Identifier méthode d'extraction
-3. Créer script transformation AS400 → notre structure
-4. Implémenter import données
+#### Règles
+
+- Ne pas implémenter la Phase 2 avant d'avoir reçu un premier fichier réel
+- Format CSV confirmé — structure exacte à définir d'après le premier fichier reçu
 
 ### 📸 Workflow Images Produits
 
@@ -340,7 +343,7 @@ Design (toi, Figma) → partage lien + composant ciblé → implémentation (moi
   1. **Répondre à tes questions** : Technique Figma, workflow, bonnes pratiques design
   2. **Te donner des astuces** : Raccourcis Figma, plugins utiles, Auto Layout, composants
   3. **Te fournir des ressources** : Tutoriels Figma, exemples, templates Figma pertinents
-  4. **Te situer** : Où tu en es dans `docs/context/ROADMAP_COMPLETE.md`, quelle page designer maintenant
+  4. **Te situer** : Où tu en es dans `obsidian-vault/Projet/roadmap.md`, quelle page designer maintenant
   5. **Réfléchir avec toi** : Décisions design (UX/UI, couleurs, typo, layouts)
   6. **Valider tes avancées** : Feedback sur tes designs, suggestions d'amélioration
   7. **Conseils techniques** : Comment structurer pour faciliter le code (Auto Layout, naming)
@@ -378,88 +381,39 @@ Pour adapter ces règles à un projet spécifique, modifiez les sections ci-dess
 
 ## Documentation du projet
 
-### Fichiers de contexte à maintenir
+### 📓 Source de vérité — Vault Obsidian
 
-- **ARCHITECTURE_ADMIN_CENTRAL.md** : `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` - Architecture complète Admin Centralisée (3 projets + 1 admin) ⭐ **RÉFÉRENCE ARCHITECTURE**
-- **CONTEXT.md** : `docs/context/CONTEXT.md` - Contexte général du projet, architecture globale, état actuel
-- **ROADMAP_COMPLETE.md** : `docs/context/ROADMAP_COMPLETE.md` - Roadmap détaillée de toutes les phases (24 phases) - **RÉFÉRENCE PRINCIPALE**
-- **BRAINSTORMING_ROADMAP.md** : `docs/context/BRAINSTORMING_ROADMAP.md` - Brainstorming & décisions prises
-- **CLARIFICATIONS_BRAINSTORMING.md** : `docs/context/CLARIFICATIONS_BRAINSTORMING.md` - Clarifications et décisions validées
-- **API_CONFIG.md** : `docs/context/API_CONFIG.md` - Configuration API centralisée (ports, endpoints, variables d'environnement, conventions)
-- **frontend/FRONTEND.md** : `frontend/FRONTEND.md` - Documentation frontend (pages, composants, services, état actuel, roadmap frontend)
-- **frontend/AUTH_USAGE.md** : `frontend/AUTH_USAGE.md` - Documentation système authentification frontend (useAuth, AuthContext)
-- **backend/BACKEND.md** : `backend/BACKEND.md` - Documentation backend (modules, endpoints, entités, état actuel, roadmap backend)
-- **POLICIES_TODO.md** : `docs/context/POLICIES_TODO.md` - Note pour finaliser politiques livraison/retour
-- **ANIMATIONS_GUIDE.md** : `docs/animations/ANIMATIONS_GUIDE.md` - Guide complet des animations AnimeJS (workflow, exemples, bonnes pratiques) ⭐ **RÉFÉRENCE ANIMATIONS**
+**Le vault Obsidian est la référence principale du projet** (remplace obsidian-vault/Projet/roadmap.md, CONTEXT.md, etc.)
 
-### 🎯 Règle ROADMAP_COMPLETE.md - OBLIGATOIRE
+**Point d’entrée** : `obsidian-vault/REBOUL.md`
 
-**ROADMAP_COMPLETE.md est la référence principale du projet.**
+| Besoin | Où aller |
+|--------|----------|
+| État global du projet | `obsidian-vault/REBOUL.md` |
+| Roadmap + tâches | `obsidian-vault/Projet/roadmap.md` |
+| Page frontend | `obsidian-vault/Frontend/Frontend.md` → page |
+| Module backend | `obsidian-vault/Backend/Backend.md` → module |
+| Collection SS26 | `obsidian-vault/Collections/Collections.md` → marque |
+| Sécurité / pentest | `obsidian-vault/Securite/Securite.md` |
+| AS400 / SFTP | `obsidian-vault/Securite/as400.md` |
+| VPS / déploiement | `obsidian-vault/Architecture/vps.md` |
+| Pipeline images | `obsidian-vault/Architecture/pipeline-images.md` |
 
-#### Quand mettre à jour ROADMAP_COMPLETE.md ?
+**Références techniques toujours valides** :
+- `docs/animations/ANIMATIONS_GUIDE.md` — guide animations AnimeJS
+- `frontend/FRONTEND.md` — stack + conventions frontend
+- `backend/BACKEND.md` — stack + conventions backend
 
-1. **À CHAQUE étape complétée** : Cocher `[ ]` → `[x]` immédiatement
-2. **Pour la Phase 24.10 (Images IA)** : En plus de cocher les tâches, mettre à jour la ligne « État actuel (dernière MAJ) » dans la section 24.10, et tenir à jour `docs/integrations/IMAGES_IA_WORKFLOW.md` (statut, prochaine étape) pour que l’avancement soit lisible
-3. **À CHAQUE phase terminée** : Ajouter ✅ au titre de la phase
-4. **Avant de commencer une nouvelle phase** : Vérifier ROADMAP_COMPLETE.md pour savoir quoi faire
-5. **Après chaque session de travail** : Mettre à jour l'avancement
+### Règles de maintenance
 
-#### Comment mettre à jour ?
-
-```markdown
-### Phase 9 : Backend - Authentification & Utilisateurs ✅
-#### 9.1 Entité User
-- [x] Créer entité User (id, email, password hash, ...)
-- [x] Enum UserRole (CLIENT, ADMIN, SUPER_ADMIN)
-- [x] Créer entité Address (id, userId, ...)
-```
-
-#### Processus systématique
-
-1. **Avant de commencer une tâche** :
-   - ✅ Consulter ROADMAP_COMPLETE.md
-   - ✅ Identifier la phase et l'étape en cours
-   - ✅ Vérifier les dépendances
-
-2. **Pendant le développement** :
-   - ✅ Se référer à ROADMAP_COMPLETE.md pour la liste des tâches
-   - ✅ Noter mentalement ce qui est fait
-
-3. **Après CHAQUE tâche complétée** :
-   - ✅ **OBLIGATOIRE** : Mettre à jour ROADMAP_COMPLETE.md (cocher `[x]`)
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli roadmap update --task "..."`)
-     - Alternative manuelle : Éditer directement le fichier
-   - ✅ Mettre à jour CONTEXT.md (état actuel) si fin de phase
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli docs sync`) - synchronise automatiquement ROADMAP ↔ BACKEND.md ↔ FRONTEND.md
-     - Alternative manuelle : Éditer directement le fichier
-   - ✅ Mettre à jour FRONTEND.md ou BACKEND.md si nécessaire
-     - **⭐ RECOMMANDÉ** : Utiliser le CLI Python (`./rcli docs sync`) - synchronise automatiquement
-
-#### Importance critique
-
-- **ROADMAP_COMPLETE.md = source de vérité du projet**
-- Permet de savoir exactement où on en est à tout moment
-- Facilite la reprise après pause
-- Évite les oublis et les doublons
-- Assure la cohérence du développement
-
-### Règles de maintenance générales
-
-- **Mise à jour continue** : Maintenir ces fichiers à jour tout au long du projet
-- **Travail par étapes** : Documenter chaque étape au fur et à mesure du développement
-- **État actuel** : Toujours mettre à jour la section "État Actuel" après chaque fonctionnalité
-- **Versioning** : Mettre à jour les numéros de version et phases dans chaque fichier
-- **Détails techniques** : Documenter les nouvelles fonctionnalités, endpoints, composants, etc.
-- **Roadmaps** : Maintenir les roadmaps frontend et backend à jour :
-  - Cocher les éléments terminés dans les roadmaps
-  - Ajouter les nouvelles fonctionnalités planifiées
-  - Mettre à jour les phases et priorités
-  - **Synchroniser avec ROADMAP_COMPLETE.md (prioritaire)**
+- **Après chaque tâche complétée** : cocher dans `obsidian-vault/Projet/roadmap.md`
+- **Après chaque session** : mettre à jour `obsidian-vault/REBOUL.md` + créer `Sessions/YYYY-MM-DD-sujet.md`
+- **Sync Cursor** : `/vault` dans Claude Code met à jour `project-rules.mdc` automatiquement
 
 ### Processus de documentation
 
-**Avant** : Consulter `ROADMAP_COMPLETE.md` (obligatoire), `ARCHITECTURE_ADMIN_CENTRAL.md` si admin, `CONTEXT.md` / `FRONTEND.md` ou `BACKEND.md` selon le contexte.  
-**Après chaque étape** : Cocher tâches dans `ROADMAP_COMPLETE.md` (`./rcli roadmap update --task "..."`), lancer `./rcli docs sync` pour CONTEXT / FRONTEND / BACKEND.
+**Avant de commencer** : lire `obsidian-vault/REBOUL.md` + le fichier de section concerné.
+**Après chaque tâche** : cocher dans `obsidian-vault/Projet/roadmap.md` + mettre à jour le fichier vault concerné.
 
 ### 🔒 Règle : Gestion des fichiers MD temporaires
 
@@ -529,7 +483,8 @@ mv docs/phases/PHASE_X_*.md docs/archive/  # Si phase terminée
 - Synthèses et FAQ pour phases actives (`PHASE_X_SYNTHESE.md`, `PHASE_X_FAQ_*.md`) - **À garder**
 
 **Dans `docs/context/`** :
-- Fichiers de contexte permanents (`CONTEXT.md`, `ROADMAP_COMPLETE.md`, `API_CONFIG.md`, etc.)
+- Fichiers de contexte techniques permanents (`API_CONFIG.md`, `DB_CLI_USAGE.md`, etc.)
+- La roadmap et l'état du projet sont dans le vault Obsidian (`obsidian-vault/`)
 
 #### 🎯 Règle d'or
 
@@ -852,6 +807,11 @@ Le CLI dispose d'un **arsenal complet de commandes** pour gérer et surveiller l
 
 # Audit de sécurité complet
 ./rcli server security --audit
+
+# Mode maintenance — toggle on/off (NOUVEAU 11/05/2026)
+./rcli server maintenance status   # voir l'état actuel
+./rcli server maintenance on       # activer la page de maintenance (503)
+./rcli server maintenance off      # désactiver → site en ligne
 ```
 
 **Vérifications de sécurité** :
@@ -1054,7 +1014,7 @@ Les commandes nécessitent :
 ```bash
 export VPS_HOST=152.228.218.35
 export VPS_USER=deploy
-export VPS_SSH_KEY=~/.ssh/id_rsa
+export VPS_SSH_KEY=~/.ssh/id_ed25519
 ```
 
 Voir `cli/utils/server_helper.py` pour la configuration.
@@ -1127,7 +1087,7 @@ Voir `cli/utils/server_helper.py` pour la configuration.
 
 ### Commandes utilitaires
 
-- **`/update-roadmap`** : Mettre à jour ROADMAP_COMPLETE.md (`docs/context/ROADMAP_COMPLETE.md`)
+- **`/update-roadmap`** : Mettre à jour la roadmap (`obsidian-vault/Projet/roadmap.md`)
   - **⭐ RECOMMANDÉ** : Utiliser le CLI (`./rcli roadmap update --task "..."`)
   - Quand et comment cocher les tâches
   - Format de mise à jour
@@ -1322,7 +1282,7 @@ docker volume ls | grep -E '(postgres|db|database)'
 
 #### 📚 Script de déploiement correct
 
-**Utiliser UNIQUEMENT** : `./scripts/deploy-prod.sh`
+**Utiliser UNIQUEMENT** : `DEPLOY_HOST=deploy@152.228.218.35 ./scripts/deploy-prod.sh`
 
 Ce script :
 - ✅ Sauvegarde automatiquement la base de données avant déploiement
@@ -1350,7 +1310,7 @@ Ce script :
 
 2. **Sauvegarde automatique** :
    - ✅ Sauvegarder automatiquement `.env.production` avant chaque déploiement
-   - ✅ Sauvegardes stockées dans `/opt/reboulstore/.env-backups/`
+   - ✅ Sauvegardes stockées dans `/var/www/reboulstore/.env-backups/`
    - ✅ Garder les 10 derniers backups
 
 3. **Cohérence architecture** :
@@ -1586,7 +1546,7 @@ Ce script :
 
 #### Gestion des backups
 
-**Emplacement** : `/opt/reboulstore/backups/` (serveur)
+**Emplacement** : `/var/www/reboulstore/backups/` (serveur)
 
 **Nommage** : `reboulstore_db_YYYYMMDD_HHMMSS.sql.gz`
 
@@ -1654,8 +1614,9 @@ obsidian-vault/
 ├── Frontend/          ← 22 pages React (une page = un fichier)
 ├── Backend/           ← 18 modules NestJS (un module = un fichier)
 ├── Database/          ← PostgreSQL — entités, schéma, backup
-├── Collections/       ← 10 marques SS26 (data + pipeline images)
-├── Architecture/      ← stack, VPS, API, services tiers, pipeline images, sécurité
+├── Collections/       ← 12 marques SS26 (data + pipeline images)
+├── Architecture/      ← stack, VPS, API, services tiers, pipeline images, CLI
+├── Securite/          ← sécurité (etat-actuel, hardening, pentest, AS400, checklist)
 ├── Projet/            ← roadmap, phases, règles critiques
 ├── Sessions/          ← logs de sessions de travail
 └── _templates/        ← modèles Templater
@@ -1668,8 +1629,9 @@ obsidian-vault/
 | `Frontend/` | `Frontend/Frontend.md` | 22 pages React + hooks + composants |
 | `Backend/` | `Backend/Backend.md` | 18 modules NestJS + endpoints + entités |
 | `Database/` | `Database/Database.md` | PostgreSQL — entités, schéma, backup |
-| `Collections/` | `Collections/Collections.md` | 10 marques SS26 — data + pipeline images |
-| `Architecture/` | `Architecture/Architecture.md` | VPS, API, workflow, services tiers, sécurité, pipeline images |
+| `Collections/` | `Collections/Collections.md` | 12 marques SS26 — data + pipeline images |
+| `Architecture/` | `Architecture/Architecture.md` | VPS, API, workflow, services tiers, CLI, pipeline images |
+| `Securite/` | `Securite/Securite.md` | État sécurité, hardening, pentest 6 phases, AS400, checklist |
 | `Projet/` | `Projet/Projet.md` | Roadmap, phases 25→27, règles non-négociables |
 
 ### Règle de navigation
@@ -1700,9 +1662,9 @@ obsidian-vault/
 
 ### Pages Frontend — statut rapide
 
-22 pages. 5 non encore créées dans le code (marquées `a-creer`) :
-Login, Register, Profile, Orders, OrderDetail.
-Détail complet : `Frontend/Frontend.md`
+22 pages. Toutes en cours de revue (Phase 25 — finalisation frontend).
+Statut détaillé page par page : `obsidian-vault/Frontend/Frontend.md`
+Monitoring UptimeRobot actif — 2 moniteurs (frontend + `/api/health`).
 
 ### Backend — modules actifs
 
@@ -1714,20 +1676,24 @@ Détail complet : `Backend/Backend.md`
 16 entités TypeORM. Connexion VPS uniquement (tunnel SSH en dev).
 Détail complet : `Database/Database.md`
 
-### Collections SS26
+### Collections SS26 (12 marques)
 
-| Marque | Slug | Statut images |
-|--------|------|---------------|
-| Stone Island | `stone-island` | 77 refs — 61 à uploader |
-| Autry | `autry` | 40 refs — tri à faire |
-| Bisous | `bisous` | 25/33 — 8 vides |
-| Arte Antwerp | `arte` | Photos dispo — pipeline à lancer |
-| Off-White | `off-white` | Shoes — pipeline à lancer |
-| Carhartt | `carhartt` | CSV prêt — photos à récupérer |
-| Saucony | `saucony` | CSV prêt |
-| Birkenstock | `birkenstock` | CSV prêt |
-| Asics | `asics` | À confirmer |
-| Salomon | `salomon` | À confirmer |
+État détaillé : `obsidian-vault/Collections/Collections.md`
+
+| Marque | Slug | Statut |
+|--------|------|--------|
+| Stone Island | `stone-island` | 63 générées — 2 uploadées |
+| Autry | `autry` | 24/34 complets — 4 refs + 10 × 4_top à faire |
+| Bisous Skateboards | `bisous` | 22/33 — 9 vides, 2 back manquants |
+| Arte Antwerp | `arte` | 10/10 générées — à uploader |
+| Off-White | `off-white` | 7/7 générées — à uploader |
+| Carhartt WIP | `carhartt` | 54/62 générées — à uploader |
+| Saucony | `saucony` | 7/7 générées — à uploader |
+| Asics | `asics` | 15/15 générées — à uploader |
+| Salomon | `salomon` | 13/13 générées — à uploader |
+| Birkenstock | `birkenstock` | 34 refs — pipeline shoe à lancer |
+| Hologram | `hologram` | CSV prêt — import + pipeline à lancer |
+| RRD | `rrd` | À démarrer |
 
 ### Mise à jour du vault
 

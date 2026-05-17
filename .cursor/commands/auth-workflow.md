@@ -23,8 +23,8 @@ Workflow pour travailler sur l’**authentification** (frontend + backend) dans 
   - `backend/src/entities/address.entity.ts` : Entité Address (liée à User).
 
 - **Docs globales** :
-  - `docs/context/ROADMAP_COMPLETE.md` : Phases auth (backend + frontend).
-  - `docs/context/CONTEXT.md` : État actuel auth.
+  - `obsidian-vault/Projet/roadmap.md` : Phases auth (backend + frontend).
+  - `obsidian-vault/REBOUL.md` : État actuel auth.
 
 ---
 
@@ -39,7 +39,7 @@ Workflow pour travailler sur l’**authentification** (frontend + backend) dans 
    - Endpoints : `/auth/register`, `/auth/login`, `/auth/logout`, `/auth/me`, etc.
    - Utilisation de JWT.
 
-3. Lire `docs/context/ROADMAP_COMPLETE.md` (phases 10, 12, 18, etc.) pour voir :
+3. Lire `obsidian-vault/Projet/roadmap.md` (phases 10, 12, 18, etc.) pour voir :
    - Ce qui est déjà fait.
    - Ce qui reste à faire (reset password, OAuth, etc.).
 
@@ -58,7 +58,7 @@ Workflow pour travailler sur l’**authentification** (frontend + backend) dans 
 
 3. Mettre à jour :
    - `frontend/FRONTEND.md` (section Auth).
-   - `docs/context/ROADMAP_COMPLETE.md` (cocher la tâche).
+   - `obsidian-vault/Projet/roadmap.md` (cocher la tâche).
 
 ---
 
@@ -74,7 +74,7 @@ Workflow pour travailler sur l’**authentification** (frontend + backend) dans 
    - Exposer des endpoints cohérents (documenter dans `backend/BACKEND.md`).
 
 3. Mettre à jour :
-   - `docs/context/ROADMAP_COMPLETE.md` (phase correspondante).
+   - `obsidian-vault/Projet/roadmap.md` (phase correspondante).
    - `backend/BACKEND.md` (section Auth).
 
 ---

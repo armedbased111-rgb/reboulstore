@@ -1,289 +1,109 @@
 """
-Synchronisation automatique de la documentation
-Synchronise ROADMAP_COMPLETE.md avec BACKEND.md et FRONTEND.md
+Synchronisation documentation — vault Obsidian + BACKEND.md / FRONTEND.md
 """
 
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-import re
+from __future__ import annotations
+
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, Optional, Tuple
+import re
+
+from utils.vault_paths import (
+    BACKEND_DOC,
+    FRONTEND_DOC,
+    ROADMAP_PATH,
+    extract_sections,
+    global_task_stats,
+    resolve_roadmap_path,
+    touch_roadmap_maj,
+)
 
 
-def _get_base_path() -> Path:
-    """Trouver le chemin de base du projet"""
-    base = Path(__file__).parent.parent.parent
-    return base
-
-
-def _extract_phases_from_roadmap(roadmap_path: Path) -> Dict[str, Dict]:
-    """Extraire les phases de ROADMAP_COMPLETE.md"""
-    try:
-        content = roadmap_path.read_text(encoding='utf-8')
-    except Exception:
-        return {}
-    
-    phases = {}
-    
-    # Pattern pour les phases : ## Phase X : Titre (✅ ou sans)
-    phase_pattern = r'##\s+(?:✅\s+)?Phase\s+(\d+(?:\.\d+)?)\s*:\s*([^\n]+)'
-    phase_matches = re.finditer(phase_pattern, content, re.IGNORECASE)
-    
-    for match in phase_matches:
-        phase_num = match.group(1)
-        phase_title = match.group(2).strip()
-        is_completed = '✅' in match.group(0)
-        
-        # Extraire le contenu de la phase jusqu'à la prochaine phase
-        start_pos = match.end()
-        next_phase_match = re.search(r'##\s+(?:✅\s+)?Phase\s+', content[start_pos:], re.IGNORECASE)
-        if next_phase_match:
-            phase_content = content[start_pos:start_pos + next_phase_match.start()]
-        else:
-            phase_content = content[start_pos:]
-        
-        # Déterminer si c'est backend ou frontend
-        is_backend = any(keyword in phase_content.lower() for keyword in [
-            'backend', 'api', 'nestjs', 'controller', 'service', 'entity', 'dto',
-            'endpoint', 'module', 'typeorm', 'database'
-        ])
-        is_frontend = any(keyword in phase_content.lower() for keyword in [
-            'frontend', 'react', 'component', 'page', 'hook', 'ui', 'tailwind',
-            'figma', 'design', 'animation', 'animejs'
-        ])
-        
-        phases[phase_num] = {
-            'title': phase_title,
-            'completed': is_completed,
-            'content': phase_content,
-            'is_backend': is_backend,
-            'is_frontend': is_frontend,
-        }
-    
-    return phases
-
-
-def _update_backend_doc(backend_path: Path, phases: Dict[str, Dict]) -> Tuple[bool, str]:
-    """Mettre à jour BACKEND.md avec les phases complétées"""
-    try:
-        content = backend_path.read_text(encoding='utf-8')
-    except Exception:
-        return False, "Fichier BACKEND.md introuvable"
-    
-    # Extraire les phases backend complétées
-    backend_phases = {k: v for k, v in phases.items() if v['is_backend'] and v['completed']}
-    
-    # Trouver la section "État actuel" ou "Complété"
-    # Mettre à jour la version et la date
-    date_pattern = r'(\*\*Dernière mise à jour\*\* : ).*'
-    new_date = datetime.now().strftime('%d/%m/%Y à %H:%M')
-    
+def _touch_doc_date(doc_path: Path, label: str) -> Tuple[bool, str]:
+    if not doc_path.exists():
+        return False, f"⚠️  {label} introuvable"
+    content = doc_path.read_text(encoding="utf-8")
+    new_date = datetime.now().strftime("%d/%m/%Y à %H:%M")
+    date_pattern = r"(\*\*Dernière mise à jour\*\* : ).*"
     if re.search(date_pattern, content):
-        content = re.sub(date_pattern, f'\\g<1>{new_date}', content)
-    
-    # Mettre à jour la version si nécessaire
-    version_pattern = r'(### Version : )([\d.]+)'
-    version_match = re.search(version_pattern, content)
-    if version_match:
-        # Incrémenter le patch version
-        current_version = version_match.group(2)
-        parts = current_version.split('.')
-        if len(parts) >= 3:
-            parts[2] = str(int(parts[2]) + 1)
-            new_version = '.'.join(parts)
-        else:
-            new_version = current_version
-        content = re.sub(version_pattern, f'\\g<1>{new_version}', content)
-    
-    # Mettre à jour la liste des phases complétées
-    completed_section_pattern = r'(#### ✅ Complété \(Phase \d+[^)]*\)\s*\n(?:- .*\n)*)'
-    # On garde les sections existantes et on ajoute les nouvelles si nécessaire
-    
-    backend_path.write_text(content, encoding='utf-8')
-    
-    return True, f"✅ BACKEND.md mis à jour ({len(backend_phases)} phases backend complétées)"
-
-
-def _update_frontend_doc(frontend_path: Path, phases: Dict[str, Dict]) -> Tuple[bool, str]:
-    """Mettre à jour FRONTEND.md avec les phases complétées"""
-    try:
-        content = frontend_path.read_text(encoding='utf-8')
-    except Exception:
-        return False, "Fichier FRONTEND.md introuvable"
-    
-    # Extraire les phases frontend complétées
-    frontend_phases = {k: v for k, v in phases.items() if v['is_frontend'] and v['completed']}
-    
-    # Trouver la section "État actuel" ou "Complété"
-    # Mettre à jour la version et la date
-    date_pattern = r'(\*\*Dernière mise à jour\*\* : ).*'
-    new_date = datetime.now().strftime('%d/%m/%Y à %H:%M')
-    
-    if re.search(date_pattern, content):
-        content = re.sub(date_pattern, f'\\g<1>{new_date}', content)
-    
-    # Mettre à jour la version si nécessaire
-    version_pattern = r'(### Version : )([\d.]+)'
-    version_match = re.search(version_pattern, content)
-    if version_match:
-        # Incrémenter le patch version
-        current_version = version_match.group(2)
-        parts = current_version.split('.')
-        if len(parts) >= 3:
-            parts[2] = str(int(parts[2]) + 1)
-            new_version = '.'.join(parts)
-        else:
-            new_version = current_version
-        content = re.sub(version_pattern, f'\\g<1>{new_version}', content)
-    
-    frontend_path.write_text(content, encoding='utf-8')
-    
-    return True, f"✅ FRONTEND.md mis à jour ({len(frontend_phases)} phases frontend complétées)"
-
-
-def _update_roadmap_date(roadmap_path: Path) -> Tuple[bool, str]:
-    """Mettre à jour la date dans ROADMAP_COMPLETE.md"""
-    try:
-        content = roadmap_path.read_text(encoding='utf-8')
-    except Exception:
-        return False, "Fichier ROADMAP_COMPLETE.md introuvable"
-    
-    # Mettre à jour la date
-    date_pattern = r'(\*\*Dernière mise à jour\*\* : ).*'
-    new_date = datetime.now().strftime('%d/%m/%Y à %H:%M')
-    
-    if re.search(date_pattern, content):
-        content = re.sub(date_pattern, f'\\g<1>{new_date}', content)
-        roadmap_path.write_text(content, encoding='utf-8')
-        return True, f"✅ Date mise à jour dans ROADMAP_COMPLETE.md"
+        content = re.sub(date_pattern, f"\\g<1>{new_date}", content)
     else:
-        # Ajouter la date si elle n'existe pas
-        version_pattern = r'(\*\*Version\*\* : [^\n]+\n)'
-        if re.search(version_pattern, content):
-            content = re.sub(version_pattern, f'\\g<1>**Dernière mise à jour** : {new_date}\n', content)
-            roadmap_path.write_text(content, encoding='utf-8')
-            return True, f"✅ Date ajoutée dans ROADMAP_COMPLETE.md"
-    
-    return False, "⚠️  Pattern date non trouvé"
+        content = f"**Dernière mise à jour** : {new_date}\n\n" + content
+    doc_path.write_text(content, encoding="utf-8")
+    return True, f"✅ {label} — date mise à jour"
 
 
-def _generate_changelog(roadmap_path: Path, output_path: Optional[Path] = None) -> str:
-    """Générer un changelog depuis ROADMAP_COMPLETE.md"""
-    try:
-        content = roadmap_path.read_text(encoding='utf-8')
-    except Exception:
+def _update_vault_roadmap(roadmap_path: Path) -> Tuple[bool, str]:
+    if not roadmap_path.exists():
+        return False, f"❌ Roadmap introuvable : {roadmap_path}"
+    content = roadmap_path.read_text(encoding="utf-8")
+    content = touch_roadmap_maj(content)
+    roadmap_path.write_text(content, encoding="utf-8")
+    done, total = global_task_stats(content)
+    rel = "obsidian-vault/Projet/roadmap.md" if roadmap_path.name == "roadmap.md" else roadmap_path.name
+    return True, f"✅ {rel} — maj + {done}/{total} tâches"
+
+
+def _generate_changelog_from_vault(roadmap_path: Path, output_path: Optional[Path] = None) -> Optional[str]:
+    if not roadmap_path.exists():
         return None
-    
-    # Extraire les phases complétées récemment
-    phases = _extract_phases_from_roadmap(roadmap_path)
-    completed_phases = {k: v for k, v in phases.items() if v['completed']}
-    
-    # Générer le changelog
-    changelog = f"""# 📝 Changelog - Reboul Store
+    content = roadmap_path.read_text(encoding="utf-8")
+    sections = extract_sections(content)
+    changelog = f"""# Changelog — Reboul Store
 
-> Généré automatiquement le {datetime.now().strftime('%d/%m/%Y à %H:%M')}
-
-## Vue d'ensemble
-
-**Total phases complétées** : {len(completed_phases)}
-
----
-
-## Phases complétées
+> Généré automatiquement le {datetime.now().strftime("%d/%m/%Y à %H:%M")}
+> Source : `obsidian-vault/Projet/roadmap.md`
 
 """
-    
-    # Grouper par numéro de phase principal (ex: Phase 9, Phase 10)
-    phases_by_main = {}
-    for phase_num, phase_info in sorted(completed_phases.items(), key=lambda x: float(x[0])):
-        main_num = phase_num.split('.')[0]
-        if main_num not in phases_by_main:
-            phases_by_main[main_num] = []
-        phases_by_main[main_num].append((phase_num, phase_info))
-    
-    # Générer le changelog par phase principale
-    for main_num in sorted(phases_by_main.keys(), key=lambda x: float(x)):
-        sub_phases = phases_by_main[main_num]
-        changelog += f"### Phase {main_num}\n\n"
-        
-        for phase_num, phase_info in sub_phases:
-            changelog += f"#### Phase {phase_num} : {phase_info['title']}\n\n"
-            
-            # Extraire les tâches complétées
-            task_pattern = r'- \[x\]\s+(.+)'
-            tasks = re.findall(task_pattern, phase_info['content'], re.IGNORECASE)
-            
-            if tasks:
-                changelog += "**Tâches complétées** :\n"
-                for task in tasks[:10]:  # Limiter à 10 tâches
+    for title, sec in sections.items():
+        if sec.completed == 0:
+            continue
+        changelog += f"## {title} ({sec.completed}/{sec.total})\n\n"
+        for line in content.splitlines():
+            if line.strip().startswith("- [x]") and title in content:
+                # tâches cochées dans le fichier — inclure si dans la section (approximation)
+                task = re.sub(r"^- \[x\]\s+", "", line.strip())
+                if len(task) > 3:
                     changelog += f"- {task}\n"
-                changelog += "\n"
-            
-            # Type de phase
-            if phase_info['is_backend']:
-                changelog += "**Type** : Backend\n\n"
-            elif phase_info['is_frontend']:
-                changelog += "**Type** : Frontend\n\n"
-            else:
-                changelog += "**Type** : Général\n\n"
-        
-        changelog += "---\n\n"
-    
-    # Sauvegarder si un chemin est fourni
+        changelog += "\n"
     if output_path:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(changelog, encoding='utf-8')
-    
+        output_path.write_text(changelog, encoding="utf-8")
     return changelog
 
 
 def synchronize_all_docs() -> Dict[str, str]:
-    """Synchroniser toute la documentation"""
-    base_path = _get_base_path()
-    
-    roadmap_path = base_path / "docs" / "context" / "ROADMAP_COMPLETE.md"
-    backend_path = base_path / "backend" / "BACKEND.md"
-    frontend_path = base_path / "frontend" / "FRONTEND.md"
-    
-    results = {}
-    
-    # Extraire les phases de la roadmap
-    phases = _extract_phases_from_roadmap(roadmap_path)
-    results['phases_extracted'] = f"✅ {len(phases)} phases extraites"
-    
-    # Mettre à jour les dates
-    success, message = _update_roadmap_date(roadmap_path)
-    results['roadmap_date'] = message
-    
-    # Synchroniser BACKEND.md
-    if backend_path.exists():
-        success, message = _update_backend_doc(backend_path, phases)
-        results['backend_sync'] = message
-    else:
-        results['backend_sync'] = "⚠️  BACKEND.md introuvable"
-    
-    # Synchroniser FRONTEND.md
-    if frontend_path.exists():
-        success, message = _update_frontend_doc(frontend_path, phases)
-        results['frontend_sync'] = message
-    else:
-        results['frontend_sync'] = "⚠️  FRONTEND.md introuvable"
-    
+    results: Dict[str, str] = {}
+    roadmap_path = resolve_roadmap_path()
+
+    ok, msg = _update_vault_roadmap(roadmap_path)
+    results["roadmap"] = msg
+
+    sections = {}
+    if roadmap_path.exists():
+        sections = extract_sections(roadmap_path.read_text(encoding="utf-8"))
+    results["sections"] = f"✅ {len(sections)} sections thématiques"
+
+    ok_b, msg_b = _touch_doc_date(BACKEND_DOC, "BACKEND.md")
+    results["backend_sync"] = msg_b
+
+    ok_f, msg_f = _touch_doc_date(FRONTEND_DOC, "FRONTEND.md")
+    results["frontend_sync"] = msg_f
+
     return results
 
 
 def generate_changelog(output_file: Optional[str] = None) -> Optional[str]:
-    """Générer un changelog"""
-    base_path = _get_base_path()
-    roadmap_path = base_path / "docs" / "context" / "ROADMAP_COMPLETE.md"
-    
-    if output_file:
-        output_path = base_path / output_file
-    else:
-        output_path = base_path / "docs" / "CHANGELOG.md"
-    
-    changelog = _generate_changelog(roadmap_path, output_path)
-    
-    if changelog:
-        return str(output_path.relative_to(base_path))
-    return None
+    from utils.vault_paths import project_root
 
+    base = project_root()
+    roadmap_path = resolve_roadmap_path()
+    if output_file:
+        output_path = base / output_file
+    else:
+        output_path = base / "docs" / "CHANGELOG.md"
+    changelog = _generate_changelog_from_vault(roadmap_path, output_path)
+    if changelog:
+        return str(output_path.relative_to(base))
+    return None

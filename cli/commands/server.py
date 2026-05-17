@@ -1664,3 +1664,68 @@ def _check_dns(domain: str):
         console.print("[blue]💡 Les changements DNS peuvent prendre jusqu'à 48h pour se propager complètement[/blue]")
     else:
         console.print(f"\n[red]❌ Aucune résolution DNS trouvée pour {domain}[/red]")
+
+
+NGINX_CONF_REMOTE = '/var/www/reboulstore/nginx/conf.d/reboulstore.conf'
+
+@server_group.command('maintenance')
+@click.argument('action', type=click.Choice(['on', 'off', 'status']), default='status', required=False)
+def maintenance(action: str):
+    """Toggle le mode maintenance du frontend (on/off/status)"""
+    check_cmd = f"grep -n 'return 503' {NGINX_CONF_REMOTE}"
+    stdout, _, _ = ssh_exec(check_cmd, return_code=True)
+
+    is_on = bool(stdout and 'return 503;' in stdout and '#' not in stdout.split('return 503;')[0].split('\n')[-1])
+
+    if action == 'status':
+        if is_on:
+            console.print("[yellow]⚠️  Maintenance : ON[/yellow] — le site affiche la page de maintenance")
+        else:
+            console.print("[green]✅ Maintenance : OFF[/green] — le site est en ligne")
+        return
+
+    if action == 'on' and is_on:
+        console.print("[yellow]Maintenance déjà active.[/yellow]")
+        return
+    if action == 'off' and not is_on:
+        console.print("[green]Site déjà en ligne.[/green]")
+        return
+
+    if action == 'on':
+        # Décommenter return 503, commenter try_files
+        sed_cmd = (
+            f"sed -i "
+            f"-e 's|# return 503;|return 503;|g' "
+            f"-e 's|try_files|# try_files|g' "
+            f"-e 's|expires -1;|# expires -1;|g' "
+            f"-e 's|add_header Cache-Control \"no-cache|# add_header Cache-Control \"no-cache|g' "
+            f"-e 's|add_header Pragma \"no-cache\";|# add_header Pragma \"no-cache\";|g' "
+            f"{NGINX_CONF_REMOTE}"
+        )
+    else:
+        # Commenter return 503, décommenter try_files
+        sed_cmd = (
+            f"sed -i "
+            f"-e 's|return 503;|# return 503;|g' "
+            f"-e 's|# try_files|try_files|g' "
+            f"-e 's|# expires -1;|expires -1;|g' "
+            f"-e 's|# add_header Cache-Control \"no-cache|add_header Cache-Control \"no-cache|g' "
+            f"-e 's|# add_header Pragma \"no-cache\";|add_header Pragma \"no-cache\";|g' "
+            f"{NGINX_CONF_REMOTE}"
+        )
+
+    ssh_exec(sed_cmd)
+
+    # Test + reload nginx
+    test_stdout, test_stderr, code = ssh_exec(
+        "docker exec reboulstore-nginx-prod nginx -t && docker exec reboulstore-nginx-prod nginx -s reload",
+        return_code=True
+    )
+
+    if code == 0:
+        label = "ON" if action == 'on' else "OFF"
+        color = "yellow" if action == 'on' else "green"
+        console.print(f"[{color}]✅ Maintenance {label}[/{color}] — nginx rechargé")
+    else:
+        console.print(f"[red]❌ Erreur nginx : {test_stderr}[/red]")
+        console.print("[yellow]Config non appliquée — vérifier manuellement[/yellow]")

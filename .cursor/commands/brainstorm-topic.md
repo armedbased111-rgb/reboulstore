@@ -33,8 +33,8 @@ Dans le chat Cursor, tape par exemple :
 L’IA doit alors :
 
 1. Lire rapidement le contexte :
-   - `docs/context/ROADMAP_COMPLETE.md`
-   - `docs/context/CONTEXT.md`
+   - `obsidian-vault/Projet/roadmap.md`
+   - `obsidian-vault/REBOUL.md`
    - La doc spécifique (`frontend/FRONTEND.md`, `backend/BACKEND.md`, `docs/architecture/...`, etc. selon le sujet)
 2. Te poser des **questions de clarification** :
    - Contexte fonctionnel

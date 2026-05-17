@@ -222,7 +222,7 @@ useEffect(() => {
 - [ ] Error state géré
 - [ ] Responsive vérifié
 - [ ] Testé dans le navigateur
-- [ ] ROADMAP_COMPLETE.md mis à jour
+- [ ] obsidian-vault/Projet/roadmap.md mis à jour
 - [ ] frontend/FRONTEND.md mis à jour
 
 ## 🚀 CLI Python - Génération automatique

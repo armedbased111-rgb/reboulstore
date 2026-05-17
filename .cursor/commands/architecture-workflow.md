@@ -8,23 +8,23 @@ Workflow pour comprendre et travailler avec l’**architecture multi‑sites + a
 
 ## 📂 Fichiers architecture
 
-- `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` ⭐  
+- `obsidian-vault/Architecture/Architecture.md` ⭐  
   → Référence principale de l’architecture (3 shops + 1 admin).
 
 - `docs/architecture/ARCHITECTURE_MULTI_SHOPS.md`  
   → Focus sur la partie multi‑shops (reboulstore, cpcompany, outlet…).
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Résumé de l’architecture + état actuel.
 
-- `docs/context/ROADMAP_COMPLETE.md`  
+- `obsidian-vault/Projet/roadmap.md`  
   → Quelles phases concernent l’admin / multi‑shops.
 
 ---
 
 ## 1. Comprendre l’architecture globale
 
-1. Lire `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` :
+1. Lire `obsidian-vault/Architecture/Architecture.md` :
    - 3 sites e‑commerce indépendants (backend + frontend + DB).
    - 1 application admin centrale (backend + frontend) connectée aux 3 DB.
    - Raison : isolation, scalabilité, sécurité.
@@ -33,7 +33,7 @@ Workflow pour comprendre et travailler avec l’**architecture multi‑sites + a
    - Détails sur les projets `reboulstore/`, `cpcompany/`, `outlet/`.
    - Comment chaque projet est structuré (backend/, frontend/, docker-compose, etc.).
 
-3. Lire `docs/context/CONTEXT.md` (section Architecture) :
+3. Lire `obsidian-vault/REBOUL.md` (section Architecture) :
    - Vue d’ensemble actuelle (où on en est : Reboul d’abord, admin plus tard, etc.).
 
 ---
@@ -50,19 +50,19 @@ Workflow pour comprendre et travailler avec l’**architecture multi‑sites + a
    - Utiliser l’admin comme **agrégateur**, pas comme point unique de vérité pour les shops.
 
 3. Pour les décisions impactant plusieurs shops :
-   - Documenter dans `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md`.
-   - Mettre à jour `docs/context/CONTEXT.md` si l’état change.
+   - Documenter dans `obsidian-vault/Architecture/Architecture.md`.
+   - Mettre à jour `obsidian-vault/REBOUL.md` si l’état change.
 
 ---
 
 ## 3. Quand tu travailles sur l’admin centrale
 
-1. Lire dans `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` :
+1. Lire dans `obsidian-vault/Architecture/Architecture.md` :
    - Comment l’admin se connecte aux différentes DB (multi‑connexions TypeORM).
    - Quelles features doivent être gérées depuis l’admin (produits, commandes, clients).
 
 2. Planifier les modules admin dans :
-   - `docs/context/ROADMAP_COMPLETE.md` (phases admin backend + admin frontend).
+   - `obsidian-vault/Projet/roadmap.md` (phases admin backend + admin frontend).
 
 3. Créer un projet admin séparé (plus tard) :
    - `admin-central/backend/`
@@ -73,12 +73,12 @@ Workflow pour comprendre et travailler avec l’**architecture multi‑sites + a
 
 ## 4. Checklist avant toute modif d’architecture
 
-1. ✅ Lire `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md`.  
+1. ✅ Lire `obsidian-vault/Architecture/Architecture.md`.  
 2. ✅ Lire `docs/architecture/ARCHITECTURE_MULTI_SHOPS.md` si c’est lié aux shops.  
-3. ✅ Vérifier dans `docs/context/ROADMAP_COMPLETE.md` la phase concernée.  
+3. ✅ Vérifier dans `obsidian-vault/Projet/roadmap.md` la phase concernée.  
 4. ✅ Noter toute décision importante dans :
    - `docs/context/CLARIFICATIONS_BRAINSTORMING.md`
-   - `docs/context/CONTEXT.md` (si l’état global change)
+   - `obsidian-vault/REBOUL.md` (si l’état global change)
 
 ---
 

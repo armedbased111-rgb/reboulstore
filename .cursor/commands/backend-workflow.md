@@ -8,7 +8,7 @@ Workflow complet pour développer des fonctionnalités backend dans Reboul Store
 
 ### 1. Avant de commencer
 
-1. ✅ **Consulter ROADMAP_COMPLETE.md** pour identifier la phase/tâche
+1. ✅ **Consulter obsidian-vault/Projet/roadmap.md** pour identifier la phase/tâche
 2. ✅ **Consulter CONTEXT.md** pour l'état actuel
 3. ✅ **Consulter backend/BACKEND.md** pour la documentation backend
 4. ✅ **Consulter API_CONFIG.md** pour les endpoints et configuration
@@ -78,7 +78,7 @@ Voir `/cli-workflow` pour le guide complet.
 
 4. **Enregistrer le module** : `backend/src/app.module.ts`
 
-5. **Mettre à jour ROADMAP_COMPLETE.md** ✅
+5. **Mettre à jour obsidian-vault/Projet/roadmap.md** ✅
 
 ### Template Module
 
@@ -257,7 +257,7 @@ export class CreateNomDto {
 ## 📝 Mise à jour documentation
 
 **Après chaque fonctionnalité :**
-1. ✅ **ROADMAP_COMPLETE.md** : Cocher les tâches terminées
+1. ✅ **obsidian-vault/Projet/roadmap.md** : Cocher les tâches terminées
 2. ✅ **backend/BACKEND.md** : Ajouter module/endpoint/entité
 3. ✅ **API_CONFIG.md** : Ajouter endpoint si nouveau
 4. ✅ **CONTEXT.md** : Mettre à jour état actuel si phase terminée

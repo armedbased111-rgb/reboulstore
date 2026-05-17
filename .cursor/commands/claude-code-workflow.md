@@ -21,7 +21,7 @@
 
 - **Batch images** : liste de refs → pour chaque ref : `db ref` puis `images generate` puis `images upload`.
 - **Vérif de refs en masse** : feuille de stock / CSV → pour chaque ref : `./rcli db ref REF` et résumer les erreurs.
-- **Doc / roadmap** : `./rcli docs sync`, cocher des tâches dans ROADMAP_COMPLETE.md, commit avec message conventionnel.
+- **Doc / roadmap** : `./rcli docs sync`, cocher des tâches dans `obsidian-vault/Projet/roadmap.md`, commit avec message conventionnel.
 - **Après une session** : « commit mes changements avec un message feat: … », « mets à jour la roadmap pour la tâche X ».
 - **Code front (optionnel)** : refactors ciblés, ajout d’un composant/page sur demande (« add a price filter to Catalog »). Claude a le contexte dans CLAUDE.md (section Frontend) et peut lire `frontend/FRONTEND.md`. Pour les features avec Figma / animations AnimeJS / règles détaillées, privilégier Cursor.
 
@@ -50,7 +50,7 @@ I have a file refs.txt with one product reference per line. For each line, run .
 ### Sync doc + mise à jour roadmap
 
 ```text
-Run ./rcli docs sync and tell me the result. Then in docs/context/ROADMAP_COMPLETE.md, check the following task: [COLLER LA TÂCHE EXACTE]. Don't change anything else.
+Run ./rcli docs sync and tell me the result. Then in obsidian-vault/Projet/roadmap.md, check the following task: [COLLER LA TÂCHE EXACTE]. Don't change anything else.
 ```
 
 ### Commit après session
@@ -90,4 +90,5 @@ Read frontend/FRONTEND.md and the Frontend section in CLAUDE.md. Then add a pric
 - **Contexte Claude** : `CLAUDE.md` (racine)
 - **Pipeline images** : `docs/integrations/IMAGES_PRODUIT_PIPELINE.md`
 - **CLI DB** : `docs/context/DB_CLI_USAGE.md`
-- **Plan 24.11** : `docs/context/ROADMAP_COMPLETE.md` § 24.11
+- **Roadmap vault** : `obsidian-vault/Projet/roadmap.md`
+- **AS400 SFTP** : `obsidian-vault/Securite/as400.md`

@@ -10,13 +10,13 @@ Workflow pour tout ce qui concerne l’**admin centrale** (projet `admin-central
 
 ## 1. Docs d’architecture à lire
 
-- `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` ⭐  
+- `obsidian-vault/Architecture/Architecture.md` ⭐  
   → Architecture complète admin centrale (3 shops + 1 admin).
 
 - `docs/architecture/ARCHITECTURE_MULTI_SHOPS.md`  
   → Détails de chaque shop et de leurs stacks.
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Où en est l’admin dans la roadmap (phases, priorités).
 
 ---
@@ -44,12 +44,12 @@ Workflow pour tout ce qui concerne l’**admin centrale** (projet `admin-central
 
 Toujours :
 
-1. Lire `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md`.  
-2. Vérifier dans `docs/context/ROADMAP_COMPLETE.md` :
+1. Lire `obsidian-vault/Architecture/Architecture.md`.  
+2. Vérifier dans `obsidian-vault/Projet/roadmap.md` :
    - Quelles phases sont prévues pour l’admin (16‑17).  
 3. Noter toute décision / changement dans :
    - `docs/context/CLARIFICATIONS_BRAINSTORMING.md`  
-   - `docs/context/CONTEXT.md` (si l’état global change).
+   - `obsidian-vault/REBOUL.md` (si l’état global change).
 
 ---
 
@@ -63,7 +63,7 @@ Toujours :
    - `admin-customers` (clients)  
 4. Documenter dans :
    - `admin-central/backend/BACKEND.md` (nouveau fichier)  
-   - `docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md` (mise à jour)
+   - `obsidian-vault/Architecture/Architecture.md` (mise à jour)
 
 ---
 
@@ -78,7 +78,7 @@ Toujours :
    - Fiches clients  
 3. Documenter dans :
    - `admin-central/frontend/FRONTEND.md` (nouveau fichier)  
-   - `docs/context/ROADMAP_COMPLETE.md` (phases 16‑17).
+   - `obsidian-vault/Projet/roadmap.md` (phases 16‑17).
 
 ---
 

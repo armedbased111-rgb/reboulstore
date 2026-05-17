@@ -8,7 +8,7 @@ Workflow complet pour développer des fonctionnalités frontend dans Reboul Stor
 
 ### 1. Avant de commencer
 
-1. ✅ **Consulter ROADMAP_COMPLETE.md** pour identifier la phase/tâche
+1. ✅ **Consulter obsidian-vault/Projet/roadmap.md** pour identifier la phase/tâche
 2. ✅ **Consulter CONTEXT.md** pour l'état actuel
 3. ✅ **Consulter frontend/FRONTEND.md** pour la documentation frontend
 4. ✅ **Vérifier les règles** dans `.cursor/rules/project-rules.mdc`
@@ -75,7 +75,7 @@ Voir `/cli-workflow` pour le guide complet.
 3. **Créer les composants** si nécessaire (dans `components/`)
 4. **Créer le service** si appel API (dans `services/`)
 5. **Ajouter les types** si besoin (dans `types/`)
-6. **Mettre à jour ROADMAP_COMPLETE.md** ✅
+6. **Mettre à jour obsidian-vault/Projet/roadmap.md** ✅
 
 ### Template de base
 
@@ -194,7 +194,7 @@ Voir `/animation-workflow` pour le workflow complet.
 ## 📝 Mise à jour documentation
 
 **Après chaque fonctionnalité :**
-1. ✅ **ROADMAP_COMPLETE.md** : Cocher les tâches terminées
+1. ✅ **obsidian-vault/Projet/roadmap.md** : Cocher les tâches terminées
 2. ✅ **frontend/FRONTEND.md** : Ajouter page/composant/service
 3. ✅ **CONTEXT.md** : Mettre à jour état actuel si phase terminée
 

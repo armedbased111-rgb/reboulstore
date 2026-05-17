@@ -30,13 +30,13 @@ Toujours fournir au minimum :
 Selon le type de bug :
 
 - **Bug fonctionnel lié à une phase**  
-  - Vérifier la phase correspondante dans `docs/context/ROADMAP_COMPLETE.md`.  
+  - Vérifier la phase correspondante dans `obsidian-vault/Projet/roadmap.md`.  
   - Si le bug remet en cause une phase, noter une entrée dans :  
     - `docs/context/CLARIFICATIONS_BRAINSTORMING.md` (décisions / ajustements).
 
 - **Bug récurrent / à suivre**  
   - Option : créer une section “Bugs connus” dans :  
-    - `docs/context/CONTEXT.md` (si global)  
+    - `obsidian-vault/REBOUL.md` (si global)  
     - ou dans `frontend/FRONTEND.md` / `backend/BACKEND.md` (si spécifique).
 
 ---

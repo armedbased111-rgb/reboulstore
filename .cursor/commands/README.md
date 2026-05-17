@@ -89,7 +89,7 @@ Workflow documentation
 ### `/roadmap-phase-workflow`
 Ajouter / modifier / contextualiser des phases dans la roadmap
 - Comment brainstormer une nouvelle phase
-- Où la noter (BRAINSTORMING_ROADMAP, CLARIFICATIONS_BRAINSTORMING, ROADMAP_COMPLETE)
+- Où la noter (obsidian-vault/Projet/roadmap.md — source de vérité unique)
 - Comment rester cohérent avec la vision globale
 
 ### `/claude-code-workflow`
@@ -148,7 +148,7 @@ Créer un module NestJS complet
 ## 📝 Utilitaires
 
 ### `/update-roadmap`
-Mettre à jour ROADMAP_COMPLETE.md
+Mettre à jour obsidian-vault/Projet/roadmap.md
 - Quand et comment cocher les tâches
 - Format de mise à jour
 - Processus systématique
@@ -226,9 +226,9 @@ Guide complet du CLI Python
 
 Toutes les commandes référencent les fichiers de documentation :
 
-- **docs/context/ROADMAP_COMPLETE.md** : Roadmap complète (référence principale)
-- **docs/context/CONTEXT.md** : Contexte et état actuel
-- **docs/architecture/ARCHITECTURE_ADMIN_CENTRAL.md** : Architecture globale
+- **obsidian-vault/Projet/roadmap.md** : Roadmap complète (référence principale)
+- **obsidian-vault/REBOUL.md** : Contexte et état actuel
+- **obsidian-vault/Architecture/Architecture.md** : Architecture globale
 - **docs/animations/ANIMATIONS_GUIDE.md** : Guide animations GSAP
 - **docs/export/FIGMA_DEV_GUIDE.md** : Guide développement Figma
 - **frontend/FRONTEND.md** : Documentation frontend

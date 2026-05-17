@@ -8,10 +8,10 @@ Workflow spécifique pour tout ce qui touche au **checkout** (UX, flow fonctionn
 
 ## 1. Docs & fichiers à lire avant
 
-- `docs/context/ROADMAP_COMPLETE.md`  
+- `obsidian-vault/Projet/roadmap.md`  
   → Phases checkout (12.x, 13, etc.).
 
-- `docs/context/CONTEXT.md`  
+- `obsidian-vault/REBOUL.md`  
   → Résumé de l’état actuel du checkout (Stripe, emails invités, etc.).
 
 - `docs/stripe/STRIPE_PAYMENT_FLOW.md`  

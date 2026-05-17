@@ -38,7 +38,7 @@ Checklist et workflow pour **améliorer la performance frontend** (temps de char
 ### B. Images & médias
 
 - [ ] Utiliser des résolutions adaptées (pas d’images 4000px pour des vignettes).  
-- [ ] Prévoir plus tard : migration vers Cloudinary (voir roadmap + `docs/context/CONTEXT.md`).  
+- [ ] Prévoir plus tard : migration vers Cloudinary (voir roadmap + `obsidian-vault/REBOUL.md`).  
 - [ ] Éviter les vidéos auto‑play lourdes sur mobile (ou prévoir fallback).
 
 ### C. Composants React
