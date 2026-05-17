@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| Logs | ✅ Phases 1–3 — Winston + Loki/Grafana **actifs VPS** · guide : [[Architecture/grafana]] · Phase 4 alertes · [[Sessions/2026-05-17-logs-winston]] |
+| Logs | ✅ Phases 1–4 — Winston, Loki/Grafana, alertes email cron · [[Architecture/grafana]] · [[Architecture/commands-logs]] · [[Sessions/2026-05-17-logs-winston]] |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 

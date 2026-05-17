@@ -217,6 +217,30 @@ Infra : [[Architecture/observability]]
 
 ---
 
+## CLI — Docker live vs Grafana
+
+| Besoin | Commande |
+|--------|----------|
+| Aide rapide | `./rcli logs guide` |
+| Logs live | `./rcli server logs backend --follow` |
+| Events JSON | `./rcli server logs backend --events` ou `./rcli logs events --last 1h` |
+| Erreurs | `./rcli logs errors --last 24h` |
+| API 4xx/5xx | `./rcli logs api-errors --last 1h` |
+| Historique 30j | Grafana → [[Architecture/grafana]] |
+
+---
+
+## Alertes email (cron VPS)
+
+```bash
+./scripts/setup-log-alerts-cron.sh    # une fois
+./scripts/check-log-alerts.sh         # test manuel
+```
+
+Variables : `.env.observability` (`LOG_ALERT_EMAIL`, `LOG_ALERT_5XX_THRESHOLD`, …)
+
+---
+
 ## Variables
 
 | Variable | Valeur |

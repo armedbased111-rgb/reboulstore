@@ -108,9 +108,9 @@ Détail complet → [[Securite/Securite]]
 - [x] Grafana sécurisé : auth admin (`.env.observability`), bind **127.0.0.1:3030** + tunnel SSH
 - [x] **VPS** : `.env.observability` + stack up (Loki, Promtail, Grafana) ✅ 17/05/2026 — vérif dashboard via tunnel SSH
 
-**Phase 4 — Alertes & CLI**
-- [ ] Alertes : pic 5xx ou absence de logs → email (complément UptimeRobot)
-- [ ] Commande `./rcli server logs` — doc alignée (Docker live vs Grafana/Loki)
+**Phase 4 — Alertes & CLI** ✅ 17/05/2026
+- [x] Alertes : `scripts/check-log-alerts.sh` + `send-log-alert.py` (SMTP `.env.production`) — cron `setup-log-alerts-cron.sh` (*/15)
+- [x] CLI : `./rcli logs guide`, `logs events`, `server logs --events` — doc [[Architecture/commands-logs]] + [[Architecture/grafana]]
 - [x] Checklist pré-go-live : erreur de test visible dans Grafana (`auth_login_failed`) ✅ 17/05/2026
 
 ### AS400 — Intégration SFTP bidirectionnel

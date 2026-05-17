@@ -162,7 +162,33 @@ Détail infra : [[Architecture/observability]]
 
 ---
 
-## Suite (Phase 4 roadmap)
+## Alertes email (Phase 4)
 
-- Alertes email sur pic `http_5xx`
-- Doc `./rcli server logs` vs Grafana
+Cron ***/15** sur le VPS : `scripts/check-log-alerts.sh`
+
+| Déclencheur | Seuil (défaut) |
+|-------------|----------------|
+| Pic `http_5xx` | ≥ 5 events / 15 min |
+| Silence Winston | `combined.log` inchangé ≥ 6 h |
+| Stack down | loki / promtail / grafana container absent |
+
+Config : `.env.observability` → `LOG_ALERT_EMAIL` (+ SMTP dans `.env.production`)
+
+```bash
+# Activer cron (VPS)
+./scripts/setup-log-alerts-cron.sh
+
+# Test manuel
+./scripts/check-log-alerts.sh
+```
+
+Complète **UptimeRobot** (site down) — pas un doublon.
+
+## CLI vs Grafana
+
+| Besoin | Outil |
+|--------|--------|
+| Live | `./rcli server logs backend -f` |
+| Events | `./rcli logs events --last 1h` |
+| Aide | `./rcli logs guide` |
+| 30 jours | Grafana (ce guide) |

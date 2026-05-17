@@ -25,10 +25,30 @@ console = Console()
 @click.option('--local', is_flag=True, help='Logs locaux (docker-compose.yml) au lieu du serveur distant')
 def logs_group(ctx, service: Optional[str], tail: int, follow: bool, admin: bool, since: Optional[str], local: bool):
     """
-    📋 Commandes pour gérer les logs (local ou serveur distant)
-    
+    📋 Logs Reboul — Docker live, events Winston, ou Grafana/Loki
+
     \b
-    Exemples d'utilisation (logs locaux) :
+    Docker live (SSH) :
+      ./rcli server logs backend --follow
+      ./rcli server logs backend --events --tail 50
+      ./rcli logs --service backend --since 1h
+
+    \b
+    Events / erreurs structurés :
+      ./rcli logs events --last 1h
+      ./rcli logs errors --last 24h
+      ./rcli logs api-errors --last 1h
+
+    \b
+    Historique centralisé (Grafana + Loki, 30 jours) :
+      Tunnel : ssh -L 3030:127.0.0.1:3030 deploy@VPS -N
+      UI : http://localhost:3030 — doc vault Architecture/grafana
+
+    \b
+    Aide détaillée : ./rcli logs guide
+
+    \b
+    Exemples (logs locaux) :
     
     \b
     # Voir les logs locaux de tous les services
@@ -667,3 +687,54 @@ def user_activity(last: str, admin: bool, top: int):
             console.print(table)
     else:
         console.print("[yellow]⚠️  Aucun log d'accès trouvé[/yellow]")
+
+
+@logs_group.command('events')
+@click.option('--last', type=str, default='1h', help='Période docker logs (ex: 1h, 24h)')
+@click.option('--tail', '-n', type=int, default=3000, help='Lignes max à parcourir')
+@click.option('--admin', is_flag=True, help='Admin Central backend')
+def log_events(last: str, admin: bool, tail: int):
+    """📌 Events Winston JSON (auth_login_failed, checkout_error, http_5xx, stripe_webhook_failed)"""
+    project_name = 'Admin Central' if admin else 'Reboul Store'
+    container = 'admin-central-backend-prod' if admin else 'reboulstore-backend-prod'
+    pattern = 'auth_login_failed|checkout_error|http_5xx|stripe_webhook_failed'
+
+    console.print(f"[bold cyan]📌 Events structurés — {project_name} (depuis {last})[/bold cyan]\n")
+
+    cmd = (
+        f"docker logs {container} --tail={tail} --since={last} 2>&1 "
+        f"| grep -E '{pattern}' || true"
+    )
+    stdout, _ = ssh_exec(cmd)
+
+    if stdout and stdout.strip():
+        for line in stdout.strip().split('\n'):
+            console.print(line)
+        console.print(f"\n[dim]{len(stdout.strip().split(chr(10)))} ligne(s)[/dim]")
+    else:
+        console.print("[green]Aucun event structuré sur cette période.[/green]")
+        console.print("[dim]Historique long : Grafana → {job=\"winston\"} (vault Architecture/grafana)[/dim]")
+
+
+@logs_group.command('guide')
+def log_guide():
+    """📖 Quand utiliser Docker logs vs Grafana/Loki"""
+    table = Table(title="Logs Reboul Store — quel outil ?", box=box.ROUNDED)
+    table.add_column("Besoin", style="cyan")
+    table.add_column("Commande / outil", style="yellow")
+    table.add_column("Période", style="dim")
+
+    rows = [
+        ("Debug live, une requête", "./rcli server logs backend -f", "maintenant"),
+        ("Events auth / checkout / 5xx", "./rcli logs events --last 1h", "~docker retention"),
+        ("Toutes erreurs récentes", "./rcli logs errors --last 24h", "~docker retention"),
+        ("Erreurs API nginx+backend", "./rcli logs api-errors --last 1h", "~docker retention"),
+        ("Historique, dashboard, 30j", "Grafana + tunnel SSH :3030", "30 jours (Loki)"),
+        ("Alertes email automatiques", "cron check-log-alerts.sh", "*/15 min"),
+    ]
+    for r in rows:
+        table.add_row(*r)
+
+    console.print(table)
+    console.print("\n[bold]Grafana[/bold] : obsidian-vault/Architecture/grafana.md")
+    console.print("[dim]Tunnel : ssh -L 3030:127.0.0.1:3030 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N[/dim]")

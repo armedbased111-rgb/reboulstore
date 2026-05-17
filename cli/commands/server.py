@@ -177,9 +177,20 @@ def status(service: Optional[str], admin: bool, all: bool, watch: bool, interval
 @click.option('--tail', type=int, default=100, help='Nombre de lignes à afficher')
 @click.option('--follow', '-f', is_flag=True, help='Suivre les logs en temps réel')
 @click.option('--errors', is_flag=True, help='Filtrer uniquement les erreurs')
+@click.option('--events', is_flag=True, help='Events Winston (auth_login_failed, http_5xx, checkout_error, …)')
 @click.option('--admin', is_flag=True, help='Logs Admin Central')
-def logs(service: Optional[str], tail: int, follow: bool, errors: bool, admin: bool):
-    """Affiche les logs d'un service ou tous les services"""
+def logs(service: Optional[str], tail: int, follow: bool, errors: bool, events: bool, admin: bool):
+    """Affiche les logs Docker prod (flux brut json-file).
+
+    \b
+    Quand utiliser quoi :
+    • ./rcli server logs [backend] — live / debug immédiat (comme docker compose logs)
+    • ./rcli logs events — events JSON structurés (auth, checkout, 5xx)
+    • ./rcli logs errors | api-errors — recherche erreurs sur une période
+    • Grafana (tunnel SSH :3030) — historique 30j, dashboard → vault Architecture/grafana
+
+    Voir aussi : ./rcli logs guide
+    """
     project_dir = SERVER_CONFIG['admin_path'] if admin else SERVER_CONFIG['project_path']
     compose_file = 'docker-compose.prod.yml'
     
@@ -192,7 +203,12 @@ def logs(service: Optional[str], tail: int, follow: bool, errors: bool, admin: b
     # Utiliser plusieurs filtres pour capturer toutes les variantes
     filter_warnings = " | grep -vE '(level=warning msg=|variable is not set|Defaulting to a blank string)'"
     
-    if errors:
+    if events:
+        cmd_parts.append(
+            '| grep -E "auth_login_failed|checkout_error|http_5xx|stripe_webhook_failed"'
+        )
+        cmd = ' '.join(cmd_parts) + filter_warnings
+    elif errors:
         cmd_parts.append('| grep -i "error\\|exception\\|failed\\|warning"')
         cmd = ' '.join(cmd_parts) + filter_warnings
     else:
