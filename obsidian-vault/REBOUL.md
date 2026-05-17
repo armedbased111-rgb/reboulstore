@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| AS400 / SFTP | P1 ✅ · P2 `entrant/` ⏸️ attend CSV · P3 `sortant/` spec 🔜 → [[Securite/as400]] |
+| AS400 / SFTP | P1 ✅ · P2 `entrant/` ⏸️ · P3 cadrage ✅ / code ⏳ → [[Securite/as400]] |
 | Logs / Grafana | ✅ Winston + Loki/Grafana + alertes · guide [[Architecture/grafana]] · [[Sessions/2026-05-17-logs-winston]] |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
@@ -82,7 +82,7 @@ Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ## Dernière session
 
-[[Sessions/2026-05-17-vault-sync]] · [[Sessions/2026-05-17-as400-phase1-setup]]
+[[Sessions/2026-05-17-as400-phase1-setup]] · [[Sessions/2026-05-17-vault-sync]]
 
 ---
 

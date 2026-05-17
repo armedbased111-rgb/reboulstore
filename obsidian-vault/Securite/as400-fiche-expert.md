@@ -27,29 +27,26 @@ statut: a-transmettre
 
 | Dossier | Vous | Nous |
 |---------|------|------|
-| `entrant/` | Vous **déposez** les fichiers **stocks** (CSV) | On lit et met à jour le site |
-| `sortant/` | Vous **récupérez** les fichiers **mouvements** (ventes web) | On génère et dépose (après mise en service) |
+| `entrant/` | Vous déposez un **CSV extrait produits / stocks** (table AS400) | On met à jour catalogue et stocks du site |
+| `sortant/` | Vous récupérez notre **CSV extrait produits** (miroir) | On génère après accord sur les colonnes |
 
 ## Rappel accord (réunion 12/05/2026)
 
 - Fichiers **CSV**, échange visé **toutes les heures**
-- Format détaillé des stocks : **à définir avec vous** (premier fichier ou spec AS400)
-- Format des mouvements que nous enverrons : **résumé ci-dessous** — merci de valider ou corriger
+- **Entrant** : structure de **votre** export produits — à nous transmettre (fichier exemple ou spec)
+- **Sortant** : nous enverrons le **même type d’extrait** depuis notre base — merci de valider (voir ci-dessous)
 
-## Aperçu — fichier mouvements (Reboul → `sortant/`)
+## Aperçu — fichier Reboul → `sortant/` (en discussion)
 
-*(Détail : [[Securite/as400#Spec mouvements envoyés — Phase 3 (sortant/) — en cours]])*
-
-- Nom proposé : `mouvements_YYYYMMDD_HH.csv`
-- Encodage UTF-8, séparateur `;`, 1 ligne = 1 article commandé
-- Commandes **payées** sur reboulstore.com
-- Colonnes principales : n° commande, date, statut, SKU, référence produit, quantité, prix
+- Visé : **extrait produits** (réf, stock, champs catalogue…), **pas** commandes web
+- **Accord Reboul** : fichier `sortant/` = **lignes modifiées** depuis le dernier export (pas catalogue entier chaque heure) — à valider côté AS400
+- Détail : [[Securite/as400]]
 
 **Merci de nous indiquer** après lecture :
 
 1. IP fixe de vos connexions SFTP (option firewall)
 2. Nommage et structure de **vos** fichiers stocks dans `entrant/`
-3. Colonnes **obligatoires** ou **interdites** pour nos mouvements
+3. Le flux `sortant/` doit-il être un **miroir produits** ou autre chose (ex. ventes) ?
 4. Contact technique AS400
 
 ## Test de connexion

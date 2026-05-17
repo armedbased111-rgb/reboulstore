@@ -1,30 +1,22 @@
 ---
 type: session
 date: 2026-05-17
-sujet: Vault sync — AS400 phases + Grafana
+sujet: Vault sync — AS400 cadrage Phase 3 + roadmap
 statut: terminé
 ---
-# Session vault — 17/05/2026
+# Vault sync — 17/05/2026
 
-## Changements
+## Mises à jour
 
-### AS400 — Phases clarifiées ([[Securite/as400]])
+- [[Securite/as400]] — Phase 3 cadrage métier ✅ (décisions Reboul consolidées)
+- [[Projet/roadmap]] — tâche cadrage P3 cochée ; code P3 après expert + P2
+- [[REBOUL]] — ligne AS400
+- [[Sessions/2026-05-17-as400-phase1-setup]] — session consolidée
 
-| Phase | Contenu | Statut |
-|-------|---------|--------|
-| 1 | SFTP VPS | ✅ |
-| 2 | `entrant/` — stocks AS400 → DB | ⏸️ attend 1er CSV expert |
-| 3 | `sortant/` — mouvements Reboul → AS400 | 🔜 spec en cours |
+## État AS400
 
-- Roadmap et `REBOUL.md` alignés
-- Suppression doublon `as400-mouvements-sortant.md` (tout dans `as400.md`)
-- Fiche expert = envoi uniquement ([[Securite/as400-fiche-expert]])
-
-### Grafana
-
-- Nœud [[Architecture/grafana]] : bloc **Référence rapide** (tunnel, mdp, events trackés)
-
-## Suite
-
-- Compléter spec Phase 3 (décisions mouvements) dans `as400.md`
-- Transmission fiche expert quand prêt
+| Phase | Statut |
+|-------|--------|
+| 1 SFTP | ✅ |
+| 2 entrant | ⏸️ |
+| 3 sortant | Cadrage ✅ · code ⏳ |

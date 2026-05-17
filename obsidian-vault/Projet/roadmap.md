@@ -115,17 +115,18 @@ Détail complet → [[Securite/Securite]]
 
 ### AS400 — Intégration SFTP bidirectionnel → [[Securite/as400]]
 
-| Phase | Dossier | Statut |
-|-------|---------|--------|
-| **1** SFTP | — | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
-| **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes |
-| **3** Mouvements sortant | `sortant/` | 🔜 spec CSV en cours → puis export NestJS + cron |
+| Phase                          | Dossier    | Statut                                                                    |
+| ------------------------------ | ---------- | ------------------------------------------------------------------------- |
+| **1** SFTP                     | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
+| **2** Stocks entrant           | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
+| **3** Extrait produits sortant | `sortant/` | ✅ cadrage métier 17/05 · code après expert + P2                           |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
 - [x] Phase 1 — SFTP VPS (chroot, test upload)
+- [x] Phase 3 — **Cadrage métier** sortant (feuille stock, delta, actif, stock web) → [[Securite/as400]]
 - [ ] Phase 1 — Transmission fiche expert + mdp
-- [ ] Phase 2 — Import stocks `entrant/` *(après 1er CSV réel)*
-- [ ] Phase 3 — Export mouvements `sortant/` *(spec en cours dans as400.md)*
+- [ ] Phase 2 — Import extrait produits `entrant/` *(après 1er CSV AS400)*
+- [ ] Phase 3 — **Code** export delta → `sortant/` *(après validation expert)*
 
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
