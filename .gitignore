@@ -1,6 +1,7 @@
 .env
 .env.production
 .env.local
+.env.observability
 
 # Cursor/Claude settings (contient des clés API)
 .claude/

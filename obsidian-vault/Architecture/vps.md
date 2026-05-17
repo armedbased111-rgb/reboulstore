@@ -125,7 +125,7 @@ UptimeRobot : 2 moniteurs actifs (check toutes les 5 min) — alertes `armedbase
 | Corrélation | `requestId` + header `X-Request-Id` sur chaque requête |
 | Événements JSON | `auth_login_failed`, `http_5xx`, `stripe_webhook_failed`, `checkout_error` |
 
-Phase 3 prévue : Loki + Promtail + Grafana → [[Projet/roadmap#Logs & observabilité *(avant lancement)*]]
+Phase 3 : Loki + Promtail + Grafana → [[Architecture/observability]]
 
 **Commandes** (tests, rcli, prod) → [[Architecture/commands-logs]]
 

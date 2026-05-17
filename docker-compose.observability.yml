@@ -1,0 +1,66 @@
+# Stack logs centralisée — Loki + Promtail + Grafana
+# Prérequis : reboulstore-network + stack prod déjà up
+# Usage : ./scripts/setup-observability.sh
+
+services:
+  loki:
+    image: grafana/loki:3.3.2
+    container_name: reboulstore-loki
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./observability/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    networks:
+      - reboulstore-network
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:3.3.2
+    container_name: reboulstore-promtail
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - ./observability/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - logs_data_prod:/winston/reboul:ro
+    depends_on:
+      - loki
+    networks:
+      - reboulstore-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: reboulstore-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env.observability}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL:-http://127.0.0.1:3030}
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - loki
+    ports:
+      # Accès local VPS uniquement — tunnel SSH recommandé
+      - "127.0.0.1:3030:3000"
+    networks:
+      - reboulstore-network
+    restart: unless-stopped
+
+volumes:
+  loki_data:
+    name: reboulstore_loki_data
+  grafana_data:
+    name: reboulstore_grafana_data
+  logs_data_prod:
+    external: true
+    name: reboulstore_logs_prod
+
+networks:
+  reboulstore-network:
+    external: true
+    name: reboulstore-network

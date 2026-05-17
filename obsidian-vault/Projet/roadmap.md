@@ -82,7 +82,7 @@ Détail complet → [[Securite/Securite]]
 
 ### Logs & observabilité *(avant lancement)*
 
-> **17/05/2026** — Phase 1 Winston **clôturée** : dev console ; prod JSON + `/app/logs` + `requestId`. Stack Loki/Grafana = Phase 3. Session : [[Sessions/2026-05-17-logs-winston]] · **Commandes** : [[Architecture/commands-logs]]
+> **17/05/2026** — Logs Phases 1–3 ✅ · Guide Grafana : [[Architecture/grafana]] · Session : [[Sessions/2026-05-17-logs-winston]] · CLI : [[Architecture/commands-logs]]
 
 **Phase 1 — Logs applicatifs NestJS (Winston)**
 - [x] Installer `winston` + `nest-winston`, activer `getLoggerConfig()` dans `app.module.ts` ✅ 17/05/2026
@@ -100,17 +100,18 @@ Détail complet → [[Securite/Securite]]
 - [x] Politique de rétention documentée dans [[Architecture/vps]] (Docker, Winston, backup log, dumps DB)
 - [x] Docker prod : conserver `10m × 3` (documenté ; ajustement différé jusqu’à Loki ou besoin trafic)
 
-**Phase 3 — Stack centralisée (containers dédiés)**
-- [ ] Ajouter services Docker : **Loki** + **Promtail** (ou Grafana Alloy) + **Grafana**
-- [ ] Promtail : collecter logs Reboul Store + Admin Central (backend, nginx, json-file Docker)
-- [ ] Rétention Loki : **14–30 jours** sur volume dédié (configurable)
-- [ ] Dashboard Grafana : erreurs 5xx, auth failed, requêtes lentes, volume par service
-- [ ] Sécuriser Grafana (auth, pas exposé publiquement sans protection — VPN ou basic auth + HTTPS)
+**Phase 3 — Stack centralisée (containers dédiés)** — code ✅ 17/05/2026 · **activer sur VPS** : `./scripts/setup-observability.sh`
+- [x] Services Docker : **Loki** + **Promtail** + **Grafana** → `docker-compose.observability.yml`
+- [x] Promtail : Reboul + Admin (`reboulstore-*`, `admin-central-*`) + fichiers Winston (`logs_data_prod`)
+- [x] Rétention Loki : **30 jours** (`720h`, volume `reboulstore_loki_data`)
+- [x] Dashboard Grafana provisionné : 5xx, `auth_login_failed`, `checkout_error`, volume / container
+- [x] Grafana sécurisé : auth admin (`.env.observability`), bind **127.0.0.1:3030** + tunnel SSH
+- [x] **VPS** : `.env.observability` + stack up (Loki, Promtail, Grafana) ✅ 17/05/2026 — vérif dashboard via tunnel SSH
 
 **Phase 4 — Alertes & CLI**
 - [ ] Alertes : pic 5xx ou absence de logs → email (complément UptimeRobot)
 - [ ] Commande `./rcli server logs` — doc alignée (Docker live vs Grafana/Loki)
-- [ ] Checklist pré-go-live : retrouver une erreur de test dans Grafana (< 24h)
+- [x] Checklist pré-go-live : erreur de test visible dans Grafana (`auth_login_failed`) ✅ 17/05/2026
 
 ### AS400 — Intégration SFTP bidirectionnel
 - [x] Réunion expert cyber AS400 ✅ 12/05/2026 — décision : SFTP bidirectionnel, batch horaire

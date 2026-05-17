@@ -6,7 +6,6 @@
       {
         "id": "7a9dc9e74909418b",
         "type": "tabs",
-        "dimension": 53.15398886827458,
         "children": [
           {
             "id": "8682eee776361d53",
@@ -37,48 +36,6 @@
             }
           },
           {
-            "id": "656d927ad8f631cc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Collections/hologram.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "hologram"
-            }
-          },
-          {
-            "id": "621f403a0aa631d5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Collections/autry.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "autry"
-            }
-          },
-          {
-            "id": "df2bb5165fcb87c4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Projet/roadmap.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "roadmap"
-            }
-          },
-          {
             "id": "97e58890e15770df",
             "type": "leaf",
             "state": {
@@ -91,30 +48,23 @@
               "icon": "lucide-file",
               "title": "roadmap"
             }
-          }
-        ],
-        "currentTab": 5
-      },
-      {
-        "id": "deab4b4e1dbd8115",
-        "type": "tabs",
-        "dimension": 46.84601113172542,
-        "children": [
+          },
           {
-            "id": "3cc5825e8e0fbce5",
+            "id": "c46a2ed5e1221cbd",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TODO.md",
+                "file": "Sessions/2026-05-17-logs-winston.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODO"
+              "title": "2026-05-17-logs-winston"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -171,7 +121,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 260.5
+    "width": 333.5
   },
   "right": {
     "id": "1d716bae38284fbd",
@@ -187,7 +137,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Sessions/2026-05-17-logs-winston.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -197,7 +147,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Rétrolien pour roadmap"
+              "title": "Rétrolien pour 2026-05-17-logs-winston"
             }
           },
           {
@@ -206,12 +156,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Sessions/2026-05-17-logs-winston.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Liens sortants de roadmap"
+              "title": "Liens sortants de 2026-05-17-logs-winston"
             }
           },
           {
@@ -249,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Projet/roadmap.md",
+                "file": "Sessions/2026-05-17-logs-winston.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Plan de roadmap"
+              "title": "Plan de 2026-05-17-logs-winston"
             }
           }
         ]
@@ -416,17 +366,20 @@
       }
     ]
   },
-  "active": "97e58890e15770df",
+  "active": "43ef9f66d590f1d7",
   "lastOpenFiles": [
-    "Architecture/commands-logs.md",
+    "Architecture/grafana.md",
+    "Architecture/observability.md",
+    "Securite/Securite.md",
+    "Securite/checklist.md",
     "Sessions/2026-05-17-logs-winston.md",
+    "Sessions/2026-05-07-hologram-rrd.md",
+    "Projet/roadmap.md",
+    "Architecture/commands-logs.md",
     "Sessions/2026-05-17-as400-cursor-sync.md",
     "Securite/etat-actuel.md",
     "Securite/pentest.md",
     "Sessions/2026-05-11-monitoring-pentest.md",
-    "Securite/checklist.md",
-    "Securite/Securite.md",
-    "Projet/roadmap.md",
     "Securite/hardening.md",
     "Sessions/2026-05-12-backup-verification.md",
     "Sessions/2026-05-11-securite.md",
@@ -441,9 +394,6 @@
     "Frontend/Terms.md",
     "Frontend/Livraison.md",
     "Frontend/ShippingReturns.md",
-    "Frontend/Stores.md",
-    "Frontend/Contact.md",
-    "Frontend/About.md",
     "Securite",
     "Database/tables",
     "Database",

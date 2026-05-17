@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Reboul Store
+    orgId: 1
+    folder: Reboul Store
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/dashboards

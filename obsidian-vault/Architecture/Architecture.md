@@ -15,6 +15,8 @@ Liens : [[REBOUL]]
 | Fichier | Contenu |
 |---------|---------|
 | [[Architecture/vps]] | VPS OVH, Docker containers, Nginx, deploy, backup, monitoring |
+| [[Architecture/observability]] | Loki + Promtail + Grafana (Phase 3 — infra) |
+| [[Architecture/grafana]] | **Guide Grafana** — accès, mdp, dashboard, LogQL, events trackés |
 | [[Architecture/commands-logs]] | Commandes logs : tests Winston, docker logs, rcli prod, backup cron |
 | [[Architecture/stack]] | Stack technique complète (Frontend + Backend + ports) |
 | [[Architecture/infra]] | Dev local, tunnel SSH, variables d'environnement |

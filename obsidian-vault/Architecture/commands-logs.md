@@ -204,7 +204,16 @@ Rétention : 30 jours → [[Architecture/vps#Logs — politique de rétention (P
 | Winston fichiers prod | 10 Mo × 5 par fichier (`error.log`, `combined.log`) |
 | Backups DB cron | 30 derniers fichiers `.sql.gz` |
 
-Phase 3 roadmap : Loki + Promtail + Grafana → [[Projet/roadmap#Logs & observabilité *(avant lancement)*]]
+## Grafana / Loki (Phase 3)
+
+→ **Guide utilisateur** : [[Architecture/grafana]] (mdp, dashboard, LogQL, events)
+
+```bash
+./scripts/setup-observability.sh   # VPS
+ssh -L 3030:127.0.0.1:3030 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N
+```
+
+Infra : [[Architecture/observability]]
 
 ---
 
