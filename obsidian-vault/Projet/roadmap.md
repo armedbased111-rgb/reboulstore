@@ -115,18 +115,21 @@ Détail complet → [[Securite/Securite]]
 
 ### AS400 — Intégration SFTP bidirectionnel → [[Securite/as400]]
 
-| Phase                          | Dossier    | Statut                                                                    |
-| ------------------------------ | ---------- | ------------------------------------------------------------------------- |
-| **1** SFTP                     | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
-| **2** Stocks entrant           | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
-| **3** Extrait produits sortant | `sortant/` | ✅ cadrage métier 17/05 · code après expert + P2                           |
+| Phase                | Dossier    | Statut                                                                    |
+| -------------------- | ---------- | ------------------------------------------------------------------------- |
+| **1** SFTP           | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
+| **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
+| **3** Sortant        | `sortant/` | ✅ 3a · ✅ 3b **B1** test · ⏸️ 3b B2–B4 (pause)                            |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
-- [x] Phase 1 — SFTP VPS (chroot, test upload)
-- [x] Phase 3 — **Cadrage métier** sortant (feuille stock, delta, actif, stock web) → [[Securite/as400]]
+- [x] Phase 1 — SFTP VPS (chroot, test upload `entrant/`)
+- [x] Phase **3a** — Cadrage sortant (delta, actif, stock web) → [[Securite/as400]]
+- [x] Phase **3b B1** — Test manuel : `./rcli db export-csv` + `put` → `sortant/produits_reboul_test.csv` ✅ 17/05
 - [ ] Phase 1 — Transmission fiche expert + mdp
-- [ ] Phase 2 — Import extrait produits `entrant/` *(après 1er CSV AS400)*
-- [ ] Phase 3 — **Code** export delta → `sortant/` *(après validation expert)*
+- [ ] Phase 2 — Import `entrant/` *(après 1er CSV AS400)*
+- [ ] Phase **3b B2** — Module export → écriture auto `sortant/` *(reprise)*
+- [ ] Phase **3b B3** — Delta + suppressions
+- [ ] Phase **3b B4** — Cron horaire
 
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
