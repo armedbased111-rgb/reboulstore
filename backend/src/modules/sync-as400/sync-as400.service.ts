@@ -12,8 +12,7 @@ import {
   SortantLine,
 } from './sync-as400-export.types';
 
-const FULL_CSV_HEADER =
-  'reference;name;price;sku;size;color;stock';
+const FULL_CSV_HEADER = 'reference;name;price;sku;size;color;stock';
 const DELTA_CSV_HEADER =
   'change_type;reference;name;price;sku;size;color;stock';
 const STATE_FILENAME = '.as400-export-state.json';
@@ -53,7 +52,10 @@ export class SyncAs400Service {
 
     if (useFull) {
       mode = 'full';
-      exportLines = current.map((r) => ({ ...r, changeType: 'update' as const }));
+      exportLines = current.map((r) => ({
+        ...r,
+        changeType: 'update' as const,
+      }));
     } else {
       mode = 'delta';
       exportLines = this.buildDeltaLines(currentBySku, previousState!.lines);
@@ -71,8 +73,12 @@ export class SyncAs400Service {
     };
     await this.saveState(statePath, nextState);
 
-    const updateCount = exportLines.filter((l) => l.changeType === 'update').length;
-    const deleteCount = exportLines.filter((l) => l.changeType === 'delete').length;
+    const updateCount = exportLines.filter(
+      (l) => l.changeType === 'update',
+    ).length;
+    const deleteCount = exportLines.filter(
+      (l) => l.changeType === 'delete',
+    ).length;
 
     this.logger.log(
       `AS400 sortant export (${mode}): ${exportLines.length} lines (${updateCount} update, ${deleteCount} delete) → ${outputPath}`,
@@ -106,8 +112,7 @@ export class SyncAs400Service {
     if (Number.isNaN(lastFull)) {
       return true;
     }
-    const daysSinceFull =
-      (Date.now() - lastFull) / (24 * 60 * 60 * 1000);
+    const daysSinceFull = (Date.now() - lastFull) / (24 * 60 * 60 * 1000);
     return daysSinceFull >= weeklyFullDays;
   }
 
@@ -169,7 +174,10 @@ export class SyncAs400Service {
     }
   }
 
-  private async saveState(path: string, state: As400ExportState): Promise<void> {
+  private async saveState(
+    path: string,
+    state: As400ExportState,
+  ): Promise<void> {
     await fs.writeFile(path, JSON.stringify(state), 'utf-8');
   }
 
