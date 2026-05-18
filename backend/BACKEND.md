@@ -158,6 +158,7 @@ Export CSV du catalogue publié (`is_published`) vers le dossier AS400. Voir `ob
 | Méthode | Route | Auth |
 |---------|-------|------|
 | `POST` | `/sync-as400/export` | Header `X-As400-Export-Secret` (= `AS400_EXPORT_SECRET`) |
+| `POST` | `/sync-as400/export?full=true` | Force export **complet** (ignore delta) |
 
 Variables d'environnement :
 
@@ -166,13 +167,17 @@ Variables d'environnement :
 | `AS400_SORTANT_DIR` | Répertoire de sortie (prod : `/var/sftp/as400/sortant`) |
 | `AS400_EXPORT_FILENAME` | Nom fichier (défaut : `produits_reboul.csv`) |
 | `AS400_EXPORT_SECRET` | Secret obligatoire en production |
+| `AS400_WEEKLY_FULL_DAYS` | Resync complet tous les N jours (défaut : `7`) |
+
+État delta : fichier `.as400-export-state.json` dans `AS400_SORTANT_DIR` (snapshot par SKU).
 
 ```bash
 curl -X POST http://localhost:3001/sync-as400/export \
   -H "X-As400-Export-Secret: $AS400_EXPORT_SECRET"
 ```
 
-CSV : `reference;name;price;sku;size;color;stock` (séparateur `;`, une ligne par variant).
+- **Premier export** ou **resync hebdo** : CSV complet — `reference;name;price;sku;size;color;stock`
+- **Delta** : `change_type;reference;name;price;sku;size;color;stock` (`update` \| `delete`, stock `0` si suppression)
 
 ## 📊 État actuel
 

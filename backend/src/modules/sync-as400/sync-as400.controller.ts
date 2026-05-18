@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, Query, UseGuards } from '@nestjs/common';
 import { SyncAs400Service } from './sync-as400.service';
 import { SyncAs400ExportGuard } from './sync-as400-export.guard';
 import { ExportSortantResultDto } from './dto/export-sortant-result.dto';
@@ -9,7 +9,10 @@ export class SyncAs400Controller {
 
   @Post('export')
   @UseGuards(SyncAs400ExportGuard)
-  async exportSortant(): Promise<ExportSortantResultDto> {
-    return this.syncAs400Service.exportSortant();
+  async exportSortant(
+    @Query('full') full?: string,
+  ): Promise<ExportSortantResultDto> {
+    const forceFull = full === 'true' || full === '1';
+    return this.syncAs400Service.exportSortant(forceFull);
   }
 }
