@@ -62,4 +62,4 @@ Liens : [[REBOUL]] · [[Architecture/Architecture]]
 
 | Module | Rôle | Statut |
 |--------|------|--------|
-| `sync-as400` *(à créer)* | Export CSV catalogue → SFTP `sortant/` + cron | ⏳ B2 en cours — [[Securite/as400]] |
+| `sync-as400` | Export CSV → SFTP `sortant/` (`POST /sync-as400/export`) | ✅ B2 · cron B4 ⏳ — [[Securite/as400]] |

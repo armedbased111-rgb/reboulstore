@@ -119,7 +119,7 @@ Détail complet → [[Securite/Securite]]
 | -------------------- | ---------- | ------------------------------------------------------------------------- |
 | **1** SFTP           | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
 | **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
-| **3** Sortant        | `sortant/` | ✅ 3a · ✅ B1 test CLI · ⏳ **B2–B4 NestJS `sync-as400`**                  |
+| **3** Sortant        | `sortant/` | ✅ 3a · ✅ B1 test CLI · ⏳ **B2–B4 NestJS `sync-as400`**                    |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
 - [x] Phase 1 — SFTP VPS (chroot, test upload `entrant/`)
@@ -128,8 +128,8 @@ Détail complet → [[Securite/Securite]]
 - [x] Architecture **3b** actée — prod = **backend NestJS** (CLI = debug seulement)
 - [ ] Phase 1 — Transmission fiche expert + mdp
 - [ ] Phase 2 — Import `entrant/` *(après 1er CSV AS400)*
-- [ ] Phase **3b B2** — Module `sync-as400` : export `is_published` → `sortant/produits_reboul.csv`
-- [ ] Phase **3b B2** — Volume / droits écriture Docker → `/var/sftp/as400/sortant/`
+- [x] Phase **3b B2** — Module `sync-as400` + export prod ✅ 18/05 (1460 lignes)
+- [x] Phase **3b B2** — Bind mount `sortant/` + ACL VPS ✅ 18/05
 - [ ] Phase **3b B3** — Delta + suppressions
 - [ ] Phase **3b B4** — `@Cron` horaire (comme images-optimization)
 

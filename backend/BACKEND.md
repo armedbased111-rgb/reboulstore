@@ -151,6 +151,29 @@ backend/
 - `GET /orders` : Liste de toutes les commandes
 - `PATCH /orders/:id/status` : Mettre à jour le statut d'une commande (body: {status})
 
+### Module sync-as400 (export catalogue → SFTP sortant)
+
+Export CSV du catalogue publié (`is_published`) vers le dossier AS400. Voir `obsidian-vault/Securite/as400.md`.
+
+| Méthode | Route | Auth |
+|---------|-------|------|
+| `POST` | `/sync-as400/export` | Header `X-As400-Export-Secret` (= `AS400_EXPORT_SECRET`) |
+
+Variables d'environnement :
+
+| Variable | Description |
+|----------|-------------|
+| `AS400_SORTANT_DIR` | Répertoire de sortie (prod : `/var/sftp/as400/sortant`) |
+| `AS400_EXPORT_FILENAME` | Nom fichier (défaut : `produits_reboul.csv`) |
+| `AS400_EXPORT_SECRET` | Secret obligatoire en production |
+
+```bash
+curl -X POST http://localhost:3001/sync-as400/export \
+  -H "X-As400-Export-Secret: $AS400_EXPORT_SECRET"
+```
+
+CSV : `reference;name;price;sku;size;color;stock` (séparateur `;`, une ligne par variant).
+
 ## 📊 État actuel
 
 ### Version : 0.24.3 - Phase 17.11.4 terminée ✅

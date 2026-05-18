@@ -26,6 +26,7 @@ import { CheckoutModule } from './modules/checkout/checkout.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { ImagesOptimizationModule } from './modules/images-optimization/images-optimization.module';
+import { SyncAs400Module } from './modules/sync-as400/sync-as400.module';
 import { CouponsModule } from './modules/coupons/coupons.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SmsModule } from './modules/sms/sms.module';
@@ -77,6 +78,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CloudinaryModule,
     CollectionsModule,
     ImagesOptimizationModule,
+    SyncAs400Module,
     CouponsModule,
     NotificationsModule,
     SmsModule,

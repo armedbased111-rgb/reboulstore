@@ -9,6 +9,7 @@ services:
       - .env.production
     volumes:
       - logs_data_prod:/app/logs
+      - /var/sftp/as400/sortant:/var/sftp/as400/sortant:rw
     environment:
       - NODE_ENV=production
       - LOG_DIR=/app/logs
@@ -37,6 +38,9 @@ services:
       # Configuration Redis
       - REDIS_HOST=${REDIS_HOST:-redis}
       - REDIS_PORT=${REDIS_PORT:-6379}
+      # AS400_* secrets/ch paths: lire depuis .env.production (env_file), pas interpolation hôte
+      - AS400_SORTANT_DIR=/var/sftp/as400/sortant
+      - AS400_EXPORT_FILENAME=produits_reboul.csv
     depends_on:
       - redis
     networks:
