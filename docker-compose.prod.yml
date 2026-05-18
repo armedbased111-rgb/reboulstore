@@ -41,6 +41,7 @@ services:
       # AS400_* secrets/ch paths: lire depuis .env.production (env_file), pas interpolation hôte
       - AS400_SORTANT_DIR=/var/sftp/as400/sortant
       - AS400_EXPORT_FILENAME=produits_reboul.csv
+      - AS400_EXPORT_CRON_ENABLED=${AS400_EXPORT_CRON_ENABLED:-true}
     depends_on:
       - redis
     networks:

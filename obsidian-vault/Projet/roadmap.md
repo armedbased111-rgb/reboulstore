@@ -119,7 +119,7 @@ Détail complet → [[Securite/Securite]]
 | -------------------- | ---------- | ------------------------------------------------------------------------- |
 | **1** SFTP           | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
 | **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
-| **3** Sortant        | `sortant/` | ✅ 3a · ✅ B1–B3 · ⏳ **B4** cron                                            |
+| **3** Sortant        | `sortant/` | ✅ 3a–**B4** (cron horaire prod)                                              |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
 - [x] Phase 1 — SFTP VPS (chroot, test upload `entrant/`)
@@ -131,7 +131,7 @@ Détail complet → [[Securite/Securite]]
 - [x] Phase **3b B2** — Module `sync-as400` + export prod ✅ 18/05 (1460 lignes)
 - [x] Phase **3b B2** — Bind mount `sortant/` + ACL VPS ✅ 18/05
 - [x] Phase **3b B3** — Delta + suppressions + resync hebdo ✅ 18/05
-- [ ] Phase **3b B4** — `@Cron` horaire (comme images-optimization)
+- [x] Phase **3b B4** — `@Cron` horaire `0 * * * *` ✅ 18/05
 
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)

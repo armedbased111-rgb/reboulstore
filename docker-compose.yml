@@ -31,6 +31,7 @@ services:
       - AS400_SORTANT_DIR=${AS400_SORTANT_DIR:-/tmp/as400-sortant}
       - AS400_EXPORT_FILENAME=${AS400_EXPORT_FILENAME:-produits_reboul.csv}
       - AS400_EXPORT_SECRET=${AS400_EXPORT_SECRET:-}
+      - AS400_EXPORT_CRON_ENABLED=${AS400_EXPORT_CRON_ENABLED:-false}
     depends_on:
       - redis
     networks:

@@ -168,6 +168,9 @@ Variables d'environnement :
 | `AS400_EXPORT_FILENAME` | Nom fichier (défaut : `produits_reboul.csv`) |
 | `AS400_EXPORT_SECRET` | Secret obligatoire en production |
 | `AS400_WEEKLY_FULL_DAYS` | Resync complet tous les N jours (défaut : `7`) |
+| `AS400_EXPORT_CRON_ENABLED` | Cron horaire (`0 * * * *`) — `false` pour désactiver (défaut dev : off, prod : on) |
+
+**Cron** : toutes les heures à `:00`, appelle `exportSortant()` (delta ou full selon B3). Logs : `Cron job: AS400 sortant export`.
 
 État delta : fichier `.as400-export-state.json` dans `AS400_SORTANT_DIR` (snapshot par SKU).
 
