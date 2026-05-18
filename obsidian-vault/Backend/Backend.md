@@ -57,3 +57,9 @@ Liens : [[REBOUL]] · [[Architecture/Architecture]]
 |--------|------|--------|
 | [[Backend/cloudinary]] | Upload + gestion images CDN | ✅ complet |
 | [[Backend/images-optimization]] | Resize + optimisation à la volée | ✅ complet |
+
+## Intégrations
+
+| Module | Rôle | Statut |
+|--------|------|--------|
+| `sync-as400` *(à créer)* | Export CSV catalogue → SFTP `sortant/` + cron | ⏳ B2 en cours — [[Securite/as400]] |

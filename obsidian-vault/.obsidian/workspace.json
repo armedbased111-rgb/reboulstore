@@ -368,8 +368,9 @@
   },
   "active": "c46a2ed5e1221cbd",
   "lastOpenFiles": [
-    "Projet/roadmap.md",
+    "Sessions/2026-05-17-as400-b2-backend.md",
     "Securite/as400.md",
+    "Projet/roadmap.md",
     "Sessions/2026-05-17-vault-sync.md",
     "Securite/as400-mouvements-sortant.md",
     "Securite/as400-fiche-expert.md",
@@ -393,7 +394,6 @@
     "Frontend/composants-cles.md",
     "Frontend/ServerError.md",
     "Frontend/NotFound.md",
-    "Frontend/Cookies.md",
     "Securite",
     "Database/tables",
     "Database",

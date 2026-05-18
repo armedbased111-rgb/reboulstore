@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| AS400 / SFTP | P1 ✅ · P2 ⏸️ · P3a ✅ · P3b B1 test ✅ — **pause** (B2 code) → [[Securite/as400]] |
+| AS400 / SFTP | P1 ✅ · P2 ⏸️ · P3a ✅ · P3b B1 ✅ · **B2–B4 NestJS `sync-as400`** en cours → [[Securite/as400]] |
 | Logs / Grafana | ✅ Winston + Loki/Grafana + alertes · guide [[Architecture/grafana]] · [[Sessions/2026-05-17-logs-winston]] |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
