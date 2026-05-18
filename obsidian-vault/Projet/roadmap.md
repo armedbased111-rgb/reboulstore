@@ -119,7 +119,7 @@ Détail complet → [[Securite/Securite]]
 | -------------------- | ---------- | ------------------------------------------------------------------------- |
 | **1** SFTP           | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
 | **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
-| **3** Sortant        | `sortant/` | ✅ 3a · ✅ B1 test CLI · ⏳ **B2–B4 NestJS `sync-as400`**                    |
+| **3** Sortant        | `sortant/` | ✅ 3a · ✅ B1 · ✅ **B2** · ⏳ B3–B4                                        |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
 - [x] Phase 1 — SFTP VPS (chroot, test upload `entrant/`)
