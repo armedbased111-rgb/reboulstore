@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-05-17
+maj: 2026-05-18
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -30,8 +30,8 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| AS400 / SFTP | P1 ✅ · P2 ⏸️ · P3 sortant ✅ (B1–B4) · fiche expert ⏳ → [[Securite/as400]] |
-| Logs / Grafana | ✅ Winston + Loki/Grafana + alertes · guide [[Architecture/grafana]] · [[Sessions/2026-05-17-logs-winston]] |
+| AS400 / SFTP | **Sortant Reboul ✅** (cron + delta) · reste : envoi fiche expert + Phase 2 `entrant/` → [[Securite/as400]] |
+| Logs / Grafana | ✅ Guide nœud [[Architecture/grafana]] — logs techniques 30 j (pas stocks/AS400 métier) |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 

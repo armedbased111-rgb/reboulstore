@@ -1,14 +1,41 @@
 ---
 type: architecture
 node: grafana
-maj: 2026-05-17
+maj: 2026-05-18
 ---
 # Grafana — Logs production Reboul Store
 
-> **Nœud de référence** : accès, mot de passe, commandes, ce qu’on surveille.  
-> Infra Docker : [[Architecture/observability]] · CLI : [[Architecture/commands-logs]]
+> **Nœud explicatif** — tout ce qu’il faut pour ouvrir Grafana, se connecter, et comprendre ce qu’on y voit (et ce qu’on n’y voit pas).
 
-Liens : [[Architecture/Architecture]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs-winston]]
+Liens : [[Architecture/Architecture]] · [[Architecture/observability]] · [[Architecture/commands-logs]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs-winston]]
+
+---
+
+## Nœud Grafana — en 30 secondes
+
+| | |
+|---|---|
+| **À quoi ça sert ?** | Chercher les **logs techniques** du site (erreurs API, login raté, checkout) sur **30 jours** |
+| **Ce n’est PAS** | Les ventes, les stocks catalogue, les fichiers AS400 SFTP — voir [[Securite/as400]] pour l’export produits |
+| **Où ?** | VPS uniquement — **tunnel SSH obligatoire** |
+| **Login** | `admin` + mdp dans `.env.observability` sur le VPS (**jamais git**) |
+| **URL locale** | http://localhost:3030 (après tunnel) |
+
+```bash
+# Terminal 1 — tunnel (laisser ouvert)
+ssh -L 3030:127.0.0.1:3030 -i ~/.ssh/id_ed25519 deploy@152.228.218.35 -N
+
+# Mot de passe Grafana (sur le VPS)
+ssh -i ~/.ssh/id_ed25519 deploy@152.228.218.35 \
+  'grep GRAFANA_ADMIN /var/www/reboulstore/.env.observability'
+```
+
+| Je veux… | Action |
+|----------|--------|
+| Vue d’ensemble | **Dashboards** → **Reboul Store — Logs** |
+| Chercher une erreur | **Explore** → Loki → `{job="winston"} \|= "checkout_error"` |
+| Voir si le cron AS400 a tourné | Explore → `{job="winston"} \|= "AS400 cron export"` |
+| Logs live sans Grafana | `./rcli server logs backend -f` ou `./rcli logs events --last 1h` |
 
 ---
 
@@ -20,7 +47,7 @@ Liens : [[Architecture/Architecture]] · [[Projet/roadmap]] · [[Sessions/2026-0
 | **Où ?** | Sur le VPS uniquement — **pas** sur Internet |
 | **Comment y aller ?** | Tunnel SSH puis navigateur |
 | **Login / mdp ?** | User `admin` · mdp dans `.env.observability` sur le VPS (jamais dans git) |
-| **Quoi qu’on ne track pas ?** | Pas les ventes / stocks / AS400 — uniquement **logs techniques** Winston |
+| **Quoi qu’on ne track pas ?** | Pas les ventes, pas le catalogue BDD, pas le contenu des CSV SFTP AS400 — uniquement **logs applicatifs** |
 
 ### Commandes essentielles
 
@@ -54,6 +81,15 @@ ssh -i ~/.ssh/id_ed25519 deploy@152.228.218.35 \
 Chaque ligne a un **`requestId`** → recouper avec l’en-tête HTTP `X-Request-Id` côté API.
 
 **Alertes email** (en plus de Grafana) : cron */15 sur le VPS si pic 5xx ou stack down → [[Architecture/commands-logs#Alertes]]
+
+### Grafana vs AS400 (ne pas confondre)
+
+| Outil | Données |
+|-------|---------|
+| **SFTP `sortant/produits_reboul.csv`** | Fichier **métier** pour l’expert AS400 (stocks/produits) — [[Securite/as400]] |
+| **Grafana / Loki** | **Logs** du backend (erreurs, cron export *réussi ou échoué*, pas le CSV lui-même) |
+
+Exemple : après chaque export horaire, les logs peuvent contenir `AS400 cron export done (delta): N lines` — utile pour vérifier que le cron tourne, pas pour lire les stocks.
 
 ---
 

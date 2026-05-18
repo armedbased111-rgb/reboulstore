@@ -41,13 +41,14 @@ Liens : [[Securite/Securite]] · [[Securite/hardening]] · [[Securite/pentest]]
 - [ ] Webhook Stripe vérifié en prod — ⏳ en attente Julie
 - [ ] Test flux paiement complet (live) — ⏳ en attente Julie
 
-## AS400 (si intégré avant lancement)
+## AS400 / SFTP → [[Securite/as400]]
 
-- [ ] Architecture réseau validée avec expert
-- [ ] Auth inter-systèmes en place
-- [ ] TLS sur tous les flux
-- [ ] File d'attente commandes opérationnelle
-- [ ] Monitoring flux AS400 ↔ site actif
+- [x] SFTP VPS (`entrant/` + `sortant/`) ✅ 17/05
+- [x] Export sortant automatisé (module `sync-as400`, cron horaire) ✅ 18/05
+- [ ] Fiche expert + identifiants transmis
+- [ ] Flux `entrant/` (leur CSV stocks) — après 1er fichier réel
+- [ ] Validation expert import `sortant/` (delta + full)
+- [ ] Monitoring dédié export AS400 (logs Grafana : `AS400 cron`) — optionnel
 
 ## Monitoring & Ops
 

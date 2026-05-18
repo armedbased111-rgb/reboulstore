@@ -36,11 +36,13 @@ statut: a-transmettre
 - **Entrant** : structure de **votre** export produits — à nous transmettre (fichier exemple ou spec)
 - **Sortant** : nous enverrons le **même type d’extrait** depuis notre base — merci de valider (voir ci-dessous)
 
-## Aperçu — fichier Reboul → `sortant/` (en discussion)
+## Aperçu — fichier Reboul → `sortant/` (opérationnel côté Reboul)
 
-- Visé : **extrait produits** (réf, stock, champs catalogue…), **pas** commandes web
-- **Accord Reboul** : fichier `sortant/` = **lignes modifiées** depuis le dernier export (pas catalogue entier chaque heure) — à valider côté AS400
-- Détail : [[Securite/as400]]
+- **Un seul fichier** : `produits_reboul.csv` (mis à jour **toutes les heures**)
+- **Habituellement** : lignes **modifiées** avec colonne `change_type` (`update` / `delete`)
+- **1× / semaine** (ou premier envoi) : fichier **complet** sans `change_type`
+- **Pas** les commandes web — extrait **produits / variants / stocks** catalogue publié
+- Détail technique : [[Securite/as400]]
 
 **Merci de nous indiquer** après lecture :
 

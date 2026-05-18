@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -137,7 +137,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Securite/as400.md",
+                "file": "Projet/roadmap.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +147,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Rétrolien pour as400"
+              "title": "Rétrolien pour roadmap"
             }
           },
           {
@@ -156,12 +156,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Securite/as400.md",
+                "file": "Projet/roadmap.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Liens sortants de as400"
+              "title": "Liens sortants de roadmap"
             }
           },
           {
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Securite/as400.md",
+                "file": "Projet/roadmap.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Plan de as400"
+              "title": "Plan de roadmap"
             }
           }
         ]
@@ -366,10 +366,11 @@
       }
     ]
   },
-  "active": "c46a2ed5e1221cbd",
+  "active": "97e58890e15770df",
   "lastOpenFiles": [
-    "Projet/roadmap.md",
+    "Sessions/2026-05-18-as400-phase3-complete.md",
     "Securite/as400.md",
+    "Projet/roadmap.md",
     "Sessions/2026-05-17-as400-b2-backend.md",
     "Sessions/2026-05-17-vault-sync.md",
     "Securite/as400-mouvements-sortant.md",
@@ -393,7 +394,6 @@
     "Frontend/animations.md",
     "Frontend/composants-cles.md",
     "Frontend/ServerError.md",
-    "Frontend/NotFound.md",
     "Securite",
     "Database/tables",
     "Database",

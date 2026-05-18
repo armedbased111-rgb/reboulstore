@@ -1,7 +1,7 @@
 ---
 type: roadmap
 statut: en-cours
-maj: 2026-05-17
+maj: 2026-05-18
 ---
 
 # Roadmap — Reboul Store SS26
@@ -119,7 +119,7 @@ Détail complet → [[Securite/Securite]]
 | -------------------- | ---------- | ------------------------------------------------------------------------- |
 | **1** SFTP           | —          | ✅ VPS 17/05 · [ ] envoi [[Securite/as400-fiche-expert]] + mdp (plus tard) |
 | **2** Stocks entrant | `entrant/` | ⏸️ attend 1er CSV expert — parser DB, cron, alertes                       |
-| **3** Sortant        | `sortant/` | ✅ 3a–**B4** (cron horaire prod)                                              |
+| **3** Sortant        | `sortant/` | ✅ **clôturé Reboul** 18/05 — envoi expert ⏳                                |
 
 - [x] Réunion expert 12/05/2026 — SFTP bidirectionnel, CSV, batch horaire
 - [x] Phase 1 — SFTP VPS (chroot, test upload `entrant/`)
@@ -132,6 +132,8 @@ Détail complet → [[Securite/Securite]]
 - [x] Phase **3b B2** — Bind mount `sortant/` + ACL VPS ✅ 18/05
 - [x] Phase **3b B3** — Delta + suppressions + resync hebdo ✅ 18/05
 - [x] Phase **3b B4** — `@Cron` horaire `0 * * * *` ✅ 18/05
+- [x] Test prod cron + delta validé (14:00 UTC) ✅ 18/05 — [[Sessions/2026-05-18-as400-phase3-complete]]
+- [ ] Envoyer [[Securite/as400-fiche-expert]] + mdp SFTP
 
 ### Tests
 - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
