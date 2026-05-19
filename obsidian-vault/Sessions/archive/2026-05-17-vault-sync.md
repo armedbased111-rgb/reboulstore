@@ -11,7 +11,7 @@ statut: terminé
 - [[Projet/roadmap]] — Phase 3b B1 cochée ; B2–B4 en attente
 - [[Securite/as400]] — tâches 3b B1 cochées
 - [[REBOUL]] — état AS400 pause
-- [[Sessions/2026-05-17-as400-phase1-setup]] — statut pause
+- [[Sessions/archive/2026-05-17-as400-phase1-setup]] — statut pause
 
 ## État AS400 au pause
 

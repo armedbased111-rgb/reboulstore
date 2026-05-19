@@ -7,7 +7,7 @@ maj: 2026-05-17
 
 Référence rapide : tests Winston (Phase 1), lecture logs Docker, prod, backups cron.
 
-Liens : [[Architecture/vps]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs-winston]]
+Liens : [[Architecture/vps]] · [[Projet/roadmap]] · [[Sessions/archive/2026-05-17-logs-winston]]
 
 ---
 

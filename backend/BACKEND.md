@@ -1,4 +1,4 @@
-**Dernière mise à jour** : 17/05/2026 à 18:39
+**Dernière mise à jour** : 19/05/2026 à 11:15
 
 # 🔧 Backend - Documentation
 
@@ -179,8 +179,8 @@ curl -X POST http://localhost:3001/sync-as400/export \
   -H "X-As400-Export-Secret: $AS400_EXPORT_SECRET"
 ```
 
-- **Premier export** ou **resync hebdo** : CSV complet — `reference;name;price;sku;size;color;stock`
-- **Delta** : `change_type;reference;name;price;sku;size;color;stock` (`update` \| `delete`, stock `0` si suppression)
+- **Premier export** ou **resync hebdo** : CSV complet — `cod_article;reference;name;price;sku;size;color;stock`
+- **Delta** : `change_type;cod_article;reference;name;price;sku;size;color;stock` (`update` \| `delete`, stock `0` si suppression)
 
 ## 📊 État actuel
 

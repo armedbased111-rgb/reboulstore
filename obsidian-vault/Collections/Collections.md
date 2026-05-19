@@ -24,7 +24,7 @@ Liens : [[REBOUL]] · [[Backend/Backend]] · [[Architecture/Architecture]]
 | [[Collections/asics\|Asics]] | `asics` | ✅ importé (15 refs) | 🟡 15/15 générées — à uploader |
 | [[Collections/salomon\|Salomon]] | `salomon` | ✅ importé (13 refs) | 🟡 13/13 générées — à uploader |
 | [[Collections/birkenstock\|Birkenstock]] | `birkenstock` | ✅ importé (34 refs) | 🔜 pipeline shoe à lancer |
-| [[Collections/hologram\|Hologram]] | `hologram` | 🟡 CSV prêt — import en attente | 🔜 pipeline flat lay à lancer |
+| [[Collections/hologram\|Hologram]] | `hologram` | ✅ importé BDD (37 variants) | 🔜 pipeline flat lay à lancer |
 | [[Collections/rrd\|RRD]] | `rrd` | 🔜 à démarrer | 🔜 à faire |
 
 ---

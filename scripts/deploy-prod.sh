@@ -503,6 +503,7 @@ mcps/
 terminals/
 .env.local
 .env.development
+.env.production
 *.log
 .DS_Store
 dist/

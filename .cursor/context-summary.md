@@ -1,16 +1,16 @@
 # Résumé de contexte — Reboul Store
 
-**Généré le** : 17/05/2026 18:39
+**Généré le** : 19/05/2026 11:15
 **Source** : vault Obsidian (`obsidian-vault/`)
 
 ## Progression globale
 
-**Tâches** : 35/82 cochées dans `Projet/roadmap.md`
+**Tâches** : 50/98 cochées dans `Projet/roadmap.md`
 
 ## Sections roadmap
 
-- 🟡 **Images & Collections** — 0/19
-  - [ ] **Hologram** — importer le CSV via Admin Centrale (8 refs)
+- 🟡 **Images & Collections** — 6/25
+  - [ ] **Code article** — autres marques (feuilles stock quand dispo)
   - [ ] **Hologram** — lancer pipeline flat lay
   - [ ] **Birkenstock** — lancer `generate-batch --product-type shoe` (34 refs)
 - 🟡 **Frontend & UX** — 0/12
@@ -21,10 +21,10 @@
   - [ ] `react-helmet-async` sur toutes les pages principales
   - [ ] Titles + meta descriptions propres (FR) par page
   - [ ] Open Graph minimal (title, description, image) — s'appuie sur [[Backend/og]]
-- 🟡 **Technique & Sécurité** — 34/38
-  - [ ] **Phase 1** — Setup SFTP basique : user `sftp-as400`, chroot, `entrant/` + `sort…
-  - [ ] **Phase 2** *(après premier CSV reçu)* — Parser NestJS adapté au format réel, cr…
-  - [ ] Tests unitaires frontend — composants critiques, hooks, panier/checkout (Vitest)
+- 🟡 **Technique & Sécurité** — 43/48
+  - [ ] Phase 1 — Transmission fiche expert + mdp
+  - [ ] Phase 2 — Import `entrant/` *(après 1er CSV AS400)*
+  - [ ] Envoyer [[Securite/as400-fiche-expert]] + mdp SFTP
 - 🟡 **Lancement** — 1/8
   - [ ] Basculer clés Stripe test → live — ⏳ en attente Julie
   - [ ] Valider webhooks Stripe en prod — ⏳ en attente Julie
@@ -58,9 +58,7 @@ Admin Centrale mutualisée pour tous les sites.
 
 ### Dernières sessions
 
-- `2026-05-17-logs-winston.md`
-- `2026-05-17-as400-cursor-sync.md`
-- `2026-05-12-backup-verification.md`
+- `Sessions.md`
 
 
 ## Fichiers de référence

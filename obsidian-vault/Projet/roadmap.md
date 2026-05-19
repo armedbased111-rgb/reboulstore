@@ -1,7 +1,7 @@
 ---
 type: roadmap
 statut: en-cours
-maj: 2026-05-18
+maj: 2026-05-19
 ---
 
 # Roadmap — Reboul Store SS26
@@ -14,7 +14,18 @@ Liens : [[Projet/Projet]] · [[Collections/Collections]]
 
 Tout ce qui est pipeline IA, tri, upload Cloudinary.
 
-- [ ] **Hologram** — importer le CSV via Admin Centrale (8 refs)
+### Code article (ERP / AS400)
+
+> Réunion expert AS400 — champ absent de notre BDD ; présent sur feuilles stock type Hologram, pas sur feuilles iCloud actuelles. Détail : [[Collections/hologram#Feuille stock]]
+
+- [x] **Code article** — valider règle : 1 `cod_article` par **variant** (taille), format `X XXX XXXXX`
+- [x] **Code article** — colonne BDD `variants` + migration (+ backup VPS avant run prod)
+- [x] **Code article** — remplir données Hologram (`import-hologram-ss26.csv`) ✅ 18/05
+- [ ] **Code article** — autres marques (feuilles stock quand dispo)
+- [x] **Code article** — CSV import + Admin Centrale (colonne `cod_article`)
+- [x] **Code article** — export AS400 sortant (`cod_article` dans `produits_reboul.csv`) — entrant à faire quand format reçu
+
+- [x] **Hologram** — import BDD (8 produits, 37 variants, `cod_article`) ✅ 19/05
 - [ ] **Hologram** — lancer pipeline flat lay
 - [ ] **Birkenstock** — lancer `generate-batch --product-type shoe` (34 refs)
 - [ ] **Autry** — générer pipeline shoe sur les 4 nouvelles refs (SCLM/CQ02, CU01, CU03, SVLM/PJ02)
@@ -82,7 +93,7 @@ Détail complet → [[Securite/Securite]]
 
 ### Logs & observabilité *(avant lancement)*
 
-> **17/05/2026** — **Logs Phases 1–4 ✅ clôturées** · Guide : [[Architecture/grafana]] · Session : [[Sessions/2026-05-17-logs-winston]]
+> **17/05/2026** — **Logs Phases 1–4 ✅ clôturées** · Guide : [[Architecture/grafana]] · Session : [[Sessions/archive/2026-05-17-logs-winston]]
 
 **Phase 1 — Logs applicatifs NestJS (Winston)**
 - [x] Installer `winston` + `nest-winston`, activer `getLoggerConfig()` dans `app.module.ts` ✅ 17/05/2026
@@ -132,7 +143,8 @@ Détail complet → [[Securite/Securite]]
 - [x] Phase **3b B2** — Bind mount `sortant/` + ACL VPS ✅ 18/05
 - [x] Phase **3b B3** — Delta + suppressions + resync hebdo ✅ 18/05
 - [x] Phase **3b B4** — `@Cron` horaire `0 * * * *` ✅ 18/05
-- [x] Test prod cron + delta validé (14:00 UTC) ✅ 18/05 — [[Sessions/2026-05-18-as400-phase3-complete]]
+- [x] Test prod cron + delta validé (14:00 UTC) ✅ 18/05 — [[Sessions/archive/2026-05-18-as400-phase3-complete]]
+- [x] Stabilisation sortant (delta vide, `.env` deploy, ~1498 lignes `cod_article`) ✅ 19/05 — [[Sessions/archive/2026-05-19-as400-stabilisation]]
 - [ ] Envoyer [[Securite/as400-fiche-expert]] + mdp SFTP
 
 ### Tests

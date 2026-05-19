@@ -27,7 +27,7 @@ Pipeline standard pour toute nouvelle marque / réassort SS26.
 - Importer dans le CSV : `docs/imports/import-MARQUE-ss26.csv`
 
 ```
-Format CSV : name;reference;brand;category;collection;stock;price;color
+Format CSV : cod_article;name;reference;brand;category;collection;stock;price;color (+ sku si besoin). `cod_article` en 1ʳᵉ colonne (vide si inconnu).
 ```
 
 ### 3. Import Admin Centrale

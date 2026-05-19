@@ -7,7 +7,7 @@ maj: 2026-05-18
 
 > **Nœud explicatif** — tout ce qu’il faut pour ouvrir Grafana, se connecter, et comprendre ce qu’on y voit (et ce qu’on n’y voit pas).
 
-Liens : [[Architecture/Architecture]] · [[Architecture/observability]] · [[Architecture/commands-logs]] · [[Projet/roadmap]] · [[Sessions/2026-05-17-logs-winston]]
+Liens : [[Architecture/Architecture]] · [[Architecture/observability]] · [[Architecture/commands-logs]] · [[Projet/roadmap]] · [[Sessions/archive/2026-05-17-logs-winston]]
 
 ---
 
