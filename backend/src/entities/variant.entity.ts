@@ -29,6 +29,16 @@ export class Variant {
   @Column({ type: 'varchar', length: 100, unique: true })
   sku: string;
 
+  /** Code article ERP / AS400 (ex. 5 001 35923) — 1 par variant */
+  @Column({
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+    name: 'cod_article',
+    unique: true,
+  })
+  codArticle: string | null;
+
   @ManyToOne(() => Product, (product) => product.variants)
   @JoinColumn({ name: 'product_id' })
   product: Product;

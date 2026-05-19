@@ -29,6 +29,9 @@ export class Variant {
   @Column({ type: 'varchar', length: 100, unique: true })
   sku: string;
 
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'cod_article', unique: true })
+  codArticle: string | null;
+
   @ManyToOne(() => Product, (product) => product.variants)
   @JoinColumn({ name: 'product_id' })
   product: Product;

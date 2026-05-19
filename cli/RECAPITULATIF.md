@@ -108,8 +108,13 @@ Convertir une feuille de stock (Marque, Genre, Référence, Stock) en CSV d'impo
 
 # Fusionner plusieurs pages (dédupliquer par référence)
 ./rcli import merge-pages -i page1.csv -i page2.csv -o import-ss26-merged.csv
+
+# Importer en BDD VPS (sans Admin Centrale)
+./rcli import apply-csv -i docs/imports/import-hologram-ss26.csv --dry-run
+./rcli import apply-csv -i docs/imports/import-hologram-ss26.csv -y
 ```
-Colonnes attendues en entrée : **Marque**, **Genre**, **Référence**, **Stock** (délimiteur `;` ou `,` auto-détecté). Sortie : `name;reference;brand;category;collection;stock;price` prêt pour l’import Admin.
+Colonnes feuille → CSV : **Cod Article**, **Marque**, **Genre**, **Référence**, **Stock**.  
+CSV BDD : `name;reference;cod_article;brand;category;collection;stock;price;color;size;sku` (upsert comme Admin).
 
 ### 📚 Documentation
 ```bash

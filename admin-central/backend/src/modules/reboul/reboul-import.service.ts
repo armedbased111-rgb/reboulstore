@@ -24,6 +24,7 @@ export interface CsvRow {
   size: string;
   stock: string;
   sku: string;
+  codArticle?: string;
   materials?: string;
   careInstructions?: string;
   madeIn?: string;
@@ -111,6 +112,7 @@ export class ReboulImportService {
       size: size || '',
       stock: get('stock') || '0',
       sku: sku || '',
+      codArticle: get('cod_article') || get('codarticle') || get('cod article') || undefined,
       materials: get('materials') || undefined,
       careInstructions: get('careinstructions') || undefined,
       madeIn: get('madein') || undefined,
@@ -280,6 +282,7 @@ export class ReboulImportService {
         size: (r.size ?? '').trim(),
         stock: Math.max(0, parseInt(String(r.stock), 10) || 0),
         sku: (r.sku ?? '').trim(),
+        codArticle: (r.codArticle ?? '').trim() || null,
       }));
 
       try {

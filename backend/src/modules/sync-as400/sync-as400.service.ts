@@ -12,9 +12,9 @@ import {
   SortantLine,
 } from './sync-as400-export.types';
 
-const FULL_CSV_HEADER = 'reference;name;price;sku;size;color;stock';
+const FULL_CSV_HEADER = 'cod_article;reference;name;price;sku;size;color;stock';
 const DELTA_CSV_HEADER =
-  'change_type;reference;name;price;sku;size;color;stock';
+  'change_type;cod_article;reference;name;price;sku;size;color;stock';
 const STATE_FILENAME = '.as400-export-state.json';
 
 @Injectable()
@@ -61,11 +61,31 @@ export class SyncAs400Service {
       exportLines = this.buildDeltaLines(currentBySku, previousState!.lines);
     }
 
+    const now = new Date().toISOString();
+
+    if (mode === 'delta' && exportLines.length === 0) {
+      const nextState: As400ExportState = {
+        lastExportAt: now,
+        lastFullExportAt: previousState!.lastFullExportAt,
+        lines: Object.fromEntries(currentBySku),
+      };
+      await this.saveState(statePath, nextState);
+      this.logger.log(
+        'AS400 delta empty — fichier sortant inchangé (aucune ligne à envoyer)',
+      );
+      return {
+        path: outputPath,
+        lineCount: 0,
+        generatedAt: now,
+        mode,
+        updateCount: 0,
+        deleteCount: 0,
+      };
+    }
+
     const csv = this.buildCsv(exportLines, mode);
     await fs.mkdir(sortantDir, { recursive: true });
     await fs.writeFile(outputPath, csv, 'utf-8');
-
-    const now = new Date().toISOString();
     const nextState: As400ExportState = {
       lastExportAt: now,
       lastFullExportAt: useFull ? now : previousState!.lastFullExportAt,
@@ -149,6 +169,7 @@ export class SyncAs400Service {
   private linesEqual(a: SortantLine, b: SortantLine): boolean {
     return (
       a.reference === b.reference &&
+      a.codArticle === b.codArticle &&
       a.name === b.name &&
       a.price === b.price &&
       a.size === b.size &&
@@ -189,6 +210,7 @@ export class SyncAs400Service {
       .andWhere('p.reference IS NOT NULL')
       .andWhere("TRIM(p.reference) <> ''")
       .select('p.reference', 'reference')
+      .addSelect('v.codArticle', 'codArticle')
       .addSelect('p.name', 'name')
       .addSelect('p.price', 'price')
       .addSelect('v.sku', 'sku')
@@ -199,6 +221,7 @@ export class SyncAs400Service {
       .addOrderBy('v.sku', 'ASC')
       .getRawMany<{
         reference: string;
+        codArticle: string | null;
         name: string;
         price: string;
         sku: string;
@@ -209,6 +232,7 @@ export class SyncAs400Service {
 
     return raw.map((r) => ({
       reference: String(r.reference ?? '').trim(),
+      codArticle: String(r.codArticle ?? '').trim(),
       name: String(r.name ?? '').trim(),
       price: this.formatPrice(r.price),
       sku: String(r.sku ?? '').trim(),
@@ -229,7 +253,16 @@ export class SyncAs400Service {
   private buildCsv(lines: SortantDeltaLine[], mode: 'full' | 'delta'): string {
     if (mode === 'full') {
       const body = lines.map((r) =>
-        [r.reference, r.name, r.price, r.sku, r.size, r.color, r.stock]
+        [
+          r.codArticle,
+          r.reference,
+          r.name,
+          r.price,
+          r.sku,
+          r.size,
+          r.color,
+          r.stock,
+        ]
           .map(escapeCsvField)
           .join(';'),
       );
@@ -239,6 +272,7 @@ export class SyncAs400Service {
     const body = lines.map((r) =>
       [
         r.changeType,
+        r.codArticle,
         r.reference,
         r.name,
         r.price,

@@ -37,6 +37,14 @@ docker exec reboulstore-backend-prod head -1 /var/sftp/as400/sortant/produits_re
 
 echo "Test SKU lines:"
 docker exec reboulstore-backend-prod grep '${TEST_SKU}' /var/sftp/as400/sortant/produits_reboul.csv 2>/dev/null || echo "(SKU not in file)"
+
+lines=\$(docker exec reboulstore-backend-prod wc -l < /var/sftp/as400/sortant/produits_reboul.csv 2>/dev/null || echo 0)
+hdr=\$(docker exec reboulstore-backend-prod head -1 /var/sftp/as400/sortant/produits_reboul.csv 2>/dev/null || true)
+if [ "\$lines" -le 2 ] || echo "\$hdr" | grep -q '^change_type'; then
+  echo "ALERT: CSV sortant invalide - relancer export full"
+else
+  echo "OK: full catalog present, \$lines lines"
+fi
 REMOTE
 }
 

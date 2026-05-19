@@ -12,6 +12,14 @@ import { Image } from './entities/image.entity';
 import { Brand } from './entities/brand.entity';
 import { Collection } from './entities/collection.entity';
 
+export type ReboulVariantInput = {
+  color: string;
+  size: string;
+  stock: number;
+  sku: string;
+  codArticle?: string | null;
+};
+
 /**
  * Service pour gérer les produits Reboul depuis l'Admin Centrale
  * 
@@ -274,7 +282,7 @@ export class ReboulProductsService {
   /**
    * Créer un produit avec ses images et variants
    */
-  async createWithImages(productData: Partial<Product>, images?: Array<{ url: string; publicId?: string; alt?: string; order: number }>, variants?: Array<{ color: string; size: string; stock: number; sku: string }>) {
+  async createWithImages(productData: Partial<Product>, images?: Array<{ url: string; publicId?: string; alt?: string; order: number }>, variants?: ReboulVariantInput[]) {
     const product = await this.create(productData);
 
     if (images && images.length > 0) {
@@ -293,6 +301,7 @@ export class ReboulProductsService {
           size: variant.size,
           stock: variant.stock,
           sku: variant.sku,
+          codArticle: variant.codArticle?.trim() || null,
         });
         await this.variantRepository.save(variantEntity);
       }
@@ -308,7 +317,7 @@ export class ReboulProductsService {
   async upsertWithVariants(
     productData: Partial<Product>,
     images: Array<{ url: string; publicId?: string; alt?: string; order: number }>,
-    variants: Array<{ color: string; size: string; stock: number; sku: string }>,
+    variants: ReboulVariantInput[],
   ): Promise<{ action: 'created' | 'updated'; product: Product; variantsCreated: number; variantsUpdated: number }> {
     const existing = productData.reference
       ? await this.productRepository.findOne({
@@ -327,6 +336,9 @@ export class ReboulProductsService {
         });
         if (existingVariant) {
           existingVariant.stock = v.stock;
+          if (v.codArticle?.trim()) {
+            existingVariant.codArticle = v.codArticle.trim();
+          }
           await this.variantRepository.save(existingVariant);
           variantsUpdated++;
         } else {
@@ -336,6 +348,7 @@ export class ReboulProductsService {
             size: v.size,
             stock: v.stock,
             sku: v.sku,
+            codArticle: v.codArticle?.trim() || null,
           });
           await this.variantRepository.save(newVariant);
           variantsCreated++;
@@ -357,7 +370,7 @@ export class ReboulProductsService {
     id: number | string,
     updateData: Partial<Product>,
     images?: Array<{ id?: number | string; url: string; publicId?: string; alt?: string; order: number }>,
-    variants?: Array<{ id?: number | string; color: string; size: string; stock: number; sku: string }>,
+    variants?: Array<ReboulVariantInput & { id?: number | string }>,
   ) {
     await this.update(id, updateData);
     const product = await this.findOne(id);
@@ -409,6 +422,9 @@ export class ReboulProductsService {
               existingVariant.size = variant.size;
               existingVariant.stock = variant.stock;
               existingVariant.sku = variant.sku;
+              if (variant.codArticle?.trim()) {
+                existingVariant.codArticle = variant.codArticle.trim();
+              }
               await this.variantRepository.save(existingVariant);
             }
           } else {
@@ -419,6 +435,7 @@ export class ReboulProductsService {
               size: variant.size,
               stock: variant.stock,
               sku: variant.sku,
+              codArticle: variant.codArticle?.trim() || null,
             });
             await this.variantRepository.save(variantEntity);
           }

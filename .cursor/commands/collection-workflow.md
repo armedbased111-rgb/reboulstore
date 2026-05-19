@@ -32,6 +32,7 @@ Le workflow d'intégration des collections réelles permet d'importer les collec
 
 | Colonne | Type | Description | Obligatoire |
 |---------|------|-------------|-------------|
+| `cod_article` | Texte | Code ERP AS400 (1ʳᵉ colonne) | ⚠️ Vide si inconnu |
 | `name` | Texte | Nom du produit | ✅ Oui |
 | `reference` | Texte | Référence/SKU produit | ⚠️ Recommandé |
 | `price` | Nombre | Prix en euros | ✅ Oui |
@@ -48,9 +49,9 @@ Le workflow d'intégration des collections réelles permet d'importer les collec
 ### Exemple CSV
 
 ```csv
-name,reference,price,brand,category,collection,color,size,stock,sku
-"T-shirt Coton","TSH-001","29.99","Nike","T-shirts","SS2025","Noir","M","10","TSH-001-N-M"
-"T-shirt Coton","TSH-001","29.99","Nike","T-shirts","SS2025","Noir","L","5","TSH-001-N-L"
+cod_article,name,reference,price,brand,category,collection,color,size,stock,sku
+,T-shirt Coton,TSH-001,29.99,Nike,T-shirts,SS2025,Noir,M,10,TSH-001-N-M
+,T-shirt Coton,TSH-001,29.99,Nike,T-shirts,SS2025,Noir,L,5,TSH-001-N-L
 ```
 
 ## ✅ Processus Validation

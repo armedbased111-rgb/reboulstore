@@ -1,33 +1,33 @@
-name;reference;brand;category;collection;stock;price;color
-Autry Windscape Low Man;SCLM/CQ02 39;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 40;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 41;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 42;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 43;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 44;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 45;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CQ02 46;autry;basket;SS26;1;169;Estate Blue/Rust
-Autry Windscape Low Man;SCLM/CU01 39;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 40;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 41;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 42;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 43;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 44;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 45;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU01 46;autry;basket;SS26;1;169;Black
-Autry Windscape Low Man;SCLM/CU03 39;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 40;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 41;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 42;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 43;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 44;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 45;autry;basket;SS26;1;169;Military
-Autry Windscape Low Man;SCLM/CU03 46;autry;basket;SS26;1;169;Military
-Autry Windscape SV Low Man;SVLM/PJ02 39;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 40;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 41;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 42;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 43;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 44;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 45;autry;basket;SS26;1;239;White
-Autry Windscape SV Low Man;SVLM/PJ02 46;autry;basket;SS26;1;239;White
+cod_article;name;reference;brand;category;collection;stock;price;color
+;Autry Windscape Low Man;SCLM/CQ02 39;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 40;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 41;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 42;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 43;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 44;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 45;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CQ02 46;autry;basket;SS26;1;169;Estate Blue/Rust
+;Autry Windscape Low Man;SCLM/CU01 39;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 40;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 41;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 42;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 43;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 44;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 45;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU01 46;autry;basket;SS26;1;169;Black
+;Autry Windscape Low Man;SCLM/CU03 39;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 40;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 41;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 42;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 43;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 44;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 45;autry;basket;SS26;1;169;Military
+;Autry Windscape Low Man;SCLM/CU03 46;autry;basket;SS26;1;169;Military
+;Autry Windscape SV Low Man;SVLM/PJ02 39;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 40;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 41;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 42;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 43;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 44;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 45;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low Man;SVLM/PJ02 46;autry;basket;SS26;1;239;White

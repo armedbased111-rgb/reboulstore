@@ -489,7 +489,7 @@ def import_cmd():
 @click.option('--price', default=100, type=int, help='Valeur price pour toutes les lignes')
 @click.option('--delimiter', default='auto', help='Séparateur CSV: ; ou , ou auto (détecté)')
 def import_feuille_to_csv(input_path, output_path, collection, stock, price, delimiter):
-    """Convertir une feuille de stock Reboul en CSV d'import BDD (name;reference;brand;category;collection;stock;price).
+    """Convertir une feuille de stock Reboul en CSV d'import BDD (cod_article;name;reference;brand;category;collection;stock;price).
     Réutilisable pour toutes les pages de stock (ex. Stone Island : 7 pages)."""
     import csv
     with open(input_path, 'r', encoding='utf-8') as f:
@@ -525,11 +525,13 @@ def import_feuille_to_csv(input_path, output_path, collection, stock, price, del
             marque = get(row, 'marque', 'brand')
             genre = get(row, 'genre', 'category', 'categorie')
             ref = get(row, 'reference', 'ref', 'référence')
+            cod = get(row, 'cod article', 'cod_article', 'codarticle')
             if not ref:
                 continue
             name = f"{marque} {genre}".strip() if (marque and genre) else (marque or genre or ref)
             name = ' '.join(w.capitalize() for w in name.split())
             rows_out.append({
+                'cod_article': cod,
                 'name': name,
                 'reference': ref,
                 'brand': marque,
@@ -541,7 +543,7 @@ def import_feuille_to_csv(input_path, output_path, collection, stock, price, del
         if not rows_out:
             console.print('[yellow]⚠️ Aucune ligne avec Référence trouvée[/yellow]')
             return
-        out_header = ['name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
+        out_header = ['cod_article', 'name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
         buf = []
         buf.append(';'.join(out_header))
         for r in rows_out:
@@ -562,7 +564,7 @@ def import_merge_pages(input_paths, output_path):
     """Fusionner plusieurs pages CSV en un seul fichier, dédupliqué par référence.
     Quand la même référence apparaît sur plusieurs pages (ex. fin page 1 = début page 2), la dernière occurrence gagne (stock mis à jour)."""
     import csv
-    out_header = ['name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
+    out_header = ['cod_article', 'name', 'reference', 'brand', 'category', 'collection', 'stock', 'price']
 
     def ref_key(ref):
         return (ref or '').strip()
@@ -589,12 +591,15 @@ def import_merge_pages(input_paths, output_path):
                 collection = (row.get('collection') or row.get('Collection') or 'SS26').strip()
                 stock = (row.get('stock') or row.get('Stock') or '2').strip()
                 price = (row.get('price') or row.get('Price') or '100').strip()
+                cod = (row.get('cod_article') or row.get('cod article') or row.get('Cod Article') or '').strip()
+                prev = by_ref.get(key, {})
                 by_ref[key] = {
-                    'name': name or by_ref.get(key, {}).get('name', ''),
+                    'cod_article': cod or prev.get('cod_article', ''),
+                    'name': name or prev.get('name', ''),
                     'reference': ref,
-                    'brand': brand or by_ref.get(key, {}).get('brand', ''),
-                    'category': category or by_ref.get(key, {}).get('category', ''),
-                    'collection': collection or by_ref.get(key, {}).get('collection', 'SS26'),
+                    'brand': brand or prev.get('brand', ''),
+                    'category': category or prev.get('category', ''),
+                    'collection': collection or prev.get('collection', 'SS26'),
                     'stock': stock,
                     'price': price,
                 }
@@ -614,8 +619,31 @@ def import_merge_pages(input_paths, output_path):
         console.print(f"[dim]   (chevauchement pages : {dup_removed} doublon(s) retiré(s), dernière occurrence conservée)[/dim]")
 
 
+@import_cmd.command('apply-csv')
+@click.option('--input', '-i', 'input_path', required=True, type=click.Path(exists=True), help='CSV import (colonnes Admin : name, reference, cod_article, brand, category, collection, color, size, stock, price, sku)')
+@click.option('--collection-id', type=int, default=None, help='ID collection (sinon colonne collection du CSV)')
+@click.option('--dry-run', is_flag=True, help='Valider sans écrire en BDD')
+@click.option('--yes', '-y', is_flag=True, help='Sans confirmation')
+@click.option('--no-backup', is_flag=True, help='Sans backup automatique (déconseillé)')
+def import_apply_csv(input_path, collection_id, dry_run, yes, no_backup):
+    """Importer un CSV collection directement en BDD VPS (sans Admin Centrale). Upsert produit + variants + cod_article."""
+    from commands.import_apply_csv import run_apply_csv
+
+    run_apply_csv(
+        console,
+        input_path,
+        collection_id,
+        dry_run,
+        yes,
+        no_backup,
+        _run_db_query,
+        _exec_db_sql,
+        _create_server_backup,
+    )
+
+
 @import_cmd.command('compare-csv')
-@click.option('--input', '-i', 'input_path', required=True, type=click.Path(exists=True), help='CSV de mise à jour (même format: name;reference;brand;category;collection;stock;price)')
+@click.option('--input', '-i', 'input_path', required=True, type=click.Path(exists=True), help='CSV de mise à jour (même format: cod_article;name;reference;brand;category;collection;stock;price)')
 @click.option('--collection', type=str, required=True, help='Nom de la collection (ex: SS26) pour comparer à la BDD')
 @click.option('--brand', type=str, default=None, help='Filtrer aussi par marque (optionnel)')
 @click.option('--output', '-o', 'output_path', type=click.Path(), default=None, help='Exporter le rapport en fichier texte')
@@ -825,10 +853,10 @@ def _image_to_csv_one(api_key, input_path, collection, brand, stock, price):
     prompt = (
         "You see a photo or scan of a STOCK SHEET (feuille de stock) from a clothing store. "
         "Extract EVERY row from the table. "
-        "Columns usually: Marque (brand), Genre (category), Référence (reference = product code + space + size, e.g. 'L100001/V09A 29' or '6100014/V29 L'). "
+        "Columns usually: Cod Article (ERP code, first column if present), Marque (brand), Genre (category), Référence (reference = product code + space + size, e.g. 'L100001/V09A 29' or '6100014/V29 L'). "
         "If a Stock column is visible, use it; otherwise use %d. If Price is visible use it; otherwise use %d. "
-        "Output ONLY a CSV with this exact header (semicolon separator): name;reference;brand;category;collection;stock;price\n"
-        "Rules: name = Brand + space + Category (e.g. Stone Island Bermuda). reference = full ref with size (exactly as printed). "
+        "Output ONLY a CSV with this exact header (semicolon separator): cod_article;name;reference;brand;category;collection;stock;price\n"
+        "Rules: cod_article = Cod Article if visible, else empty. name = Brand + space + Category (e.g. Stone Island Bermuda). reference = full ref with size (exactly as printed). "
         "brand = Marque. category = Genre in lowercase. collection = %s. stock = number. price = number. "
         "One line per row; no extra text, no markdown, no code block."
     ) % (stock, price, collection)
@@ -855,7 +883,7 @@ def _image_to_csv_one(api_key, input_path, collection, brand, stock, price):
     if not text:
         return []
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-    out_header = "name;reference;brand;category;collection;stock;price"
+    out_header = "cod_article;name;reference;brand;category;collection;stock;price"
     if lines and "name" in lines[0].lower() and "reference" in lines[0].lower():
         data_lines = [ln for ln in lines[1:] if ln and not ln.startswith("```")]
     else:
@@ -880,7 +908,7 @@ def import_image_to_csv(input_paths, output_path, collection, brand, stock, pric
         return
 
     paths = list(input_paths)
-    out_header = "name;reference;brand;category;collection;stock;price"
+    out_header = "cod_article;name;reference;brand;category;collection;stock;price"
     by_ref = {}
     total_rows = 0
     for i, p in enumerate(paths):
@@ -891,12 +919,11 @@ def import_image_to_csv(input_paths, output_path, collection, brand, stock, pric
             console.print(f"[red]❌ Erreur pour {p}: {e}[/red]")
             continue
         for ln in data_lines:
-            parts = ln.split(";", 6)
-            if len(parts) >= 2:
-                ref = (parts[1] or "").strip()
-                if ref:
-                    by_ref[ref] = ln
-                    total_rows += 1
+            parts = ln.split(";")
+            ref = (parts[2] if len(parts) >= 3 else parts[1] if len(parts) >= 2 else "").strip()
+            if ref:
+                by_ref[ref] = ln
+                total_rows += 1
         console.print("[green]  → %d lignes[/green]" % len(data_lines))
     if not by_ref:
         console.print("[red]❌ Aucune ligne extraite.[/red]")
