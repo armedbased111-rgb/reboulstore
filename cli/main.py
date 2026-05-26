@@ -854,12 +854,13 @@ def _image_to_csv_one(api_key, input_path, collection, brand, stock, price):
         "You see a photo or scan of a STOCK SHEET (feuille de stock) from a clothing store. "
         "Extract EVERY row from the table. "
         "Columns usually: Cod Article (ERP code, first column if present), Marque (brand), Genre (category), Référence (reference = product code + space + size, e.g. 'L100001/V09A 29' or '6100014/V29 L'). "
-        "If a Stock column is visible, use it; otherwise use %d. If Price is visible use it; otherwise use %d. "
+        "If a Stock column is visible, use it; otherwise use %d. "
+        "IGNORE purchase price columns (Px Achat, prix achat) — always use price = %d for every row (selling price comes from tag scans later). "
         "Output ONLY a CSV with this exact header (semicolon separator): cod_article;name;reference;brand;category;collection;stock;price\n"
-        "Rules: cod_article = Cod Article if visible, else empty. name = Brand + space + Category (e.g. Stone Island Bermuda). reference = full ref with size (exactly as printed). "
-        "brand = Marque. category = Genre in lowercase. collection = %s. stock = number. price = number. "
+        "Rules: cod_article = Cod Article if visible, else empty. name = product reference WITHOUT trailing size (e.g. S26213/10 from S26213/10 48). reference = full ref with size (exactly as printed). "
+        "brand = Marque. category = Genre in lowercase. collection = %s. stock = number. price = %d always. "
         "One line per row; no extra text, no markdown, no code block."
-    ) % (stock, price, collection)
+    ) % (stock, price, collection, price)
     if brand:
         prompt += " If brand is not clearly visible, use \"%s\" for brand and adjust name accordingly." % brand.replace('"', '\\"')
 

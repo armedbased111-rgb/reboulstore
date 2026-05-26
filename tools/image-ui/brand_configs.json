@@ -98,5 +98,25 @@
     "flash_attempts": 4,
     "delay": 30,
     "use_flash": true
+  },
+  "RRD": {
+    "name": "RRD",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /RRD",
+    "output_dir": "./output_batch_rrd",
+    "product_type": "garment",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
+  },
+  "Hologram": {
+    "name": "Hologram",
+    "input_dir": "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /HOLOGRAM",
+    "output_dir": "./output_batch_hologram",
+    "product_type": "garment",
+    "refs_dir": "refs_empty",
+    "flash_attempts": 4,
+    "delay": 30,
+    "use_flash": true
   }
 }

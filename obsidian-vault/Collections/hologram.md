@@ -54,6 +54,7 @@ Colonne **Cod Article** (ERP) — renseignée dans le CSV et en BDD (`variants.c
 
 - Type : **flat lay** (vêtements)
 - Photos : faites — dossier iCloud `Collection reboulstore /HOLOGRAM/`
+- Pipeline : **garment** (flat lay) — Image UI marque **Hologram** · `output_batch_hologram`
 
 ## Plan
 

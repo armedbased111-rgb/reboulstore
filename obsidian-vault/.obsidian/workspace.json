@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Collections/rrd.md",
+                "file": "Collections/saucony.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "rrd"
+              "title": "saucony"
             }
           },
           {
@@ -198,10 +198,12 @@
       "graph:Ouvrir la vue graphique": false
     }
   },
-  "active": "97e58890e15770df",
+  "active": "43ef9f66d590f1d7",
   "lastOpenFiles": [
-    "Collections/hologram.md",
+    "Sessions/archive/2026-05-21-collections-rrd-saucony.md",
+    "Collections/salomon.md",
     "Collections/rrd.md",
+    "Collections/hologram.md",
     "Sessions/archive/2026-05-19-as400-stabilisation.md",
     "Projet/roadmap.md",
     "Securite/as400.md",
@@ -225,8 +227,6 @@
     "Sessions/2026-05-17-vault-sync.md",
     "Securite/as400-mouvements-sortant.md",
     "Securite/as400-fiche-expert.md",
-    "Sessions/2026-05-17-as400-phase1-setup.md",
-    "Sessions/2026-05-17-logs-winston.md",
     "Securite",
     "Database/tables",
     "Database",

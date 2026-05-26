@@ -174,4 +174,7 @@ Vérifie si le dossier output contient un fichier avec "face" ET un fichier avec
 | Off-White | À lancer (shoes, iCloud nommage `:`) |
 | Carhartt | CSV prêt — photos à récupérer |
 | Saucony | CSV prêt — photos à récupérer |
-| Birkenstock | CSV prêt — pipeline à définir |
+| Birkenstock | CSV prêt — pipeline shoe |
+| RRD | Config ✅ garment — shoot 27/35 — import BDD en attente |
+| Hologram | Config ✅ garment — photos OK — pipeline à lancer |
+| Saucony | 8 refs BDD — 7/7 IA + **`S70704-30`** à shooter |

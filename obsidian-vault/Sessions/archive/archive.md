@@ -11,6 +11,7 @@ Toutes les sessions **terminées**.
 ## Mai 2026
 
 ### AS400 / SFTP
+- [[Sessions/archive/2026-05-21-collections-rrd-saucony]] — RRD CSV/shoot 27/35, Saucony S70704-30 BDD
 - [[Sessions/archive/2026-05-19-as400-stabilisation]] — Delta vide, deploy `.env`, catalogue 1498 lignes
 - [[Sessions/archive/2026-05-18-as400-phase3-complete]] — Phase 3 sortant clôturée (cron + delta)
 - [[Sessions/archive/2026-05-17-as400-b2-backend]] — Module NestJS sync-as400

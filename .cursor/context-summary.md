@@ -1,15 +1,15 @@
 # Résumé de contexte — Reboul Store
 
-**Généré le** : 19/05/2026 11:15
+**Généré le** : 26/05/2026 15:58
 **Source** : vault Obsidian (`obsidian-vault/`)
 
 ## Progression globale
 
-**Tâches** : 50/98 cochées dans `Projet/roadmap.md`
+**Tâches** : 51/99 cochées dans `Projet/roadmap.md`
 
 ## Sections roadmap
 
-- 🟡 **Images & Collections** — 6/25
+- 🟡 **Images & Collections** — 7/26
   - [ ] **Code article** — autres marques (feuilles stock quand dispo)
   - [ ] **Hologram** — lancer pipeline flat lay
   - [ ] **Birkenstock** — lancer `generate-batch --product-type shoe` (34 refs)

@@ -1,7 +1,7 @@
 ---
 type: roadmap
 statut: en-cours
-maj: 2026-05-19
+maj: 2026-05-26
 ---
 
 # Roadmap — Reboul Store SS26
@@ -32,14 +32,15 @@ Tout ce qui est pipeline IA, tri, upload Cloudinary.
 - [ ] **Autry** — générer 4_top manquants via Gemini ADJUST (10 refs : HIPX-032K · JAPM-026B · PAPM-027B · PAPX-019K · SHPM-079Y · SWPX-036W · TSPM-044W · TSPX-047W · TSPX-053W · TSPX-053Y)
 - [ ] **Bisous** — décider du sort des 9 refs vides (SS26-30, SS26-74→81) : shooter ou supprimer
 - [ ] **Bisous** — régénérer back pour SS26-91 et SS26-94
-- [ ] **RRD** — démarrer : feuille stock → CSV → photos → pipeline
+- [ ] **RRD** — CSV ✅ · shoot 27/35 · scan prix · import BDD · pipeline
 - [ ] Trier + vérifier qualité toutes collections avant upload
 - [ ] **Upload batch** — Stone Island (61 refs)
 - [ ] **Upload batch** — Carhartt (54 refs)
 - [ ] **Upload batch** — Autry (quand complet)
 - [ ] **Upload batch** — Arte Antwerp (10 refs)
 - [ ] **Upload batch** — Off-White (7 refs)
-- [ ] **Upload batch** — Saucony (7 refs)
+- [ ] **Upload batch** — Saucony (7 refs + `S70704-30` après pipeline)
+- [x] **Saucony** — ref `S70704-30` Progrid Triumph 4 import BDD (10 tailles, Mist/lapis) ✅ 21/05
 - [ ] **Upload batch** — Asics (15 refs)
 - [ ] **Upload batch** — Salomon (13 refs)
 - [ ] **Upload batch** — Hologram (après génération)
