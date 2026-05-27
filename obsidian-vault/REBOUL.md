@@ -28,7 +28,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Admin Centrale | Fonctionnelle — import, gestion quotidienne |
 | Infrastructure prod | ✅ Stable — deploy OK, monitoring UptimeRobot actif (11/05/2026) |
 | Frontend | Finalisation page par page en cours |
-| Collections | Pipeline data OK — images en cours par marque |
+| Collections | Hologram ✅ uploadé · Bisous prêt upload · Stone Island / Arte / Autry en cours |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
 | AS400 / SFTP | **Sortant ✅** · **Fiche expert envoyée à Jacques ✅ 27/05** · Phase 2 `entrant/` en attente réponse Jacques → [[Securite/as400]] |
 | Logs / Grafana | ✅ Guide nœud [[Architecture/grafana]] — logs techniques 30 j (pas stocks/AS400 métier) |
@@ -82,7 +82,7 @@ Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ## Dernière session
 
-[[Sessions/archive/2026-05-27-pipeline-as400-hologram]] · [[Sessions/Sessions]]
+[[Sessions/archive/2026-05-27-bisous-ispublished-logos]] · [[Sessions/archive/2026-05-27-pipeline-as400-hologram]] · [[Sessions/Sessions]]
 
 ---
 

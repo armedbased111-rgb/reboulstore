@@ -136,7 +136,11 @@ Points à vérifier :
 ./rcli images upload-batch --batch output_batch_marque/
 ```
 
-Les URLs Cloudinary sont enregistrées en BDD → immédiatement visibles sur le site.
+**Ordre upload** : FACE toujours en position 0 (image principale). Tri : `face` → `back/top` → reste. Insensible à la casse (FACE.png = face.png).
+
+**is_published** : après upload réussi, le CLI set automatiquement `is_published = true` sur le produit → visible sur le catalogue. Produits sans images = `is_published = false` par défaut.
+
+**Back optionnel** : une seule image (face) suffit pour passer à `needs_upload` dans Image UI (chaussettes, accessoires). Le back n'est pas bloquant.
 
 ---
 
@@ -167,18 +171,17 @@ Vérifie si le dossier output contient un fichier avec "face" ET un fichier avec
 
 ---
 
-## Collections — état pipeline (07/05/2026)
+## Collections — état pipeline (27/05/2026)
 
 | Marque | Statut pipeline |
 |--------|----------------|
-| Stone Island | Généré (77 refs) — 61 à uploader |
+| Hologram | ✅ Uploadé (8/8) — is_published=true |
+| Bisous | ✅ Prêt upload (24 refs) — SS26-30 jaune à photographier |
+| Stone Island | Généré — 61+ à uploader |
 | Autry | Généré (40 refs) — tri + upload à faire |
-| Bisous | Généré (25/33) — 8 refs vides |
 | Arte Antwerp | À lancer (photos dispo iCloud) |
-| Off-White | À lancer (shoes, iCloud nommage `:`) |
-| Carhartt | CSV prêt — photos à récupérer |
-| Saucony | CSV prêt — photos à récupérer |
-| Birkenstock | CSV prêt — pipeline shoe |
-| RRD | Config ✅ garment — shoot 27/35 — import BDD en attente |
-| Hologram | Config ✅ garment — photos OK — pipeline à lancer |
-| Saucony | 8 refs BDD — 7/7 IA + **`S70704-30`** à shooter |
+| Off-White | À lancer (shoes) |
+| Carhartt | Pas de photos — is_published=false |
+| Saucony | Pas de photos — is_published=false |
+| Birkenstock | Pas de photos — is_published=false |
+| RRD | Import BDD en attente |
