@@ -171,6 +171,14 @@ export class ProductsController {
     return this.productsService.update(id, updateProductDto);
   }
 
+  @Patch(':id/publish')
+  setPublished(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('isPublished') isPublished: boolean,
+  ) {
+    return this.productsService.setPublished(id, isPublished);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {

@@ -35,10 +35,11 @@ PROMPT_FACE = (
     "Single image: one garment only. Front view, flat lay on a flat surface. "
     "Garment alone—no mannequin, no hanger, no body, no person. "
     "The garment must fill most of the frame (same scale as a back-view flat lay). "
-    "Sleeves visible; if the source has a hood show it, if it has none do not add one. Natural relaxed drape. "
+    "Sleeves visible; if the source has a hood show it, if it has none do not add one. "
+    "Garment lying perfectly flat — smooth out physical wrinkles, creases and folds so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "Center the garment both horizontally and vertically in the frame: equal left/right margins, consistent small margin above the waistband and below the hem. "
     "The garment must be perfectly straight: waistband perfectly horizontal, legs vertical, no tilt or rotation. "
-    "Soft even lighting; only a very subtle soft shadow directly under the garment. No harsh shadows. "
+    "Flat even lighting. NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. "
     "Clean product photography for e-commerce. Output only this one image."
     + NO_INVENTION
     + BG
@@ -48,9 +49,10 @@ PROMPT_BACK = (
     "Garment alone—no mannequin, no hanger, no body, no person. "
     "The garment must fill most of the frame (same scale as the front-view flat lay). "
     "Back seams and sleeves visible; if the source has a hood show it, if it has none do not add one. "
+    "Garment lying perfectly flat — smooth out physical wrinkles, creases and folds so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "Center the garment both horizontally and vertically in the frame: equal left/right margins, consistent small margin above the waistband and below the hem. "
     "The garment must be perfectly straight: waistband perfectly horizontal, legs vertical, no tilt or rotation. "
-    "Soft even lighting; only a very subtle soft shadow under the garment. No harsh shadows. "
+    "Flat even lighting. NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. "
     "Clean product photography for e-commerce. Output only this one image."
     + NO_INVENTION
     + BG
@@ -134,7 +136,8 @@ FLASH_PROMPT_PRODUCT_FIRST = (
     "TASK: Extract the garment from IMAGE 1. Remove cardboard, floor, shelves, feet, text, arrows. "
     "Render it as a clean product image using IMAGE 2's framing, fold and alignment: garment flat, sleeves arranged like IMAGE 2, "
     "waistband perfectly horizontal, vertical axis centered; same crop, same margins. "
-    "Remove harsh shadows; use only a soft, subtle shadow under the garment like IMAGE 2. "
+    "NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. Flat even lighting. "
+    "Smooth out physical wrinkles and creases so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "Do NOT add any logo, badge, patch or branding that is not clearly visible in IMAGE 1. "
     "If the garment in IMAGE 1 has no badge, the output must have no badge. "
     "Background MUST be plain solid #808080 (medium grey) only. No other color or gradient. "
@@ -149,7 +152,8 @@ REFERENCE_PROMPT = (
     "vertical axis of the garment centered in the frame; no tilt, no rotation. "
     "FRAMING: Same crop, same centering, same margins as IMAGE 2. Tight crop; the garment must FILL the frame. "
     "Equal left/right margins, consistent small margin above the waistband and below the hem. "
-    "Remove harsh or uneven shadows from the original photo; use only a soft, subtle shadow under the garment like IMAGE 2. "
+    "NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. Flat even lighting. "
+    "Smooth out physical wrinkles and creases so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "COLOR: Preserve the exact garment color from IMAGE 1; no hue or saturation shift. "
     "BACKGROUND: Must be plain solid #808080 (medium grey) only. No other background color or gradient. "
     "TASK: Put the garment from IMAGE 1 into the exact same setup as Image 2 (same flat lay or angle, same crop, #808080 background, same lighting). "
@@ -166,7 +170,7 @@ REFERENCE_BACK_WITH_COLOR_FROM_FRONT = (
     "Never substitute a different garment type. "
     "Do NOT add any logo, badge or patch that is not clearly visible in IMAGE 1 or IMAGE 3. "
     "FOLD AND ALIGNMENT: Match IMAGE 2—waistband horizontal, vertical axis centered; no tilt or rotation. "
-    "FRAMING: Same crop and centering as IMAGE 2. Remove harsh shadows; use only a soft, subtle shadow under the garment. "
+    "FRAMING: Same crop and centering as IMAGE 2. NO shadow of any kind. Flat even lighting. Smooth out physical wrinkles and creases — PRESERVE fabric pattern (stripes, checks, prints) pixel-perfect. "
     "BACKGROUND: Must be plain solid #808080 (medium grey) only. No other background color or gradient. "
     "OUTPUT: One image = the BACK of the garment in IMAGE 1, color from IMAGE 3. No text. "
     "CRITICAL: Output garment = exactly the product in IMAGE 1 (same type, back view). Never copy the garment from IMAGE 2."
@@ -206,9 +210,8 @@ ERRORS_AVOID_DEFAULT = (
     "AVOID: tilted or rotated garment; harsh shadows from the room; wide empty margins; garment too small in frame; "
     "wrong fold or position compared to ref; sleeves or body messy or misaligned; sleeves with diagonal creases or bunching; "
     "outputting a different garment type than IMAGE 1 (e.g. jacket when IMAGE 1 is shorts—always keep the same product as IMAGE 1). "
-    "AVOID the floating shadow error: no elongated horizontal shadow at the bottom of the image, detached from the garment (that makes the product look suspended). Remove it. "
-    "GOOD: fold and alignment exactly like IMAGE 2 (ref)—garment flat, sleeves perfectly straight and flat (clean rectangle shoulder to cuff), "
-    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop; one soft contact shadow only directly under the garment edges, no second shadow below."
+    "GOOD: garment flat, ALL wrinkles and creases smoothed out, sleeves perfectly straight and flat (clean rectangle shoulder to cuff), "
+    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop. NO shadow anywhere. Fabric pattern (stripes, checks, prints) must be preserved exactly."
 )
 
 # ── Utilitaires ───────────────────────────────────────────────────────────────

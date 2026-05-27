@@ -67,7 +67,7 @@ Colonne **Cod Article** (ERP) — renseignée dans le CSV et en BDD (`variants.c
 - [x] Renseigner `cod_article` depuis feuille PDF ✅ 18/05
 - [x] Importer en BDD ✅ 19/05 (8 produits, 37 variants)
 - [x] Lancer pipeline IA (flat lay) ✅ 27/05 — batch lancé via Image UI · problème coloris blancs identifié → fond #808080 corrigé dans pipeline
-- [ ] Retouche Photoshop
-- [ ] Upload Cloudinary
+- [x] Retouche Photoshop ✅ 2026-05-27
+- [x] Upload Cloudinary ✅ 2026-05-27
 
 → [[Architecture/workflow-collection]]

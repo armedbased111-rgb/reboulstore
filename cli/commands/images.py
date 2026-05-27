@@ -1460,9 +1460,16 @@ def upload(reference, image_dir, backend_url, do_append):
             console.print(f"[red]❌ Erreur lors de la suppression des anciennes images : {e}[/red]")
             raise SystemExit(1)
     exts = (".png", ".jpg", ".jpeg")
+    def _img_sort_key(name: str) -> tuple:
+        n = name.lower()
+        if "face" in n:
+            return (0, name)
+        if "back" in n or "top" in n:
+            return (1, name)
+        return (2, name)
     files_to_upload = sorted(
         [(f.name, f) for f in image_dir.iterdir() if f.is_file() and f.suffix.lower() in exts and not f.name.startswith(".")],
-        key=lambda x: x[0],
+        key=lambda x: _img_sort_key(x[0]),
     )
     if not files_to_upload:
         console.print(f"[yellow]⚠️ Aucune image trouvée dans {image_dir}[/yellow]")
@@ -1490,6 +1497,10 @@ def upload(reference, image_dir, backend_url, do_append):
         for fh in file_handles:
             fh.close()
     console.print(f"[green]✅ {len(files_to_upload)} image(s) uploadées et attachées au produit {reference}[/green]")
+    try:
+        requests.patch(f"{base_url}/products/{product_id}/publish", json={"isPublished": True}, timeout=10)
+    except requests.RequestException:
+        pass
 
 
 @images.command("delete-by-brand")

@@ -90,6 +90,7 @@ export class ProductsService {
 
     const where: FindOptionsWhere<Product> = {
       collectionId: activeCollection.id,
+      isPublished: true,
     };
 
     // Filtre par catégorie
@@ -221,6 +222,7 @@ export class ProductsService {
     const where: FindOptionsWhere<Product> = {
       categoryId,
       collectionId: activeCollection.id,
+      isPublished: true,
     };
 
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -353,6 +355,14 @@ export class ProductsService {
     // Invalider le cache du produit spécifique
     await this.cacheManager.del(`product:${id}`);
     // Note: Le cache de la liste expire automatiquement après 5 minutes (TTL)
+  }
+
+  async setPublished(id: number, isPublished: boolean): Promise<Product> {
+    const product = await this.findOne(id);
+    product.isPublished = isPublished;
+    const saved = await this.productRepository.save(product);
+    await this.cacheManager.del(`product:${id}`);
+    return saved;
   }
 
   async findVariantsByProduct(productId: number): Promise<Variant[]> {

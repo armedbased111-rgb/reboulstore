@@ -60,7 +60,7 @@ export class Product {
   @JoinColumn({ name: 'collection_id' })
   collection: Collection | null;
 
-  @Column({ type: 'boolean', name: 'is_published', default: true })
+  @Column({ type: 'boolean', name: 'is_published', default: false })
   isPublished: boolean;
 
   @OneToMany(() => Image, (image) => image.product)
