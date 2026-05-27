@@ -20,10 +20,7 @@ def get_ref_status(input_dir: Path, output_dir: Path, ref_name: str) -> StatusTy
     has_face = output_folder.exists() and any(
         "face" in f.name.lower() for f in output_folder.iterdir() if f.is_file()
     )
-    has_back = output_folder.exists() and any(
-        ("back" in f.name.lower() or "top" in f.name.lower()) for f in output_folder.iterdir() if f.is_file()
-    )
-    if not (has_face and has_back):
+    if not has_face:
         return "needs_generation"
 
     meta_path = output_folder / ".uploaded"
