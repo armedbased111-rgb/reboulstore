@@ -5,7 +5,7 @@ slug-bdd: hologram
 saison: SS26
 statut-data: importe
 statut-images: photos-faites
-maj: 2026-05-19
+maj: 2026-05-27
 ---
 # Hologram SS26
 
@@ -66,7 +66,7 @@ Colonne **Cod Article** (ERP) — renseignée dans le CSV et en BDD (`variants.c
 - [x] Supprimer refs sans photos (AR00065, AR00647) ✅ 2026-05-07
 - [x] Renseigner `cod_article` depuis feuille PDF ✅ 18/05
 - [x] Importer en BDD ✅ 19/05 (8 produits, 37 variants)
-- [ ] Lancer pipeline IA (flat lay)
+- [x] Lancer pipeline IA (flat lay) ✅ 27/05 — batch lancé via Image UI · problème coloris blancs identifié → fond #808080 corrigé dans pipeline
 - [ ] Retouche Photoshop
 - [ ] Upload Cloudinary
 

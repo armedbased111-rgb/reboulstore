@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # ── Constantes prompts ────────────────────────────────────────────────────────
 
-BG = " Plain solid #F3F3F3 light grey background only (no gradients). No props, no text, no extra elements. "
+BG = " Plain solid #808080 medium grey background only (no gradients). No props, no text, no extra elements. "
 NO_INVENTION = (
     " Do NOT add any badge, logo, patch or hood that is not clearly visible in the source image. "
     "If the garment has no hood, output must have no hood. If it has no visible logo/badge, output must have none. "
@@ -116,7 +116,7 @@ ADJUST_SYSTEM = (
     "CRITICAL: The garment in the output must be THE SAME as in the input — same type, same color, same view (front or back), same framing. "
     "Change ONLY what the instruction asks (e.g. shadow, fold, lighting, remove a tag). Do not substitute a different product or view. "
     "Apply ONLY this change: {prompt}. "
-    "Background must be plain solid #F3F3F3 (light grey) only. "
+    "Background must be plain solid #808080 (medium grey) only. "
     "DIMENSIONS: Output image must have the EXACT same width and height in pixels as the input image. Do not crop, resize, zoom in or zoom out. The product must occupy the exact same position and scale in the frame as in the input. "
     "Output only the modified image, no text."
 )
@@ -137,7 +137,7 @@ FLASH_PROMPT_PRODUCT_FIRST = (
     "Remove harsh shadows; use only a soft, subtle shadow under the garment like IMAGE 2. "
     "Do NOT add any logo, badge, patch or branding that is not clearly visible in IMAGE 1. "
     "If the garment in IMAGE 1 has no badge, the output must have no badge. "
-    "Background MUST be plain solid #F3F3F3 (light grey) only. No other color or gradient. "
+    "Background MUST be plain solid #808080 (medium grey) only. No other color or gradient. "
     "Preserve exact color from IMAGE 1. No text, no props. CRITICAL: Do not output the garment from IMAGE 2."
 )
 REFERENCE_PROMPT = (
@@ -151,8 +151,8 @@ REFERENCE_PROMPT = (
     "Equal left/right margins, consistent small margin above the waistband and below the hem. "
     "Remove harsh or uneven shadows from the original photo; use only a soft, subtle shadow under the garment like IMAGE 2. "
     "COLOR: Preserve the exact garment color from IMAGE 1; no hue or saturation shift. "
-    "BACKGROUND: Must be plain solid #F3F3F3 (light grey) only. No other background color or gradient. "
-    "TASK: Put the garment from IMAGE 1 into the exact same setup as Image 2 (same flat lay or angle, same crop, #F3F3F3 background, same lighting). "
+    "BACKGROUND: Must be plain solid #808080 (medium grey) only. No other background color or gradient. "
+    "TASK: Put the garment from IMAGE 1 into the exact same setup as Image 2 (same flat lay or angle, same crop, #808080 background, same lighting). "
     "OUTPUT: One image showing IMAGE 1's garment only, photographed like Image 2. No text. "
     "CRITICAL: Do not output the garment from Image 2. The output must show only the garment from Image 1."
 )
@@ -167,7 +167,7 @@ REFERENCE_BACK_WITH_COLOR_FROM_FRONT = (
     "Do NOT add any logo, badge or patch that is not clearly visible in IMAGE 1 or IMAGE 3. "
     "FOLD AND ALIGNMENT: Match IMAGE 2—waistband horizontal, vertical axis centered; no tilt or rotation. "
     "FRAMING: Same crop and centering as IMAGE 2. Remove harsh shadows; use only a soft, subtle shadow under the garment. "
-    "BACKGROUND: Must be plain solid #F3F3F3 (light grey) only. No other background color or gradient. "
+    "BACKGROUND: Must be plain solid #808080 (medium grey) only. No other background color or gradient. "
     "OUTPUT: One image = the BACK of the garment in IMAGE 1, color from IMAGE 3. No text. "
     "CRITICAL: Output garment = exactly the product in IMAGE 1 (same type, back view). Never copy the garment from IMAGE 2."
 )
@@ -186,7 +186,7 @@ REFERENCE_FROM_SOURCE_OF_TRUTH = (
     "You receive two images in order. "
     "IMAGE 1 = THE EXACT GARMENT (source of truth—the product already generated). This is the garment that MUST appear in your output. "
     "IMAGE 2 = Style reference for this view (framing, pose, background). Use only its composition and style. Do NOT copy or draw the garment from Image 2. "
-    "BACKGROUND: Must be plain solid #F3F3F3 (light grey) only. "
+    "BACKGROUND: Must be plain solid #808080 (medium grey) only. "
     "OUTPUT: The garment from IMAGE 1 only, presented in the style of Image 2 (same color, design, logo, details; only presentation changes: person wearing, crop, angle). "
     "One image, no text. "
     + MANNEQUIN_PROFILES
@@ -197,7 +197,7 @@ LIFESTYLE_SAME_MODEL_PROMPT = (
     "IMAGE 1 = THE EXACT GARMENT (source of truth). This is the garment that MUST appear in your output. "
     "IMAGE 2 = Style reference for pose, framing, background. Use only its composition and style. "
     "IMAGE 3 = THE MODEL who must appear in your output. Same person (same appearance, skin tone, body). "
-    "BACKGROUND: Must be plain solid #F3F3F3 (light grey) only. "
+    "BACKGROUND: Must be plain solid #808080 (medium grey) only. "
     "OUTPUT: The garment from IMAGE 1 worn by THE SAME PERSON as in IMAGE 3 (identical appearance), in the pose/style of IMAGE 2. One image, no text. "
     "CRITICAL: The person in your output must be the same as in IMAGE 3. Only the pose/angle may change. Garment from IMAGE 1 only."
 )
@@ -752,8 +752,6 @@ def run_generate_one(
                         suffix = f"_{attempt + 1}" if attempt > 0 else ""
                         out_path = output_dir / f"{name}{suffix}.png"
                         out_path.write_bytes(out_bytes)
-                        if name in ("1_face", "2_back") and product_type != "shoe":
-                            _pil_normalize_bg(out_path)
                         saved_any = True
                         if attempt == 0 and delay_after_image > 0:
                             time.sleep(delay_after_image)

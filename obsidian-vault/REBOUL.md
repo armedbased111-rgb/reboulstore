@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-05-21
+maj: 2026-05-27
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Finalisation page par page en cours |
 | Collections | Pipeline data OK — images en cours par marque |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| AS400 / SFTP | **Sortant Reboul ✅** (cron + delta, ~1497 variants, `cod_article`) · reste : fiche expert + Phase 2 `entrant/` → [[Securite/as400]] |
+| AS400 / SFTP | **Sortant ✅** · **Fiche expert envoyée à Jacques ✅ 27/05** · Phase 2 `entrant/` en attente réponse Jacques → [[Securite/as400]] |
 | Logs / Grafana | ✅ Guide nœud [[Architecture/grafana]] — logs techniques 30 j (pas stocks/AS400 métier) |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
@@ -82,7 +82,7 @@ Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ## Dernière session
 
-[[Sessions/archive/2026-05-21-collections-rrd-saucony]] · [[Sessions/Sessions]]
+[[Sessions/archive/2026-05-27-pipeline-as400-hologram]] · [[Sessions/Sessions]]
 
 ---
 

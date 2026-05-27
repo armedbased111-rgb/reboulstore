@@ -53,7 +53,7 @@ Site prod — images accessibles
 ```
 
 Gemini reçoit la photo brute et produit :
-- `1_face.png` — vêtement flat lay, bg blanc #F3F3F3, centré
+- `1_face.png` — vêtement flat lay, bg #808080 gris moyen, centré
 - `1_back.png` — vue dos, même traitement
 
 ### Chaussures (shoe pipeline)
@@ -76,6 +76,10 @@ Gemini reçoit la photo brute et produit :
 ```
 
 **Jamais `--ref` pour les chaussures** → cause hallucinations (badges inventés).
+
+---
+
+**Note (27/05/2026)** : PIL normalize_bg désactivé après génération — les images gardent exactement ce que le modèle produit. Le fond #808080 est conservé pour PS (retouche manuelle de fond et ombre).
 
 ---
 
@@ -142,7 +146,7 @@ Les URLs Cloudinary sont enregistrées en BDD → immédiatement visibles sur le
 |-----------|--------|
 | Dimensions | 1024 × 1365 px |
 | Ratio | 3:4 |
-| Fond | `#F3F3F3` |
+| Fond génération | `#808080` (gris moyen — contraste optimal blanc ET noir) |
 | Format | PNG |
 | Centrage | **PIL uniquement** (jamais IA) |
 

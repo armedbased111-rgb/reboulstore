@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Collections/saucony.md",
+                "file": "Securite/as400.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "saucony"
+              "title": "as400"
             }
           },
           {
@@ -198,8 +198,11 @@
       "graph:Ouvrir la vue graphique": false
     }
   },
-  "active": "43ef9f66d590f1d7",
+  "active": "97e58890e15770df",
   "lastOpenFiles": [
+    "Sessions/archive/2026-05-27-pipeline-as400-hologram.md",
+    "Securite/as400-fiche-expert.md",
+    "Collections/saucony.md",
     "Sessions/archive/2026-05-21-collections-rrd-saucony.md",
     "Collections/salomon.md",
     "Collections/rrd.md",
@@ -224,9 +227,6 @@
     "Securite/etat-actuel.md",
     "Sessions/2026-05-18-as400-phase3-complete.md",
     "Sessions/2026-05-17-as400-b2-backend.md",
-    "Sessions/2026-05-17-vault-sync.md",
-    "Securite/as400-mouvements-sortant.md",
-    "Securite/as400-fiche-expert.md",
     "Securite",
     "Database/tables",
     "Database",
