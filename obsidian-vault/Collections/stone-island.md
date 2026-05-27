@@ -4,8 +4,8 @@ marque: Stone Island
 slug-bdd: stone-island
 saison: SS26
 statut-data: complet
-statut-images: partiel
-maj: 2026-05-06
+statut-images: uploade
+maj: 2026-05-27
 ---
 # Stone Island SS26
 
@@ -33,8 +33,7 @@ Liens : [[Collections/Collections]]
 
 - 63 refs dans `output_batch_stone_island/`
 - Toutes avec `1_face` + `2_back` générés (IA Gemini Flash)
-- **2 refs uploadées** : `11000027-V93`, `1200005-V05G`
-- **61 refs restantes à trier puis uploader**
+- **63 refs uploadées ✅ 27/05** — is_published=true · affichage validé sur le site
 
 ## Pipeline images
 
@@ -57,6 +56,6 @@ Ajustements ponctuels avec `--gemini-pro` (sans `--ref`, sans `--skip-verify`).
 ## Tâches
 
 - [x] Générer images IA (63/63 face+back) ✅
-- [ ] Trier les 61 refs restantes (vérifier qualité face + back)
-- [ ] Uploader les 61 refs vers Cloudinary (`./rcli images upload-batch --batch output_batch_stone_island`)
-- [ ] Valider affichage sur le site
+- [x] Trier les refs (vérifier qualité face + back) ✅
+- [x] Uploader 63 refs vers Cloudinary ✅ 2026-05-27
+- [x] Valider affichage sur le site ✅ 2026-05-27

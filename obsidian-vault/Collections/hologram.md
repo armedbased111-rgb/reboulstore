@@ -4,7 +4,7 @@ marque: Hologram
 slug-bdd: hologram
 saison: SS26
 statut-data: importe
-statut-images: photos-faites
+statut-images: uploade
 maj: 2026-05-27
 ---
 # Hologram SS26

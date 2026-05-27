@@ -4,8 +4,8 @@ marque: Arte Antwerp
 slug-bdd: arte
 saison: SS26
 statut-data: importe
-statut-images: generees
-maj: 2026-05-07
+statut-images: uploade
+maj: 2026-05-27
 ---
 # Arte Antwerp SS26
 
@@ -50,6 +50,6 @@ Liens : [[Collections/Collections]]
 - [x] Scanner les étiquettes → prix renseignés
 - [x] Importer via Admin Centrale (10 refs, 37 SKUs)
 - [x] Générer les images IA (10/10 face+back) ✅
-- [ ] Vérifier qualité + color-fix si nécessaire
-- [ ] Uploader vers Cloudinary (`./rcli images upload-batch --batch output_batch_arte`)
-- [ ] Valider affichage sur le site
+- [x] Vérifier qualité + color-fix ✅
+- [x] Uploader vers Cloudinary ✅ 2026-05-27
+- [x] Valider affichage sur le site ✅ 2026-05-27

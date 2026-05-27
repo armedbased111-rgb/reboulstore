@@ -4,8 +4,8 @@ marque: Off-White
 slug-bdd: off-white
 saison: SS26
 statut-data: importe
-statut-images: generees
-maj: 2026-05-11
+statut-images: uploade
+maj: 2026-05-27
 ---
 # Off-White SS26
 
@@ -44,7 +44,7 @@ Les sous-dossiers utilisent `:` au lieu de `/` dans les noms.
 
 - Type : sneakers → pipeline shoe (`--product-type shoe`)
 - Output : `output_batch_off_white/` — **7/7 refs complètes** (1_face + 4_top) ✅
-- 0 refs uploadées
+- **7 refs uploadées ✅ 27/05** — is_published=true
 
 ## Plan
 
@@ -52,8 +52,8 @@ Les sous-dossiers utilisent `:` au lieu de `/` dans les noms.
 - [x] Créer le CSV
 - [x] Importer via Admin Centrale (7 refs, 47 SKUs) ✅
 - [x] Générer images IA (7/7 — 1_face + 4_top) ✅
-- [ ] Vérifier qualité + trier
-- [ ] Uploader vers Cloudinary (`./rcli images upload-batch --batch output_batch_off_white`)
-- [ ] Valider affichage sur le site
+- [x] Vérifier qualité + trier ✅
+- [x] Uploader vers Cloudinary ✅ 2026-05-27
+- [x] Valider affichage sur le site ✅ 2026-05-27
 
 ⚠️ `BERIGHT:IMAGE` dans iCloud = ref `BERIGHT/MAGE` (nom de dossier incorrect)

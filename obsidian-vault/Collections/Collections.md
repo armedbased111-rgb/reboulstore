@@ -10,22 +10,22 @@ Liens : [[REBOUL]] · [[Backend/Backend]] · [[Architecture/Architecture]]
 
 ---
 
-## Marques SS26 — État (11/05/2026)
+## Marques SS26 — État (27/05/2026)
 
-| Marque                                     | Slug BDD       | Data                             | Images                                            |
-| ------------------------------------------ | -------------- | -------------------------------- | ------------------------------------------------- |
-| [[Collections/stone-island\|Stone Island]] | `stone-island` | ✅ importé                        | 🟡 63/63 générées — 2/63 uploadées                |
-| [[Collections/autry\|Autry]]               | `autry`        | ✅ importé (40 refs)              | 🟡 24/34 complets — 10 × 4_top + 4 refs à générer |
-| [[Collections/bisous\|Bisous Skateboards]] | `bisous`       | ✅ importé (25 refs)              | 🟡 22/33 complets — 2 back manquants — 9 vides    |
-| [[Collections/arte\|Arte Antwerp]]         | `arte`         | ✅ importé (10 refs)              | 🟡 10/10 générées — à uploader                    |
-| [[Collections/off-white\|Off-White]]       | `off-white`    | ✅ importé (7 refs)               | 🟡 7/7 générées — à uploader                      |
-| [[Collections/carhartt\|Carhartt WIP]]     | `carhartt`     | ✅ importé (62 refs)              | 🟡 54/62 générées — à uploader                    |
-| [[Collections/saucony\|Saucony]]           | `saucony`      | ✅ **8 refs** BDD (+ `S70704-30`) | 🟡 7/7 IA — **S70704-30** à shooter + upload      |
-| [[Collections/asics\|Asics]]               | `asics`        | ✅ importé (15 refs)              | 🟡 15/15 générées — à uploader                    |
-| [[Collections/salomon\|Salomon]]           | `salomon`      | ✅ importé (13 refs)              | 🟡 13/13 générées — à uploader                    |
-| [[Collections/birkenstock\|Birkenstock]]   | `birkenstock`  | ✅ importé (34 refs)              | 🔜 pipeline shoe à lancer                         |
-| [[Collections/hologram\|Hologram]]         | `hologram`     | ✅ importé BDD (37 variants)      | 🔜 pipeline flat lay à lancer                     |
-| [[Collections/rrd\|RRD]]                   | `rrd`          | 🟡 CSV prêt (110 var.)           | 🟡 shoot 27/35 — pipeline OK                      |
+| Marque | Slug BDD | Produits BDD | Images uploadées | Statut |
+|--------|----------|-------------|-----------------|--------|
+| [[Collections/stone-island\|Stone Island]] | `stone-island` | 139 | 63 produits avec images | ✅ uploadé |
+| [[Collections/bisous\|Bisous Skateboards]] | `bisous` | 43 | 24 produits | ✅ uploadé — SS26-30 jaune à shooter |
+| [[Collections/hologram\|Hologram]] | `hologram` | 16 | 8 produits | ✅ uploadé |
+| [[Collections/off-white\|Off-White]] | `off-white` | 14 | 7 produits | ✅ uploadé |
+| [[Collections/arte\|Arte Antwerp]] | `arte` | 20 | 10 produits | ✅ uploadé |
+| [[Collections/asics\|Asics]] | `asics` | 32 | 15 produits | ✅ uploadé |
+| [[Collections/salomon\|Salomon]] | `salomon` | 26 | 13 produits | ✅ uploadé |
+| [[Collections/autry\|Autry]] | `autry` | 76 | 34 produits (6 non-publiés) | 🟡 partiel |
+| [[Collections/birkenstock\|Birkenstock]] | `birkenstock` | 41 | 0 | ❌ pas d'images |
+| [[Collections/carhartt\|Carhartt WIP]] | `carhartt` | 62 | 0 | ❌ pas d'images |
+| [[Collections/saucony\|Saucony]] | `saucony` | 8 | 0 — S70704-30 à shooter | ❌ pas d'images |
+| [[Collections/rrd\|RRD]] | `rrd` | — | — | 🔜 import BDD en attente |
 
 ---
 
