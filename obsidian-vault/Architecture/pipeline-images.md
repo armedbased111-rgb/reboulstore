@@ -176,7 +176,7 @@ Vérifie si le dossier output contient un fichier avec "face" ET un fichier avec
 | Marque | Statut pipeline |
 |--------|----------------|
 | Hologram | ✅ Uploadé (8/8) — is_published=true |
-| Bisous | ✅ Prêt upload (24 refs) — SS26-30 jaune à photographier |
+| Bisous | ✅ Uploadé (24/25) — SS26-30 jaune à photographier |
 | Stone Island | Généré — 61+ à uploader |
 | Autry | Généré (40 refs) — tri + upload à faire |
 | Arte Antwerp | À lancer (photos dispo iCloud) |

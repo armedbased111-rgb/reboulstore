@@ -4,7 +4,7 @@ marque: Bisous Skateboards
 slug-bdd: bisous
 saison: SS26
 statut-data: importe
-statut-images: pret-upload
+statut-images: uploade
 maj: 2026-05-27
 ---
 # Bisous Skateboards SS26
@@ -29,7 +29,8 @@ Liens : [[Collections/Collections]]
 - **1 ref à photographier** : SS26-30 (jaune — photos manquantes)
 - **SS26-24** : inclus ✅ (retouche terminée)
 - Refs face-only (1 image) : SS26-85 · SS26-87 · SS26-88 · SS26-91 · SS26-92 · SS26-94
-- 0 refs uploadées — **prêt à uploader** (sauf SS26-30)
+- **24 refs uploadées ✅ 27/05** — is_published=true · affichage validé sur le site
+- SS26-30 (coloris jaune) exclu — photos manquantes
 
 ## Plan
 
@@ -39,6 +40,6 @@ Liens : [[Collections/Collections]]
 - [x] Générer images IA
 - [x] Retouche PS — toutes refs prêtes ✅ 27/05
 - [x] Vérifier ordre face/back ✅ 27/05
-- [ ] Uploader 24 refs vers Cloudinary (SS26-30 exclu — photos manquantes)
+- [x] Uploader 24 refs vers Cloudinary (SS26-30 exclu — photos manquantes) ✅ 2026-05-27
 - [ ] Photographier SS26-30 (coloris jaune)
-- [ ] Valider affichage sur le site
+- [x] Valider affichage sur le site ✅ 2026-05-27

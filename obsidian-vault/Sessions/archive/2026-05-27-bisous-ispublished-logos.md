@@ -45,7 +45,7 @@ Liens : [[Collections/bisous]] · [[Collections/hologram]] · [[Architecture/pip
 
 ## Suite
 
-- [ ] Bisous : lancer upload 24 refs
+- [x] Bisous : upload 24 refs ✅ 27/05 — affiché sur le site
 - [ ] Bisous : photographier SS26-30 (coloris jaune)
 - [ ] Hologram : wipe + reupload via Image UI (fix ordre face/back ancien upload)
 - [ ] Déployer backend (is_published filter + PATCH publish endpoint)
