@@ -12,8 +12,8 @@ interface UseProductsReturn {
     error: string | null;
     refetch: () => void;
 }
-export const useProducts = (query?: ProductQuery): UseProductsReturn => {
-    // Etats pour stocker les données
+// null = skip (slug en cours de résolution), undefined = pas de filtre
+export const useProducts = (query?: ProductQuery | null): UseProductsReturn => {
     const [data, setData] = useState<PaginatedProductsResponse>({
         products: [],
         total: 0,
@@ -24,24 +24,27 @@ export const useProducts = (query?: ProductQuery): UseProductsReturn => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    const queryString = useMemo(() => JSON.stringify(query || {}), [query]);
-    
-    // Garder une référence de la dernière query exécutée
-    const lastQueryRef = useRef<string>('');
+    const queryString = useMemo(
+        () => (query !== null ? JSON.stringify(query || {}) : null),
+        [query]
+    );
 
-    // Fonction pour récupérer les produits
+    const lastQueryRef = useRef<string | null>('');
+
     const fetchProducts = useCallback(async () => {
-        // Éviter les appels multiples avec la même query
+        if (queryString === null) {
+            // Slug en cours de résolution — attendre sans lancer de requête
+            setLoading(true);
+            return;
+        }
         if (lastQueryRef.current === queryString) {
             return;
         }
-        
         lastQueryRef.current = queryString;
-        
         try {
             setLoading(true);
             setError(null);
-            const parsedQuery = queryString ? JSON.parse(queryString) : undefined;
+            const parsedQuery = JSON.parse(queryString);
             const response = await getProducts(parsedQuery);
             setData(response);
         } catch (err) {

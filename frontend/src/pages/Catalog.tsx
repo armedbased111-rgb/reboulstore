@@ -161,7 +161,7 @@ export const Catalog = () => {
 
   // Ne pas lancer la requête tant que la catégorie ou la marque n'est pas encore résolue
   const isResolvingSlug = (!!categorySlug && categoryLoading) || (!!brandSlug && brandLoading);
-  const { products, total, totalPages, loading, error } = useProducts(isResolvingSlug ? undefined : productQuery);
+  const { products, total, totalPages, loading, error } = useProducts(isResolvingSlug ? null : productQuery);
 
   // Filtres actifs
   const hasActiveFilters =

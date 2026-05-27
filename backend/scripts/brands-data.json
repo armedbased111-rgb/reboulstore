@@ -67,8 +67,8 @@
       "name": "Carhartt",
       "slug": "carhartt",
       "description": null,
-      "logoFile": "carhartt_logo_b.png",
-      "logoPath": "brands/CARHARTT/carhartt_logo_b.png"
+      "logoFile": "carhartt_b.png",
+      "logoPath": "brands/CARHARTT/carhartt_b.png"
     },
     {
       "name": "Chloé",
@@ -144,8 +144,8 @@
       "name": "Hologram",
       "slug": "hologram",
       "description": null,
-      "logoFile": "hologram_typo_b.png",
-      "logoPath": "brands/HOLOGRAM/hologram_typo_b.png"
+      "logoFile": "holo_b.png",
+      "logoPath": "brands/HOLOGRAM/holo_b.png"
     },
     {
       "name": "Jacob Cohen",
@@ -389,8 +389,8 @@
       "name": "White Sand",
       "slug": "white-sand",
       "description": null,
-      "logoFile": "WHITESAND_b.png",
-      "logoPath": "brands/WHITESAND/WHITESAND_b.png"
+      "logoFile": "WHITESAND_w.png",
+      "logoPath": "brands/WHITESAND/WHITESAND_w.png"
     },
     {
       "name": "Zadig & Voltaire",

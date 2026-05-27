@@ -85,10 +85,10 @@
       "name": "Carhartt",
       "slug": "carhartt",
       "description": null,
-      "logoFile": "carhartt_logo_b.png",
-      "logoPath": "brands/CARHARTT/carhartt_logo_b.png",
-      "logoUrl": null,
-      "publicId": null
+      "logoFile": "carhartt_b.png",
+      "logoPath": "brands/CARHARTT/carhartt_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1779896626/brands/logos/brands/logos/carhartt.png",
+      "publicId": "brands/logos/brands/logos/carhartt"
     },
     {
       "name": "Chloé",
@@ -184,10 +184,10 @@
       "name": "Hologram",
       "slug": "hologram",
       "description": null,
-      "logoFile": "hologram_typo_b.png",
-      "logoPath": "brands/HOLOGRAM/hologram_typo_b.png",
-      "logoUrl": null,
-      "publicId": null
+      "logoFile": "holo_b.png",
+      "logoPath": "brands/HOLOGRAM/holo_b.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1779896640/brands/logos/brands/logos/hologram.png",
+      "publicId": "brands/logos/brands/logos/hologram"
     },
     {
       "name": "Jacob Cohen",
@@ -499,10 +499,10 @@
       "name": "White Sand",
       "slug": "white-sand",
       "description": null,
-      "logoFile": "WHITESAND_b.png",
-      "logoPath": "brands/WHITESAND/WHITESAND_b.png",
-      "logoUrl": null,
-      "publicId": null
+      "logoFile": "WHITESAND_w.png",
+      "logoPath": "brands/WHITESAND/WHITESAND_w.png",
+      "logoUrl": "https://res.cloudinary.com/dxen69pdo/image/upload/v1767028151/brands/logos/brands/logos/white-sand.png",
+      "publicId": "brands/logos/brands/logos/white-sand"
     },
     {
       "name": "Zadig & Voltaire",
