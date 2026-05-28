@@ -6,13 +6,17 @@ StatusType = Literal["empty", "needs_generation", "needs_upload", "done"]
 PHOTO_EXTS = {'.jpg', '.jpeg', '.png', '.heic', '.HEIC', '.JPG', '.JPEG', '.PNG'}
 
 
-def _output_ref_name(ref_name: str) -> str:
-    return ref_name.replace(":", "_")
+def _resolve_output_folder(output_dir: Path, ref_name: str) -> Path:
+    """Cherche le dossier output en testant le nom exact puis avec : → _."""
+    exact = output_dir / ref_name
+    if exact.exists():
+        return exact
+    return output_dir / ref_name.replace(":", "_")
 
 
 def get_ref_status(input_dir: Path, output_dir: Path, ref_name: str) -> StatusType:
     input_folder = input_dir / ref_name
-    output_folder = output_dir / _output_ref_name(ref_name)
+    output_folder = _resolve_output_folder(output_dir, ref_name)
 
     has_photos = input_folder.exists() and any(
         f for f in input_folder.iterdir()
@@ -77,7 +81,7 @@ def scan_brand_refs(brand_config: dict) -> list[dict]:
 
     for d in subdirs:
         status = get_ref_status(input_dir, output_dir, d.name)
-        images = list_output_images(output_dir / _output_ref_name(d.name))
+        images = list_output_images(_resolve_output_folder(output_dir, d.name))
         photo_count = count_input_photos(input_dir, d.name)
         info = db_info.get(d.name, {})
         refs.append({

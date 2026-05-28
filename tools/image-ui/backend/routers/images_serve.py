@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pathlib import Path
 from services.brand_config import load_configs, resolve_output_dir
+from services.ref_status import _resolve_output_folder
 
 router = APIRouter()
 
@@ -33,7 +34,7 @@ def serve_image(brand: str, ref: str, filename: str):
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    file_path = output_dir / ref.replace(":", "_") / filename
+    file_path = _resolve_output_folder(output_dir, ref) / filename
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))
@@ -57,7 +58,7 @@ def serve_campaign_image(brand: str, ref: str, filename: str):
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    file_path = output_dir / ref.replace(":", "_") / "campaign" / filename
+    file_path = _resolve_output_folder(output_dir, ref) / "campaign" / filename
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))

@@ -926,7 +926,7 @@ def generate_batch(input_dir, refs_dir, output_dir, skip_existing, do_upload, ba
     ok_count = fail_count = skip_count = 0
     failed_refs = []
     for i, subdir in enumerate(subdirs, 1):
-        ref = subdir.name.replace("-", "/").replace(":", "/")
+        ref = subdir.name.replace(":", "/")
         out_dir = output_root / subdir.name
         if out_dir.exists():
             out_files = [f.name for f in out_dir.iterdir() if f.is_file()]
@@ -1554,7 +1554,7 @@ def upload_batch(batch_dir, backend_url, do_append):
     for d in all_subdirs:
         files = _collect_face_back_images(d)
         if files:
-            ref = d.name.replace("-", "/")
+            ref = d.name.replace(":", "/")
             to_upload.append((d, ref, files))
             total_expected += len(files)
     skipped_dirs = len(all_subdirs) - len(to_upload)

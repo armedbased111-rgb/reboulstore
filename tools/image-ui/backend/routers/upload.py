@@ -8,7 +8,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from services.brand_config import load_configs, resolve_output_dir
-from services.ref_status import scan_brand_refs, list_output_images
+from services.ref_status import scan_brand_refs, list_output_images, _resolve_output_folder
 
 router = APIRouter()
 
@@ -28,12 +28,8 @@ def _strip_ansi(text: str) -> str:
     return _ANSI_RE.sub("", text)
 
 
-def _norm_ref(ref: str) -> str:
-    return ref.replace(":", "_")
-
-
 def mark_uploaded(output_dir: Path, ref: str):
-    meta_path = output_dir / _norm_ref(ref) / ".uploaded"
+    meta_path = _resolve_output_folder(output_dir, ref) / ".uploaded"
     meta_path.write_text(json.dumps({"uploaded_at": datetime.utcnow().isoformat()}))
 
 
@@ -66,12 +62,12 @@ async def run_upload_ref(brand: str, ref: str, request: Request):
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    ref_dir = output_dir / _norm_ref(ref)
+    ref_dir = _resolve_output_folder(output_dir, ref)
     if not ref_dir.exists():
         raise HTTPException(404, f"Dossier ref introuvable : {ref}")
 
     # ref in DB uses "/" not "-" or ":"
-    ref_db = ref.replace("-", "/").replace(":", "/")
+    ref_db = ref.replace(":", "/")
 
     async def event_gen():
         try:
@@ -148,8 +144,8 @@ async def wipe_and_reupload_brand(brand: str, request: Request):
                 if await request.is_disconnected():
                     break
                 ref = ref_info["name"]
-                ref_db = ref.replace("-", "/").replace(":", "/")
-                ref_dir = output_dir / _norm_ref(ref)
+                ref_db = ref.replace(":", "/")
+                ref_dir = _resolve_output_folder(output_dir, ref)
                 yield f"data: {json.dumps({'type': 'upload_start', 'ref': ref, 'index': i + 1, 'total': len(to_upload)})}\n\n"
 
                 proc2 = await asyncio.create_subprocess_exec(
