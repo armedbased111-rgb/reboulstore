@@ -4,8 +4,8 @@ marque: Saucony
 slug-bdd: saucony
 saison: SS26
 statut-data: importe
-statut-images: generees
-maj: 2026-05-21
+statut-images: uploade
+maj: 2026-05-29
 ---
 # Saucony SS26
 
@@ -15,27 +15,38 @@ Liens : [[Collections/Collections]]
 
 ## Données BDD
 
-- **8 références** en BDD ✅ (dont **S70704-30** Progrid Triumph 4, produit #459)
+- **8 références** en BDD ✅ — **8/8 publiées** ✅
 - Slug exact : `saucony`
-- CSV : `docs/imports/import-saucony-ss26.csv` — **157 variants** (8 refs après ajout)
+- CSV : `docs/imports/import-saucony-ss26.csv` — 157 variants
 
-### Nouvelle ref (21/05) — Progrid Triumph 4
+### Refs (8)
 
-| Champ | Valeur |
-|-------|--------|
-| Ref base | **`S70704-30`** *(iCloud `S70704-30`)* — Mist / lapis |
-| Couleur | Mist / lapis |
-| Prix | **185** € |
-| Tailles | 40.5 → 46.5 (10 pointures, stock 1) |
-| `cod_article` | `5 009 54937` → `54946` (+1 par taille, 40.5→46.5) |
-
-**Refs (8)** : `GUIDE7WHI/MUL` · `OMNI9BEI/SIL` · `OMNI9BLA/TOR` · `OMNI9WHI/PUR` · `OMNI9WHI/MUL` · `OMNI9/BLACK` · `OMNI9/BLU/BRU` · **`S70704-30`** (Progrid Triumph 4)
+| Ref | Statut |
+|-----|--------|
+| `GUIDE7WHI/MUL` | ✅ uploadé |
+| `OMNI9BEI/SIL` | ✅ uploadé |
+| `OMNI9/BLACK` | ✅ uploadé — OMNI9:BLACK à re-générer (photo sur boîte noire) |
+| `OMNI9/BLU/BRU` | ✅ uploadé |
+| `OMNI9BLA/TOR` | ✅ uploadé |
+| `OMNI9WHI/PUR` | ✅ uploadé |
+| `OMNI9WHI/MUL` | ✅ uploadé |
+| `S70704-30` | ✅ uploadé (Progrid Triumph 4 — ajouté 21/05) |
 
 ## Images
 
 - Pipeline : **shoe** (`--product-type shoe`)
-- Output : `output_batch_saucony/` — **7/7 refs** avec 1_face + 4_top ✅ — **`S70704-30`** à générer
-- iCloud : `S70704-30/` — photos shoe à déposer
+- Output : `output_batch_saucony/` — **8/8 refs uploadées ✅ 2026-05-29**
+- `OMNI9:BLACK` — 1_face à refaire via ADJUST (photo sur boîte noire, fond mal supprimé)
+
+### Commande ADJUST OMNI9/BLACK
+
+```bash
+./rcli images adjust \
+  --image "/Users/tripleseptinteractive/Library/Mobile Documents/com~apple~CloudDocs/Collection reboulstore /SAUCONY/OMNI9:BLACK/face.jpeg" \
+  --prompt "Extract ONLY the sneaker shoe. The dark rectangular foam insert under the shoe is NOT part of the shoe — remove it completely. Remove all background (boxes, floor, cardboard, everything). Place centered in lateral side profile view on a plain solid #808080 medium grey background. Equal margins. Preserve all details pixel-perfectly." \
+  -o "output_batch_saucony/OMNI9:BLACK/1_face.png" \
+  --gemini-pro
+```
 
 ## Plan
 
@@ -43,9 +54,8 @@ Liens : [[Collections/Collections]]
 - [x] Créer le CSV
 - [x] Importer via Admin Centrale (7 refs) ✅
 - [x] CSV — ajout Progrid Triumph 4 (`S70704-30`, 10 tailles) ✅ 21/05
-- [x] Importer la 8ᵉ ref en BDD (`S70704-30`, 10 tailles) ✅ — couleur `Mist/lapis` en BDD
-- [ ] Photos + pipeline shoe sur `S70704-30`
-- [x] Générer images IA (7/7 — 1_face + 4_top) ✅
-- [ ] Vérifier qualité + trier
-- [ ] Uploader vers Cloudinary (`./rcli images upload-batch --batch output_batch_saucony`)
-- [ ] Valider affichage sur le site
+- [x] Importer la 8ᵉ ref en BDD (`S70704-30`) ✅
+- [x] Générer images IA (8/8 — 1_face + 4_top) ✅
+- [x] Uploader 8/8 vers Cloudinary ✅ 2026-05-29
+- [x] Valider affichage sur le site ✅ 2026-05-29
+- [ ] OMNI9/BLACK : re-générer 1_face via ADJUST (boîte noire en fond)
