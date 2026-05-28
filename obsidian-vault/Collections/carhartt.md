@@ -4,8 +4,8 @@ marque: Carhartt WIP
 slug-bdd: carhartt
 saison: SS26
 statut-data: importe
-statut-images: generees
-maj: 2026-05-11
+statut-images: uploade
+maj: 2026-05-29
 ---
 # Carhartt WIP SS26
 
@@ -22,8 +22,10 @@ Liens : [[Collections/Collections]]
 
 ## Images
 
-- Pipeline : **flat lay standard** (vêtements)
-- Output : `output_batch_carhartt/` — **54/62 refs** avec face + back (8 refs sans dossier — pas de photos sources)
+- Pipeline : **flat lay standard** (vêtements) — fond #808080
+- Output : `output_batch_carhartt/` — **52 refs uploadées ✅** (52/62 publiées)
+- 2 refs sans images générées : `I030434_3IR` · `I030469_0160`
+- 8 refs sans photos sources (is_published=false)
 
 ## Plan
 
@@ -31,6 +33,7 @@ Liens : [[Collections/Collections]]
 - [x] Créer le CSV
 - [x] Importer via Admin Centrale (62 refs) ✅
 - [x] Générer images IA (54/62 face+back) — 8 refs sans photos sources
-- [ ] Vérifier qualité + trier
-- [ ] Uploader vers Cloudinary (`./rcli images upload-batch --batch output_batch_carhartt`)
-- [ ] Valider affichage sur le site
+- [x] Vérifier qualité + retouche PS ✅ 2026-05-29
+- [x] Uploader 52 refs vers Cloudinary ✅ 2026-05-29
+- [x] Valider affichage sur le site ✅ 2026-05-29
+- [ ] Photos manquantes : 8 refs à shooter

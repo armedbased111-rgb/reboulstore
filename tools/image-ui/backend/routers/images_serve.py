@@ -33,7 +33,7 @@ def serve_image(brand: str, ref: str, filename: str):
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    file_path = output_dir / ref / filename
+    file_path = output_dir / ref.replace(":", "_") / filename
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))
@@ -57,7 +57,7 @@ def serve_campaign_image(brand: str, ref: str, filename: str):
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    file_path = output_dir / ref / "campaign" / filename
+    file_path = output_dir / ref.replace(":", "_") / "campaign" / filename
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(404, "Image introuvable")
     return FileResponse(str(file_path))

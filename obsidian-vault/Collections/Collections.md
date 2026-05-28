@@ -10,7 +10,7 @@ Liens : [[REBOUL]] · [[Backend/Backend]] · [[Architecture/Architecture]]
 
 ---
 
-## Marques SS26 — État (27/05/2026)
+## Marques SS26 — État (29/05/2026)
 
 | Marque | Slug BDD | Produits BDD | Images uploadées | Statut |
 |--------|----------|-------------|-----------------|--------|
@@ -23,7 +23,7 @@ Liens : [[REBOUL]] · [[Backend/Backend]] · [[Architecture/Architecture]]
 | [[Collections/salomon\|Salomon]] | `salomon` | 26 | 13 produits | ✅ uploadé |
 | [[Collections/autry\|Autry]] | `autry` | 76 | 34 produits (6 non-publiés) | 🟡 partiel |
 | [[Collections/birkenstock\|Birkenstock]] | `birkenstock` | 41 | 0 | ❌ pas d'images |
-| [[Collections/carhartt\|Carhartt WIP]] | `carhartt` | 62 | 0 | ❌ pas d'images |
+| [[Collections/carhartt\|Carhartt WIP]] | `carhartt` | 62 | 52 produits publiés (8 sans photos) | 🟡 partiel |
 | [[Collections/saucony\|Saucony]] | `saucony` | 8 | 0 — S70704-30 à shooter | ❌ pas d'images |
 | [[Collections/rrd\|RRD]] | `rrd` | — | — | 🔜 import BDD en attente |
 
