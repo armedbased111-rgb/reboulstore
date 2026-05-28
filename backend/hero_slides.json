@@ -1,5 +1,14 @@
 [
   {
+    "id": "slide_1780012531",
+    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780012534/homepage/hero/slide_1780012531.png",
+    "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780012534/homepage/hero/slide_1780012531.png",
+    "title": "Salomon SS26",
+    "subtitle": "",
+    "buttonText": "Découvrir",
+    "buttonLink": "/catalog/salomon"
+  },
+  {
     "id": "slide_1774722129",
     "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1774722130/homepage/hero/slide_1774722129.png",
     "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1774722131/homepage/hero/slide_1774722129_mobile.png",
