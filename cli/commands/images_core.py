@@ -544,7 +544,7 @@ def run_generate_one(
             face_bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
                     "Keep the lateral side profile view exactly as-is. Equal margins on all sides. "
                     "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
                     "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
@@ -587,7 +587,7 @@ def run_generate_one(
             bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #F3F3F3 light grey background. "
+                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
                     "Equal margins on all sides. "
                     "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
                     "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
@@ -624,7 +624,7 @@ def run_generate_one(
             bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
                     "Remove all background (floor, plastic packaging, cardboard, table, any surface or prop). "
-                    "Replace with solid #F3F3F3 background. "
+                    "Replace with solid #808080 medium grey background. "
                     "Center the garment with equal margins on all sides. "
                     "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
                     "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
@@ -661,7 +661,7 @@ def run_generate_one(
             bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
                     "Remove all background (floor, plastic packaging, cardboard, table, any surface or prop). "
-                    "Replace with solid #F3F3F3 background. "
+                    "Replace with solid #808080 medium grey background. "
                     "Center the garment with equal margins on all sides. "
                     "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
                     "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
