@@ -14,20 +14,13 @@ interface HeroSlide {
 
 const FALLBACK_SLIDES: HeroSlide[] = [
   {
-    id: 'fallback_1',
-    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1773351718/homepage/homepage/hero.png',
-    title: 'SS26 Pre Release',
-    subtitle: 'Stone Island SS26',
-    buttonText: 'Shop now',
-    buttonLink: '/catalog',
-  },
-  {
-    id: 'fallback_2',
-    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1773352040/homepage/homepage/hero_2.png',
-    title: 'SS26 Pre Release',
-    subtitle: 'Stone Island SS26',
-    buttonText: 'Shop now',
-    buttonLink: '/catalog',
+    id: 'slide_1780012531',
+    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780012534/homepage/hero/slide_1780012531.png',
+    imageSrcMobile: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780013177/homepage/hero/slide_1780012531_mobile.png',
+    title: 'Salomon SS26',
+    subtitle: '',
+    buttonText: 'Découvrir',
+    buttonLink: '/catalog/salomon',
   },
 ];
 import { FeaturedProducts } from '../components/home/FeaturedProducts';
