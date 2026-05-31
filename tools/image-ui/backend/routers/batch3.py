@@ -17,11 +17,11 @@ BATCH3_PROMPT_GARMENT = (
     "Do not change anything else."
 )
 BATCH3_PROMPT_SHOE_FACE = (
-    "Add a soft subtle shadow directly under the sole of the shoe. "
+    "Add only a very subtle soft shadow directly under the sole. No harsh shadows. "
     "Do not change anything else."
 )
 BATCH3_PROMPT_SHOE_TOP = (
-    "Add a soft subtle shadow around the shoe edges. "
+    "Add only a very subtle soft shadow around the shoe edges. No harsh shadows. "
     "Do not change anything else."
 )
 
@@ -89,6 +89,39 @@ async def _run_batch3(api_key: str, images: list[Path], request: Request, produc
             yield f"data: {json.dumps({'type': 'log', 'message': f'  ✗ {img_path.name} — {e}'})}\n\n"
         await asyncio.sleep(2)
     yield f"data: {json.dumps({'type': 'done', 'success': fail == 0, 'ok': ok, 'fail': fail, 'output': f'{ok} image(s) traitée(s)'})}\n\n"
+
+
+@router.post("/batch3/{brand}/{ref}/image/{filename}")
+async def run_batch3_image(brand: str, ref: str, filename: str, request: Request):
+    """Batch 3 sur une seule image."""
+    configs = load_configs()
+    if brand not in configs:
+        raise HTTPException(404, f"Marque '{brand}' introuvable")
+    output_dir = resolve_output_dir(configs[brand]["output_dir"])
+    img_path = _resolve_output_folder(output_dir, ref) / filename
+    if not img_path.exists():
+        raise HTTPException(404, f"Image introuvable : {filename}")
+    product_type = configs[brand].get("product_type", "garment")
+    try:
+        api_key = _get_api_key()
+    except ValueError as e:
+        raise HTTPException(500, str(e))
+
+    async def event_gen():
+        yield f"data: {json.dumps({'type': 'log', 'message': f'Batch 3 — {filename}…'})}\n\n"
+        try:
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, _call_gemini_batch3, api_key, img_path, product_type)
+            if result:
+                img_path.write_bytes(result)
+                yield f"data: {json.dumps({'type': 'done', 'success': True, 'ok': 1, 'fail': 0, 'output': f'✓ {filename}'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'done', 'success': False, 'ok': 0, 'fail': 1, 'output': f'✗ {filename}'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'done', 'success': False, 'ok': 0, 'fail': 1, 'output': str(e)})}\n\n"
+
+    return StreamingResponse(event_gen(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 @router.post("/batch3/{brand}/{ref}/run")

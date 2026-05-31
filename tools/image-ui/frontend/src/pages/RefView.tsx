@@ -46,6 +46,32 @@ export function RefView() {
   const [genRunning, setGenRunning] = useState(false)
   const [genLogs, setGenLogs] = useState<BatchEvent[]>([])
   const [showGenLog, setShowGenLog] = useState(false)
+  const [imgBatchRunning, setImgBatchRunning] = useState<string | null>(null) // "b2:filename" ou "b3:filename"
+
+  const runBatch2Image = (img: string) => {
+    if (imgBatchRunning) return
+    const key = `b2:${img}`
+    setImgBatchRunning(key)
+    streamSSE(
+      `/api/batch2/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/image/${encodeURIComponent(img)}`,
+      {},
+      () => {},
+      (running) => { if (!running) { setImgBatchRunning(null); setImgTs(Date.now()); load() } },
+    )
+  }
+
+  const runBatch3Image = (img: string) => {
+    if (imgBatchRunning) return
+    const key = `b3:${img}`
+    setImgBatchRunning(key)
+    streamSSE(
+      `/api/batch3/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/image/${encodeURIComponent(img)}`,
+      {},
+      () => {},
+      (running) => { if (!running) { setImgBatchRunning(null); setImgTs(Date.now()); load() } },
+    )
+  }
+
   const [batch2Running, setBatch2Running] = useState(false)
   const [batch2Logs, setBatch2Logs] = useState<BatchEvent[]>([])
   const [showBatch2Log, setShowBatch2Log] = useState(false)
@@ -531,14 +557,32 @@ export function RefView() {
                         className="w-full h-full object-contain"
                       />
                     </div>
-                    <div className="px-3 py-2 flex items-center justify-between">
-                      <p className="text-[10px] text-zinc-500 font-mono truncate">{img}</p>
-                      <button
-                        onClick={e => { e.stopPropagation(); deleteImage(img) }}
-                        className="text-zinc-700 hover:text-red-400 transition-colors ml-2 flex-shrink-0 cursor-pointer opacity-0 group-hover:opacity-100"
-                      >
-                        <Trash2 size={11} />
-                      </button>
+                    <div className="px-3 py-2 flex items-center justify-between gap-1">
+                      <p className="text-[10px] text-zinc-500 font-mono truncate flex-1">{img}</p>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 flex-shrink-0">
+                        <button
+                          onClick={e => { e.stopPropagation(); runBatch2Image(img) }}
+                          disabled={!!imgBatchRunning}
+                          title="Batch 2 — fond blanc"
+                          className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-indigo-600/80 hover:bg-indigo-500 text-white disabled:opacity-40 cursor-pointer"
+                        >
+                          {imgBatchRunning === `b2:${img}` ? '…' : 'B2'}
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); runBatch3Image(img) }}
+                          disabled={!!imgBatchRunning}
+                          title="Batch 3 — ombres"
+                          className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-violet-600/80 hover:bg-violet-500 text-white disabled:opacity-40 cursor-pointer"
+                        >
+                          {imgBatchRunning === `b3:${img}` ? '…' : 'B3'}
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); deleteImage(img) }}
+                          className="text-zinc-700 hover:text-red-400 transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={11} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

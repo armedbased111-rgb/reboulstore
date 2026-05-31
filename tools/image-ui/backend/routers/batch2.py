@@ -55,6 +55,38 @@ def _find_images(ref_dir: Path) -> list[Path]:
     ])
 
 
+@router.post("/batch2/{brand}/{ref}/image/{filename}")
+async def run_batch2_image(brand: str, ref: str, filename: str, request: Request):
+    """Batch 2 sur une seule image."""
+    configs = load_configs()
+    if brand not in configs:
+        raise HTTPException(404, f"Marque '{brand}' introuvable")
+    output_dir = resolve_output_dir(configs[brand]["output_dir"])
+    img_path = _resolve_output_folder(output_dir, ref) / filename
+    if not img_path.exists():
+        raise HTTPException(404, f"Image introuvable : {filename}")
+    try:
+        api_key = _get_api_key()
+    except ValueError as e:
+        raise HTTPException(500, str(e))
+
+    async def event_gen():
+        yield f"data: {json.dumps({'type': 'log', 'message': f'Batch 2 — {filename}…'})}\n\n"
+        try:
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, _call_gemini_batch2, api_key, img_path)
+            if result:
+                img_path.write_bytes(result)
+                yield f"data: {json.dumps({'type': 'done', 'success': True, 'ok': 1, 'fail': 0, 'output': f'✓ {filename}'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'done', 'success': False, 'ok': 0, 'fail': 1, 'output': f'✗ {filename}'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'done', 'success': False, 'ok': 0, 'fail': 1, 'output': str(e)})}\n\n"
+
+    return StreamingResponse(event_gen(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
 @router.post("/batch2/{brand}/{ref}/run")
 async def run_batch2_ref(brand: str, ref: str, request: Request):
     """Batch 2 sur une seule ref. SSE."""
