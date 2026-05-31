@@ -316,7 +316,7 @@ def run_apply_csv(
                     f"INSERT INTO products (name, reference, price, category_id, brand_id, collection_id, "
                     f"description, materials, care_instructions, made_in, is_published, created_at, updated_at) "
                     f"VALUES ('{name_esc}', '{ref_esc}', {price}, {cat_id}, {brand_sql}, {collection_id}, "
-                    f"{desc_sql}, {materials_sql}, {care_sql}, {made_sql}, true, NOW(), NOW());"
+                    f"{desc_sql}, {materials_sql}, {care_sql}, {made_sql}, false, NOW(), NOW());"
                 )
                 existing = run_query(
                     f"SELECT id FROM products WHERE reference = '{ref_esc}' LIMIT 1;"
