@@ -15,11 +15,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CLI_PATH = PROJECT_ROOT / "cli"
 
 BATCH2_PROMPT = (
-    "Replace the background with pure white. "
-    "The exact background color must be RGB(243, 243, 243) — hex #F3F3F3. "
-    "Do not modify the garment in any way — preserve all fabric texture, colors, stitching, buttons and details exactly. "
-    "NO drop shadow. Flat even lighting. "
-    "Clean professional product photography."
+    "Replace the background with pure white RGB(243, 243, 243) — hex #F3F3F3. "
+    "Do not modify the product in any way — preserve everything exactly as-is: "
+    "fabric texture, colors, stitching, buttons, shadows, lighting, all details. "
+    "Only the background changes."
 )
 
 IMAGE_NAMES = ["1_face", "2_back", "4_top"]
