@@ -628,7 +628,7 @@ def run_generate_one(
                     "Center the garment with equal margins on all sides. "
                     "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
                     "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
-                    "Only a very soft shadow directly under the garment edges, no other shadow."
+                    "NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. Flat even lighting."
                 )
             )
             num_variants = flash_attempts if use_flash else 1
@@ -665,7 +665,7 @@ def run_generate_one(
                     "Center the garment with equal margins on all sides. "
                     "Smooth all fabric wrinkles and creases — make it look like a freshly ironed flat lay. "
                     "Preserve exactly: logos, prints, text, colors, materials, stitching, labels, badges. "
-                    "Only a very soft shadow directly under the garment edges, no other shadow."
+                    "NO shadow of any kind — no drop shadow, no cast shadow, no shadow under the garment. Flat even lighting."
                 )
             )
             num_variants = flash_attempts if use_flash else 1

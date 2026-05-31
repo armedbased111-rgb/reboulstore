@@ -139,7 +139,7 @@ REFERENCE_PROMPT = (
     "Do NOT add any logo, badge, patch or branding that is not clearly visible in IMAGE 1. If IMAGE 1 has no badge, output must have no badge. "
     "FOLD AND ALIGNMENT (critical): Match IMAGE 2 exactly—same way the garment is folded and laid (sleeves, body), waistband perfectly horizontal, vertical axis of the garment centered in the frame; no tilt, no rotation. "
     "FRAMING: Same crop, same centering, same margins as IMAGE 2. Tight crop; the garment must FILL the frame. Equal left/right margins, consistent small margin above the waistband and below the hem. "
-    "Remove harsh or uneven shadows from the original photo; use only a soft, subtle shadow under the garment like IMAGE 2. "
+    "Remove all shadows from the original photo. NO shadow of any kind in the output — flat even lighting only. "
     "COLOR: Preserve the exact garment color from IMAGE 1; no hue or saturation shift. "
     "BACKGROUND: Must be plain solid #808080 (medium grey) only. No other background color or gradient. "
     "TASK: Put the garment from IMAGE 1 into the exact same setup as Image 2 (same flat lay or angle, same crop, #808080 background, same lighting). "
@@ -264,7 +264,7 @@ ERRORS_AVOID_DEFAULT = (
     "outputting a different garment type than IMAGE 1 (e.g. jacket when IMAGE 1 is shorts—always keep the same product as IMAGE 1). "
     "AVOID the floating shadow error: no elongated horizontal shadow at the bottom of the image, detached from the garment (that makes the product look suspended). Remove it. "
     "GOOD: fold and alignment exactly like IMAGE 2 (ref)—garment flat, sleeves perfectly straight and flat (clean rectangle shoulder to cuff), "
-    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop; one soft contact shadow only directly under the garment edges, no second shadow below."
+    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop; NO shadow of any kind — flat even lighting."
 )
 
 
@@ -602,7 +602,7 @@ def _run_generate_one(
                     "Remove all background completely. "
                     "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
                     "Center it on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. Add a very subtle natural shadow beneath the garment only. "
+                    "Equal margins on all sides. NO shadow of any kind — flat even lighting only. "
                     "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
                     "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
                 )
@@ -873,7 +873,7 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
                     "Remove all background completely. "
                     "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
                     "Center it on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. Add a very subtle natural shadow beneath the garment only. "
+                    "Equal margins on all sides. NO shadow of any kind — flat even lighting only. "
                     "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
                     "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
                 )
