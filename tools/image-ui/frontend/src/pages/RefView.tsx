@@ -162,14 +162,12 @@ export function RefView() {
   }, [data])
 
   const deleteImage = async (img: string) => {
-    if (!window.confirm(`Supprimer ${img} ?`)) return
     await api.delete(`/manage/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/${encodeURIComponent(img)}`)
     if (selectedImg === img) setSelectedImg(null)
     await load()
   }
 
   const deleteCampaignImage = async (img: string) => {
-    if (!window.confirm(`Supprimer ${img} ?`)) return
     await api.delete(`/campaign/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/${encodeURIComponent(img)}`)
     await loadCampaignImages()
   }
