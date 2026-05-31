@@ -17,8 +17,9 @@ def delete_image(brand: str, ref: str, filename: str):
     configs = load_configs()
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
+    from services.ref_status import _resolve_output_folder
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    image_path = output_dir / ref / filename
+    image_path = _resolve_output_folder(output_dir, ref) / filename
     if not image_path.exists():
         raise HTTPException(404, f"Image introuvable : {filename}")
     # Safety: only delete image files
@@ -34,8 +35,9 @@ def rename_image(brand: str, ref: str, filename: str, req: RenameRequest):
     configs = load_configs()
     if brand not in configs:
         raise HTTPException(404, "Marque introuvable")
+    from services.ref_status import _resolve_output_folder
     output_dir = resolve_output_dir(configs[brand]["output_dir"])
-    src = output_dir / ref / filename
+    src = _resolve_output_folder(output_dir, ref) / filename
     if not src.exists():
         raise HTTPException(404, f"Image introuvable : {filename}")
     new_name = Path(req.new_name).name  # security: no path traversal
