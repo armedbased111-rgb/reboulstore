@@ -13,11 +13,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CLI_PATH = PROJECT_ROOT / "cli"
 
 BATCH3_PROMPT = (
-    "Add natural flat lay shadows only. "
-    "The garment is lying flat on a white surface, photographed from directly above. "
-    "Add soft natural shadows cast by the garment fabric onto the white surface beneath it, following the garment contour exactly. "
-    "The shadow must be under the garment where fabric meets surface — never detached or floating away from the garment. "
-    "Do not modify the garment, its colors, details or background in any other way."
+    "Add a soft subtle shadow around the garment edges. "
+    "Do not change anything else."
 )
 
 
