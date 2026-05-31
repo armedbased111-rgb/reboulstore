@@ -26,6 +26,9 @@ export function BrandView() {
   const [batch2Running, setBatch2Running] = useState(false)
   const [batch2Logs, setBatch2Logs] = useState<BatchEvent[]>([])
   const [showBatch2, setShowBatch2] = useState(false)
+  const [batch3Running, setBatch3Running] = useState(false)
+  const [batch3Logs, setBatch3Logs] = useState<BatchEvent[]>([])
+  const [showBatch3, setShowBatch3] = useState(false)
 
   const handleBatchEvent = useCallback((e: BatchEvent) => {
     setBatchLogs(prev => [...prev, e])
@@ -71,6 +74,35 @@ export function BrandView() {
         }
         setBatch2Running(false)
       }).catch(() => setBatch2Running(false))
+  }
+
+  const startBatch3 = () => {
+    if (!confirm(`Lancer le Batch 3 (ombres flat lay) sur toutes les images de ${brandName} ?`)) return
+    setBatch3Logs([])
+    setBatch3Running(true)
+    setShowBatch3(true)
+    fetch(`/api/batch3/${encodeURIComponent(brandName)}/start`, { method: 'POST' })
+      .then(async res => {
+        const reader = res.body!.getReader()
+        const dec = new TextDecoder()
+        let buf = ''
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buf += dec.decode(value, { stream: true })
+          const lines = buf.split('\n'); buf = lines.pop()!
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const evt: BatchEvent = JSON.parse(line.slice(6))
+                setBatch3Logs(prev => [...prev, evt])
+                if (evt.type === 'done' || evt.type === 'error') { setBatch3Running(false); refresh() }
+              } catch {}
+            }
+          }
+        }
+        setBatch3Running(false)
+      }).catch(() => setBatch3Running(false))
   }
 
   const startWipeReupload = () => {
@@ -157,11 +189,19 @@ export function BrandView() {
               )}
               <button
                 onClick={startBatch2}
-                disabled={batch2Running || batchRunning}
+                disabled={batch2Running || batchRunning || batch3Running}
                 className="flex items-center gap-2 text-[11px] font-medium bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg transition-all duration-150 disabled:opacity-30 cursor-pointer"
               >
                 <Play size={12} />
                 Batch 2
+              </button>
+              <button
+                onClick={startBatch3}
+                disabled={batch3Running || batchRunning || batch2Running}
+                className="flex items-center gap-2 text-[11px] font-medium bg-violet-600 hover:bg-violet-500 text-white px-4 py-1.5 rounded-lg transition-all duration-150 disabled:opacity-30 cursor-pointer"
+              >
+                <Play size={12} />
+                Batch 3
               </button>
             </div>
           </div>
@@ -179,6 +219,19 @@ export function BrandView() {
               {!wipeRunning && <button onClick={() => setShowWipe(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={14} /></button>}
             </div>
             <LogConsole events={wipeLogs} />
+          </div>
+        )}
+
+        {/* Batch 3 panel */}
+        {showBatch3 && (
+          <div className="bg-zinc-900 border border-violet-900/40 rounded-xl p-4 mb-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] tracking-widest uppercase text-violet-400 font-medium">
+                {batch3Running ? 'Batch 3 — Ombres flat lay…' : 'Batch 3 terminé'}
+              </span>
+              {!batch3Running && <button onClick={() => setShowBatch3(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={14} /></button>}
+            </div>
+            <LogConsole events={batch3Logs} />
           </div>
         )}
 

@@ -49,6 +49,9 @@ export function RefView() {
   const [batch2Running, setBatch2Running] = useState(false)
   const [batch2Logs, setBatch2Logs] = useState<BatchEvent[]>([])
   const [showBatch2Log, setShowBatch2Log] = useState(false)
+  const [batch3Running, setBatch3Running] = useState(false)
+  const [batch3Logs, setBatch3Logs] = useState<BatchEvent[]>([])
+  const [showBatch3Log, setShowBatch3Log] = useState(false)
 
   // Campaign state
   const [campSourceImg, setCampSourceImg] = useState<string>('')
@@ -229,6 +232,18 @@ export function RefView() {
     }
   }
 
+  const runBatch3 = () => {
+    if (batch3Running) return
+    setShowBatch3Log(true)
+    streamSSE(
+      `/api/batch3/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/run`,
+      {},
+      setBatch3Logs,
+      setBatch3Running,
+      () => { setImgTs(Date.now()); load() },
+    )
+  }
+
   const runBatch2 = () => {
     if (batch2Running) return
     setShowBatch2Log(true)
@@ -399,9 +414,15 @@ export function RefView() {
                 </button>
               )}
               {hasImages && (
-                <button onClick={runBatch2} disabled={batch2Running}
+                <button onClick={runBatch2} disabled={batch2Running || batch3Running}
                   className="flex items-center gap-2 text-[11px] font-medium bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg transition-all disabled:opacity-40 cursor-pointer">
                   <Play size={12} />{batch2Running ? 'Batch 2…' : 'Batch 2'}
+                </button>
+              )}
+              {hasImages && (
+                <button onClick={runBatch3} disabled={batch3Running || batch2Running}
+                  className="flex items-center gap-2 text-[11px] font-medium bg-violet-600 hover:bg-violet-500 text-white px-4 py-1.5 rounded-lg transition-all disabled:opacity-40 cursor-pointer">
+                  <Play size={12} />{batch3Running ? 'Batch 3…' : 'Batch 3'}
                 </button>
               )}
               {(data.status === 'needs_upload' || data.status === 'done') && hasImages && (
@@ -442,6 +463,15 @@ export function RefView() {
               {!uploadRunning && <button onClick={() => setShowUploadLog(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={13} /></button>}
             </div>
             <LogConsole events={uploadLogs} />
+          </div>
+        )}
+        {showBatch3Log && (
+          <div className="bg-zinc-900 border border-violet-900/40 rounded-xl p-4 mb-5">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-[10px] tracking-widest uppercase text-violet-400 font-medium">{batch3Running ? 'Batch 3 — Ombres flat lay…' : 'Batch 3 terminé'}</span>
+              {!batch3Running && <button onClick={() => setShowBatch3Log(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={13} /></button>}
+            </div>
+            <LogConsole events={batch3Logs} />
           </div>
         )}
         {showBatch2Log && (
