@@ -22,7 +22,8 @@ def get_ref(name: str, ref: str):
     config = configs[name]
     input_dir = Path(config["input_dir"])
     output_dir = resolve_output_dir(config["output_dir"])
+    from services.ref_status import _resolve_output_folder
     status = get_ref_status(input_dir, output_dir, ref)
-    images = list_output_images(output_dir / ref)
+    images = list_output_images(_resolve_output_folder(output_dir, ref))
     input_photos = list_input_photos(input_dir, ref)
     return {"name": ref, "status": status, "images": images, "input_photo_count": len(input_photos), "input_photos": input_photos}

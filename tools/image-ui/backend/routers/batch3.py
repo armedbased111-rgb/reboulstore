@@ -12,19 +12,37 @@ router = APIRouter()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CLI_PATH = PROJECT_ROOT / "cli"
 
-BATCH3_PROMPT = (
+BATCH3_PROMPT_GARMENT = (
     "Add a soft subtle shadow around the garment edges. "
+    "Do not change anything else."
+)
+BATCH3_PROMPT_SHOE_FACE = (
+    "Add a soft subtle shadow directly under the sole of the shoe. "
+    "Do not change anything else."
+)
+BATCH3_PROMPT_SHOE_TOP = (
+    "Add a soft subtle shadow around the shoe edges. "
     "Do not change anything else."
 )
 
 
-def _call_gemini_batch3(api_key: str, image_path: Path) -> bytes | None:
+def _batch3_prompt(image_path: Path, product_type: str) -> str:
+    if product_type == "shoe":
+        name = image_path.stem.lower()
+        if "top" in name:
+            return BATCH3_PROMPT_SHOE_TOP
+        return BATCH3_PROMPT_SHOE_FACE
+    return BATCH3_PROMPT_GARMENT
+
+
+def _call_gemini_batch3(api_key: str, image_path: Path, product_type: str = "garment") -> bytes | None:
     import sys
     if str(CLI_PATH) not in sys.path:
         sys.path.insert(0, str(CLI_PATH))
     from commands.images_core import call_gemini, encode_image
     img_b64, mime = encode_image(image_path)
-    return call_gemini(api_key, img_b64, mime, BATCH3_PROMPT, use_flash=True)
+    prompt = _batch3_prompt(image_path, product_type)
+    return call_gemini(api_key, img_b64, mime, prompt, use_flash=True)
 
 
 def _get_api_key() -> str:
@@ -48,9 +66,9 @@ def _find_images(ref_dir: Path) -> list[Path]:
     ])
 
 
-async def _run_batch3(api_key: str, images: list[Path], request: Request):
+async def _run_batch3(api_key: str, images: list[Path], request: Request, product_type: str = "garment"):
     total = len(images)
-    yield f"data: {json.dumps({'type': 'log', 'message': f'Batch 3 — {total} image(s) à traiter…'})}\n\n"
+    yield f"data: {json.dumps({'type': 'log', 'message': f'Batch 3 — {total} image(s) à traiter… (type: {product_type})'})}\n\n"
     ok = fail = 0
     for i, img_path in enumerate(images):
         if await request.is_disconnected():
@@ -58,7 +76,7 @@ async def _run_batch3(api_key: str, images: list[Path], request: Request):
         yield f"data: {json.dumps({'type': 'log', 'message': f'[{i+1}/{total}] {img_path.parent.name} / {img_path.name}…'})}\n\n"
         try:
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, _call_gemini_batch3, api_key, img_path)
+            result = await loop.run_in_executor(None, _call_gemini_batch3, api_key, img_path, product_type)
             if result:
                 img_path.write_bytes(result)
                 ok += 1
@@ -85,8 +103,10 @@ async def run_batch3_ref(brand: str, ref: str, request: Request):
     except ValueError as e:
         raise HTTPException(500, str(e))
 
+    product_type = configs[brand].get("product_type", "garment")
+
     async def event_gen():
-        async for chunk in _run_batch3(api_key, _find_images(ref_dir), request):
+        async for chunk in _run_batch3(api_key, _find_images(ref_dir), request, product_type):
             yield chunk
 
     return StreamingResponse(event_gen(), media_type="text/event-stream",
@@ -111,8 +131,10 @@ async def start_batch3(brand: str, request: Request):
                 continue
             all_images.extend(_find_images(ref_dir))
 
+    product_type = configs[brand].get("product_type", "garment")
+
     async def event_gen():
-        async for chunk in _run_batch3(api_key, all_images, request):
+        async for chunk in _run_batch3(api_key, all_images, request, product_type):
             yield chunk
 
     return StreamingResponse(event_gen(), media_type="text/event-stream",
