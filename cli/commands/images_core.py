@@ -39,7 +39,7 @@ PROMPT_FACE = (
     "Garment lying perfectly flat — smooth out physical wrinkles, creases and folds so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "Center the garment both horizontally and vertically in the frame: equal left/right margins, consistent small margin above the waistband and below the hem. "
     "The garment must be perfectly straight: waistband perfectly horizontal, legs vertical, no tilt or rotation. "
-    "Very subtle soft shadow along the bottom edge of the garment only, directly attached where the fabric meets the background — as if the garment is slightly elevated above a flat surface. No shadow detached or floating below the garment. "
+    "Natural flat lay shadow: the garment is lying flat on a surface, camera looking straight down from above. Add a soft natural shadow cast by the garment fabric onto the surface beneath it, following the garment contour — as photographed under soft studio lighting from above. The shadow is under the garment where fabric meets surface, never detached or floating. "
     "Clean product photography for e-commerce. Output only this one image."
     + NO_INVENTION
     + BG
@@ -52,7 +52,7 @@ PROMPT_BACK = (
     "Garment lying perfectly flat — smooth out physical wrinkles, creases and folds so the fabric looks clean and pressed. PRESERVE the original fabric pattern exactly (stripes, checks, prints, textures) pixel-perfect — do NOT blur, fade or remove any pattern. "
     "Center the garment both horizontally and vertically in the frame: equal left/right margins, consistent small margin above the waistband and below the hem. "
     "The garment must be perfectly straight: waistband perfectly horizontal, legs vertical, no tilt or rotation. "
-    "Very subtle soft shadow along the bottom edge of the garment only, directly attached where the fabric meets the background — as if the garment is slightly elevated above a flat surface. No shadow detached or floating below the garment. "
+    "Natural flat lay shadow: the garment is lying flat on a surface, camera looking straight down from above. Add a soft natural shadow cast by the garment fabric onto the surface beneath it, following the garment contour — as photographed under soft studio lighting from above. The shadow is under the garment where fabric meets surface, never detached or floating. "
     "Clean product photography for e-commerce. Output only this one image."
     + NO_INVENTION
     + BG

@@ -264,7 +264,7 @@ ERRORS_AVOID_DEFAULT = (
     "outputting a different garment type than IMAGE 1 (e.g. jacket when IMAGE 1 is shorts—always keep the same product as IMAGE 1). "
     "AVOID the floating shadow error: no elongated horizontal shadow at the bottom of the image, detached from the garment (that makes the product look suspended). Remove it. "
     "GOOD: fold and alignment exactly like IMAGE 2 (ref)—garment flat, sleeves perfectly straight and flat (clean rectangle shoulder to cuff), "
-    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop; very subtle soft shadow along the bottom edge only, directly attached to the garment — no floating shadow."
+    "waistband perfectly horizontal, vertical axis of garment centered in frame; tight crop; natural flat lay shadow cast by garment onto surface beneath (camera from above) — never detached or floating."
 )
 
 
@@ -602,7 +602,7 @@ def _run_generate_one(
                     "Remove all background completely. "
                     "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
                     "Center it on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. Very subtle soft shadow along the bottom edge of the garment only, directly attached where the fabric meets the background. No shadow detached or floating below the garment. "
+                    "Equal margins on all sides. Natural flat lay shadow: soft shadow cast by the garment fabric onto the surface beneath it, following the garment contour — camera looking down from above. Never detached or floating. "
                     "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
                     "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
                 )
@@ -873,7 +873,7 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
                     "Remove all background completely. "
                     "Place the garment as a perfect flat lay: lying flat, fully extended, arms/sleeves open, no folding. "
                     "Center it on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. Very subtle soft shadow along the bottom edge of the garment only, directly attached where the fabric meets the background. No shadow detached or floating below the garment. "
+                    "Equal margins on all sides. Natural flat lay shadow: soft shadow cast by the garment fabric onto the surface beneath it, following the garment contour — camera looking down from above. Never detached or floating. "
                     "DO NOT modify the garment in any way — preserve ALL details pixel-perfectly: "
                     "labels, badges, logos, colors, materials, stitching, buttons, zippers, prints."
                 )
