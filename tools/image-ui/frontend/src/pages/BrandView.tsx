@@ -48,7 +48,7 @@ export function BrandView() {
   const stopBatch = async () => { await api.post('/batch/stop') }
 
   const startBatch2 = () => {
-    if (!confirm(`Lancer le Batch 2 (fond blanc + ombre) sur toutes les images générées de ${brandName} ?`)) return
+    if (!window.confirm(`Lancer le Batch 2 sur toutes les images de ${brandName} ?`)) return
     setBatch2Logs([])
     setBatch2Running(true)
     setShowBatch2(true)
@@ -77,7 +77,7 @@ export function BrandView() {
   }
 
   const startBatch3 = () => {
-    if (!confirm(`Lancer le Batch 3 (ombres flat lay) sur toutes les images de ${brandName} ?`)) return
+    if (!window.confirm(`Lancer le Batch 3 (ombres) sur toutes les images de ${brandName} ?`)) return
     setBatch3Logs([])
     setBatch3Running(true)
     setShowBatch3(true)
@@ -106,7 +106,7 @@ export function BrandView() {
   }
 
   const startWipeReupload = () => {
-    if (!confirm(`Wipe toutes les images Cloudinary de ${brandName} et re-upload ?`)) return
+    if (!window.confirm(`Wipe toutes les images Cloudinary de ${brandName} et re-upload ?`)) return
     setWipeLogs([])
     setWipeRunning(true)
     setShowWipe(true)
