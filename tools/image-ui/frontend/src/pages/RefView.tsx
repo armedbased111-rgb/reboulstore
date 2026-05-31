@@ -46,6 +46,9 @@ export function RefView() {
   const [genRunning, setGenRunning] = useState(false)
   const [genLogs, setGenLogs] = useState<BatchEvent[]>([])
   const [showGenLog, setShowGenLog] = useState(false)
+  const [batch2Running, setBatch2Running] = useState(false)
+  const [batch2Logs, setBatch2Logs] = useState<BatchEvent[]>([])
+  const [showBatch2Log, setShowBatch2Log] = useState(false)
 
   // Campaign state
   const [campSourceImg, setCampSourceImg] = useState<string>('')
@@ -226,6 +229,18 @@ export function RefView() {
     }
   }
 
+  const runBatch2 = () => {
+    if (batch2Running) return
+    setShowBatch2Log(true)
+    streamSSE(
+      `/api/batch2/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/run`,
+      {},
+      setBatch2Logs,
+      setBatch2Running,
+      () => { setImgTs(Date.now()); load() },
+    )
+  }
+
   const runUpload = () => {
     if (uploadRunning) return
     setShowUploadLog(true)
@@ -383,6 +398,12 @@ export function RefView() {
                   <Play size={12} />{genRunning ? 'Génération…' : 'Générer'}
                 </button>
               )}
+              {hasImages && (
+                <button onClick={runBatch2} disabled={batch2Running}
+                  className="flex items-center gap-2 text-[11px] font-medium bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg transition-all disabled:opacity-40 cursor-pointer">
+                  <Play size={12} />{batch2Running ? 'Batch 2…' : 'Batch 2'}
+                </button>
+              )}
               {(data.status === 'needs_upload' || data.status === 'done') && hasImages && (
                 <button onClick={runUpload} disabled={uploadRunning}
                   className="flex items-center gap-2 text-[11px] font-medium bg-white hover:bg-zinc-100 text-black px-4 py-1.5 rounded-lg transition-all disabled:opacity-40 cursor-pointer">
@@ -421,6 +442,15 @@ export function RefView() {
               {!uploadRunning && <button onClick={() => setShowUploadLog(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={13} /></button>}
             </div>
             <LogConsole events={uploadLogs} />
+          </div>
+        )}
+        {showBatch2Log && (
+          <div className="bg-zinc-900 border border-indigo-900/40 rounded-xl p-4 mb-5">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-[10px] tracking-widest uppercase text-indigo-400 font-medium">{batch2Running ? 'Batch 2 — Fond blanc + ombre…' : 'Batch 2 terminé'}</span>
+              {!batch2Running && <button onClick={() => setShowBatch2Log(false)} className="text-zinc-600 hover:text-zinc-300 cursor-pointer"><X size={13} /></button>}
+            </div>
+            <LogConsole events={batch2Logs} />
           </div>
         )}
 
@@ -466,7 +496,7 @@ export function RefView() {
                   >
                     <div className="aspect-[3/4] bg-zinc-800 overflow-hidden">
                       <img
-                        src={`/api/images/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/${img}`}
+                        src={`/api/images/${encodeURIComponent(brandName)}/${encodeURIComponent(refName)}/${img}?t=${imgTs}`}
                         alt={img}
                         className="w-full h-full object-contain"
                       />
