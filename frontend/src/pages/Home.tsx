@@ -122,6 +122,9 @@ export const Home = () => {
             title="BEST SELLERS — STONE ISLAND"
             products={bestSellers}
             viewAllLink="/catalog?brand=stone-island"
+            heroBg="https://res.cloudinary.com/dxen69pdo/image/upload/f_auto,q_auto,w_1920/homepage/hero/slide_1780351897.jpg"
+            heroBgMobile="https://res.cloudinary.com/dxen69pdo/image/upload/f_auto,q_auto,w_828/homepage/hero/slide_1780351897_mobile.jpg"
+            brandTag="SS26 Collection"
           />
         </div>
       )}

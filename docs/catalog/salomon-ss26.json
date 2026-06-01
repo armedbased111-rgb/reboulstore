@@ -1,0 +1,93 @@
+[
+  {
+    "ref": "L41086600R/XT6",
+    "name": "XT-6",
+    "color": "Black",
+    "description": "Baskets trail XT-6 tout noir avec tige mesh, renforts SensiFit et semelle Contagrip à crampons.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47209600/XT6",
+    "name": "XT-6",
+    "color": "White/Mauve",
+    "description": "Baskets XT-6 blanches avec overlays argentés, bande mauve et laçage Quicklace.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47450600R/XT6",
+    "name": "XT-6 GTX",
+    "color": "Black",
+    "description": "Baskets XT-6 imperméables Gore-Tex en mesh noir et argent avec laçage Quicklace.",
+    "materials": "Textile and synthetic upper, Gore-Tex membrane, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47568400/XT4",
+    "name": "XT-4 OG",
+    "color": "Grey/Blue",
+    "description": "Baskets XT-4 OG gris bleuté rétro trail avec renforts métallisés et semelle crantée.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L477962E26/XTW",
+    "name": "Whisper Void",
+    "color": "White",
+    "description": "Baskets Whisper Void crème au mesh ouvert respirant, structure cage et semelle trail légère.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47953400/XT4",
+    "name": "XT-4 OG GTX",
+    "color": "Black",
+    "description": "Baskets XT-4 OG imperméables Gore-Tex noires avec semelle intermédiaire ACS blanche.",
+    "materials": "Textile and synthetic upper, Gore-Tex membrane, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47989500/XT6",
+    "name": "XT-6",
+    "color": "Grey",
+    "description": "Baskets XT-6 gris Quiet Shade avec overlays blancs contrastés et semelle bi-ton.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47990600/XT4",
+    "name": "XT-4 OG",
+    "color": "White/Cream",
+    "description": "Baskets XT-4 OG crème et bleu-gris avec bande bordeaux et semelle intermédiaire ACS.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L47990800/XT4",
+    "name": "XT-4 OG",
+    "color": "Grey",
+    "description": "Baskets XT-4 OG gris asphalt avec overlays argentés et accent orange sur la semelle.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L49154300/XT6",
+    "name": "XT-6",
+    "color": "Black/Orange",
+    "description": "Baskets XT-6 noires et crème avec garde-boue orange Dragon Fire et laçage Quicklace.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L49154700/XT6",
+    "name": "XT-6",
+    "color": "Green",
+    "description": "Baskets XT-6 vert Bistro avec overlays blancs et semelle grise technique.",
+    "materials": "Textile and synthetic upper, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L49158700/XT6",
+    "name": "XT-6 GTX",
+    "color": "Blue/Lime",
+    "description": "Baskets XT-6 imperméables Gore-Tex bleu Niagara avec overlays jaune lime.",
+    "materials": "Textile and synthetic upper, Gore-Tex membrane, EVA midsole, rubber outsole"
+  },
+  {
+    "ref": "L49202300/XT6",
+    "name": "XT-6 GTX",
+    "color": "Green/Grey",
+    "description": "Baskets XT-6 GTX vert eucalyptus et sauge argentée avec liseré violet clair.",
+    "materials": "Textile and synthetic upper, Gore-Tex membrane, EVA midsole, rubber outsole"
+  }
+]

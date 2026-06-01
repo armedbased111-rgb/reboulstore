@@ -75,8 +75,6 @@ export interface Product {
   
   // Informations spécifiques au produit
   materials?: string;
-  careInstructions?: string;
-  madeIn?: string;
   customSizeChart?: SizeChartEntry[];
 }
 

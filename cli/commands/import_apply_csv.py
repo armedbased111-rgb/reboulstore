@@ -85,8 +85,6 @@ def _normalize_row(lower: Dict[str, str]) -> Dict[str, str]:
         'sku': sku,
         'cod_article': get('cod_article', 'codarticle', 'cod article'),
         'materials': get('materials'),
-        'care_instructions': get('careinstructions', 'care_instructions'),
-        'made_in': get('madein', 'made_in'),
     }
 
 
@@ -292,10 +290,6 @@ def run_apply_csv(
             desc_sql = f"'{_esc(desc)}'" if desc else 'NULL'
             materials = first.get('materials') or ''
             materials_sql = f"'{_esc(materials)}'" if materials else 'NULL'
-            care = first.get('care_instructions') or ''
-            care_sql = f"'{_esc(care)}'" if care else 'NULL'
-            made = first.get('made_in') or ''
-            made_sql = f"'{_esc(made)}'" if made else 'NULL'
             brand_sql = str(brand_id) if brand_id is not None else 'NULL'
 
             existing = run_query(
@@ -306,17 +300,16 @@ def run_apply_csv(
                 exec_sql(
                     f"UPDATE products SET name = '{name_esc}', price = {price}, "
                     f"category_id = {cat_id}, brand_id = {brand_sql}, collection_id = {collection_id}, "
-                    f"description = {desc_sql}, materials = {materials_sql}, "
-                    f"care_instructions = {care_sql}, made_in = {made_sql}, updated_at = NOW() "
+                    f"description = {desc_sql}, materials = {materials_sql}, updated_at = NOW() "
                     f"WHERE id = {pid};"
                 )
                 stats['products_updated'] += 1
             else:
                 exec_sql(
                     f"INSERT INTO products (name, reference, price, category_id, brand_id, collection_id, "
-                    f"description, materials, care_instructions, made_in, is_published, created_at, updated_at) "
+                    f"description, materials, is_published, created_at, updated_at) "
                     f"VALUES ('{name_esc}', '{ref_esc}', {price}, {cat_id}, {brand_sql}, {collection_id}, "
-                    f"{desc_sql}, {materials_sql}, {care_sql}, {made_sql}, false, NOW(), NOW());"
+                    f"{desc_sql}, {materials_sql}, false, NOW(), NOW());"
                 )
                 existing = run_query(
                     f"SELECT id FROM products WHERE reference = '{ref_esc}' LIMIT 1;"

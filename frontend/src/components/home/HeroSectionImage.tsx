@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { HeroSectionDecor } from '../decorative';
+import { cloudinaryUrl } from '../../utils/imageUtils';
 
 interface HeroSlide {
   imageSrc?: string;
@@ -51,8 +52,7 @@ export const HeroSectionImage = ({
     buttonLink,
   }];
 
-  // Démarre sur un slide aléatoire
-  const [current, setCurrent] = useState(() => Math.floor(Math.random() * allSlides.length));
+  const [current, setCurrent] = useState(0);
   const [fading, setFading] = useState(false);
 
   const goTo = useCallback((index: number) => {
@@ -79,21 +79,19 @@ export const HeroSectionImage = ({
 
   const safeIndex = current % (visibleSlides.length || 1);
   const slide = visibleSlides[safeIndex] ?? allSlides[0];
-  const activeSrc = (isMobile && slide.imageSrcMobile) ? slide.imageSrcMobile : slide.imageSrc;
+  const rawSrc = (isMobile && slide.imageSrcMobile) ? slide.imageSrcMobile : slide.imageSrc;
+  const activeSrc = rawSrc ? cloudinaryUrl(rawSrc, isMobile ? 828 : 1920) : rawSrc;
 
-  const nextRandom = useCallback(() => {
+  const nextSlide = useCallback(() => {
     if (visibleSlides.length <= 1) return;
-    let next;
-    do { next = Math.floor(Math.random() * visibleSlides.length); }
-    while (next === safeIndex);
-    goTo(next);
+    goTo((safeIndex + 1) % visibleSlides.length);
   }, [visibleSlides.length, safeIndex, goTo]);
 
   useEffect(() => {
     if (visibleSlides.length <= 1) return;
-    const timer = setInterval(nextRandom, autoplayInterval);
+    const timer = setInterval(nextSlide, autoplayInterval);
     return () => clearInterval(timer);
-  }, [nextRandom, visibleSlides.length, autoplayInterval]);
+  }, [nextSlide, visibleSlides.length, autoplayInterval]);
 
   return (
     <section className={`relative w-full overflow-hidden ${isMobile && slide.imageSrcMobile ? 'aspect-[9/16]' : 'h-[60vh] md:h-[80vh]'}`}>
@@ -114,6 +112,8 @@ export const HeroSectionImage = ({
             src={activeSrc}
             alt={slide.title}
             loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         )}

@@ -1,111 +1,111 @@
-cod_article;name;reference;brand;category;collection;stock;price;color;sku
-5 029 01862;S26213/10;S26213/10 48;rrd;polo mc;SS26;2;165;10;S26213/10 48
-5 029 01863;S26213/10;S26213/10 50;rrd;polo mc;SS26;1;165;10;S26213/10 50
-5 029 01864;S26213/10;S26213/10 52;rrd;polo mc;SS26;1;165;10;S26213/10 52
-5 029 01865;S26213/10;S26213/10 54;rrd;polo mc;SS26;1;165;10;S26213/10 54
-5 029 01867;S26213/10;S26213/10 58;rrd;polo mc;SS26;1;165;10;S26213/10 58
-5 029 01872;S26213/20;S26213/20 48;rrd;polo mc;SS26;1;165;20;S26213/20 48
-5 029 01873;S26213/20;S26213/20 50;rrd;polo mc;SS26;1;165;20;S26213/20 50
-5 029 01875;S26213/20;S26213/20 54;rrd;polo mc;SS26;1;165;20;S26213/20 54
-5 029 01877;S26213/20;S26213/20 58;rrd;polo mc;SS26;2;165;20;S26213/20 58
-5 029 01882;S26213/60;S26213/60 48;rrd;polo mc;SS26;1;165;60;S26213/60 48
-5 029 01883;S26213/60;S26213/60 50;rrd;polo mc;SS26;2;165;60;S26213/60 50
-5 029 01887;S26213/60;S26213/60 58;rrd;polo mc;SS26;1;165;60;S26213/60 58
-5 029 01892;S26222/43;S26222/43 48;rrd;polo mc;SS26;3;165;43;S26222/43 48
-5 029 01893;S26222/43;S26222/43 50;rrd;polo mc;SS26;2;165;43;S26222/43 50
-5 029 01894;S26222/43;S26222/43 52;rrd;polo mc;SS26;1;165;43;S26222/43 52
-5 029 01895;S26222/43;S26222/43 54;rrd;polo mc;SS26;1;165;43;S26222/43 54
-5 029 01897;S26222/43;S26222/43 58;rrd;polo mc;SS26;1;165;43;S26222/43 58
-5 029 01902;S26222/61;S26222/61 48;rrd;polo mc;SS26;2;165;61;S26222/61 48
-5 029 01903;S26222/61;S26222/61 50;rrd;polo mc;SS26;1;165;61;S26222/61 50
-5 029 01905;S26222/61;S26222/61 54;rrd;polo mc;SS26;1;165;61;S26222/61 54
-5 029 01907;S26222/61;S26222/61 58;rrd;polo mc;SS26;1;165;61;S26222/61 58
-5 029 01912;S26222/64;S26222/64 48;rrd;polo mc;SS26;2;165;64;S26222/64 48
-5 029 01913;S26222/64;S26222/64 50;rrd;polo mc;SS26;1;165;64;S26222/64 50
-5 029 01914;S26222/64;S26222/64 52;rrd;polo mc;SS26;1;165;64;S26222/64 52
-5 029 01916;S26222/64;S26222/64 56;rrd;polo mc;SS26;1;165;64;S26222/64 56
-5 029 01917;S26222/64;S26222/64 58;rrd;polo mc;SS26;1;165;64;S26222/64 58
-5 035 00137;S26321/20;S26321/20 50;rrd;bermuda;SS26;1;215;20;S26321/20 50
-5 035 00138;S26321/20;S26321/20 52;rrd;bermuda;SS26;1;215;20;S26321/20 52
-5 035 00152;S26321/84;S26321/84 48;rrd;bermuda;SS26;1;215;84;S26321/84 48
-5 035 00153;S26321/84;S26321/84 50;rrd;bermuda;SS26;1;215;84;S26321/84 50
-5 035 00154;S26321/84;S26321/84 52;rrd;bermuda;SS26;1;215;84;S26321/84 52
-5 035 00160;S26323/26;S26323/26 48;rrd;bermuda;SS26;1;225;26;S26323/26 48
-5 035 00161;S26323/26;S26323/26 50;rrd;bermuda;SS26;1;225;26;S26323/26 50
-5 035 00162;S26323/26;S26323/26 52;rrd;bermuda;SS26;1;225;26;S26323/26 52
-5 035 00167;S26323/85;S26323/85 46;rrd;bermuda;SS26;1;225;85;S26323/85 46
-5 035 00168;S26323/85;S26323/85 48;rrd;bermuda;SS26;2;225;85;S26323/85 48
-5 035 00169;S26323/85;S26323/85 50;rrd;bermuda;SS26;2;225;85;S26323/85 50
-5 035 00170;S26323/85;S26323/85 52;rrd;bermuda;SS26;1;225;85;S26323/85 52
-5 035 00171;S26323/85;S26323/85 54;rrd;bermuda;SS26;1;225;85;S26323/85 54
-5 035 00175;S26325/43;S26325/43 46;rrd;bermuda;SS26;1;215;43;S26325/43 46
-5 035 00177;S26325/43;S26325/43 50;rrd;bermuda;SS26;2;215;43;S26325/43 50
-5 035 00178;S26325/43;S26325/43 52;rrd;bermuda;SS26;1;215;43;S26325/43 52
-5 035 00179;S26325/43;S26325/43 54;rrd;bermuda;SS26;1;215;43;S26325/43 54
-5 035 00183;S26325/64;S26325/64 44;rrd;bermuda;SS26;1;215;64;S26325/64 44
-5 035 00184;S26325/64;S26325/64 46;rrd;bermuda;SS26;2;215;64;S26325/64 46
-5 035 00185;S26325/64;S26325/64 48;rrd;bermuda;SS26;2;215;64;S26325/64 48
-5 035 00186;S26325/64;S26325/64 50;rrd;bermuda;SS26;1;215;64;S26325/64 50
-5 035 00187;S26325/64;S26325/64 54;rrd;bermuda;SS26;1;215;64;S26325/64 54
-5 004 49580;S26051/20;S26051/20 48;rrd;veste;SS26;1;549;20;S26051/20 48
-5 004 49581;S26051/20;S26051/20 50;rrd;veste;SS26;1;549;20;S26051/20 50
-5 004 49582;S26051/20;S26051/20 52;rrd;veste;SS26;1;549;20;S26051/20 52
-5 004 49583;S26051/20;S26051/20 54;rrd;veste;SS26;1;549;20;S26051/20 54
-5 004 49599;S26056/13;S26056/13 50;rrd;veste;SS26;1;549;13;S26056/13 50
-5 004 49600;S26056/13;S26056/13 52;rrd;veste;SS26;1;549;13;S26056/13 52
-5 004 49601;S26056/13;S26056/13 54;rrd;veste;SS26;1;549;13;S26056/13 54
-5 004 49608;S26056/60;S26056/60 50;rrd;veste;SS26;1;549;60;S26056/60 50
-5 004 49609;S26056/60;S26056/60 52;rrd;veste;SS26;1;549;60;S26056/60 52
-5 004 49610;S26056/60;S26056/60 54;rrd;veste;SS26;1;549;60;S26056/60 54
-5 004 49516;S26017/61;S26017/61 46;rrd;coupe vent;SS26;1;455;61;S26017/61 46
-5 004 49518;S26017/61;S26017/61 50;rrd;coupe vent;SS26;1;455;61;S26017/61 50
-5 008 17437;S26450/10;S26450/10 M/L;rrd;casquette;SS26;1;100;10;S26450/10 M/L
-5 008 17436;S26450/10;S26450/10 S/M;rrd;casquette;SS26;1;100;10;S26450/10 S/M
-5 008 17454;S26450/27;S26450/27 S/M;rrd;casquette;SS26;1;100;27;S26450/27 S/M
-5 008 17445;S26450/60;S26450/60 M/L;rrd;casquette;SS26;3;100;60;S26450/60 M/L
-5 008 17453;S26450/60;S26450/60 S/M;rrd;casquette;SS26;1;100;60;S26450/60 S/M
-5 008 17462;S26450/85;S26450/85 M/L;rrd;casquette;SS26;3;100;85;S26450/85 M/L
-5 008 17461;S26450/85;S26450/85 S/M;rrd;casquette;SS26;1;100;85;S26450/85 S/M
-5 001 35868;S26271/V72;S26271/V72 46;rrd;chemise;SS26;1;185;V72;S26271/V72 46
-5 001 35869;S26271/V72;S26271/V72 48;rrd;chemise;SS26;1;185;V72;S26271/V72 48
-5 001 35871;S26271/V72;S26271/V72 50;rrd;chemise;SS26;1;185;V72;S26271/V72 50
-5 001 35872;S26271/V72;S26271/V72 52;rrd;chemise;SS26;1;185;V72;S26271/V72 52
-5 001 35872;S26271/V72;S26271/V72 54;rrd;chemise;SS26;1;185;V72;S26271/V72 54
-5 002 70114;S26300/10;S26300/10 54;rrd;pantalon;SS26;1;209;10;S26300/10 54
-5 002 70126;S26300/20;S26300/20 52;rrd;pantalon;SS26;2;209;20;S26300/20 52
-5 002 70127;S26300/20;S26300/20 54;rrd;pantalon;SS26;1;209;20;S26300/20 54
-5 002 70137;S26300/60;S26300/60 48;rrd;pantalon;SS26;2;209;60;S26300/60 48
-5 002 70150;S26315/20;S26315/20 48;rrd;pantalon;SS26;2;245;20;S26315/20 48
-5 002 70151;S26315/20;S26315/20 50;rrd;pantalon;SS26;1;245;20;S26315/20 50
-5 002 70153;S26315/20;S26315/20 54;rrd;pantalon;SS26;1;245;20;S26315/20 54
-5 002 70165;S26315/84M;S26315/84M 52;rrd;pantalon;SS26;1;245;84M;S26315/84M 52
-5 002 70166;S26315/84M;S26315/84M 54;rrd;pantalon;SS26;1;245;84M;S26315/84M 54
-5 002 70175;S26322/20;S26322/20 46;rrd;pantalon;SS26;1;245;20;S26322/20 46
-5 002 70176;S26322/20;S26322/20 48;rrd;pantalon;SS26;2;245;20;S26322/20 48
-5 002 70177;S26322/20;S26322/20 50;rrd;pantalon;SS26;1;245;20;S26322/20 50
-5 002 70178;S26322/20;S26322/20 52;rrd;pantalon;SS26;2;245;20;S26322/20 52
-5 002 70179;S26322/20;S26322/20 54;rrd;pantalon;SS26;1;245;20;S26322/20 54
-5 002 70180;S26322/20;S26322/20 56;rrd;pantalon;SS26;1;245;20;S26322/20 56
-5 002 70190;S26322/26;S26322/26 50;rrd;pantalon;SS26;1;245;26;S26322/26 50
-5 002 70191;S26322/26;S26322/26 52;rrd;pantalon;SS26;1;245;26;S26322/26 52
-5 002 70200;S26322/60;S26322/60 48;rrd;pantalon;SS26;2;245;60;S26322/60 48
-5 002 70203;S26322/60;S26322/60 50;rrd;pantalon;SS26;1;245;60;S26322/60 50
-5 002 70204;S26322/60;S26322/60 52;rrd;pantalon;SS26;1;245;60;S26322/60 52
-5 002 70205;S26322/60;S26322/60 54;rrd;pantalon;SS26;2;245;60;S26322/60 54
-5 002 70206;S26322/60;S26322/60 56;rrd;pantalon;SS26;1;245;60;S26322/60 56
-5 002 70207;S26322/60;S26322/60 58;rrd;pantalon;SS26;1;245;60;S26322/60 58
-5 002 70208;S26322/84;S26322/84 46;rrd;pantalon;SS26;1;245;84;S26322/84 46
-5 002 70213;S26322/84;S26322/84 48;rrd;pantalon;SS26;1;245;84;S26322/84 48
-5 002 70215;S26322/84;S26322/84 50;rrd;pantalon;SS26;2;245;84;S26322/84 50
-5 002 70216;S26322/84;S26322/84 52;rrd;pantalon;SS26;1;245;84;S26322/84 52
-5 002 70218;S26322/84;S26322/84 54;rrd;pantalon;SS26;1;245;84;S26322/84 54
-5 002 70228;S26322/85;S26322/85 48;rrd;pantalon;SS26;2;245;85;S26322/85 48
-5 002 70229;S26322/85;S26322/85 50;rrd;pantalon;SS26;3;245;85;S26322/85 50
-5 002 70230;S26322/85;S26322/85 52;rrd;pantalon;SS26;2;245;85;S26322/85 52
-5 002 70231;S26322/85;S26322/85 54;rrd;pantalon;SS26;1;245;85;S26322/85 54
-5 002 70232;S26322/85;S26322/85 56;rrd;pantalon;SS26;1;245;85;S26322/85 56
-5 002 70233;S26322/85;S26322/85 58;rrd;pantalon;SS26;1;245;85;S26322/85 58
-5 002 70633;S26335/13;S26335/13 50;rrd;pantalon;SS26;1;255;13;S26335/13 50
-5 002 70634;S26335/13;S26335/13 52;rrd;pantalon;SS26;1;255;13;S26335/13 52
-5 002 70646;S26335/60;S26335/60 50;rrd;pantalon;SS26;1;255;60;S26335/60 50
-5 002 70647;S26335/60;S26335/60 52;rrd;pantalon;SS26;1;255;60;S26335/60 52
+cod_article;name;reference;brand;category;collection;stock;price;color;sku;description;materials
+5 029 01862;Polo Manches Courtes;S26213/10 48;rrd;polo mc;SS26;2;165;Navy;S26213/10 48;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01863;Polo Manches Courtes;S26213/10 50;rrd;polo mc;SS26;1;165;Navy;S26213/10 50;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01864;Polo Manches Courtes;S26213/10 52;rrd;polo mc;SS26;1;165;Navy;S26213/10 52;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01865;Polo Manches Courtes;S26213/10 54;rrd;polo mc;SS26;1;165;Navy;S26213/10 54;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01867;Polo Manches Courtes;S26213/10 58;rrd;polo mc;SS26;1;165;Navy;S26213/10 58;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01872;Polo Manches Courtes;S26213/20 48;rrd;polo mc;SS26;1;165;Anthracite;S26213/20 48;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01873;Polo Manches Courtes;S26213/20 50;rrd;polo mc;SS26;1;165;Anthracite;S26213/20 50;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01875;Polo Manches Courtes;S26213/20 54;rrd;polo mc;SS26;1;165;Anthracite;S26213/20 54;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01877;Polo Manches Courtes;S26213/20 58;rrd;polo mc;SS26;2;165;Anthracite;S26213/20 58;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01882;Polo Manches Courtes;S26213/60 48;rrd;polo mc;SS26;1;165;Navy;S26213/60 48;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01883;Polo Manches Courtes;S26213/60 50;rrd;polo mc;SS26;2;165;Navy;S26213/60 50;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01887;Polo Manches Courtes;S26213/60 58;rrd;polo mc;SS26;1;165;Navy;S26213/60 58;Polo manches courtes en tissu technique stretch, avec poche poitrine à liseré orange contrasté.;80% Polyamide, 20% Elastane
+5 029 01892;Polo Technique;S26222/43 48;rrd;polo mc;SS26;3;165;Dusty Pink;S26222/43 48;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01893;Polo Technique;S26222/43 50;rrd;polo mc;SS26;2;165;Dusty Pink;S26222/43 50;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01894;Polo Technique;S26222/43 52;rrd;polo mc;SS26;1;165;Dusty Pink;S26222/43 52;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01895;Polo Technique;S26222/43 54;rrd;polo mc;SS26;1;165;Dusty Pink;S26222/43 54;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01897;Polo Technique;S26222/43 58;rrd;polo mc;SS26;1;165;Dusty Pink;S26222/43 58;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01902;Polo Technique;S26222/61 48;rrd;polo mc;SS26;2;165;Grey;S26222/61 48;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01903;Polo Technique;S26222/61 50;rrd;polo mc;SS26;1;165;Grey;S26222/61 50;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01905;Polo Technique;S26222/61 54;rrd;polo mc;SS26;1;165;Grey;S26222/61 54;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01907;Polo Technique;S26222/61 58;rrd;polo mc;SS26;1;165;Grey;S26222/61 58;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01912;Polo Technique;S26222/64 48;rrd;polo mc;SS26;2;165;Light Grey;S26222/64 48;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01913;Polo Technique;S26222/64 50;rrd;polo mc;SS26;1;165;Light Grey;S26222/64 50;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01914;Polo Technique;S26222/64 52;rrd;polo mc;SS26;1;165;Light Grey;S26222/64 52;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01916;Polo Technique;S26222/64 56;rrd;polo mc;SS26;1;165;Light Grey;S26222/64 56;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 029 01917;Polo Technique;S26222/64 58;rrd;polo mc;SS26;1;165;Light Grey;S26222/64 58;Polo technique en jersey stretch avec badge brodé sur la manche et détail orange signature.;Cotton piqué, elastane
+5 035 00137;Short Week End;S26321/20 50;rrd;bermuda;SS26;1;215;Petrol Blue;S26321/20 50;Short en tissu extralight ultra-léger, coupe moderne pour un style casual premium.;80% Polyamide, 20% Elastane
+5 035 00138;Short Week End;S26321/20 52;rrd;bermuda;SS26;1;215;Petrol Blue;S26321/20 52;Short en tissu extralight ultra-léger, coupe moderne pour un style casual premium.;80% Polyamide, 20% Elastane
+5 035 00152;Short Week End;S26321/84 48;rrd;bermuda;SS26;1;215;Khaki;S26321/84 48;Short en tissu extralight ultra-léger, coupe moderne pour un style casual premium.;80% Polyamide, 20% Elastane
+5 035 00153;Short Week End;S26321/84 50;rrd;bermuda;SS26;1;215;Khaki;S26321/84 50;Short en tissu extralight ultra-léger, coupe moderne pour un style casual premium.;80% Polyamide, 20% Elastane
+5 035 00154;Short Week End;S26321/84 52;rrd;bermuda;SS26;1;215;Khaki;S26321/84 52;Short en tissu extralight ultra-léger, coupe moderne pour un style casual premium.;80% Polyamide, 20% Elastane
+5 035 00160;Short Cargo;S26323/26 48;rrd;bermuda;SS26;1;225;Olive;S26323/26 48;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00161;Short Cargo;S26323/26 50;rrd;bermuda;SS26;1;225;Olive;S26323/26 50;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00162;Short Cargo;S26323/26 52;rrd;bermuda;SS26;1;225;Olive;S26323/26 52;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00167;Short Cargo;S26323/85 46;rrd;bermuda;SS26;1;225;Beige;S26323/85 46;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00168;Short Cargo;S26323/85 48;rrd;bermuda;SS26;2;225;Beige;S26323/85 48;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00169;Short Cargo;S26323/85 50;rrd;bermuda;SS26;2;225;Beige;S26323/85 50;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00170;Short Cargo;S26323/85 52;rrd;bermuda;SS26;1;225;Beige;S26323/85 52;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00171;Short Cargo;S26323/85 54;rrd;bermuda;SS26;1;225;Beige;S26323/85 54;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00175;Short Cargo;S26325/43 46;rrd;bermuda;SS26;1;215;Mauve;S26325/43 46;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00177;Short Cargo;S26325/43 50;rrd;bermuda;SS26;2;215;Mauve;S26325/43 50;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00178;Short Cargo;S26325/43 52;rrd;bermuda;SS26;1;215;Mauve;S26325/43 52;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00179;Short Cargo;S26325/43 54;rrd;bermuda;SS26;1;215;Mauve;S26325/43 54;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00183;Short Cargo;S26325/64 44;rrd;bermuda;SS26;1;215;Sky Blue;S26325/64 44;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00184;Short Cargo;S26325/64 46;rrd;bermuda;SS26;2;215;Sky Blue;S26325/64 46;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00185;Short Cargo;S26325/64 48;rrd;bermuda;SS26;2;215;Sky Blue;S26325/64 48;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00186;Short Cargo;S26325/64 50;rrd;bermuda;SS26;1;215;Sky Blue;S26325/64 50;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 035 00187;Short Cargo;S26325/64 54;rrd;bermuda;SS26;1;215;Sky Blue;S26325/64 54;Short cargo en tissu technique léger avec poches latérales plaquées.;80% Polyamide, 20% Elastane
+5 004 49580;Blazer;S26051/20 48;rrd;veste;SS26;1;549;Dark Green;S26051/20 48;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49581;Blazer;S26051/20 50;rrd;veste;SS26;1;549;Dark Green;S26051/20 50;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49582;Blazer;S26051/20 52;rrd;veste;SS26;1;549;Dark Green;S26051/20 52;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49583;Blazer;S26051/20 54;rrd;veste;SS26;1;549;Dark Green;S26051/20 54;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49599;Blazer;S26056/13 50;rrd;veste;SS26;1;549;Light Grey;S26056/13 50;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49600;Blazer;S26056/13 52;rrd;veste;SS26;1;549;Light Grey;S26056/13 52;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49601;Blazer;S26056/13 54;rrd;veste;SS26;1;549;Light Grey;S26056/13 54;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49608;Blazer;S26056/60 50;rrd;veste;SS26;1;549;Navy;S26056/60 50;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49609;Blazer;S26056/60 52;rrd;veste;SS26;1;549;Navy;S26056/60 52;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49610;Blazer;S26056/60 54;rrd;veste;SS26;1;549;Navy;S26056/60 54;Blazer technique un bouton en tissu stretch, avec poches plaquées et finitions sobres pour un style smart casual.;80% Polyamide, 20% Elastane
+5 004 49516;Blouson;S26017/61 46;rrd;coupe vent;SS26;1;455;Navy;S26017/61 46;Blouson léger en tissu technique stretch avec grandes poches plaquées bordées de noir et fermeture à boutons-pression.;80% Polyamide, 20% Elastane
+5 004 49518;Blouson;S26017/61 50;rrd;coupe vent;SS26;1;455;Navy;S26017/61 50;Blouson léger en tissu technique stretch avec grandes poches plaquées bordées de noir et fermeture à boutons-pression.;80% Polyamide, 20% Elastane
+5 008 17437;Casquette;S26450/10 M/L;rrd;casquette;SS26;1;100;Black;S26450/10 M/L;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17436;Casquette;S26450/10 S/M;rrd;casquette;SS26;1;100;Black;S26450/10 S/M;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17454;Casquette;S26450/27 S/M;rrd;casquette;SS26;1;100;Green;S26450/27 S/M;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17445;Casquette;S26450/60 M/L;rrd;casquette;SS26;3;100;Navy;S26450/60 M/L;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17453;Casquette;S26450/60 S/M;rrd;casquette;SS26;1;100;Navy;S26450/60 S/M;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17462;Casquette;S26450/85 M/L;rrd;casquette;SS26;3;100;White Sand;S26450/85 M/L;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 008 17461;Casquette;S26450/85 S/M;rrd;casquette;SS26;1;100;White Sand;S26450/85 S/M;Casquette en tissu Surflex stretch, logo micro-injection et réglable.;80% Polyamide, 20% Elastane
+5 001 35868;Chemise;S26271/V72 46;rrd;chemise;SS26;1;185;Light Blue Stripe;S26271/V72 46;Chemise à fines rayures bleu ciel et blanches, en tissu léger et respirant, coupe regular.;Cotton, elastane
+5 001 35869;Chemise;S26271/V72 48;rrd;chemise;SS26;1;185;Light Blue Stripe;S26271/V72 48;Chemise à fines rayures bleu ciel et blanches, en tissu léger et respirant, coupe regular.;Cotton, elastane
+5 001 35871;Chemise;S26271/V72 50;rrd;chemise;SS26;1;185;Light Blue Stripe;S26271/V72 50;Chemise à fines rayures bleu ciel et blanches, en tissu léger et respirant, coupe regular.;Cotton, elastane
+5 001 35872;Chemise;S26271/V72 52;rrd;chemise;SS26;1;185;Light Blue Stripe;S26271/V72 52;Chemise à fines rayures bleu ciel et blanches, en tissu léger et respirant, coupe regular.;Cotton, elastane
+5 001 35872;Chemise;S26271/V72 54;rrd;chemise;SS26;1;185;Light Blue Stripe;S26271/V72 54;Chemise à fines rayures bleu ciel et blanches, en tissu léger et respirant, coupe regular.;Cotton, elastane
+5 002 70114;Pantalon Surflex Chino;S26300/10 54;rrd;pantalon;SS26;1;209;Navy;S26300/10 54;Pantalon chino Surflex ultra-léger et stretch, coupe slim avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70126;Pantalon Surflex Chino;S26300/20 52;rrd;pantalon;SS26;2;209;Anthracite;S26300/20 52;Pantalon chino Surflex ultra-léger et stretch, coupe slim avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70127;Pantalon Surflex Chino;S26300/20 54;rrd;pantalon;SS26;1;209;Anthracite;S26300/20 54;Pantalon chino Surflex ultra-léger et stretch, coupe slim avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70137;Pantalon Surflex Chino;S26300/60 48;rrd;pantalon;SS26;2;209;Navy;S26300/60 48;Pantalon chino Surflex ultra-léger et stretch, coupe slim avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70150;Pantalon Terzilight Chino;S26315/20 48;rrd;pantalon;SS26;2;245;Dark Green;S26315/20 48;Pantalon Terzilight en tissu technique léger, coupe slim avec revers élégant au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70151;Pantalon Terzilight Chino;S26315/20 50;rrd;pantalon;SS26;1;245;Dark Green;S26315/20 50;Pantalon Terzilight en tissu technique léger, coupe slim avec revers élégant au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70153;Pantalon Terzilight Chino;S26315/20 54;rrd;pantalon;SS26;1;245;Dark Green;S26315/20 54;Pantalon Terzilight en tissu technique léger, coupe slim avec revers élégant au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70165;Pantalon Terzilight Chino;S26315/84M 52;rrd;pantalon;SS26;1;245;Khaki;S26315/84M 52;Pantalon Terzilight en tissu technique léger, coupe slim avec revers élégant au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70166;Pantalon Terzilight Chino;S26315/84M 54;rrd;pantalon;SS26;1;245;Khaki;S26315/84M 54;Pantalon Terzilight en tissu technique léger, coupe slim avec revers élégant au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70175;Pantalon Cargo;S26322/20 46;rrd;pantalon;SS26;1;245;Dark Grey;S26322/20 46;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70176;Pantalon Cargo;S26322/20 48;rrd;pantalon;SS26;2;245;Dark Grey;S26322/20 48;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70177;Pantalon Cargo;S26322/20 50;rrd;pantalon;SS26;1;245;Dark Grey;S26322/20 50;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70178;Pantalon Cargo;S26322/20 52;rrd;pantalon;SS26;2;245;Dark Grey;S26322/20 52;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70179;Pantalon Cargo;S26322/20 54;rrd;pantalon;SS26;1;245;Dark Grey;S26322/20 54;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70180;Pantalon Cargo;S26322/20 56;rrd;pantalon;SS26;1;245;Dark Grey;S26322/20 56;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70190;Pantalon Cargo;S26322/26 50;rrd;pantalon;SS26;1;245;Olive;S26322/26 50;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70191;Pantalon Cargo;S26322/26 52;rrd;pantalon;SS26;1;245;Olive;S26322/26 52;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70200;Pantalon Cargo;S26322/60 48;rrd;pantalon;SS26;2;245;Navy;S26322/60 48;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70203;Pantalon Cargo;S26322/60 50;rrd;pantalon;SS26;1;245;Navy;S26322/60 50;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70204;Pantalon Cargo;S26322/60 52;rrd;pantalon;SS26;1;245;Navy;S26322/60 52;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70205;Pantalon Cargo;S26322/60 54;rrd;pantalon;SS26;2;245;Navy;S26322/60 54;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70206;Pantalon Cargo;S26322/60 56;rrd;pantalon;SS26;1;245;Navy;S26322/60 56;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70207;Pantalon Cargo;S26322/60 58;rrd;pantalon;SS26;1;245;Navy;S26322/60 58;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70208;Pantalon Cargo;S26322/84 46;rrd;pantalon;SS26;1;245;Brown;S26322/84 46;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70213;Pantalon Cargo;S26322/84 48;rrd;pantalon;SS26;1;245;Brown;S26322/84 48;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70215;Pantalon Cargo;S26322/84 50;rrd;pantalon;SS26;2;245;Brown;S26322/84 50;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70216;Pantalon Cargo;S26322/84 52;rrd;pantalon;SS26;1;245;Brown;S26322/84 52;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70218;Pantalon Cargo;S26322/84 54;rrd;pantalon;SS26;1;245;Brown;S26322/84 54;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70228;Pantalon Cargo;S26322/85 48;rrd;pantalon;SS26;2;245;Beige;S26322/85 48;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70229;Pantalon Cargo;S26322/85 50;rrd;pantalon;SS26;3;245;Beige;S26322/85 50;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70230;Pantalon Cargo;S26322/85 52;rrd;pantalon;SS26;2;245;Beige;S26322/85 52;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70231;Pantalon Cargo;S26322/85 54;rrd;pantalon;SS26;1;245;Beige;S26322/85 54;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70232;Pantalon Cargo;S26322/85 56;rrd;pantalon;SS26;1;245;Beige;S26322/85 56;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70233;Pantalon Cargo;S26322/85 58;rrd;pantalon;SS26;1;245;Beige;S26322/85 58;Pantalon cargo en tissu technique performant avec poches latérales fonctionnelles.;80% Polyamide, 20% Elastane
+5 002 70633;Pantalon Slim;S26335/13 50;rrd;pantalon;SS26;1;255;Grey;S26335/13 50;Pantalon slim en tissu technique extensible, coupe ajustée avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70634;Pantalon Slim;S26335/13 52;rrd;pantalon;SS26;1;255;Grey;S26335/13 52;Pantalon slim en tissu technique extensible, coupe ajustée avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70646;Pantalon Slim;S26335/60 50;rrd;pantalon;SS26;1;255;Navy;S26335/60 50;Pantalon slim en tissu technique extensible, coupe ajustée avec revers au bas de jambe.;80% Polyamide, 20% Elastane
+5 002 70647;Pantalon Slim;S26335/60 52;rrd;pantalon;SS26;1;255;Navy;S26335/60 52;Pantalon slim en tissu technique extensible, coupe ajustée avec revers au bas de jambe.;80% Polyamide, 20% Elastane

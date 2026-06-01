@@ -79,12 +79,6 @@ export class Product {
   @Column({ type: 'text', nullable: true })
   materials: string | null; // Ex: "100% Cotton"
 
-  @Column({ type: 'text', nullable: true, name: 'care_instructions' })
-  careInstructions: string | null; // Ex: "Machine wash cold"
-
-  @Column({ type: 'varchar', length: 100, nullable: true, name: 'made_in' })
-  madeIn: string | null; // Ex: "France"
-
   /**
    * Size chart custom pour ce produit (override celui de la catégorie)
    * Si null, le produit utilise le size chart de sa catégorie

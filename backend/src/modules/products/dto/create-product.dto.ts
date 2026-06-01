@@ -42,14 +42,6 @@ export class CreateProductDto {
   @IsOptional()
   materials?: string;
 
-  @IsString()
-  @IsOptional()
-  careInstructions?: string;
-
-  @IsString()
-  @IsOptional()
-  madeIn?: string;
-
   // Size chart custom (override celui de la catégorie)
   @IsArray()
   @IsOptional()

@@ -70,8 +70,6 @@ export interface Product {
   shopId?: string | null;
   collectionId?: string | null;
   materials?: string | null;
-  careInstructions?: string | null;
-  madeIn?: string | null;
   customSizeChart?: Array<{
     size: string;
     chest?: number;

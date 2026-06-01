@@ -26,8 +26,6 @@ export interface CsvRow {
   sku: string;
   codArticle?: string;
   materials?: string;
-  careInstructions?: string;
-  madeIn?: string;
 }
 
 export interface RowValidation {
@@ -114,8 +112,6 @@ export class ReboulImportService {
       sku: sku || '',
       codArticle: get('cod_article') || get('codarticle') || get('cod article') || undefined,
       materials: get('materials') || undefined,
-      careInstructions: get('careinstructions') || undefined,
-      madeIn: get('madein') || undefined,
     };
   }
 
@@ -273,8 +269,6 @@ export class ReboulImportService {
         brandId: brand?.id ?? null,
         collectionId: cid,
         materials: first.materials || null,
-        careInstructions: first.careInstructions || null,
-        madeIn: first.madeIn || null,
       };
 
       const variants = sortedRows.map((r) => ({

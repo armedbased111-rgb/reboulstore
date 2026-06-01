@@ -7,5 +7,23 @@
     "subtitle": "",
     "buttonText": "Découvrir",
     "buttonLink": "/catalog/salomon"
+  },
+  {
+    "id": "slide_1780339626",
+    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780339628/homepage/hero/slide_1780339626.png",
+    "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780339629/homepage/hero/slide_1780339626_mobile.png",
+    "title": "Off-White™",
+    "subtitle": "Be Right Back",
+    "buttonText": "Shop now",
+    "buttonLink": "/catalog"
+  },
+  {
+    "id": "slide_1780351897",
+    "imageSrc": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780351898/homepage/hero/slide_1780351897.jpg",
+    "imageSrcMobile": "https://res.cloudinary.com/dxen69pdo/image/upload/v1780351899/homepage/hero/slide_1780351897_mobile.jpg",
+    "title": "Stone Island",
+    "subtitle": "SS26",
+    "buttonText": "Shop now",
+    "buttonLink": "/catalog"
   }
 ]

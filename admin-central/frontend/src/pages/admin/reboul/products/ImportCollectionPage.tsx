@@ -137,7 +137,7 @@ export default function ImportCollectionPage() {
             Fichier CSV (format complet)
           </h2>
           <p className="text-sm text-gray-600">
-            Colonnes : cod_article (1ʳᵉ colonne, schéma AS400), name, reference, description, price, brand, category, collection, color, size, stock, sku (optionnel : materials, careInstructions, madeIn). Une ligne = un variant.
+            Colonnes : cod_article (1ʳᵉ colonne, schéma AS400), name, reference, description, price, brand, category, collection, color, size, stock, sku (optionnel : materials). Une ligne = un variant.
           </p>
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">

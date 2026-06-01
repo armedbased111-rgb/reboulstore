@@ -13,8 +13,6 @@ export interface CsvRow {
   stock: string;
   sku: string;
   materials?: string;
-  careInstructions?: string;
-  madeIn?: string;
 }
 
 export interface RowValidation {

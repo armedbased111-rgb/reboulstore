@@ -2,6 +2,20 @@
  * Utilitaires pour la gestion des URLs d'images
  */
 
+const CLOUDINARY_BASE = 'res.cloudinary.com';
+
+/**
+ * Injecte les transformations Cloudinary dans une URL.
+ * f_auto → WebP/AVIF selon le navigateur
+ * q_auto → compression intelligente sans perte visible
+ * w_{width} → resize si spécifié
+ */
+export const cloudinaryUrl = (url: string, width?: number): string => {
+  if (!url.includes(CLOUDINARY_BASE)) return url;
+  const transforms = width ? `f_auto,q_auto,w_${width}` : 'f_auto,q_auto';
+  return url.replace('/image/upload/', `/image/upload/${transforms}/`);
+};
+
 /**
  * Base URL de l'API backend
  * Utilise la même logique que api.ts pour la cohérence
@@ -41,9 +55,9 @@ export const getImageUrl = (imageUrl: string | null | undefined): string | null 
     return null;
   }
 
-  // Si l'URL est déjà complète (http:// ou https://), la retourner telle quelle
+  // Si l'URL est déjà complète (http:// ou https://), optimiser si Cloudinary
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    return imageUrl;
+    return cloudinaryUrl(imageUrl, 1200);
   }
 
   // Si l'URL commence par /, c'est une URL relative au backend

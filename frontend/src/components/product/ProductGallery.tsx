@@ -1,5 +1,5 @@
 import type { Image } from '../../types';
-import { getImageUrl } from '../../utils/imageUtils';
+import { getImageUrl, cloudinaryUrl } from '../../utils/imageUtils';
 import { ProductCardFigureDecor } from '../decorative';
 
 interface ProductGalleryProps {
@@ -36,9 +36,11 @@ export const ProductGallery = ({ images, productName, imageDecorBase }: ProductG
           />
           <picture className="block w-full">
             <img
-              src={getImageUrl(image.url) || ''}
+              src={cloudinaryUrl(getImageUrl(image.url) || '', 900)}
               alt={image.alt || `${productName} - ${i + 1}`}
               loading={i === 0 ? 'eager' : 'lazy'}
+              fetchPriority={i === 0 ? 'high' : 'auto'}
+              decoding="async"
               className="w-full h-auto object-cover aspect-[3/4]"
             />
           </picture>

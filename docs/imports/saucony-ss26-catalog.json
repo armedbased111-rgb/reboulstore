@@ -1,0 +1,79 @@
+{
+  "brand": "saucony",
+  "collection": "SS26",
+  "category": "basket",
+  "products": [
+    {
+      "reference": "GUIDE7WHI/MUL",
+      "id": 347,
+      "style_code": "S70936-31",
+      "name": "Guide 7",
+      "color": "Blanc multicolore",
+      "description": "Baskets running ProGrid Guide 7 au coloris blanc multicolore. Tige en mesh respirant, empiècements synthétiques structurants et amorti ProGrid pour un confort à la foulée au style rétro-running.",
+      "materials": "Tige mesh, empiècements synthétiques, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9BEI/SIL",
+      "id": 348,
+      "style_code": "S70832-5",
+      "name": "Omni 9",
+      "color": "Beige",
+      "description": "Baskets ProGrid Omni 9 beige et argent. Silhouette running des années 2000 avec mesh respirant, empiècements métallisés et semelle ProGrid pour amorti et stabilité.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9/BLACK",
+      "id": 349,
+      "style_code": "S70897-3",
+      "name": "Omni 9",
+      "color": "Noir",
+      "description": "Baskets ProGrid Omni 9 tout noir. Revisite rétro d'un classique running avec tige mesh, overlays synthétiques et technologie ProGrid en semelle intermédiaire.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9/BLU/BRU",
+      "id": 350,
+      "style_code": "S70739-74",
+      "name": "Omni 9",
+      "color": "Bleu",
+      "description": "Baskets ProGrid Omni 9 bleu pinceau. Coloris contrasté sur base mesh avec empiècements synthétiques et amorti ProGrid, inspiration running vintage Saucony Originals.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9BLA/TOR",
+      "id": 351,
+      "style_code": "S70739-75",
+      "name": "Omni 9",
+      "color": "Noir",
+      "description": "Baskets ProGrid Omni 9 noir torte. Accents écaille sur une base noire, mesh technique et semelle ProGrid pour un look rétro-running affirmé.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9WHI/PUR",
+      "id": 352,
+      "style_code": "S70832-13",
+      "name": "Omni 9",
+      "color": "Blanc violet",
+      "description": "Baskets ProGrid Omni 9 blanc et violet. Tige mesh claire, détails colorés et semelle ProGrid pour le confort, dans l'esprit des runners Saucony des années 2000.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "OMNI9WHI/MUL",
+      "id": 353,
+      "style_code": "S70739-52",
+      "name": "Omni 9",
+      "color": "Blanc multicolore",
+      "description": "Baskets ProGrid Omni 9 blanc multicolore. Mesh respirant et empiècements synthétiques multiton sur une semelle ProGrid généreuse, style running rétro.",
+      "materials": "Tige mesh, empiècements synthétiques et cuir, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    },
+    {
+      "reference": "S70704-30",
+      "id": 459,
+      "style_code": "S70704-30",
+      "name": "ProGrid Triumph 4",
+      "color": "Bleu lapis",
+      "description": "Baskets ProGrid Triumph 4 coloris Mist Lapis. Mesh ouvert, empiècements cuir chromé, technologie Arch-lock et amorti ProGrid pour un confort maximal au look Y2K.",
+      "materials": "Tige mesh, empiècements cuir chromé et synthétique, semelle intermédiaire EVA ProGrid, semelle extérieure caoutchouc"
+    }
+  ]
+}

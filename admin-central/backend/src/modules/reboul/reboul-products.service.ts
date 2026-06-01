@@ -11,6 +11,7 @@ import { Variant } from './entities/variant.entity';
 import { Image } from './entities/image.entity';
 import { Brand } from './entities/brand.entity';
 import { Collection } from './entities/collection.entity';
+import { Shop } from './entities/shop.entity';
 
 export type ReboulVariantInput = {
   color: string;
@@ -42,6 +43,8 @@ export class ReboulProductsService {
     private brandRepository: Repository<Brand>,
     @InjectRepository(Collection, 'reboul')
     private collectionRepository: Repository<Collection>,
+    @InjectRepository(Shop, 'reboul')
+    private shopRepository: Repository<Shop>,
   ) {}
 
   /**
@@ -164,9 +167,16 @@ export class ReboulProductsService {
       }
     }
 
+    let shopId = productData.shopId;
+    if (!shopId) {
+      const defaultShop = await this.shopRepository.findOne({ where: { slug: 'reboul' } });
+      if (defaultShop) shopId = defaultShop.id;
+    }
+
     const product = this.productRepository.create({
       ...productData,
       collectionId,
+      shopId,
     });
     return this.productRepository.save(product);
   }
@@ -329,6 +339,14 @@ export class ReboulProductsService {
     if (existing) {
       let variantsCreated = 0;
       let variantsUpdated = 0;
+
+      if (!existing.shopId) {
+        const defaultShop = await this.shopRepository.findOne({ where: { slug: 'reboul' } });
+        if (defaultShop) {
+          existing.shopId = defaultShop.id;
+          await this.productRepository.save(existing);
+        }
+      }
 
       for (const v of variants) {
         const existingVariant = await this.variantRepository.findOne({

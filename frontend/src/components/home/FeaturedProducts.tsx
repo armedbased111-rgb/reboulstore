@@ -55,16 +55,16 @@ const ProductImage = ({
  * Props du composant FeaturedProducts
  */
 interface FeaturedProductsProps {
-  /** Titre de la section (ex: "Winter Sale", "New Arrivals") */
   title: string;
-  /** Lien "voir tout" affiché comme → à droite du titre (optionnel) */
   viewAllLink?: string;
-  /** Liste des produits à afficher (optionnel si categorySlug est fourni) */
   products?: Product[];
-  /** Slug de la catégorie pour récupérer automatiquement les produits (optionnel) */
   categorySlug?: string;
-  /** Nombre limite de produits à afficher (par défaut: 10) */
   limit?: number;
+  /** Image de fond pour un mini-hero au-dessus du carousel */
+  heroBg?: string;
+  heroBgMobile?: string;
+  /** Tag affiché en haut à gauche du mini-hero (ex: "SS26") */
+  brandTag?: string;
 }
 
 /**
@@ -86,7 +86,10 @@ export const FeaturedProducts = ({
   viewAllLink,
   products: productsProp,
   categorySlug,
-  limit = 10
+  limit = 10,
+  heroBg,
+  heroBgMobile,
+  brandTag,
 }: FeaturedProductsProps) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const prevButtonRef = useRef<HTMLButtonElement>(null);
@@ -238,6 +241,48 @@ export const FeaturedProducts = ({
 
   return (
     <section className="m-[2px] last:mb-0">
+      {/* Mini-hero optionnel */}
+      {heroBg && (
+        <div className="relative w-full h-[220px] md:h-[280px] overflow-hidden">
+          {/* Image de fond — mobile ou desktop */}
+          <img
+            src={heroBgMobile && typeof window !== 'undefined' && window.innerWidth < 768 ? heroBgMobile : heroBg}
+            alt={title}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Gradient bas */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          {/* Contenu */}
+          <div className="absolute inset-0 flex flex-col justify-between p-4 md:p-6 z-10">
+            {/* Tag haut gauche */}
+            {brandTag && (
+              <span className="self-start font-mono text-[9px] uppercase tracking-[0.22em] text-white/60 border border-white/20 px-2 py-0.5">
+                {brandTag}
+              </span>
+            )}
+            {/* Titre + nav bas */}
+            <div className="flex items-end justify-between gap-4">
+              {viewAllLink ? (
+                <Link to={viewAllLink} className="hover:opacity-70 transition-opacity">
+                  <h2 className="text-[26px] md:text-[36px] font-normal leading-none text-white uppercase">{title}</h2>
+                </Link>
+              ) : (
+                <h2 className="text-[26px] md:text-[36px] font-normal leading-none text-white uppercase">{title}</h2>
+              )}
+              <div className="flex shrink-0 gap-3 pb-1">
+                <button ref={prevButtonRef} onClick={slidePrev} className="disabled:opacity-0 cursor-pointer transition-opacity" aria-label="Précédent">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" className="fill-white"><path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" /></svg>
+                </button>
+                <button ref={nextButtonRef} onClick={slideNext} className="rotate-180 disabled:opacity-0 cursor-pointer transition-opacity" aria-label="Suivant">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" className="fill-white"><path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative w-full p-[2px]">
         <TechnicalDecorFrame
           datum={HOME_FEATURED_DECOR.frameDatum}
@@ -246,44 +291,31 @@ export const FeaturedProducts = ({
           omitCorners={['tr', 'bl']}
         />
         <div className="relative z-[3] pb-4">
-          {/* Header — titre + fil HUD + nav */}
-          <div className="mb-[16px] flex items-center justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              {viewAllLink ? (
-                <Link to={viewAllLink} className="block hover:opacity-60 transition-opacity">
+          {/* Header classique — seulement si pas de mini-hero */}
+          {!heroBg && (
+            <div className="mb-[16px] flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                {viewAllLink ? (
+                  <Link to={viewAllLink} className="block hover:opacity-60 transition-opacity">
+                    <h2 className="text-[28px] font-normal leading-none">{title}</h2>
+                  </Link>
+                ) : (
                   <h2 className="text-[28px] font-normal leading-none">{title}</h2>
-                </Link>
-              ) : (
-                <h2 className="text-[28px] font-normal leading-none">{title}</h2>
-              )}
-              <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
-                {HOME_FEATURED_DECOR.hudLine}
-              </p>
+                )}
+                <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.22em] text-black/25 sm:text-[9px]">
+                  {HOME_FEATURED_DECOR.hudLine}
+                </p>
+              </div>
+              <div className="mr-3 flex shrink-0 gap-2">
+                <button ref={prevButtonRef} onClick={slidePrev} className="disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed" aria-label="Produits précédents">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current"><path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" /></svg>
+                </button>
+                <button ref={nextButtonRef} onClick={slideNext} className="rotate-180 disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed" aria-label="Produits suivants">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current"><path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" /></svg>
+                </button>
+              </div>
             </div>
-
-            <div className="mr-3 flex shrink-0 gap-2">
-              <button
-                ref={prevButtonRef}
-                onClick={slidePrev}
-                className="disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed"
-                aria-label="Produits précédents"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current">
-                  <path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" />
-                </svg>
-              </button>
-              <button
-                ref={nextButtonRef}
-                onClick={slideNext}
-                className="rotate-180 disabled:opacity-0 cursor-pointer transition-opacity disabled:cursor-not-allowed"
-                aria-label="Produits suivants"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" xmlSpace="preserve" className="fill-current">
-                  <path d="M14 5.93H2.2L7.36.81 6.55 0 .81 5.69 0 6.5l.81.81L6.55 13l.81-.81L2.2 7.07H14z" />
-                </svg>
-              </button>
-            </div>
-          </div>
+          )}
 
           <Swiper
             onSwiper={(swiper) => {

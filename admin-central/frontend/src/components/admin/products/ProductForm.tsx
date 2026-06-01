@@ -38,8 +38,6 @@ export default function ProductForm({
     brandId: initialData?.brandId || '',
     collectionId: initialData?.collectionId || '',
     materials: initialData?.materials || '',
-    careInstructions: initialData?.careInstructions || '',
-    madeIn: initialData?.madeIn || '',
   });
   const [sizeChartItems, setSizeChartItems] = useState<Array<{
     size: string;
@@ -102,8 +100,6 @@ export default function ProductForm({
         brandId: initialData.brandId || '',
         collectionId: initialData.collectionId || '',
         materials: initialData.materials || '',
-        careInstructions: initialData.careInstructions || '',
-        madeIn: initialData.madeIn || '',
       });
       setSizeChartItems(initialData.customSizeChart || []);
       setProductImages(
@@ -194,8 +190,6 @@ export default function ProductForm({
         price: Number(formData.price),
         customSizeChart: sizeChartItems.length > 0 ? sizeChartItems : undefined,
         materials: formData.materials || undefined,
-        careInstructions: formData.careInstructions || undefined,
-        madeIn: formData.madeIn || undefined,
         // Inclure les images et variants pour la mise à jour complète
         images: productImages.map((img) => ({
           id: img.id || undefined, // Ne pas envoyer id si undefined
@@ -378,37 +372,6 @@ export default function ProductForm({
           placeholder="Ex: 100% Cotton"
         />
         <p className="mt-1 text-xs text-gray-500">Ex: 100% Cotton, 50% Polyester 50% Cotton</p>
-      </div>
-
-      {/* Instructions d'entretien */}
-      <div>
-        <label htmlFor="careInstructions" className="block text-sm font-medium text-gray-700">
-          Instructions d'entretien
-        </label>
-        <textarea
-          id="careInstructions"
-          rows={3}
-          value={formData.careInstructions}
-          onChange={(e) => handleChange('careInstructions', e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-          placeholder="Ex: Machine wash cold, Do not bleach, Tumble dry low"
-        />
-        <p className="mt-1 text-xs text-gray-500">Instructions de lavage et d'entretien</p>
-      </div>
-
-      {/* Pays de fabrication */}
-      <div>
-        <label htmlFor="madeIn" className="block text-sm font-medium text-gray-700">
-          Pays de fabrication
-        </label>
-        <input
-          type="text"
-          id="madeIn"
-          value={formData.madeIn}
-          onChange={(e) => handleChange('madeIn', e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-          placeholder="Ex: France, Italy, Portugal"
-        />
       </div>
 
       {/* Size Chart personnalisé */}
