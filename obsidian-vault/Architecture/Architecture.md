@@ -40,7 +40,8 @@ Liens : [[REBOUL]]
 
 | Fichier | Contenu |
 |---------|---------|
-| [[Architecture/pipeline-images]] | Pipeline complet : photos → IA → couleur → upload Cloudinary |
+| [[Architecture/pipeline-images]] | Pipeline produit : photos → IA → couleur → upload Cloudinary |
+| [[Architecture/workflow-pub-elevenlabs]] | **Pipeline pub/campagne** : GPT Image 2 → Kontext Pro → Flux 2 → PS · prompts validés · formats · templates Off-White + Stone Island |
 
 ## Sécurité
 
