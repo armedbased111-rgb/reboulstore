@@ -52,6 +52,17 @@ Tout ce qui est pipeline IA, tri, upload Cloudinary.
 
 Revue pages, corrections UI, responsive, copywriting.
 
+### Home — améliorations 01/06/2026
+- [x] Hero carousel — 3 slides (Salomon · Off-White™ · Stone Island) desktop + mobile ✅ 01/06
+- [x] Hero carousel — algo séquentiel (1→2→3→1) remplace random ✅ 01/06
+- [x] Images — `cloudinaryUrl()` : f_auto, q_auto, w_X sur tout le site ✅ 01/06
+- [x] Hero — `fetchpriority="high"` + `decoding="async"` + sizing desktop/mobile ✅ 01/06
+- [x] FeaturedProducts — mini-hero optionnel (heroBg, brandTag) ✅ 01/06
+- [x] Stone Island Best Sellers — mini-hero SS26 connecté ✅ 01/06
+- [ ] Activer billing Google Cloud pour débloquer Gemini batch 1 + batch 3
+- [ ] Tester hero carousel sur mobile réel
+
+### Revue pages
 - [ ] [[Frontend/Home]] + popup newsletter — revue desktop + mobile
 - [ ] [[Frontend/Catalog]] — revue desktop + mobile
 - [ ] [[Frontend/Product]] — revue desktop + mobile

@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-05-27
+maj: 2026-06-02
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -27,7 +27,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Backend NestJS | Stable et complet — 18 modules |
 | Admin Centrale | Fonctionnelle — import, gestion quotidienne |
 | Infrastructure prod | ✅ Stable — deploy OK, monitoring UptimeRobot actif (11/05/2026) |
-| Frontend | Finalisation page par page en cours |
+| Frontend | Hero 3 slides ✅ · images optimisées Cloudinary ✅ · mini-hero FeaturedProducts ✅ (01/06) |
 | Collections | Hologram ✅ uploadé · Bisous ✅ uploadé (24/25) · Stone Island / Arte / Autry en cours |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
 | AS400 / SFTP | **Sortant ✅** · **Fiche expert envoyée à Jacques ✅ 27/05** · Phase 2 `entrant/` en attente réponse Jacques → [[Securite/as400]] |
@@ -82,7 +82,7 @@ Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
 
 ## Dernière session
 
-[[Sessions/archive/2026-05-27-bisous-ispublished-logos]] · [[Sessions/archive/2026-05-27-pipeline-as400-hologram]] · [[Sessions/Sessions]]
+[[Sessions/archive/2026-06-01-hero-slides-image-optim]] · [[Sessions/archive/2026-06-01-rrd-birkenstock-pipeline]] · [[Sessions/Sessions]]
 
 ---
 
