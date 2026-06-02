@@ -94,7 +94,7 @@ export const HeroSectionImage = ({
   }, [nextSlide, visibleSlides.length, autoplayInterval]);
 
   return (
-    <section className={`relative w-full overflow-hidden ${isMobile && slide.imageSrcMobile ? 'aspect-[9/16]' : 'h-[60vh] md:h-[80vh]'}`}>
+    <section className={`relative w-full overflow-hidden ${isMobile && slide.imageSrcMobile ? 'aspect-[3/5]' : 'h-[35vh] md:h-[45vh]'}`}>
       <div
         className="absolute inset-0 transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}
