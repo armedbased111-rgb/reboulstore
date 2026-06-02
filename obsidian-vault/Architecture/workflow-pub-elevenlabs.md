@@ -138,13 +138,15 @@ do not modify anything else, make it beautiful
 
 ## Formats de sortie
 
-| Destination | Dimensions | Format export |
-|-------------|-----------|---------------|
-| Hero desktop | **1920 × 1080** minimum, **2560 × 1440** idéal | JPG 90% ou PNG |
-| Hero mobile | **750 × 1334** (iPhone standard) | JPG 90% ou PNG |
-| Mini-hero desktop | **1920 × 560** | JPG 90% |
-| Mini-hero mobile | **828 × 620** | JPG 90% |
-| Social / carré | **1080 × 1080** | JPG 90% |
+| Destination | Dimensions | Ratio | Format export |
+|-------------|-----------|-------|---------------|
+| Hero desktop | **1920 × 480 px** | **4:1** | JPG 90% ou PNG |
+| Hero mobile | **828 × 1035 px** | **4:5** | JPG 90% ou PNG |
+| Mini-hero desktop | **1920 × 480 px** | **4:1** | JPG 90% ou PNG |
+| Mini-hero mobile | identique desktop | **4:1** | JPG 90% ou PNG |
+| Social / carré | **1080 × 1080** | 1:1 | JPG 90% |
+
+> Hero principal et mini-hero partagent le même ratio 4:1 desktop — une seule image suffit pour les deux si la composition le permet.
 
 **Avec texte/logo intégré dans l'image** → PNG-24
 **Photo pure sans texte** → JPG 85-90% (Cloudinary compressera en WebP automatiquement)
