@@ -243,13 +243,13 @@ export const FeaturedProducts = ({
     <section className="m-[2px] last:mb-0">
       {/* Mini-hero optionnel */}
       {heroBg && (
-        <div className="relative w-full h-[220px] md:h-[280px] overflow-hidden">
+        <div className="relative w-full aspect-[4/1] overflow-hidden">
           {/* Image de fond — mobile ou desktop */}
           <img
             src={heroBgMobile && typeof window !== 'undefined' && window.innerWidth < 768 ? heroBgMobile : heroBg}
             alt={title}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
           {/* Gradient bas */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
