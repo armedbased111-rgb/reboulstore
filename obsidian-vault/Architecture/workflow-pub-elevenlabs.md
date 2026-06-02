@@ -147,6 +147,8 @@ do not modify anything else, make it beautiful
 
 > Hero principal et mini-hero partagent le même ratio 4:1 desktop — une seule image suffit pour les deux si la composition le permet.
 
+> ⚠️ **Règle composition mini-hero** : le badge / élément clé doit être dans la zone centrale-droite de l'image dès la génération. Si l'image est générée en 3:1, `object-right` ne fonctionne pas (l'image remplit déjà la largeur). Générer directement en **4:1** ou **21:9** dans ElevenLabs pour le mini-hero.
+
 **Avec texte/logo intégré dans l'image** → PNG-24
 **Photo pure sans texte** → JPG 85-90% (Cloudinary compressera en WebP automatiquement)
 
