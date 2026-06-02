@@ -142,8 +142,7 @@ do not modify anything else, make it beautiful
 |-------------|-----------|-------|---------------|
 | Hero desktop | **1920 × 480 px** | **4:1** | JPG 90% ou PNG |
 | Hero mobile | **828 × 1035 px** | **4:5** | JPG 90% ou PNG |
-| Mini-hero desktop | **1920 × 480 px** | **4:1** | JPG 90% ou PNG |
-| Mini-hero mobile | identique desktop | **4:1** | JPG 90% ou PNG |
+| Mini-hero | **1920 × 480 px** | **4:1** | JPG 90% ou PNG — même image desktop + mobile |
 | Social / carré | **1080 × 1080** | 1:1 | JPG 90% |
 
 > Hero principal et mini-hero partagent le même ratio 4:1 desktop — une seule image suffit pour les deux si la composition le permet.
