@@ -15,22 +15,52 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CLI_PATH = PROJECT_ROOT / "cli"
 
 BATCH2_PROMPT = (
-    "Replace the background with pure white RGB(243, 243, 243) — hex #F3F3F3. "
-    "Do not modify the product in any way — preserve everything exactly as-is: "
-    "fabric texture, colors, stitching, buttons, shadows, lighting, all details. "
-    "Only the background changes."
+    "IMAGE 1 is a color swatch — this is the exact background color to use. "
+    "IMAGE 2 is the product. Replace the background of IMAGE 2 with the exact solid color from IMAGE 1. "
+    "Keep the product completely unchanged: same position, same size, same colors, same details. "
+    "Output only the modified image."
 )
 
 IMAGE_NAMES = ["1_face", "2_back", "4_top"]
 
 
-def _call_gemini_batch2(api_key: str, image_path: Path) -> bytes | None:
-    import sys
+def _make_f3f3f3_swatch_b64() -> tuple:
+    """Génère un carré 200x200 rempli exactement #F3F3F3, retourne (b64, mime)."""
+    import io
+    from PIL import Image as _PIL
+    swatch = _PIL.new("RGB", (200, 200), (243, 243, 243))
+    buf = io.BytesIO()
+    swatch.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode(), "image/png"
+
+
+def _call_gemini_batch2(api_key: str, image_path: Path) -> "Optional[bytes]":
+    import sys, requests
     if str(CLI_PATH) not in sys.path:
         sys.path.insert(0, str(CLI_PATH))
-    from commands.images_core import call_gemini, encode_image
+    from commands.images_core import encode_image, GEMINI_MODEL, GEMINI_BASE, load_env
+    load_env()
+    api_key_used = api_key
     img_b64, mime = encode_image(image_path)
-    return call_gemini(api_key, img_b64, mime, BATCH2_PROMPT, use_flash=True)
+    swatch_b64, swatch_mime = _make_f3f3f3_swatch_b64()
+    # Swatch en premier → Gemini lit IMAGE 1 = couleur de référence, IMAGE 2 = produit
+    parts = [
+        {"text": BATCH2_PROMPT},
+        {"inline_data": {"mime_type": swatch_mime, "data": swatch_b64}},
+        {"inline_data": {"mime_type": mime, "data": img_b64}},
+    ]
+    body = {
+        "contents": [{"parts": parts}],
+        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"], "temperature": 0},
+    }
+    url = f"{GEMINI_BASE}/{GEMINI_MODEL}:generateContent"
+    resp = requests.post(url, headers={"x-goog-api-key": api_key_used, "Content-Type": "application/json"}, json=body, timeout=120)
+    resp.raise_for_status()
+    for part in resp.json().get("candidates", [{}])[0].get("content", {}).get("parts", []):
+        if "inlineData" in part:
+            return base64.b64decode(part["inlineData"]["data"])
+    return None
+
 
 
 def _get_api_key() -> str:

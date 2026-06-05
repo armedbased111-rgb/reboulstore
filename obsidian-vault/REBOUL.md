@@ -27,7 +27,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Backend NestJS | Stable et complet — 18 modules |
 | Admin Centrale | Fonctionnelle — import, gestion quotidienne |
 | Infrastructure prod | ✅ Stable — deploy OK, monitoring UptimeRobot actif (11/05/2026) |
-| Frontend | Hero 3 slides ✅ · images optimisées Cloudinary ✅ · mini-hero FeaturedProducts ✅ (01/06) |
+| Frontend | Hero slide 1 = MM6 × Salomon ✅ (05/06) · `h-[57vh]/h-[47vh]` · mini-hero `h-[25vh]/h-[30vh]` ✅ |
 | Collections | Hologram ✅ uploadé · Bisous ✅ uploadé (24/25) · Stone Island / Arte / Autry en cours |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
 | AS400 / SFTP | **Sortant ✅** · **Fiche expert envoyée à Jacques ✅ 27/05** · Phase 2 `entrant/` en attente réponse Jacques → [[Securite/as400]] |

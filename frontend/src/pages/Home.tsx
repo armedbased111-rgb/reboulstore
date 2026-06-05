@@ -15,10 +15,10 @@ interface HeroSlide {
 const FALLBACK_SLIDES: HeroSlide[] = [
   {
     id: 'slide_1780012531',
-    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780012534/homepage/hero/slide_1780012531.png',
-    imageSrcMobile: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780013177/homepage/hero/slide_1780012531_mobile.png',
-    title: 'Salomon SS26',
-    subtitle: '',
+    imageSrc: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780661871/homepage/hero/slide_1780012531.png',
+    imageSrcMobile: 'https://res.cloudinary.com/dxen69pdo/image/upload/v1780663627/homepage/hero/slide_1780012531_mobile.png',
+    title: 'MM6 × Salomon',
+    subtitle: 'Collaboration SS26',
     buttonText: 'Découvrir',
     buttonLink: '/catalog/salomon',
   },

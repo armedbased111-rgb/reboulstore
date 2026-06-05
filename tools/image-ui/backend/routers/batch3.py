@@ -35,7 +35,7 @@ def _batch3_prompt(image_path: Path, product_type: str) -> str:
     return BATCH3_PROMPT_GARMENT
 
 
-def _call_gemini_batch3(api_key: str, image_path: Path, product_type: str = "garment") -> bytes | None:
+def _call_gemini_batch3(api_key: str, image_path: Path, product_type: str = "garment") -> "Optional[bytes]":
     import sys
     if str(CLI_PATH) not in sys.path:
         sys.path.insert(0, str(CLI_PATH))

@@ -67,7 +67,7 @@ async def run_upload_ref(brand: str, ref: str, request: Request):
         raise HTTPException(404, f"Dossier ref introuvable : {ref}")
 
     # ref in DB uses "/" not "-" or ":"
-    ref_db = ref.replace(":", "/")
+    ref_db = ref.replace(":", "/").replace("-", "/")
 
     async def event_gen():
         try:
@@ -144,7 +144,7 @@ async def wipe_and_reupload_brand(brand: str, request: Request):
                 if await request.is_disconnected():
                     break
                 ref = ref_info["name"]
-                ref_db = ref.replace(":", "/")
+                ref_db = ref.replace(":", "/").replace("-", "/")
                 ref_dir = _resolve_output_folder(output_dir, ref)
                 yield f"data: {json.dumps({'type': 'upload_start', 'ref': ref, 'index': i + 1, 'total': len(to_upload)})}\n\n"
 

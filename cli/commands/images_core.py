@@ -122,9 +122,14 @@ ADJUST_SYSTEM = (
     "DIMENSIONS: Output image must have the EXACT same width and height in pixels as the input image. Do not crop, resize, zoom in or zoom out. The product must occupy the exact same position and scale in the frame as in the input. "
     "Output only the modified image, no text."
 )
+ADJUST_SYSTEM_SHOE_BGREMOVE = (
+    "You are a product photo editor for e-commerce. {prompt} "
+    "DIMENSIONS: Output image must have the EXACT same width and height in pixels as the input image. "
+    "Output only the modified image, no text."
+)
 
-GEMINI_MODEL = "gemini-2.5-flash-image"
-GEMINI_REF_MODEL = "gemini-3-pro-image-preview"
+GEMINI_MODEL = "gemini-3.1-flash-image"
+GEMINI_REF_MODEL = "gemini-3-pro-image"
 GEMINI_VISION_MODEL = "gemini-2.5-flash"
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
@@ -318,6 +323,7 @@ def call_gemini(
     use_flash_model: bool = False,
     bad_example_b64: Optional[str] = None,
     bad_example_mime: Optional[str] = None,
+    temperature: Optional[float] = None,
 ) -> Optional[bytes]:
     """Appel API Gemini image generation. Retourne les bytes de l'image ou None."""
     if use_flash and ref_b64 and ref_mime and not color_ref_b64 and not model_ref_b64:
@@ -345,7 +351,9 @@ def call_gemini(
     )
     url = f"{GEMINI_BASE}/{model}:generateContent"
     gen_config: dict = {"responseModalities": ["TEXT", "IMAGE"]}
-    if seed is not None:
+    if temperature is not None:
+        gen_config["temperature"] = temperature
+    elif seed is not None:
         gen_config["seed"] = seed
         gen_config["temperature"] = 1.0 if use_variation else 0.3
     elif use_variation:
@@ -541,13 +549,13 @@ def run_generate_one(
         if name == "1_face_bgremove":
             log("1_face (nettoyage fond Gemini)…")
             face_adj_b64, face_adj_mime = encode_image(face_path)
-            face_bg_prompt = ADJUST_SYSTEM.format(
+            face_bg_prompt = ADJUST_SYSTEM_SHOE_BGREMOVE.format(
                 prompt=(
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
-                    "Keep the lateral side profile view exactly as-is. Equal margins on all sides. "
-                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
-                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                    "Place the shoe on a pure white background. "
+                    "Lateral side profile view: sole facing down, shoe perfectly centered with equal margins on all sides. "
+                    "Apply soft even studio lighting. Add only a very subtle soft shadow directly under the sole — no harsh shadows. "
+                    "Preserve ALL shoe details pixel-perfectly: tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
                 )
             )
             num_variants = flash_attempts if use_flash else 1
@@ -558,6 +566,7 @@ def run_generate_one(
                 try:
                     out_bytes = call_gemini(
                         api_key, face_adj_b64, face_adj_mime, face_bg_prompt, use_flash=use_flash,
+                        temperature=0,
                     )
                     if out_bytes:
                         suffix = f"_{t + 1}" if t > 0 else ""
@@ -584,13 +593,13 @@ def run_generate_one(
         if name == "4_top_bgremove":
             log("4_top (nettoyage fond Gemini)…")
             top_b64, top_mime = encode_image(top_source_path)
-            bg_prompt = ADJUST_SYSTEM.format(
+            bg_prompt = ADJUST_SYSTEM_SHOE_BGREMOVE.format(
                 prompt=(
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. "
-                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
-                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                    "Place the shoe on a pure white background. "
+                    "Top-down overhead view: shoe perfectly centered with equal margins on all sides. "
+                    "Apply soft even studio lighting. Add only a very subtle soft shadow directly under the sole — no harsh shadows. "
+                    "Preserve ALL shoe details pixel-perfectly: tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
                 )
             )
             num_variants = flash_attempts if use_flash else 1
@@ -601,6 +610,7 @@ def run_generate_one(
                 try:
                     out_bytes = call_gemini(
                         api_key, top_b64, top_mime, bg_prompt, use_flash=use_flash,
+                        temperature=0,
                     )
                     if out_bytes:
                         suffix = f"_{t + 1}" if t > 0 else ""

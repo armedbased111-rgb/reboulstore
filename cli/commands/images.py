@@ -116,8 +116,8 @@ PROMPT_TOP_SHOE = (
     + NO_INVENTION
 )
 
-GEMINI_MODEL = "gemini-2.5-flash-image"
-GEMINI_REF_MODEL = "gemini-3-pro-image-preview"
+GEMINI_MODEL = "gemini-3.1-flash-image"
+GEMINI_REF_MODEL = "gemini-3-pro-image"
 GEMINI_VISION_MODEL = "gemini-2.5-flash"  # Vision + texte (vérif même produit / couleur) — 2.5 plus fiable que 2.0
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
@@ -500,11 +500,12 @@ def _run_generate_one(
             top_b64, top_mime = _encode_image(_top_source)
             _bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
+                    "Clean up this shoe product photo for e-commerce. "
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. "
-                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
-                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                    "Place the shoe on a pure white background. "
+                    "Lateral side profile view: sole facing down, shoe perfectly centered with equal margins on all sides. "
+                    "Apply soft even studio lighting. Add only a very subtle soft shadow directly under the sole — no harsh shadows. "
+                    "Preserve ALL shoe details pixel-perfectly: tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
                 )
             )
             num_variants = flash_attempts if use_flash else 1
@@ -753,11 +754,12 @@ def generate(input_dir, refs_dir, face_path, back_path, use_flash, flash_attempt
             top_b64, top_mime = _encode_image(_top_source)
             _bg_prompt = ADJUST_SYSTEM.format(
                 prompt=(
+                    "Clean up this shoe product photo for e-commerce. "
                     "Remove all background (paper, tissue paper, table, floor, any surface). "
-                    "Center the shoe perfectly on a plain solid #808080 medium grey background. "
-                    "Equal margins on all sides. "
-                    "DO NOT modify the shoe in any way — preserve ALL details pixel-perfectly: "
-                    "tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
+                    "Place the shoe on a pure white background. "
+                    "Top-down overhead view: shoe perfectly centered with equal margins on all sides. "
+                    "Apply soft even studio lighting. Add only a very subtle soft shadow directly under the sole — no harsh shadows. "
+                    "Preserve ALL shoe details pixel-perfectly: tongue label, midsole text, logo, colors, materials, stitching, sole pattern."
                 )
             )
             num_variants = flash_attempts if use_flash else 1

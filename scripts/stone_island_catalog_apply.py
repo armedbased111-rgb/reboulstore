@@ -11,7 +11,7 @@ import psycopg2
 ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = ROOT / "docs/imports/import-stone-island-ss26.csv"
 
-# Noms courts type boutique (sans marque, sans « with … ») — détail dans description FR.
+# Noms courts type boutique + préfixe marque affiché (ex. « Stone Island Cargo Shorts »).
 STYLES = {
     "11000027": {
         "name": "Oxford Shirt",
@@ -255,21 +255,22 @@ def main():
             print(f"MISSING STYLE: {ref} ({style})", file=sys.stderr)
             continue
         en_color = color_en(fr_color or "")
+        display_name = f"Stone Island {meta['name']}"
         cur.execute(
             """
             UPDATE products
             SET name = %s, description = %s, materials = %s, updated_at = NOW()
             WHERE id = %s
             """,
-            (meta["name"], meta["description"], meta["materials"], pid),
+            (display_name, meta["description"], meta["materials"], pid),
         )
         cur.execute(
             "UPDATE variants SET color = %s, updated_at = NOW() WHERE product_id = %s",
             (en_color, pid),
         )
-        name_by_ref[ref] = meta["name"]
+        name_by_ref[ref] = display_name
         updated += 1
-        print(f"OK {ref:<22} {meta['name']:<40} {en_color}")
+        print(f"OK {ref:<22} {display_name:<40} {en_color}")
 
     conn.commit()
 

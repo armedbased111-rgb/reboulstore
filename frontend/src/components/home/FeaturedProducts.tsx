@@ -243,7 +243,7 @@ export const FeaturedProducts = ({
     <section className="m-[2px] last:mb-0">
       {/* Mini-hero optionnel */}
       {heroBg && (
-        <div className="relative w-full aspect-[4/1] overflow-hidden">
+        <div className="relative w-full h-[25vh] md:h-[30vh] overflow-hidden">
           {/* Image de fond — mobile ou desktop */}
           <img
             src={heroBgMobile && typeof window !== 'undefined' && window.innerWidth < 768 ? heroBgMobile : heroBg}

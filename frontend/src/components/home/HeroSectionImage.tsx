@@ -94,7 +94,7 @@ export const HeroSectionImage = ({
   }, [nextSlide, visibleSlides.length, autoplayInterval]);
 
   return (
-    <section className="relative w-full overflow-hidden aspect-[4/5] md:aspect-[4/1]">
+    <section className="relative w-full overflow-hidden h-[57vh] md:h-[47vh]">
       <div
         className="absolute inset-0 transition-opacity duration-400"
         style={{ opacity: fading ? 0 : 1 }}

@@ -1,33 +1,33 @@
 cod_article;name;reference;brand;category;collection;stock;price;color
-;Windscape Low;SCLM/CQ02 39;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 40;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 41;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 42;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 43;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 44;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 45;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CQ02 46;autry;basket;SS26;1;169;Blue/Rust
-;Windscape Low;SCLM/CU01 39;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 40;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 41;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 42;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 43;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 44;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 45;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU01 46;autry;basket;SS26;1;169;Black
-;Windscape Low;SCLM/CU03 39;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 40;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 41;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 42;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 43;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 44;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 45;autry;basket;SS26;1;169;Green
-;Windscape Low;SCLM/CU03 46;autry;basket;SS26;1;169;Green
-;Windscape SV Low;SVLM/PJ02 39;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 40;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 41;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 42;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 43;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 44;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 45;autry;basket;SS26;1;239;White
-;Windscape SV Low;SVLM/PJ02 46;autry;basket;SS26;1;239;White
+;Autry Windscape Low;SCLM/CQ02 39;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 40;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 41;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 42;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 43;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 44;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 45;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CQ02 46;autry;basket;SS26;1;169;Blue/Rust
+;Autry Windscape Low;SCLM/CU01 39;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 40;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 41;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 42;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 43;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 44;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 45;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU01 46;autry;basket;SS26;1;169;Black
+;Autry Windscape Low;SCLM/CU03 39;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 40;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 41;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 42;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 43;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 44;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 45;autry;basket;SS26;1;169;Green
+;Autry Windscape Low;SCLM/CU03 46;autry;basket;SS26;1;169;Green
+;Autry Windscape SV Low;SVLM/PJ02 39;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 40;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 41;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 42;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 43;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 44;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 45;autry;basket;SS26;1;239;White
+;Autry Windscape SV Low;SVLM/PJ02 46;autry;basket;SS26;1;239;White

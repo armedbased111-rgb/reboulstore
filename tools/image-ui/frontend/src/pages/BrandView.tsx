@@ -333,7 +333,7 @@ function RefCard({ brandName, ref_ }: { brandName: string; ref_: RefStatus }) {
       <div className="px-2.5 py-2.5 space-y-0.5">
         <p className="text-[10px] font-medium text-zinc-200 truncate tracking-wide">{ref_.name}</p>
         {ref_.product_name && (
-          <p className="text-[10px] text-zinc-500 truncate leading-tight">{ref_.product_name.replace(/^.+?\s/, '')}</p>
+          <p className="text-[10px] text-zinc-500 truncate leading-tight">{ref_.product_name}</p>
         )}
         {ref_.category && (
           <p className="text-[9px] uppercase tracking-widest text-zinc-700 truncate">{ref_.category}</p>

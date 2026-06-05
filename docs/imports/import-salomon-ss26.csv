@@ -1,75 +1,75 @@
 cod_article;name;reference;brand;category;collection;stock;price;color
-;XT-6;L41086600R/XT6 5,5;salomon;basket;SS26;2;180;Black
-;XT-6;L41086600R/XT6 8;salomon;basket;SS26;1;180;Black
-;XT-6;L41086600R/XT6 9,5;salomon;basket;SS26;1;180;Black
-;XT-6;L47209600/XT6 5;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 6;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 6,5;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 7;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 7,5;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 8;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 9;salomon;basket;SS26;1;180;White/Mauve
-;XT-6;L47209600/XT6 9,5;salomon;basket;SS26;1;180;White/Mauve
-;XT-6 GTX;L47450600R/XT6 9;salomon;basket;SS26;1;200;Black
-;XT-4 OG;L47568400/XT4 6,5;salomon;basket;SS26;1;190;Grey/Blue
-;XT-4 OG;L47568400/XT4 7;salomon;basket;SS26;1;190;Grey/Blue
-;Whisper Void;L477962E26/XTW 7;salomon;basket;SS26;1;160;White
-;Whisper Void;L477962E26/XTW 7,5;salomon;basket;SS26;1;160;White
-;Whisper Void;L477962E26/XTW 8;salomon;basket;SS26;1;160;White
-;Whisper Void;L477962E26/XTW 8,5;salomon;basket;SS26;1;160;White
-;XT-4 OG GTX;L47953400/XT4 8;salomon;basket;SS26;1;210;Black
-;XT-4 OG GTX;L47953400/XT4 8,5;salomon;basket;SS26;1;210;Black
-;XT-6;L47989500/XT6 7,5;salomon;basket;SS26;1;180;Grey
-;XT-6;L47989500/XT6 8;salomon;basket;SS26;1;180;Grey
-;XT-6;L47989500/XT6 9;salomon;basket;SS26;1;180;Grey
-;XT-6;L47989500/XT6 9,5;salomon;basket;SS26;1;180;Grey
-;XT-6;L47989500/XT6 10;salomon;basket;SS26;1;180;Grey
-;XT-6;L47989500/XT6 10,5;salomon;basket;SS26;1;180;Grey
-;XT-4 OG;L47990600/XT4 5;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 6,5;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 7;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 7,5;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 8;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 9;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990600/XT4 9,5;salomon;basket;SS26;1;190;White/Cream
-;XT-4 OG;L47990800/XT4 7,5;salomon;basket;SS26;1;190;Grey
-;XT-4 OG;L47990800/XT4 8;salomon;basket;SS26;1;190;Grey
-;XT-4 OG;L47990800/XT4 8,5;salomon;basket;SS26;1;190;Grey
-;XT-6;L49154300/XT6 4;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 4,5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 5,5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 6;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 7;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 7,5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 8;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 8,5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 9;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154300/XT6 9,5;salomon;basket;SS26;1;180;Black/Orange
-;XT-6;L49154700/XT6 7,5;salomon;basket;SS26;1;180;Green
-;XT-6;L49154700/XT6 8;salomon;basket;SS26;1;180;Green
-;XT-6;L49154700/XT6 8,5;salomon;basket;SS26;1;180;Green
-;XT-6;L49154700/XT6 9;salomon;basket;SS26;1;180;Green
-;XT-6 GTX;L49158700/XT6 4;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 4,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 5,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 6;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 6,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 7;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 7,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 8;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 8,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 9;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 9,5;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49158700/XT6 10;salomon;basket;SS26;1;200;Blue/Lime
-;XT-6 GTX;L49202300/XT6 4;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 4,5;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 5,5;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 6,5;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 7;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 7,5;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 8;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 8,5;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 9;salomon;basket;SS26;1;200;Green/Grey
-;XT-6 GTX;L49202300/XT6 9,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6;L41086600R/XT6 5,5;salomon;basket;SS26;2;180;Black
+;Salomon XT-6;L41086600R/XT6 8;salomon;basket;SS26;1;180;Black
+;Salomon XT-6;L41086600R/XT6 9,5;salomon;basket;SS26;1;180;Black
+;Salomon XT-6;L47209600/XT6 5;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 6;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 6,5;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 7;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 7,5;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 8;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 9;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6;L47209600/XT6 9,5;salomon;basket;SS26;1;180;White/Mauve
+;Salomon XT-6 GTX;L47450600R/XT6 9;salomon;basket;SS26;1;200;Black
+;Salomon XT-4 OG;L47568400/XT4 6,5;salomon;basket;SS26;1;190;Grey/Blue
+;Salomon XT-4 OG;L47568400/XT4 7;salomon;basket;SS26;1;190;Grey/Blue
+;Salomon Whisper Void;L477962E26/XTW 7;salomon;basket;SS26;1;160;White
+;Salomon Whisper Void;L477962E26/XTW 7,5;salomon;basket;SS26;1;160;White
+;Salomon Whisper Void;L477962E26/XTW 8;salomon;basket;SS26;1;160;White
+;Salomon Whisper Void;L477962E26/XTW 8,5;salomon;basket;SS26;1;160;White
+;Salomon XT-4 OG GTX;L47953400/XT4 8;salomon;basket;SS26;1;210;Black
+;Salomon XT-4 OG GTX;L47953400/XT4 8,5;salomon;basket;SS26;1;210;Black
+;Salomon XT-6;L47989500/XT6 7,5;salomon;basket;SS26;1;180;Grey
+;Salomon XT-6;L47989500/XT6 8;salomon;basket;SS26;1;180;Grey
+;Salomon XT-6;L47989500/XT6 9;salomon;basket;SS26;1;180;Grey
+;Salomon XT-6;L47989500/XT6 9,5;salomon;basket;SS26;1;180;Grey
+;Salomon XT-6;L47989500/XT6 10;salomon;basket;SS26;1;180;Grey
+;Salomon XT-6;L47989500/XT6 10,5;salomon;basket;SS26;1;180;Grey
+;Salomon XT-4 OG;L47990600/XT4 5;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 6,5;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 7;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 7,5;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 8;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 9;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990600/XT4 9,5;salomon;basket;SS26;1;190;White/Cream
+;Salomon XT-4 OG;L47990800/XT4 7,5;salomon;basket;SS26;1;190;Grey
+;Salomon XT-4 OG;L47990800/XT4 8;salomon;basket;SS26;1;190;Grey
+;Salomon XT-4 OG;L47990800/XT4 8,5;salomon;basket;SS26;1;190;Grey
+;Salomon XT-6;L49154300/XT6 4;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 4,5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 5,5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 6;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 7;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 7,5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 8;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 8,5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 9;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154300/XT6 9,5;salomon;basket;SS26;1;180;Black/Orange
+;Salomon XT-6;L49154700/XT6 7,5;salomon;basket;SS26;1;180;Green
+;Salomon XT-6;L49154700/XT6 8;salomon;basket;SS26;1;180;Green
+;Salomon XT-6;L49154700/XT6 8,5;salomon;basket;SS26;1;180;Green
+;Salomon XT-6;L49154700/XT6 9;salomon;basket;SS26;1;180;Green
+;Salomon XT-6 GTX;L49158700/XT6 4;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 4,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 5,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 6;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 6,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 7;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 7,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 8;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 8,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 9;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 9,5;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49158700/XT6 10;salomon;basket;SS26;1;200;Blue/Lime
+;Salomon XT-6 GTX;L49202300/XT6 4;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 4,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 5,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 6,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 7;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 7,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 8;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 8,5;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 9;salomon;basket;SS26;1;200;Green/Grey
+;Salomon XT-6 GTX;L49202300/XT6 9,5;salomon;basket;SS26;1;200;Green/Grey

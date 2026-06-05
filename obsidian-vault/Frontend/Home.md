@@ -4,7 +4,7 @@ fichier: src/pages/Home.tsx
 route: /
 statut: a-revoir
 phase: "25"
-maj: 2026-06-02
+maj: 2026-06-05
 ---
 # Home
 
@@ -16,8 +16,9 @@ Liens : [[Frontend/Frontend]]
 
 ## Ce qui est en place
 
-- **Hero section** — 3 slides : Salomon SS26 · Off-White™ · Stone Island SS26 · carousel séquentiel ✅ 01/06
-- **HeroSectionImage** — desktop/mobile séparés, `fetchpriority="high"`, `f_auto,q_auto` Cloudinary ✅
+- **Hero section** — 3 slides : **MM6 × Salomon** · Off-White™ · Stone Island SS26 · carousel séquentiel ✅ 05/06
+- **HeroSectionImage** — `h-[57vh] md:h-[47vh]` (hauteur fixe vh, object-cover) · desktop/mobile séparés ✅ 05/06
+- **Mini-hero FeaturedProducts** — `h-[25vh] md:h-[30vh]` ✅ 05/06
 - BrandCarousel — 57 marques, logos noirs sur fond clair, animation scroll
 - BrandMarquee — sticky sous le header, logos blancs défilants sur fond noir
 - **FeaturedProducts** — mini-hero optionnel (`heroBg`, `heroBgMobile`, `brandTag`) ✅ 01/06
