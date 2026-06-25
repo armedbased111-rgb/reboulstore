@@ -323,8 +323,7 @@ export class SyncAs400Service {
           .map(escapeCsvField)
           .join(';'),
       );
-      const csv =
-        [COMMANDE_CSV_HEADER, ...body].join('\n') + '\n';
+      const csv = [COMMANDE_CSV_HEADER, ...body].join('\n') + '\n';
       const filename = `commande_${order.id}_${this.formatTimestamp(now)}.csv`;
       await fs.writeFile(join(commandesDir, filename), csv, 'utf-8');
       totalLines += lines.length;
@@ -348,9 +347,7 @@ export class SyncAs400Service {
     };
   }
 
-  private async buildCommandeLines(
-    order: Order,
-  ): Promise<
+  private async buildCommandeLines(order: Order): Promise<
     Array<{
       numeroCommande: string;
       date: string;
@@ -377,9 +374,7 @@ export class SyncAs400Service {
         codArticle: item.variant?.codArticle ?? '',
         reference: (item.variant?.product as any)?.reference ?? '',
         designation: (item.variant?.product as any)?.name ?? '',
-        prixVente: this.formatPrice(
-          (item.variant?.product as any)?.price ?? 0,
-        ),
+        prixVente: this.formatPrice((item.variant?.product as any)?.price ?? 0),
         taille: item.variant?.size ?? '',
         quantite: String(item.quantity),
       }));

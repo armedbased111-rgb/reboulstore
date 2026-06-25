@@ -1,7 +1,7 @@
 ---
 type: racine
 version: 1.1
-maj: 2026-06-02
+maj: 2026-06-25
 ---
 # REBOUL STORE — Intelligence centrale
 
@@ -30,7 +30,7 @@ Admin Centrale mutualisée pour tous les sites.
 | Frontend | Hero slide 1 = MM6 × Salomon ✅ (05/06) · `h-[57vh]/h-[47vh]` · mini-hero `h-[25vh]/h-[30vh]` ✅ |
 | Collections | Hologram ✅ uploadé · Bisous ✅ uploadé (24/25) · Stone Island / Arte / Autry en cours |
 | Sécurité | ✅ Helmet, rate limiting, VPS durci, UptimeRobot, pentest route rédigée |
-| AS400 / SFTP | **Sortant ✅** · **Fiche expert envoyée à Jacques ✅ 27/05** · Phase 2 `entrant/` en attente réponse Jacques → [[Securite/as400]] |
+| AS400 / SFTP | **Sortant ✅** produits (delta horodaté) + **commandes clients ✅** (25/06) · Fiche expert envoyée ✅ 27/05 · Phase 2 `entrant/` en attente Jacques → [[Securite/as400]] |
 | Logs / Grafana | ✅ Guide nœud [[Architecture/grafana]] — logs techniques 30 j (pas stocks/AS400 métier) |
 
 Roadmap : **[[Projet/roadmap]]** · Sécurité : **[[Securite/Securite]]**
