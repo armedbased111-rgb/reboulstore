@@ -39,6 +39,8 @@ export const Home = () => {
   const { products, loading } = useProducts(query);
   const queryBestSellers = useMemo(() => ({ brand: 'stone-island', limit: 10 }), []);
   const { products: bestSellers } = useProducts(queryBestSellers);
+  const querySalomon = useMemo(() => ({ brand: 'salomon', limit: 10 }), []);
+  const { products: salomonProducts } = useProducts(querySalomon);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(FALLBACK_SLIDES);
 
   useEffect(() => {
@@ -83,6 +85,17 @@ export const Home = () => {
     }
   }, { threshold: 0.1, rootMargin: '150px' });
 
+  const featuredProductsRef5 = useScrollAnimation((element) => {
+    const cards = element.querySelectorAll('.product-card');
+    if (cards.length > 0) {
+      animateStaggerFadeIn(cards, {
+        duration: 1.2,
+        stagger: 0.15,
+        distance: 30
+      });
+    }
+  }, { threshold: 0.1, rootMargin: '150px' });
+
   return (
     <div className='px-[4px]'>
       <SeoHead
@@ -106,6 +119,20 @@ export const Home = () => {
             title="NOUVEAUTÉS"
             viewAllLink="/catalog"
             products={products}
+          />
+        </div>
+      )}
+
+      {/* Featured Products - Salomon */}
+      {salomonProducts.length > 0 && (
+        <div ref={featuredProductsRef5}>
+          <FeaturedProducts
+            title="BEST SELLERS — SALOMON"
+            products={salomonProducts}
+            viewAllLink="/catalog?brand=salomon"
+            heroBg="https://res.cloudinary.com/dxen69pdo/image/upload/f_auto,q_auto,w_1920/homepage/hero/salomon_green_desktop.png"
+            heroBgMobile="https://res.cloudinary.com/dxen69pdo/image/upload/f_auto,q_auto,w_828/homepage/hero/salomon_green_mobile.png"
+            brandTag="SS26 Collection"
           />
         </div>
       )}

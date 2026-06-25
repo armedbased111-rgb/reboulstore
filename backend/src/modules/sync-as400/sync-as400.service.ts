@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Variant } from '../../entities/variant.entity';
+import { Order, OrderStatus } from '../../entities/order.entity';
 import { ExportSortantResultDto } from './dto/export-sortant-result.dto';
+import { ExportCommandesResultDto } from './dto/export-commandes-result.dto';
 import {
   As400ExportState,
   SortantDeltaLine,
@@ -15,7 +17,10 @@ import {
 const FULL_CSV_HEADER = 'cod_article;reference;name;price;sku;size;color;stock';
 const DELTA_CSV_HEADER =
   'change_type;cod_article;reference;name;price;sku;size;color;stock';
+const COMMANDE_CSV_HEADER =
+  'numero_commande;date;nom_client;cod_article;reference;designation;prix_vente;taille;quantite';
 const STATE_FILENAME = '.as400-export-state.json';
+const COMMANDES_STATE_FILENAME = '.as400-commandes-state.json';
 
 @Injectable()
 export class SyncAs400Service {
@@ -24,6 +29,8 @@ export class SyncAs400Service {
   constructor(
     @InjectRepository(Variant)
     private readonly variantRepository: Repository<Variant>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -71,10 +78,10 @@ export class SyncAs400Service {
       };
       await this.saveState(statePath, nextState);
       this.logger.log(
-        'AS400 delta empty — fichier sortant inchangé (aucune ligne à envoyer)',
+        'AS400 delta empty — aucun fichier delta créé (aucune ligne à envoyer)',
       );
       return {
-        path: outputPath,
+        path: sortantDir,
         lineCount: 0,
         generatedAt: now,
         mode,
@@ -85,7 +92,13 @@ export class SyncAs400Service {
 
     const csv = this.buildCsv(exportLines, mode);
     await fs.mkdir(sortantDir, { recursive: true });
-    await fs.writeFile(outputPath, csv, 'utf-8');
+
+    const actualPath =
+      mode === 'delta'
+        ? join(sortantDir, `delta_${this.formatTimestamp(now)}.csv`)
+        : outputPath;
+
+    await fs.writeFile(actualPath, csv, 'utf-8');
     const nextState: As400ExportState = {
       lastExportAt: now,
       lastFullExportAt: useFull ? now : previousState!.lastFullExportAt,
@@ -101,11 +114,11 @@ export class SyncAs400Service {
     ).length;
 
     this.logger.log(
-      `AS400 sortant export (${mode}): ${exportLines.length} lines (${updateCount} update, ${deleteCount} delete) → ${outputPath}`,
+      `AS400 sortant export (${mode}): ${exportLines.length} lines (${updateCount} update, ${deleteCount} delete) → ${actualPath}`,
     );
 
     return {
-      path: outputPath,
+      path: actualPath,
       lineCount: exportLines.length,
       generatedAt: now,
       mode,
@@ -248,6 +261,182 @@ export class SyncAs400Service {
       return '0.00';
     }
     return n.toFixed(2);
+  }
+
+  async exportCommandes(): Promise<ExportCommandesResultDto> {
+    const sortantDir =
+      this.configService.get<string>('AS400_SORTANT_DIR') ??
+      '/tmp/as400-sortant';
+    const commandesDir = join(sortantDir, 'commandes');
+    const statePath = join(sortantDir, COMMANDES_STATE_FILENAME);
+
+    await fs.mkdir(commandesDir, { recursive: true });
+
+    const lastExportedId = await this.loadLastExportedOrderId(statePath);
+
+    const orders = await this.orderRepository
+      .createQueryBuilder('o')
+      .leftJoinAndSelect('o.cart', 'c')
+      .leftJoinAndSelect('c.items', 'ci')
+      .leftJoinAndSelect('ci.variant', 'v')
+      .leftJoin('v.product', 'p')
+      .addSelect(['p.reference', 'p.name', 'p.price'])
+      .where('o.status IN (:...statuses)', {
+        statuses: [
+          OrderStatus.PAID,
+          OrderStatus.PROCESSING,
+          OrderStatus.SHIPPED,
+          OrderStatus.DELIVERED,
+        ],
+      })
+      .andWhere('o.id > :lastId', { lastId: lastExportedId })
+      .orderBy('o.id', 'ASC')
+      .getMany();
+
+    if (orders.length === 0) {
+      this.logger.log('AS400 commandes: aucune nouvelle commande à exporter');
+      return {
+        path: commandesDir,
+        orderCount: 0,
+        lineCount: 0,
+        generatedAt: new Date().toISOString(),
+      };
+    }
+
+    const now = new Date().toISOString();
+    let totalLines = 0;
+
+    for (const order of orders) {
+      const lines = await this.buildCommandeLines(order);
+      const body = lines.map((l) =>
+        [
+          l.numeroCommande,
+          l.date,
+          l.nomClient,
+          l.codArticle,
+          l.reference,
+          l.designation,
+          l.prixVente,
+          l.taille,
+          l.quantite,
+        ]
+          .map(escapeCsvField)
+          .join(';'),
+      );
+      const csv =
+        [COMMANDE_CSV_HEADER, ...body].join('\n') + '\n';
+      const filename = `commande_${order.id}_${this.formatTimestamp(now)}.csv`;
+      await fs.writeFile(join(commandesDir, filename), csv, 'utf-8');
+      totalLines += lines.length;
+      this.logger.log(
+        `AS400 commande #${order.id}: ${lines.length} lignes → ${filename}`,
+      );
+    }
+
+    const maxId = orders[orders.length - 1].id;
+    await this.saveLastExportedOrderId(statePath, maxId);
+
+    this.logger.log(
+      `AS400 commandes export: ${orders.length} commandes, ${totalLines} lignes → ${commandesDir}`,
+    );
+
+    return {
+      path: commandesDir,
+      orderCount: orders.length,
+      lineCount: totalLines,
+      generatedAt: now,
+    };
+  }
+
+  private async buildCommandeLines(
+    order: Order,
+  ): Promise<
+    Array<{
+      numeroCommande: string;
+      date: string;
+      nomClient: string;
+      codArticle: string;
+      reference: string;
+      designation: string;
+      prixVente: string;
+      taille: string;
+      quantite: string;
+    }>
+  > {
+    const nomClient = order.customerInfo?.name ?? '';
+    const dateStr = order.paidAt
+      ? new Date(order.paidAt).toISOString().slice(0, 10)
+      : new Date(order.createdAt).toISOString().slice(0, 10);
+    const orderNum = String(order.id);
+
+    if (order.cart?.items?.length) {
+      return order.cart.items.map((item) => ({
+        numeroCommande: orderNum,
+        date: dateStr,
+        nomClient,
+        codArticle: item.variant?.codArticle ?? '',
+        reference: (item.variant?.product as any)?.reference ?? '',
+        designation: (item.variant?.product as any)?.name ?? '',
+        prixVente: this.formatPrice(
+          (item.variant?.product as any)?.price ?? 0,
+        ),
+        taille: item.variant?.size ?? '',
+        quantite: String(item.quantity),
+      }));
+    }
+
+    if (order.items?.length) {
+      const variantIds = order.items.map((i) => i.variantId);
+      const variants = await this.variantRepository
+        .createQueryBuilder('v')
+        .leftJoin('v.product', 'p')
+        .addSelect(['p.reference', 'p.name', 'p.price'])
+        .whereInIds(variantIds)
+        .getMany();
+      const variantMap = new Map(variants.map((v) => [v.id, v]));
+
+      return order.items.map((item) => {
+        const v = variantMap.get(item.variantId);
+        return {
+          numeroCommande: orderNum,
+          date: dateStr,
+          nomClient,
+          codArticle: v?.codArticle ?? '',
+          reference: (v?.product as any)?.reference ?? '',
+          designation: (v?.product as any)?.name ?? '',
+          prixVente: this.formatPrice((v?.product as any)?.price ?? 0),
+          taille: v?.size ?? '',
+          quantite: String(item.quantity),
+        };
+      });
+    }
+
+    return [];
+  }
+
+  private async loadLastExportedOrderId(path: string): Promise<number> {
+    try {
+      const raw = await fs.readFile(path, 'utf-8');
+      const parsed = JSON.parse(raw);
+      return typeof parsed.lastOrderId === 'number' ? parsed.lastOrderId : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  private async saveLastExportedOrderId(
+    path: string,
+    lastOrderId: number,
+  ): Promise<void> {
+    await fs.writeFile(
+      path,
+      JSON.stringify({ lastOrderId, exportedAt: new Date().toISOString() }),
+      'utf-8',
+    );
+  }
+
+  private formatTimestamp(iso: string): string {
+    return iso.replace(/[-:]/g, '').replace('T', '_').replace(/\..+$/, '');
   }
 
   private buildCsv(lines: SortantDeltaLine[], mode: 'full' | 'delta'): string {

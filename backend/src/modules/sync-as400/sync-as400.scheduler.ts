@@ -29,6 +29,16 @@ export class SyncAs400Scheduler {
     } catch (error) {
       this.logger.error('AS400 cron export failed:', error);
     }
+
+    try {
+      const cmdResult = await this.syncAs400Service.exportCommandes();
+      this.logger.log(
+        `AS400 cron commandes done: ${cmdResult.orderCount} commandes, ` +
+          `${cmdResult.lineCount} lignes → ${cmdResult.path}`,
+      );
+    } catch (error) {
+      this.logger.error('AS400 cron commandes export failed:', error);
+    }
   }
 
   private isCronEnabled(): boolean {
